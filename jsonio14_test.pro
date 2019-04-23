@@ -44,7 +44,8 @@ include($$JSONIO14_DIR/jsonio14.pri)
 HEADERS += \
         $$TESTS_DIR/tst_jsonio.h \
         $$TESTS_DIR/tst_detail.h \
-        $$TESTS_DIR/tst_service.h
+        $$TESTS_DIR/tst_service.h \
+        $$TESTS_DIR/tst_base.h
 
 SOURCES += \
         $$TESTS_DIR/main.cpp

@@ -1,6 +1,7 @@
-#include "tst_jsonio.h"
-#include "tst_detail.h"
-#include "tst_service.h"
+//#include "tst_jsonio.h"
+//#include "tst_service.h"
+//#include "tst_detail.h"
+#include "tst_base.h"
 
 #include <gtest/gtest.h>
 

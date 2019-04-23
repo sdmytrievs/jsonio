@@ -19,7 +19,7 @@ void JsonFree::update_node(JsonBase::Type atype, const std::string &avalue)
    field_value = avalue;
 }
 
-JsonBase& JsonFree::append_node(const std::string &akey, JsonBase::Type atype, const std::string &avalue )
+JsonFree& JsonFree::append_node(const std::string &akey, JsonBase::Type atype, const std::string &avalue )
 {
   children.emplace_back( JsonFree{atype, akey, avalue, this} );
   return children.back();
@@ -90,8 +90,8 @@ JsonFree& JsonFree::get_child(const std::string &key)
                                  [=]( auto value ) { return value.getKey() == key; });
     if( element == children.end() )
     {
-        append_node( key, JsonBase::Object, "" );
-        return children.back();
+        return append_node( key, JsonBase::Object, "" );
+        //return children.back();
     }
     return *element;
 }
@@ -117,32 +117,4 @@ JsonFree &JsonFree::get_parent() const
 
 
 
-/* old
- *
- *
-
-    /// Set Value to current Node
-    template <class T>
-    bool setValue( const T& value  )
-    {
-        auto decodedType = typeTraits( value );
-        switch( decodedType )
-        {
-        case Null:
-        case Bool:
-        case Int:
-        case Double:
-        case String:  updateNodeData(  decodedType, v2string(value) );
-            break;
-        case Array:   //setArray( value );
-            break;
-        case Object: // setMapKey( value );
-            break;
-        default:
-            return false;
-        }
-        return true;
-    }
-
-  */
 } // namespace jsonio14

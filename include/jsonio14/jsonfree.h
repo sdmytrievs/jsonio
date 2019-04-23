@@ -236,7 +236,7 @@ private:
     JsonFree( JsonBase::Type atype, const std::string &akey, const std::string& avalue, JsonFree *aparent = nullptr );
 
     void update_node(  JsonBase::Type atype, const std::string& avalue ) override;
-    JsonBase &append_node( const std::string& akey, JsonBase::Type atype, const std::string& avalue ) override;
+    JsonFree &append_node( const std::string& akey, JsonBase::Type atype, const std::string& avalue ) override;
 
     /// Deep copy children
     void copy(const JsonFree &obj);
@@ -248,7 +248,6 @@ private:
     const JsonFree &get_child(const std::string& key) const;
     JsonFree &get_child(const std::string& key);
     JsonFree &get_parent() const;
-
 };
 
 // Add iterator?

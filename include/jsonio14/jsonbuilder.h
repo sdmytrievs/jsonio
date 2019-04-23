@@ -28,8 +28,8 @@ public:
 
     JsonBuilder& startObject( const std::string& akey )
     {
-        current_json.append_node( akey, JsonBase::Object, "" );
-        current_json = current_json.children.back();
+        current_json = current_json.append_node( akey, JsonBase::Object, "" );
+        //current_json = current_json.children.back();
         return *this;
     }
 
@@ -41,8 +41,8 @@ public:
 
     JsonBuilder& startArray( const std::string& akey )
     {
-        current_json.append_node( akey, JsonBase::Array, "" );
-        current_json = current_json.children.back();
+        current_json = current_json.append_node( akey, JsonBase::Array, "" );
+        //current_json = current_json.children.back();
         return *this;
     }
 
