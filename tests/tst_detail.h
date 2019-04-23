@@ -191,6 +191,6 @@ TEST( JsonioDetail, Split )
  strquery.pop();
  EXPECT_EQ( "ccc", strquery.front() );
 
- auto strquery2 = split("::bb::ccc::", "::" );
+ auto strquery2 = split("::bb::ccc::", ":" );
  EXPECT_EQ( 7, strquery2.size() );
 }

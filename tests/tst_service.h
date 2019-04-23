@@ -5,30 +5,32 @@
 
 
 #include "service.h"
+#include "jsondetail.h"
 
 using namespace testing;
 using namespace jsonio14;
 
+//  Function that can be used to split text using regexp
 TEST( JsonioService, regexpSplit )
 {
-    //  Function that can be used to split text using regexp
-    // std::vector<std::string> regexp_split(const std::string& str, std::string rgx_str = "\\s+");
-
+    auto tokens = regexp_split( "1\r 22 \n333 ", "\\s+" );
+    // std::cout << dump(tokens) << std::endl;
+    EXPECT_EQ( "[ \"1\", \"22\", \"333\" ]", dump(tokens) );
+    auto strquery = regexp_split("a:bb:ccc", ":" );
+    EXPECT_EQ( "[ \"a\", \"bb\", \"ccc\" ]", dump(strquery) );
 }
 
+//  Function that can be used to extract tokens using regexp
 TEST( JsonioService, regexpExtract )
 {
-    //  Function that can be used to extract tokens using regexp
-    //  std::vector<std::string> regexp_extract(const std::string& str, std::string rgx_str);
-
-//vector<string> tokens = regexp_extract( format.head_regexp, "%head\\d+");
-//tokens = regexp_extract( format.end_regexp, "%end\\d+");
+    auto tokens = regexp_extract( " %h11 %h22 %h33 ", "%h\\d+" );
+    //std::cout << dump(tokens) << std::endl;
+    EXPECT_EQ( "[ \"%h11\", \"%h22\", \"%h33\" ]", dump(tokens) );
 }
 
+//  Function that can be used to replase text using regexp
 TEST( JsonioService, regexpReplace )
 {
-    //  Function that can be used to replase text using regexp
-    // std::string regexp_replace(const std::string& instr, const std::string& rgx_str, const std::string& replacement );
-//regexp_replace( format.key_regexp, "%key", impexKey );
-//regexp_replace( rgex[ii++], "%value", values[0] );
+    auto resstr = regexp_replace("there is a subsequence in the string" ,"\\b(sub)([^ ]*)","sub-$2");
+    EXPECT_EQ( "there is a sub-sequence in the string", resstr );
 }

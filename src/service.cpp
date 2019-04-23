@@ -1,4 +1,4 @@
-#include <boost/regex.hpp>
+#include <regex>
 #include "service.h"
 #include "jsondetail.h"
 
@@ -9,11 +9,9 @@ namespace jsonio14 {
 std::vector<std::string> regexp_split(const std::string& str, std::string rgx_str)
 {
   std::vector<std::string> lst;
-
-  boost::regex rgx(rgx_str);
-
-  boost::sregex_token_iterator iter(str.begin(), str.end(), rgx, -1);
-  boost::sregex_token_iterator end;
+  std::regex rgx(rgx_str);
+  std::sregex_token_iterator iter(str.begin(), str.end(), rgx, -1);
+  std::sregex_token_iterator end;
 
   while (iter != end)
   {
@@ -29,11 +27,9 @@ std::vector<std::string> regexp_split(const std::string& str, std::string rgx_st
 std::vector<std::string> regexp_extract(const std::string& str, std::string rgx_str)
 {
   std::vector<std::string> lst;
-
-  boost::regex rgx(rgx_str);
-
-  boost::sregex_token_iterator iter(str.begin(), str.end(), rgx, 0);
-  boost::sregex_token_iterator end;
+  std::regex rgx(rgx_str);
+  std::sregex_token_iterator iter(str.begin(), str.end(), rgx, 0);
+  std::sregex_token_iterator end;
 
   while (iter != end)
   {
@@ -41,7 +37,6 @@ std::vector<std::string> regexp_extract(const std::string& str, std::string rgx_
     trim(lst.back());
     ++iter;
   }
-
   return lst;
 }
 
@@ -49,7 +44,7 @@ std::vector<std::string> regexp_extract(const std::string& str, std::string rgx_
 //  Function that can be used to replase text using regexp
 std::string regexp_replace(const std::string& instr, const std::string& rgx_str, const std::string& replacement )
 {
-   boost::regex re(rgx_str);
+   std::regex re(rgx_str);
    std::string output_str = regex_replace(instr, re, replacement);
    return output_str;
 }
