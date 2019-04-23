@@ -77,6 +77,27 @@ std::string JsonBase::getFieldPath() const
     }
 }
 
+const char *JsonBase::typeName(JsonBase::Type type)
+{
+    switch( type )
+    {
+    case Null:
+        return "null";
+    case Object:
+        return "object";
+    case Array:
+        return "array";
+    case String:
+        return "string";
+    case Bool:
+        return "boolean";
+    case UNDEFINED:
+        return "undefined";
+    default:
+        return "number";
+    }
+}
+
 
 
 

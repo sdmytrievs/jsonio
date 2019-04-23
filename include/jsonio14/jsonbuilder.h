@@ -28,7 +28,7 @@ public:
 
     JsonBuilder& startObject( const std::string& akey )
     {
-        current_json.appendNode( akey, JsonBase::Object, "" );
+        current_json.append_node( akey, JsonBase::Object, "" );
         current_json = current_json.children.back();
         return *this;
     }
@@ -41,7 +41,7 @@ public:
 
     JsonBuilder& startArray( const std::string& akey )
     {
-        current_json.appendNode( akey, JsonBase::Array, "" );
+        current_json.append_node( akey, JsonBase::Array, "" );
         current_json = current_json.children.back();
         return *this;
     }
@@ -54,31 +54,31 @@ public:
 
     JsonBuilder& addNull( const std::string& akey )
     {
-        current_json.appendNode( akey, JsonBase::Null, "null" );
+        current_json.append_node( akey, JsonBase::Null, "null" );
         return *this;
     }
 
     JsonBuilder& addBool( const std::string& akey, bool value )
     {
-        current_json.appendNode( akey, JsonBase::Bool, v2string(value) );
+        current_json.append_node( akey, JsonBase::Bool, v2string(value) );
         return *this;
     }
 
     JsonBuilder& addInt( const std::string& akey, long value )
     {
-        current_json.appendNode( akey, JsonBase::Null, v2string(value) );
+        current_json.append_node( akey, JsonBase::Null, v2string(value) );
         return *this;
     }
 
     JsonBuilder& addDouble( const std::string& akey, double value )
     {
-        current_json.appendNode( akey, JsonBase::Null, v2string(value) );
+        current_json.append_node( akey, JsonBase::Null, v2string(value) );
         return *this;
     }
 
     JsonBuilder& addString( const std::string& akey, const std::string& value )
     {
-        current_json.appendNode( akey, JsonBase::Null, v2string(value) );
+        current_json.append_node( akey, JsonBase::Null, v2string(value) );
         return *this;
     }
 
@@ -92,7 +92,7 @@ public:
     JsonBuilder&  addValue( const std::string& akey, T value )
     {
         auto decodedType = current_json.typeTraits( value );
-        current_json.appendNode( akey, decodedType, v2string(value) );
+        current_json.append_node( akey, decodedType, v2string(value) );
         return *this;
     }
 
@@ -101,7 +101,7 @@ public:
               class = typename std::enable_if<is_container<T>{}, bool>::type >
     JsonBuilder&  addArray( const std::string& akey, const T& values  )
     {
-        current_json.appendNode( akey, JsonBase::Array, "" ).setArray( values  );
+        current_json.append_node( akey, JsonBase::Array, "" ).setArray( values  );
         return *this;
     }
 
@@ -110,7 +110,7 @@ public:
               class = typename std::enable_if<is_mappish<T>{}, bool>::type >
     JsonBuilder&  addMapKey( const std::string& akey, const T& values  )
     {
-        current_json.appendNode( akey, JsonBase::Object, "" ).setMapKey( values  );
+        current_json.append_node( akey, JsonBase::Object, "" ).setMapKey( values  );
         return *this;
     }
 

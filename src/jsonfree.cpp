@@ -12,17 +12,16 @@ JsonFree::JsonFree( JsonBase::Type atype, const std::string &akey, const std::st
     }
 }
 
-void JsonFree::updateNodeData(JsonBase::Type atype, const std::string &avalue)
+void JsonFree::update_node(JsonBase::Type atype, const std::string &avalue)
 {
    children.clear();
    field_type = atype;
    field_value = avalue;
 }
 
-JsonBase& JsonFree::appendNode(const std::string &akey, JsonBase::Type atype, const std::string &avalue )
+JsonBase& JsonFree::append_node(const std::string &akey, JsonBase::Type atype, const std::string &avalue )
 {
   children.emplace_back( JsonFree{atype, akey, avalue, this} );
-  //  children.push_back( JsonFree( atype, akey, avalue, this ));
   return children.back();
 }
 
@@ -91,7 +90,7 @@ JsonFree& JsonFree::get_child(const std::string &key)
                                  [=]( auto value ) { return value.getKey() == key; });
     if( element == children.end() )
     {
-        appendNode( key, JsonBase::Object, "" );
+        append_node( key, JsonBase::Object, "" );
         return children.back();
     }
     return *element;

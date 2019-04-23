@@ -8,14 +8,14 @@ namespace jsonio14 {
 
 /// @brief an interface to store JSON object
 /// @class JsonBase represents an abstract item in a tree view.
-/// Item data defines one json object
+/// Item data defines one json object.
 class JsonBase
 {
 protected:
 
    explicit JsonBase() {}
    /// Destructor
-   virtual ~JsonBase(){}
+   virtual ~JsonBase() {}
 
 public:
 
@@ -33,30 +33,30 @@ public:
 
     // Test methods  --------------------------------------------
 
-    /// Test top object
+    /// This function returns true if and only if the JSON object is top.
     virtual bool isTop() const = 0;
 
-    /// Test object as Struct
+    /// This function returns true if and only if the JSON type is Object.
     virtual bool isObject() const
     { return getType() == Type::Object; }
 
-    /// Test object as Array
+    /// This function returns true if and only if the JSON type is Array.
     virtual bool isArray() const
     { return  getType() == Type::Array; }
 
-    /// Test object as numeric value
+    /// This function returns true if and only if the JSON type is a numeric value.
     virtual bool isNumber( ) const
     { return  getType() == Type::Int or getType() == Type::Double; }
 
-    /// Test object as Bool
+    /// This function returns true if and only if the JSON type is boolean.
     virtual bool isBool() const
     { return getType() == Type::Bool; }
 
-    /// Test object as Null
+    /// This function returns true if and only if the JSON type is Null object.
     virtual bool isNull() const
     { return getType() == Type::Null; }
 
-    /// Test object as String
+    /// This function returns true if and only if the JSON type is String
     virtual bool isString() const
     { return getType() == Type::String; }
 
@@ -90,28 +90,13 @@ public:
     /// Get object type.
     virtual Type getType() const = 0;
 
-    /// Get Value from object
-    /// If object is not numeric value, the false will be returned.
-    template <class T>
-    bool getValueOld( T& value  ) const
+    /// @brief return the type as string
+    ///   Returns the type name as string to be used in error messages - usually to
+    ///   indicate that a function was called on a wrong JSON type.
+    virtual const char* getTypeName() const
     {
-       switch( getType() )
-       {
-        case Type::Double: value = toDouble(); break;
-        case Type::Int:    value = toInt();  break;
-        case Type::Bool:   value = toBool();  break;
-        default:     return false;
-       }
-       return true;
+       return  typeName( getType() );
     }
-
-    bool getValueOld( std::string& value  ) const
-    {
-       value = toString( true );
-       return true;
-    }
-
-
 
     // Get methods ( using in Qt GUI ) --------------------------
 
@@ -151,7 +136,7 @@ public:
         auto decodedType = typeTraits( value );
         if( decodedType>= Null && decodedType<=String )
         {
-            updateNodeData(  decodedType, v2string(value) );
+            update_node(  decodedType, v2string(value) );
             return true;
         }
         return false;
@@ -181,10 +166,10 @@ public:
     void setArray( const T& values  )
     {
         int ii{0};
-        updateNodeData(  Array, "" );
+        update_node(  Array, "" );
         for( const auto& el: values )
         {
-            appendNode( std::to_string(ii++), UNDEFINED, "" ).setValue(el);
+            append_node( std::to_string(ii++), UNDEFINED, "" ).setValue(el);
         }
     }
 
@@ -193,18 +178,18 @@ public:
               class = typename std::enable_if<is_mappish<T>{}, bool>::type >
     void setMapKey( const T& values  )
     {
-        updateNodeData(  Object, "" );
+        update_node(  Object, "" );
         for( const auto& el: values )
         {
-            appendNode( el->first, UNDEFINED, "" ).setValue(el->second);
+            append_node( el->first, UNDEFINED, "" ).setValue(el->second);
         }
     }
 
 
 private:
 
-    virtual void updateNodeData(  Type atype, const std::string& avalue ) =0;
-    virtual JsonBase& appendNode( const std::string& akey, Type atype, const std::string& avalue ) =0;
+    virtual void update_node(  Type atype, const std::string& avalue ) =0;
+    virtual JsonBase& append_node( const std::string& akey, Type atype, const std::string& avalue ) =0;
 
 public:
 
@@ -241,27 +226,7 @@ public:
     /// @brief return the type as string
     ///   Returns the type name as string to be used in error messages - usually to
     ///   indicate that a function was called on a wrong JSON type.
-
-    const char* typeName() const
-    {
-        switch( getType() )
-        {
-        case Null:
-            return "null";
-        case Object:
-            return "object";
-        case Array:
-            return "array";
-        case String:
-            return "string";
-        case Bool:
-            return "boolean";
-        case UNDEFINED:
-            return "undefined";
-        default:
-            return "number";
-        }
-    }
+    static const char* typeName(Type type);
 
 
 };

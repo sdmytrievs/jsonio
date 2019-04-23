@@ -83,7 +83,7 @@ public:
         {
             return get_child( idx );
         }
-        JARANGO_THROW( "JsonFree", 21, "cannot use operator[] with a numeric argument with " + std::string( typeName() ) );
+        JARANGO_THROW( "JsonFree", 21, "cannot use operator[] with a numeric argument with " + std::string( getTypeName() ) );
     }
 
     /// Return a reference to arr[i] if this is an array, exception otherwise.
@@ -93,7 +93,7 @@ public:
         {
             return get_child( idx );
         }
-        JARANGO_THROW( "JsonFree", 22, "cannot use operator[] with a numeric argument with " + std::string( typeName() ) );
+        JARANGO_THROW( "JsonFree", 22, "cannot use operator[] with a numeric argument with " + std::string( getTypeName() ) );
     }
 
 
@@ -104,7 +104,7 @@ public:
         {
             return get_child( key );
         }
-        JARANGO_THROW( "JsonFree", 23, "cannot use operator[] with a string argument with " + std::string( typeName() ) );
+        JARANGO_THROW( "JsonFree", 23, "cannot use operator[] with a string argument with " + std::string( getTypeName() ) );
     }
 
     /// Return a reference to object[key] if this is an object, exception otherwise.
@@ -114,7 +114,7 @@ public:
         {
             return get_child( key );
         }
-        JARANGO_THROW( "JsonFree", 24, "cannot use operator[] with a string argument with " + std::string( typeName() ) );
+        JARANGO_THROW( "JsonFree", 24, "cannot use operator[] with a string argument with " + std::string( getTypeName() ) );
     }
 
     // Test methods  --------------------------------------------
@@ -165,7 +165,7 @@ public:
               class = typename std::enable_if<is_container<T>{}, bool>::type >
     bool getArray( T& values  )
     {
-        JARANGO_THROW_IF( !isArray(), "JsonFree", 11, "cannot use getArray with " + std::string( typeName() ) );
+        JARANGO_THROW_IF( !isArray(), "JsonFree", 11, "cannot use getArray with " + std::string( getTypeName() ) );
         values.clear();
         typename T::value_type val;
         for ( size_t ii=0; ii<getChildrenCount(); ii++)
@@ -235,8 +235,8 @@ private:
     /// Object constructor
     JsonFree( JsonBase::Type atype, const std::string &akey, const std::string& avalue, JsonFree *aparent = nullptr );
 
-    void updateNodeData(  JsonBase::Type atype, const std::string& avalue ) override;
-    JsonBase &appendNode( const std::string& akey, JsonBase::Type atype, const std::string& avalue ) override;
+    void update_node(  JsonBase::Type atype, const std::string& avalue ) override;
+    JsonBase &append_node( const std::string& akey, JsonBase::Type atype, const std::string& avalue ) override;
 
     /// Deep copy children
     void copy(const JsonFree &obj);
