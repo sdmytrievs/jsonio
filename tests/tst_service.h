@@ -34,3 +34,20 @@ TEST( JsonioService, regexpReplace )
     auto resstr = regexp_replace("there is a subsequence in the string" ,"\\b(sub)([^ ]*)","sub-$2");
     EXPECT_EQ( "there is a sub-sequence in the string", resstr );
 }
+
+TEST( JsonioService, Trim )
+{
+    std::string str{" \t\rTest \n "};
+    trim( str );
+    EXPECT_EQ( "Test", str );
+    str = ":: Test2 ;";
+    trim( str, ": ;" );
+    EXPECT_EQ( "Test2", str );
+}
+
+TEST( JsonioService, Replace )
+{
+    std::string str{"Test \t\n:"};
+    replace_all( str, " \t\n", '_' );
+    EXPECT_EQ( "Test___:", str );
+}

@@ -1,5 +1,6 @@
 #include <cmath>
 #include "jsondetail.h"
+#include "service.h"
 
 namespace jsonio14 {
 

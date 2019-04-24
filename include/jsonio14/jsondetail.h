@@ -4,7 +4,7 @@
 #include <sstream>
 #include <limits>
 #include <queue>
-#include <algorithm>
+//#include <algorithm>
 #include "type_test.h"
 
 namespace jsonio14 {
@@ -54,8 +54,8 @@ bool string2v( const std::string& data, T& value )
 template <>  bool string2v( const std::string& data, std::string& value );
 template <>  bool string2v( const std::string& data, bool& value );
 
-// Serialization part --------------------------------------------------
 
+// Serialization part --------------------------------------------------
 
 /// @brief dump escaped string.
 /// Escape a string by replacing certain special characters by a sequence of an
@@ -107,61 +107,6 @@ std::string dump( const T& elems  )
 
 // Some string functions -----------------------------------------------------
 
-/// Trim from start (in place)
-inline void ltrim(std::string &s )
-{
-    s.erase(s.begin(), std::find_if(s.begin(), s.end(), [](int ch) {
-        return !std::isspace(ch);
-    }));
-}
-
-/// Trim from end (in place)
-inline void rtrim(std::string &s)
-{
-    s.erase(std::find_if(s.rbegin(), s.rend(), [](int ch) {
-        return !std::isspace(ch);
-    }).base(), s.end());
-}
-
-/// Trim from both ends (in place)
-inline void trim(std::string &s )
-{
-    ltrim(s);
-    rtrim(s);
-}
-
-
-/// Trim characters from start (in place)
-inline void ltrim(std::string &s, const std::string &characters )
-{
-    s.erase(s.begin(), std::find_if(s.begin(), s.end(), [=](char ch) {
-        return characters.find_first_of(ch)==std::string::npos;
-    }));
-}
-
-/// Trim characters from end (in place)
-inline void rtrim(std::string &s, const std::string &characters)
-{
-    s.erase(std::find_if(s.rbegin(), s.rend(), [=](char ch) {
-        return characters.find_first_of(ch)==std::string::npos;
-    }).base(), s.end());
-}
-
-/// Trim characters from both ends (in place)
-inline void trim(std::string &s, const std::string &characters )
-{
-    ltrim(s, characters);
-    rtrim(s, characters);
-}
-
-
-/// Replace all characters to character in string (in place)
-inline void replace_all(std::string &s, const std::string &characters, char to_character )
-{
-    std::replace_if( s.begin(), s.end(), [=](char ch) {
-        return characters.find_first_of(ch)!=std::string::npos;
-    }, to_character );
-}
 
 /// Split string to int array ( "1;2;3" to  { 1, 2, 3 } )
 std::queue<int> split_int( const std::string& str_data, const std::string& delimiters );

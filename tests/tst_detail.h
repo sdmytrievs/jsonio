@@ -151,23 +151,6 @@ TEST( JsonioDetail, isMappish )
     EXPECT_FALSE( is_mappish<std::string>::value );
 }
 
-TEST( JsonioDetail, Trim )
-{
-    std::string str{" \t\rTest \n "};
-    trim( str );
-    EXPECT_EQ( "Test", str );
-    str = ":: Test2 ;";
-    trim( str, ": ;" );
-    EXPECT_EQ( "Test2", str );
-}
-
-TEST( JsonioDetail, Replace )
-{
-    std::string str{"Test \t\n:"};
-    replace_all( str, " \t\n", '_' );
-    EXPECT_EQ( "Test___:", str );
-}
-
 TEST( JsonioDetail, Split )
 {
  auto intquery =   split_int( "1;2;3", ";" );

@@ -1,18 +1,46 @@
 #pragma once
 
-
-#include "jsonfree.h"
+#include "jsonbuilder.h"
 
 namespace jsonio14 {
 
 
+/// Class for read/write json structure from/to text file or string
+class JsonParser
+{
+  protected:
+
+  std::string jsontext;
+  const char *curjson;
+  const char *end;
+
+  bool xblanc();
+  void parse_string( std::string& str );
+  void parse_number( double& value, int& type );
+  void parse_value( const std::string& name, JsonObjectBuilder& builder );
+  //void print_stream( ostream& os, const JsonDom* object, int depth, bool dense );
+
+public:
+
+  explicit JsonParser():curjson(nullptr), end(nullptr)
+  { }
+
+
+  /// Parse internal jsontext string to bson structure (without first {)
+  void parse_object( JsonObjectBuilder& builder );
+  void parse_array( JsonArrayBuilder& builder );
+
+};
+
+
+
 //template <class T>
-class JsonParser final
+class JsonParser1 final
 {
 
 public:
 
-    explicit JsonParser()
+    explicit JsonParser1()
     { }
 
     // Serialize json object to string.

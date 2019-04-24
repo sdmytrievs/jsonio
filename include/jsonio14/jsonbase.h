@@ -181,7 +181,7 @@ public:
         update_node(  Object, "" );
         for( const auto& el: values )
         {
-            append_node( el->first, UNDEFINED, "" ).setValue(el->second);
+            append_node( el.first, UNDEFINED, "" ).setValue(el.second);
         }
     }
 
@@ -229,6 +229,9 @@ public:
     static const char* typeName(Type type);
 
 
+    friend class JsonBuilderBase;
+    friend class JsonObjectBuilder;
+    friend class JsonArrayBuilder;
 };
 
 

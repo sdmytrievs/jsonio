@@ -248,6 +248,7 @@ private:
     const JsonFree &get_child(const std::string& key) const;
     JsonFree &get_child(const std::string& key);
     JsonFree &get_parent() const;
+
 };
 
 // Add iterator?
