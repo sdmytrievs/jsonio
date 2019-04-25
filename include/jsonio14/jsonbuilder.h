@@ -18,14 +18,22 @@ protected:
         :current_json{object}
     { }
 
-    void append_scalar(const std::string &key, const std::string &value);
+    void append_scalar(const std::string &key, const std::string &value, bool noString );
 
 public:
 
-    virtual JsonObjectBuilder addObject( const std::string& akey ) = 0;
-    virtual JsonArrayBuilder  addArray( const std::string& akey ) = 0;
+    virtual ~JsonBuilderBase()
+    {}
+
+    virtual JsonObjectBuilder addObject( const std::string& akey )  = 0;
+    virtual JsonArrayBuilder  addArray( const std::string& akey )  = 0;
     virtual JsonBuilderBase& addString( const std::string& akey, const std::string& value ) =0;
-    virtual JsonBuilderBase& addScalar(const std::string& key, const std::string& value ) =0;
+    virtual JsonBuilderBase& testScalar(const std::string& key, const std::string& value )
+    {
+        append_scalar( key,  value, true  );
+        return *this;
+    }
+
 
     /*template <class T>
     operator T() const
@@ -44,7 +52,10 @@ public:
 
     explicit JsonObjectBuilder( JsonBase& object )
         : JsonBuilderBase{ object }
-    { }
+    {
+        // clear old data
+        object.update_node( JsonBase::Object, "" );
+    }
 
     // Append functions --------------------------------------
 
@@ -83,9 +94,9 @@ public:
     }
 
     /// Append obvious object - get type from string data
-    JsonObjectBuilder& addScalar(const std::string& key, const std::string& value ) override
+    JsonObjectBuilder& addScalar(const std::string& key, const std::string& value )
     {
-        append_scalar( key,  value  );
+        append_scalar( key,  value, false  );
         return *this;
     }
 
@@ -128,7 +139,10 @@ public:
 
     explicit JsonArrayBuilder( JsonBase& object )
         : JsonBuilderBase{ object }
-    { }
+    {
+        // clear old data
+        object.update_node( JsonBase::Array, "" );
+    }
 
     // Append functions --------------------------------------
 
@@ -138,38 +152,38 @@ public:
 
     JsonArrayBuilder& addNull()
     {
-        current_json.append_node( std::to_string( current_json.getChildrenCount() ), JsonBase::Null, "null" );
+        current_json.append_node( nextKey(), JsonBase::Null, "null" );
         return *this;
     }
 
     JsonArrayBuilder& addBool( bool value )
     {
-        current_json.append_node( std::to_string( current_json.getChildrenCount() ), JsonBase::Bool, v2string(value) );
+        current_json.append_node( nextKey(), JsonBase::Bool, v2string(value) );
         return *this;
     }
 
     JsonArrayBuilder& addInt( long value )
     {
-        current_json.append_node( std::to_string( current_json.getChildrenCount() ), JsonBase::Int, v2string(value) );
+        current_json.append_node( nextKey(), JsonBase::Int, v2string(value) );
         return *this;
     }
 
     JsonArrayBuilder& addDouble( double value )
     {
-        current_json.append_node( std::to_string( current_json.getChildrenCount() ), JsonBase::Double, v2string(value) );
+        current_json.append_node( nextKey(), JsonBase::Double, v2string(value) );
         return *this;
     }
 
     JsonArrayBuilder& addString( const std::string& value )
     {
-        current_json.append_node( std::to_string( current_json.getChildrenCount() ), JsonBase::String, v2string(value) );
+        current_json.append_node( nextKey(), JsonBase::String, v2string(value) );
         return *this;
     }
 
     /// Append obvious object - get type from string data
     JsonArrayBuilder& addScalar( const std::string& value )
     {
-        append_scalar( std::to_string( current_json.getChildrenCount() ),  value  );
+        append_scalar( nextKey(),  value, false  );
         return *this;
     }
 
@@ -179,7 +193,7 @@ public:
     JsonArrayBuilder&  addValue( T value )
     {
         auto decodedType = current_json.typeTraits( value );
-        current_json.append_node( std::to_string( current_json.getChildrenCount() ), decodedType, v2string(value) );
+        current_json.append_node( nextKey(), decodedType, v2string(value) );
         return *this;
     }
 
@@ -188,7 +202,7 @@ public:
               class = typename std::enable_if<is_container<T>{}, bool>::type >
     JsonArrayBuilder&  addVector( const T& values  )
     {
-        current_json.append_node( std::to_string( current_json.getChildrenCount() ), JsonBase::Array, "" ).setArray( values  );
+        current_json.append_node( nextKey(), JsonBase::Array, "" ).setArray( values  );
         return *this;
     }
 
@@ -197,7 +211,7 @@ public:
               class = typename std::enable_if<is_mappish<T>{}, bool>::type >
     JsonArrayBuilder&  addMapKey( const T& values  )
     {
-        current_json.append_node( std::to_string( current_json.getChildrenCount() ), JsonBase::Object, "" ).setMapKey( values  );
+        current_json.append_node( nextKey(), JsonBase::Object, "" ).setMapKey( values  );
         return *this;
     }
 
@@ -206,8 +220,11 @@ public:
     JsonObjectBuilder addObject( const std::string& akey ) override;
     JsonArrayBuilder  addArray( const std::string& akey ) override;
     JsonBuilderBase &addString( const std::string& akey, const std::string& value ) override;
-    JsonBuilderBase &addScalar(const std::string& key, const std::string& value ) override;
 
+    std::string nextKey() const
+    {
+      return  std::to_string( current_json.getChildrenCount() );
+    }
 };
 
 

@@ -8,58 +8,31 @@ namespace jsonio14 {
 /// Class for read/write json structure from/to text file or string
 class JsonParser
 {
-  protected:
 
-  std::string jsontext;
-  const char *curjson;
-  const char *end;
+    const std::size_t err_block_size{20};
 
-  bool xblanc();
-  void parse_string( std::string& str );
-  void parse_number( double& value, int& type );
-  void parse_value( const std::string& name, JsonObjectBuilder& builder );
-  //void print_stream( ostream& os, const JsonDom* object, int depth, bool dense );
+protected:
 
-public:
+    /// Text to parse
+    std::string jsontext;
+    std::size_t cur_pos{0};
+    std::size_t end_pos{0};
 
-  explicit JsonParser():curjson(nullptr), end(nullptr)
-  { }
-
-
-  /// Parse internal jsontext string to bson structure (without first {)
-  void parse_object( JsonObjectBuilder& builder );
-  void parse_array( JsonArrayBuilder& builder );
-
-};
-
-
-
-//template <class T>
-class JsonParser1 final
-{
+    bool skip_space();
+    bool skip_space_comment();
+    bool parse_string( std::string& str );
+    void parse_value( const std::string& name, JsonBuilderBase& builder );
+    /// Parse internal jsontext string to json structure (with first {)
+    void parse_object( JsonObjectBuilder& builder );
+    /// Parse internal jsontext string to json structure (with first [)
+    void parse_array( JsonArrayBuilder& builder );
 
 public:
 
-    explicit JsonParser1()
-    { }
-
-    // Serialize json object to string.
-    static void dump(std::string& out, const JsonBase& object, int dense = 0);
-
-
-    static std::string dump(const JsonBase& object, int dense = 0)
-    {
-      std::string out;
-      dump(out, object, dense);
-      return out;
-    }
-
-
-    /// Parse one Json object from string
-    bool parse( const std::string& json, JsonBase& object );
-
+    explicit JsonParser()  { }
+    /// Parse json string to internal structure data
+    void parseTo( const std::string& jsondata, JsonBase& out );
 
 };
-
 
 } // namespace jsonio14
