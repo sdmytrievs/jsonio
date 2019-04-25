@@ -16,6 +16,14 @@ std::vector<std::string> regexp_extract(const std::string& str, std::string rgx_
 ///  Function that can be used to replase text using regexp
 std::string regexp_replace(const std::string& instr, const std::string& rgx_str, const std::string& replacement );
 
+template < class T>
+inline bool in_range( const T& x, const T& lower, const T& upper)
+{
+    return (x >= lower && x <= upper);
+}
+
+
+
 /// Trim from start (in place)
 inline void ltrim(std::string &s )
 {

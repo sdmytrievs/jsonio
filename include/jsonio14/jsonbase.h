@@ -2,6 +2,7 @@
 #include <vector>
 #include "jsondetail.h"
 #include "exceptions.h"
+#include "type_test.h"
 
 namespace jsonio14 {
 

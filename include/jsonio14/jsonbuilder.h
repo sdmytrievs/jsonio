@@ -4,6 +4,76 @@
 
 namespace jsonio14 {
 
+class JsonFree;
+class JsonSchema;
+
+namespace json {
+
+/// @brief dump object to JSON string.
+std::string dump( const JsonBase& object, bool dense = false );
+
+/// Serialize object as a JSON formatted stream.
+void dump( std::iostream& os, const JsonBase& object, bool dense = false );
+
+/// Deserialize a JSON document to a object.
+void loads( const std::string& jsonstr, JsonBase& object );
+
+/// Deserialize a JSON document to a free format json object.
+JsonFree loads( const std::string& jsonstr );
+/// Deserialize a JSON document to a schema define json object.
+JsonSchema loads( const std::string& schema_name, const std::string& jsonstr );
+
+
+/// @brief dump escaped string.
+/// Escape a string by replacing certain special characters by a sequence of an
+/// escape character (backslash) and another character and other control.
+std::string dump( const std::string& value );
+/// @brief dump escaped string.
+/// Escape a string by replacing certain special characters by a sequence of an
+/// escape character (backslash) and another character and other control.
+std::string dump( const char* value );
+
+/// Serialize a numeric value  to a json string.
+template <class T,
+          std::enable_if_t<!is_container<T>{}&!is_mappish<T>{}, int> = 0 >
+std::string dump( const T& value  )
+{
+    return v2string(value);
+}
+
+/// Serialize vector-like objects (std::list, std::vector, std::set, etc) to a json string.
+template <class T,
+          std::enable_if_t<is_container<T>{}&!is_mappish<T>{}, int> = 0 >
+std::string dump( const T& elems  )
+{
+    std::string genjson = "[";
+    for( auto row: elems )
+    {
+        genjson += " "+dump( row ) + ",";
+    }
+    genjson.pop_back();
+    genjson += " ]";
+    return genjson;
+}
+
+/// Serialize map-like objects (std::map, std::unordered_map, etc) to a json string.
+template <class T,
+          std::enable_if_t<is_container<T>{}&is_mappish<T>{}, int> = 0 >
+std::string dump( const T& elems  )
+{
+    std::string genjson = "{";
+    for( auto row: elems )
+    {
+        genjson += " \"" + row.first + "\"";
+        genjson += ":" + dump(row.second) + ",";
+    }
+    genjson.pop_back();
+    genjson += " }";
+    return genjson;
+}
+
+} // namespace jsonio14
+
 class JsonObjectBuilder;
 class JsonArrayBuilder;
 
@@ -34,7 +104,6 @@ public:
         return *this;
     }
 
-
     /*template <class T>
     operator T() const
     {
@@ -43,8 +112,6 @@ public:
 
 };
 
-
-//template <class T>
 class JsonObjectBuilder final : public JsonBuilderBase
 {
 
@@ -130,10 +197,8 @@ public:
 
 };
 
-//template <class T>
 class JsonArrayBuilder final : public JsonBuilderBase
 {
-
 
 public:
 

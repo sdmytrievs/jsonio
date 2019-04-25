@@ -76,56 +76,6 @@ template <>  bool string2v( const std::string& data, bool& value )
     return true;
 }
 
-
-// Serialization part --------------------------------------------------
-
-
-std::string dump(const std::string &value )
-{
-    std::string out;
-    out += '"';
-    for (size_t i = 0; i < value.length(); i++) {
-        const char ch = value[i];
-        if (ch == '\\') {
-            out += "\\\\";
-        } else if (ch == '"') {
-            out += "\\\"";
-        } else if (ch == '\b') {
-            out += "\\b";
-        } else if (ch == '\f') {
-            out += "\\f";
-        } else if (ch == '\n') {
-            out += "\\n";
-        } else if (ch == '\r') {
-            out += "\\r";
-        } else if (ch == '\t') {
-            out += "\\t";
-        } else if (static_cast<uint8_t>(ch) <= 0x1f) {
-            char buf[8];
-            snprintf(buf, sizeof buf, "\\u%04x", ch);
-            out += buf;
-        } else if (static_cast<uint8_t>(ch) == 0xe2 && static_cast<uint8_t>(value[i+1]) == 0x80
-                   && static_cast<uint8_t>(value[i+2]) == 0xa8) {
-            out += "\\u2028";
-            i += 2;
-        } else if (static_cast<uint8_t>(ch) == 0xe2 && static_cast<uint8_t>(value[i+1]) == 0x80
-                   && static_cast<uint8_t>(value[i+2]) == 0xa9) {
-            out += "\\u2029";
-            i += 2;
-        } else {
-            out += ch;
-        }
-    }
-    out += '"';
-
-    return out;
-}
-
-std::string dump(const char *value )
-{
-    return dump( std::string(value) );
-}
-
 // "1;2;3" to array { 1, 2, 3 }
 std::queue<int> split_int( const std::string& str_data, const std::string& delimiters )
 {

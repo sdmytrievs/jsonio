@@ -31,6 +31,7 @@ void buildOneObject()
     jsBuilder.addMapKey( "vumaps", vumaps );
 
     //JsonFree jsNew = jsBuilder;
+    std::cout << json::dump( jsFree, false);
 }
 
 void buildComplexObject()
@@ -46,6 +47,7 @@ void buildComplexObject()
         arr.addValue(ii);
     }
     auto obj = jsBuilder.addObject("object").addInt("obj1", 1).addString("obj2", "Test");
+    std::cout << json::dump( jsFree, true);
 }
 
 

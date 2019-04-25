@@ -29,9 +29,11 @@ protected:
 
 public:
 
-    explicit JsonParser()  { }
+    explicit JsonParser(const std::string &jsondata):
+        jsontext{jsondata}, cur_pos{0}, end_pos{jsondata.length()}
+    { }
     /// Parse json string to internal structure data
-    void parseTo( const std::string& jsondata, JsonBase& out );
+    void parse_to( JsonBase& out );
 
 };
 
