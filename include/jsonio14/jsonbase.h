@@ -14,9 +14,9 @@ class JsonBase
 {
 protected:
 
-   explicit JsonBase() {}
-   /// Destructor
-   virtual ~JsonBase() {}
+    explicit JsonBase() {}
+    /// Destructor
+    virtual ~JsonBase() {}
 
 public:
 
@@ -30,7 +30,6 @@ public:
         Object = 12, // T_STRUCT
         Array = 15   // T_LIST
     };
-
 
     // Test methods  --------------------------------------------
 
@@ -96,7 +95,7 @@ public:
     ///   indicate that a function was called on a wrong JSON type.
     virtual const char* getTypeName() const
     {
-       return  typeName( getType() );
+        return  typeName( getType() );
     }
 
     // Get methods ( using in Qt GUI ) --------------------------
@@ -126,6 +125,74 @@ public:
 
     /// Get field path to top object
     std::string getFieldPath() const;
+
+    // Get values  --------------------------
+
+    /// Get primitive value from current Node
+    /// Could be get_to( T& value ) function
+    template <class T,
+              std::enable_if_t<!is_container<T>{}&!is_mappish<T>{}, int> = 0 >
+    bool getValue( T& value  )
+    {
+        auto decodedType = typeTraits( value );
+        if( decodedType>= Null && decodedType<=String )
+        {
+            return string2v( getFieldValue(), value );
+        }
+        return false;
+    }
+
+    /// Get array-like data from current Node
+    template <class T,
+              std::enable_if_t<is_container<T>{}&!is_mappish<T>{}, int> = 0 >
+    bool getValue( T& value  )
+    {
+        return getArray( value );
+    }
+
+    /// Get map-like data from current Node
+    template <class T,
+              std::enable_if_t<is_container<T>{}&is_mappish<T>{}, int> = 0 >
+    bool getValue( T& value  )
+    {
+        return getMapKey( value );
+    }
+
+    /// Get  vector-like objects (std::list, std::vector, std::set, etc) from current Node
+    template <class T,
+              class = typename std::enable_if<is_container<T>{}, bool>::type >
+    bool getArray( T& values  )
+    {
+        JARANGO_THROW_IF( !isArray(), "JsonBase", 11, "cannot use getArray with " + std::string( getTypeName() ) );
+        values.clear();
+        typename T::value_type val;
+        for ( size_t ii=0; ii<getChildrenCount(); ii++)
+        {
+            if( getChild(ii)->getValue( val ) )
+                values.emplace_back(val);
+        }
+        return true;
+    }
+
+    /// Get map-like objects (std::map, std::unordered_map, etc) to current Node
+    template <class Map,
+              class = typename std::enable_if<is_mappish<Map>{}, bool>::type >
+    bool getMapKey( Map& values  )
+    {
+        JARANGO_THROW_IF( !isObject(), "JsonBase", 12, "cannot use getMapKey with " + std::string( getTypeName() ) );
+        values.clear();
+        typename Map::value_type val;
+        typename Map::key_type key;
+
+        for ( size_t ii=0; ii<getChildrenCount(); ii++)
+        {
+            if( !string2v( getChild(ii)->getKey(), key ) )
+                continue;
+            if( getChild(ii)->getValue( val ) )
+                values[key] = val;
+        }
+        return true;
+    }
 
     // Set methods  --------------------------
 
@@ -161,6 +228,12 @@ public:
         return true;
     }
 
+    bool setValue( const std::string& value  )
+    {
+        update_node(  String, v2string(value) );
+        return true;
+    }
+
     /// Set  vector-like objects (std::list, std::vector, std::set, etc) to current Node
     template <class T,
               class = typename std::enable_if<is_container<T>{}, bool>::type >
@@ -186,6 +259,20 @@ public:
         }
     }
 
+    // Update methods  --------------------------
+
+    /// Clear field and set value to default (null).
+    virtual bool clear()
+    {
+        update_node(  Null, "null" );
+        return true;
+    }
+
+    /// Remove current field from json.
+    virtual bool remove() = 0;
+
+    /// Resize top level array
+    //virtual bool resizeArray( const std::vector<std::size_t>& sizes, const std::string& defval  = "" ) = 0;
 
 private:
 
@@ -221,7 +308,7 @@ public:
 
     static Type typeTraits( const char * )
     {
-       return String;
+        return String;
     }
 
     /// @brief return the type as string
@@ -234,6 +321,8 @@ public:
     friend class JsonObjectBuilder;
     friend class JsonArrayBuilder;
 };
+
+std::ostream &operator<<(std::ostream& os, const JsonBase& obj);
 
 
 } // namespace jsonio14

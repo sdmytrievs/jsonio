@@ -12,8 +12,6 @@ namespace jsonio14 {
 class JsonFree final : public JsonBase
 {
 
-    friend class JsonBuilder;
-
 private:
 
    //friend class JsonFactory<JsonFree>;
@@ -130,61 +128,6 @@ public:
     {   return  field_type;  }
 
 
-    /// Get primitive value from current Node
-    /// Could be get_to( T& value ) function
-    template <class T,
-              std::enable_if_t<!is_container<T>{}&!is_mappish<T>{}, int> = 0 >
-    bool getValue( T& value  )
-    {
-        auto decodedType = typeTraits( value );
-        if( decodedType>= Null && decodedType<=String )
-        {
-            return string2v( getFieldValue(), value );
-        }
-        return false;
-    }
-
-    /// Get array-like data from current Node
-    template <class T,
-              std::enable_if_t<is_container<T>{}&!is_mappish<T>{}, int> = 0 >
-    bool getValue( T& value  )
-    {
-        return getArray( value );
-    }
-
-    /// Get map-like data from current Node
-    template <class T,
-              std::enable_if_t<is_container<T>{}&is_mappish<T>{}, int> = 0 >
-    bool getValue( T& value  )
-    {
-        return getMapKey( value );
-    }
-
-    /// Get  vector-like objects (std::list, std::vector, std::set, etc) from current Node
-    template <class T,
-              class = typename std::enable_if<is_container<T>{}, bool>::type >
-    bool getArray( T& values  )
-    {
-        JARANGO_THROW_IF( !isArray(), "JsonFree", 11, "cannot use getArray with " + std::string( getTypeName() ) );
-        values.clear();
-        typename T::value_type val;
-        for ( size_t ii=0; ii<getChildrenCount(); ii++)
-        {
-          if( children[ii].getValue( val ) )
-            values.emplace_back(val);
-        }
-        return true;
-    }
-
-    /// Get map-like objects (std::map, std::unordered_map, etc) to current Node
-    template <class T,
-              class = typename std::enable_if<is_mappish<T>{}, bool>::type >
-    bool getMapKey( T& values  )
-    {
-        return false;
-    }
-
-
 
 
     // Get methods ( using in Qt GUI model ) --------------------------
@@ -214,6 +157,13 @@ public:
     {  return parent_object;  }
 
     std::vector<std::string> getUsedKeys() const override;
+
+
+    // Update methods  --------------------------
+
+
+    // Remove current field
+    bool remove() override;
 
 
 private:
@@ -249,11 +199,12 @@ private:
     JsonFree &get_child(const std::string& key);
     JsonFree &get_parent() const;
 
+    bool remove_child(JsonFree *child);
+    bool remove_child(std::size_t idx);
+    bool remove_child(const std::string &key);
 };
 
 // Add iterator?
-// add builder -
-// add prser
 // add resize array 2D, 3D ....
 /// Get field by fieldpath ("name1.name2.name3")
 //virtual JsonDom *field(  const std::string& fieldpath ) const = 0;
@@ -266,10 +217,6 @@ private:
 // Update functions  -----------------------------------
 /// Resize top level Array
 //virtual void resizeArray( const std::vector<std::size_t>& sizes, const std::string& defval  = "" ) = 0;
-/// Clear Fields and set value to default
-//virtual void clearField() =0;
-/// Remove current field from json
-//virtual bool removeField() = 0;
 /// Set value to children Node
 //template <class T>
 //bool setFieldValue( const std::string& keypath, const T& value  )

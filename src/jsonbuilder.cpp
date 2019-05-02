@@ -53,7 +53,7 @@ std::string dump(const char *value )
     return dump( std::string(value) );
 }
 
-void dump2stream( std::iostream& os, const JsonBase& object, int depth, bool dense )
+void dump2stream( std::ostream& os, const JsonBase& object, int depth, bool dense )
 {
     int temp;
     bool first = true;
@@ -151,7 +151,7 @@ std::string dump( const JsonBase &object, bool dense )
     return os.str();
 }
 
-void dump( std::iostream &os, const JsonBase &object, bool dense )
+void dump( std::ostream &os, const JsonBase &object, bool dense )
 {
     auto objtype = object.getType();
     if( objtype == JsonBase::Object )
@@ -173,9 +173,9 @@ void dump( std::iostream &os, const JsonBase &object, bool dense )
 
     dump2stream( os, object, 0, dense );
     if( objtype == JsonBase::Object )
-        os << "}";
+        os << "}\n";
     else
-        os << "]";
+        os << "]\n";
 }
 
 
@@ -213,7 +213,7 @@ void JsonBuilderBase::append_scalar(const std::string &key, const std::string &v
                     current_json.append_node( key, JsonBase::Bool, "false" );
                 else
                     if( is<long>( ival, value ) )
-                        current_json.append_node( key, JsonBase::Null, v2string(ival) );
+                        current_json.append_node( key, JsonBase::Int, v2string(ival) );
                     else
                         if( is<double>( dval, value ))
                             current_json.append_node( key, JsonBase::Double, v2string(dval) );

@@ -13,7 +13,7 @@ namespace json {
 std::string dump( const JsonBase& object, bool dense = false );
 
 /// Serialize object as a JSON formatted stream.
-void dump( std::iostream& os, const JsonBase& object, bool dense = false );
+void dump( std::ostream& os, const JsonBase& object, bool dense = false );
 
 /// Deserialize a JSON document to a object.
 void loads( const std::string& jsonstr, JsonBase& object );

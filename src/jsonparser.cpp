@@ -187,7 +187,12 @@ void JsonParser::parse_value(const std::string &name, JsonBuilderBase &builder)
     default:  // addScalar true/false/null/number
     {
         auto pos_end_value = jsontext.find_first_of( ",]}", cur_pos );
-        auto valuestr = jsontext.substr(cur_pos, pos_end_value);
+        auto end_size = pos_end_value;
+        if( pos_end_value != std::string::npos )
+        {
+           end_size -= cur_pos;
+        }
+        auto valuestr = jsontext.substr(cur_pos, end_size);
         trim(valuestr);
         builder.testScalar( name, valuestr );
         cur_pos = pos_end_value;

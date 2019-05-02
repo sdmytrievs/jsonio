@@ -49,6 +49,13 @@ std::vector<std::string> JsonFree::getUsedKeys() const
     return usekeys;
 }
 
+bool JsonFree::remove()
+{
+    if( parent_object == nullptr )
+        return false;
+    return parent_object->remove_child( this );
+}
+
 // key and parent not changed
 void JsonFree::copy(const JsonFree &obj)
 {
@@ -115,6 +122,32 @@ JsonFree &JsonFree::get_parent() const
     return *parent_object;
 }
 
+bool JsonFree::remove_child( std::size_t idx )
+{
+  return remove_child( &get_child( idx ) );
+}
+
+bool JsonFree::remove_child( const std::string &key )
+{
+   return remove_child( &get_child( key ) );
+}
+
+bool JsonFree::remove_child( JsonFree* child )
+{
+    int thisndx = -1;
+    for(std::size_t ii=0; ii< children.size(); ii++ )
+    {
+        if( &children[ii] == child )
+            thisndx = static_cast<int>(ii);
+        if( thisndx >= 0 )
+            children[ii].ndx_in_parent--;
+    }
+    if( thisndx >= 0 )
+    {   children.erase(children.begin() + thisndx);
+        return true;
+    }
+    return false;
+}
 
 
 } // namespace jsonio14

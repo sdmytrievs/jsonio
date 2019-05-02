@@ -30,8 +30,7 @@ void buildOneObject()
     jsBuilder.addVector( "vlist", vlist );
     jsBuilder.addMapKey( "vumaps", vumaps );
 
-    //JsonFree jsNew = jsBuilder;
-    std::cout << json::dump( jsFree, false);
+    json::dump(std::cout, jsFree, false);
 }
 
 void buildComplexObject()

@@ -1,6 +1,13 @@
-#include "jsonbase.h"
+#include "jsonbuilder.h"
 
 namespace jsonio14 {
+
+
+std::ostream &operator<<( std::ostream &os, const JsonBase &obj )
+{
+    json::dump( os, obj );
+    return os;
+}
 
 template <> JsonBase::Type JsonBase::typeTraits( const bool& )
 {
@@ -12,14 +19,12 @@ template <> JsonBase::Type JsonBase::typeTraits( const std::string& )
     return JsonBase::String;
 }
 
-// json string for Object and Array
+
 std::string JsonBase::toString( bool dense ) const
 {
     if( isStructured() )
     {
-        std::string jsondata;
-        //printNodeToJson( jsondata, this, dense );
-        return jsondata;
+        return json::dump( *this, dense );
     }
     return getFieldValue();
 }
