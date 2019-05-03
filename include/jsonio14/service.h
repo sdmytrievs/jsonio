@@ -8,6 +8,11 @@
 
 namespace jsonio14 {
 
+/// Get all files into directory
+std::vector<std::string> files_into_directory( const std::string& directory_path, const std::string& sample = "");
+/// Read whole ASCII file into string
+std::string read_all_file( const std::string& file_path );
+
 
 ///  Function that can be used to split text using regexp
 std::vector<std::string> regexp_split(const std::string& str, std::string rgx_str = "\\s+");

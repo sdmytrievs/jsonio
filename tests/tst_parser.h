@@ -5,6 +5,7 @@
 
 #include "jsonbuilder.h"
 #include "jsonfree.h"
+#include "service.h"
 
 using namespace testing;
 using namespace jsonio14;
@@ -142,6 +143,13 @@ TEST( JsonioParser, TestArray )
 TEST( JsonioParser, TestFail )
 {
   EXPECT_THROW( json::loads( "[" ) , std::exception );
+
+  auto fail_json_files =  files_into_directory( "fail2" );
+  for( auto file: fail_json_files)
+  {
+     auto json_data = read_all_file( file );
+     EXPECT_THROW( json::loads( json_data ) , std::exception );
+  }
 }
 
 // moved it to
