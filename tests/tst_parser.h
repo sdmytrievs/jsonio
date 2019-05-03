@@ -33,6 +33,13 @@ TEST( JsonioParser, TestDouble )
         EXPECT_NEAR( expected, jsFree[0].toDouble(), 1e-20 );
     };
 
+    // limits long int +9223372036854775807
+    DetailSettings::doublePrecision = 15;
+    TEST_DOUBLE("[+92233720368547758070]", 9.22337203685478e+19);
+
+    TEST_DOUBLE("[.1]", 0.1);
+    TEST_DOUBLE("[-.1]", -0.1);
+
     TEST_DOUBLE("[0.0]", 0.0);
     TEST_DOUBLE("[-0.0]", -0.0);
     TEST_DOUBLE("[1.0]", 1.0);
@@ -60,12 +67,10 @@ TEST( JsonioParser, TestDouble )
     TEST_DOUBLE("[2.2250738585072014e-308]", 2.2250738585072014e-308); // Min normal positive double
     TEST_DOUBLE("[1.7976931348623157e+308]", 1.7976931348623157e+308); // Max double
     TEST_DOUBLE("[1e-10000]", 0.0);                                   // must underflow
-
     TEST_DOUBLE("[1e-214748363]", 0.0);
     TEST_DOUBLE("[1e-214748364]", 0.0);
 
     TEST_DOUBLE("[0.017976931348623157e+310]", 1.7976931348623157e+308); // Max double in another form
-
 }
 
 TEST( JsonioParser, TestInt )
@@ -83,4 +88,68 @@ TEST( JsonioParser, TestInt )
     TEST_INT("[-100]", -100);
     TEST_INT("[+10]", 10);
     TEST_INT("[1000000]", 1000000);
+
+    // limits
+   TEST_INT("[-9223372036854775807]", -9223372036854775807);
+   TEST_INT("[+9223372036854775807]", +9223372036854775807);
+}
+
+
+TEST( JsonioParser, TestString )
+{
+    auto TEST_STRING = [](const std::string & json_string, const std::string& expected)
+    {
+        auto jsFree = json::loads(json_string);
+        EXPECT_EQ( JsonBase::String, jsFree[0].getType() );
+        EXPECT_EQ( expected, jsFree[0].toString() );
+    };
+
+    TEST_STRING("[ \"\" ]", "");
+    TEST_STRING("[ \"abc\" ]", "abc" );
+
+    TEST_STRING("[ \"abc dfg \" ]", "abc dfg ");
+    TEST_STRING("[ \"\\\\ \\b\\f\\n\\r\\t \\\"\" ]", "\\ \b\f\n\r\t \"" );
+}
+
+TEST( JsonioParser, TestObject )
+{
+    auto jsFree = json::loads("{}");
+    EXPECT_EQ( JsonBase::Object, jsFree.getType() );
+
+    jsFree = json::loads(" { \"abc\": 11 } ");
+    EXPECT_EQ( JsonBase::Object, jsFree.getType() );
+    EXPECT_EQ( jsFree["abc"].toInt(), 11 );
+
+    jsFree = json::loads(" { \"abc\": 11, \"dfg\": [ true ] } ");
+    EXPECT_EQ( JsonBase::Object, jsFree.getType() );
+    EXPECT_TRUE( jsFree["dfg"][0].toBool() );
+}
+
+TEST( JsonioParser, TestArray )
+{
+    auto jsFree = json::loads("[]");
+    EXPECT_EQ( JsonBase::Array, jsFree.getType() );
+
+    jsFree = json::loads(" [ \"abc\", 11, 12 ] ");
+    EXPECT_EQ( JsonBase::Array, jsFree.getType() );
+    EXPECT_EQ( jsFree[1].toInt(), 11 );
+
+    jsFree = json::loads(" [ [ true, false ] ] ");
+    EXPECT_EQ( JsonBase::Array, jsFree.getType() );
+    EXPECT_TRUE( jsFree[0][0].toBool() );
+}
+
+TEST( JsonioParser, TestFail )
+{
+  EXPECT_THROW( json::loads( "[" ) , std::exception );
+}
+
+// moved it to
+namespace jsonio14 {
+void undumpString( std::string& strvalue );
+}
+TEST( JsonioParser, TestUndumpString )
+{
+ std::string sdata("");
+ undumpString(sdata);
 }
