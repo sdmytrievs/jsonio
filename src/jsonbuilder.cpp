@@ -219,7 +219,7 @@ void JsonBuilderBase::append_scalar(const std::string &key, const std::string &v
                             current_json.append_node( key, JsonBase::Double, v2string(dval) );
                         else
                             if( noString )
-                                JARANGO_THROW(  "JsonArrayBuilder", 4, key+ " undefined value type " + value );
+                                JARANGO_THROW(  "JsonArrayBuilder", 4, key + " undefined value type '" + value +"'" );
                             else
                                 current_json.append_node( key, JsonBase::String, v2string(value) );
 }

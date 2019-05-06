@@ -31,12 +31,13 @@ INCLUDEPATH   += $$JSONIO14_DIR
 INCLUDEPATH   += $$JSONIO14_HEADERS_DIR
 
 #LIBS +=  -lcurl  -lvelocypack
-#!win32:LIBS +=  -lboost_regex -lboost_system -lboost_filesystem
+!win32:LIBS +=  -lboost_regex -lboost_system -lboost_filesystem
 
 OBJECTS_DIR   = obj
 
 SOURCES += \
 #        main.cpp \
-    examples/exbuilder.cpp
+#    examples/exbuilder.cpp \
+    examples/exparser.cpp
 
 include($$JSONIO14_DIR/jsonio14.pri)

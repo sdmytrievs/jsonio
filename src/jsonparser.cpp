@@ -33,6 +33,8 @@ void JsonParser::parse_to( JsonBase &out )
         parse_array( jsBuilder );
     }
     // else ??? update value Scalar
+    skip_space_comment();
+    JARANGO_THROW_IF( cur_pos < end_pos, "JsonParser", 9, "extra value after close: " + err_part() );
 }
 
 //  object = { "<key1>" : <value1>, ... , "<keyN>" : <valueN> }
@@ -41,7 +43,7 @@ void JsonParser::parse_object(JsonObjectBuilder &builder)
     std::string keyn;
     if( jsontext[cur_pos] == jsBeginObject )
         cur_pos++;
-    JARANGO_THROW_IF( !skip_space_comment(), "JsonParser", 1, "unterminated object: " + jsontext.substr(cur_pos, err_block_size) );
+    JARANGO_THROW_IF( !skip_space_comment(), "JsonParser", 1, "unterminated object: " + err_part() );
 
     // empty object
     if( jsontext[cur_pos] == jsEndObject )
@@ -52,17 +54,17 @@ void JsonParser::parse_object(JsonObjectBuilder &builder)
 
     do {
         if( !parse_string( keyn ) )
-            JARANGO_THROW(  "JsonParser", 2, "missing key of object: " + jsontext.substr(cur_pos, err_block_size) );
+            JARANGO_THROW(  "JsonParser", 2, "missing key of object: " + err_part() );
 
-        JARANGO_THROW_IF( !skip_space_comment(), "JsonParser", 3, "missing value of object: " + jsontext.substr(cur_pos, err_block_size) );
+        JARANGO_THROW_IF( !skip_space_comment(), "JsonParser", 3, "missing value of object: " + err_part() );
 
         if( jsontext[cur_pos] == jsNameSeparator  )
             cur_pos++;
         else
-            JARANGO_THROW(  "JsonParser", 4, "missing ':' : " + jsontext.substr(cur_pos, err_block_size) );
+            JARANGO_THROW(  "JsonParser", 4, "missing ':' : " + err_part() );
 
         parse_value( keyn,  builder );
-        JARANGO_THROW_IF( !skip_space_comment(), "JsonParser", 1, "unterminated object: " + jsontext.substr(cur_pos, err_block_size) );
+        JARANGO_THROW_IF( !skip_space_comment(), "JsonParser", 1, "unterminated object: " + err_part() );
 
         if( jsontext[cur_pos] == jsEndObject  )
         {
@@ -72,7 +74,7 @@ void JsonParser::parse_object(JsonObjectBuilder &builder)
 
     }while( jsontext[cur_pos++] == jsValueSeparator );
 
-    JARANGO_THROW(  "JsonParser", 5, "illegal symbol : " + jsontext.substr(cur_pos, err_block_size) );
+    JARANGO_THROW(  "JsonParser", 5, "illegal symbol : '" + jsontext.substr(cur_pos-1, err_block_size)+"'" );
 }
 
 //    array = [ <value1>, ... <valueN> ]
@@ -80,7 +82,7 @@ void JsonParser::parse_array(JsonArrayBuilder &builder)
 {
     if( jsontext[cur_pos] == jsBeginArray )
         cur_pos++;
-    JARANGO_THROW_IF( !skip_space_comment(), "JsonParser", 10, "unterminated array: " + jsontext.substr(cur_pos, err_block_size) );
+    JARANGO_THROW_IF( !skip_space_comment(), "JsonParser", 6, "unterminated array: " + err_part() );
 
     // empty array
     if( jsontext[cur_pos] == jsEndArray )
@@ -91,7 +93,7 @@ void JsonParser::parse_array(JsonArrayBuilder &builder)
 
     do {
         parse_value( builder.nextKey(),  builder );
-        JARANGO_THROW_IF( !skip_space_comment(), "JsonParser", 12, "unterminated array: " + jsontext.substr(cur_pos, err_block_size) );
+        JARANGO_THROW_IF( !skip_space_comment(), "JsonParser", 6, "unterminated array: " + err_part() );
         if( jsontext[cur_pos] == jsEndArray  )
         {
             cur_pos++;
@@ -99,7 +101,20 @@ void JsonParser::parse_array(JsonArrayBuilder &builder)
         }
     }while( jsontext[cur_pos++] == jsValueSeparator );
 
-    JARANGO_THROW(  "JsonParser", 13, "illegal symbol : " + jsontext.substr(cur_pos, err_block_size) );
+    JARANGO_THROW(  "JsonParser", 5, "illegal symbol : '" + jsontext.substr(cur_pos-1, err_block_size)+"'" );
+}
+
+std::string JsonParser::err_part() const
+{
+    std::string asubstr;
+    if( cur_pos < end_pos - err_block_size)
+        asubstr =  jsontext.substr(cur_pos, err_block_size);
+    else if( end_pos < err_block_size )
+        asubstr = jsontext;
+    else
+        asubstr = jsontext.substr( end_pos - err_block_size);
+
+    return "'" + asubstr  + "'";
 }
 
 
@@ -128,15 +143,21 @@ bool JsonParser::skip_space_comment()
 
 bool JsonParser::parse_string( std::string &str )
 {
+    bool lastCh = false;
     str = "";
-    JARANGO_THROW_IF( !skip_space_comment(), "JsonParser", 21, "must be string: " + jsontext.substr(cur_pos, err_block_size) );
+    JARANGO_THROW_IF( !skip_space_comment(), "JsonParser", 7, "must be string: " + err_part() );
 
     if( jsontext[cur_pos++] != jsQuote )
         return false;
 
-    while( jsontext[cur_pos] != jsQuote || jsontext[cur_pos-1] == '\\' )
+    while( jsontext[cur_pos] != jsQuote || lastCh )
     {
         str += jsontext[cur_pos];
+        if( jsontext[cur_pos] == '\\' )
+            lastCh = !lastCh;
+        else
+            lastCh = false;
+
         cur_pos++;
         if( cur_pos>=end_pos )
             return false;
@@ -149,7 +170,7 @@ bool JsonParser::parse_string( std::string &str )
 
 void JsonParser::parse_value(const std::string &name, JsonBuilderBase &builder)
 {
-    JARANGO_THROW_IF( !skip_space_comment(), "JsonParser", 41, "must be value: " + jsontext.substr(cur_pos, err_block_size) );
+    JARANGO_THROW_IF( !skip_space_comment(), "JsonParser", 8, "must be value: " + err_part() );
 
     switch( jsontext[cur_pos] )
     {
@@ -177,13 +198,13 @@ void JsonParser::parse_value(const std::string &name, JsonBuilderBase &builder)
     }
         break;
 
-    case jsEndArray:
+    /*case jsEndArray:
         --cur_pos;
         break;  // empty array
     case jsEndObject:
         --cur_pos;
         break;  // empty object
-
+*/
     default:  // addScalar true/false/null/number
     {
         auto pos_end_value = jsontext.find_first_of( ",]}", cur_pos );
@@ -269,10 +290,10 @@ void undumpString( std::string& strvalue )
                     // Explicitly check length of the substring. The following loop
                     // relies on std::string returning the terminating NUL when
                     // accessing str[length]. Checking here reduces brittleness.
-                    JARANGO_THROW_IF( esc.length() < 4, "JsonParser", 101, "bad \\u escape: " + esc );
+                    JARANGO_THROW_IF( esc.length() < 4, "JsonParser", 10, "bad \\u escape: " + esc );
                     for (size_t j = 0; j < 4; j++) {
                         JARANGO_THROW_IF( !in_range(esc[j], 'a', 'f') and !in_range(esc[j], 'A', 'F') and !in_range(esc[j], '0', '9'),
-                                          "JsonParser", 101, "bad \\u escape: " + esc );
+                                          "JsonParser", 11, "bad \\u escape: " + esc );
                     }
                     long codepoint = strtol(esc.data(), nullptr, 16);
 
@@ -311,7 +332,7 @@ void undumpString( std::string& strvalue )
                 case 'b':  resstr += '\b'; break;
                 case 'f':  resstr += '\f'; break;
                 default:
-                    JARANGO_THROW( "JsonParser", 103, "invalid escape character " + esc(ch) );
+                    JARANGO_THROW( "JsonParser", 13, "invalid escape character " + esc(ch) );
                 }
             }
             else
@@ -320,7 +341,7 @@ void undumpString( std::string& strvalue )
                 last_escaped_codepoint = -1;
                 auto ch = strvalue[ii++];
                 JARANGO_THROW_IF( in_range<long>(ch, 0, 0x1f),
-                                  "JsonParser", 102, "unescaped in string" );
+                                  "JsonParser", 12, "unescaped in string" );
                 resstr += ch;
             }
         }

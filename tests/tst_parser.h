@@ -144,11 +144,24 @@ TEST( JsonioParser, TestFail )
 {
   EXPECT_THROW( json::loads( "[" ) , std::exception );
 
-  auto fail_json_files =  files_into_directory( "fail2" );
+  auto fail_json_files =  files_into_directory( "fail" );
   for( auto file: fail_json_files)
   {
      auto json_data = read_all_file( file );
-     EXPECT_THROW( json::loads( json_data ) , std::exception );
+     EXPECT_THROW( json::loads( json_data ) , jarango_exception );
+  }
+}
+
+TEST( JsonioParser, TestPass )
+{
+  EXPECT_NO_THROW( json::loads( "[ ] " ) );
+  EXPECT_NO_THROW( json::loads( " {} " ) );
+
+  auto fail_json_files =  files_into_directory( "pass" );
+  for( auto file: fail_json_files)
+  {
+     auto json_data = read_all_file( file );
+     EXPECT_NO_THROW( json::loads( json_data )  );
   }
 }
 

@@ -27,6 +27,9 @@ protected:
     /// Parse internal jsontext string to json structure (with first [)
     void parse_array( JsonArrayBuilder& builder );
 
+    /// Get substr with error
+    std::string err_part() const;
+
 public:
 
     explicit JsonParser(const std::string &jsondata):
