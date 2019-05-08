@@ -98,11 +98,7 @@ public:
     virtual JsonObjectBuilder addObject( const std::string& akey )  = 0;
     virtual JsonArrayBuilder  addArray( const std::string& akey )  = 0;
     virtual JsonBuilderBase& addString( const std::string& akey, const std::string& value ) =0;
-    virtual JsonBuilderBase& testScalar(const std::string& key, const std::string& value )
-    {
-        append_scalar( key,  value, true  );
-        return *this;
-    }
+    virtual JsonBuilderBase& testScalar(const std::string& key, const std::string& value );
 
     /*template <class T>
     operator T() const

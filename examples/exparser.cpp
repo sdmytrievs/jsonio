@@ -32,6 +32,11 @@ int main(int argc, char* argv[])
                 std::cout << "Fail: " << " std::exception: " << e.what() <<  std::endl;
             }
         }
+
+        // test split
+        auto all_slop16 = read_all_file( "slop16.dat" );
+        std::cout << all_slop16 << std::endl;
+
     }
     catch(...)
     {

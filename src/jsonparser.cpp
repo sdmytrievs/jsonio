@@ -34,7 +34,7 @@ void JsonParser::parse_to( JsonBase &out )
     }
     // else ??? update value Scalar
     skip_space_comment();
-    JARANGO_THROW_IF( cur_pos < end_pos, "JsonParser", 9, "extra value after close: " + err_part() );
+    JARANGO_THROW_IF( cur_pos < end_pos, "JsonParser", 14, "extra value after close: " + err_part() );
 }
 
 //  object = { "<key1>" : <value1>, ... , "<keyN>" : <valueN> }
@@ -170,7 +170,7 @@ bool JsonParser::parse_string( std::string &str )
 
 void JsonParser::parse_value(const std::string &name, JsonBuilderBase &builder)
 {
-    JARANGO_THROW_IF( !skip_space_comment(), "JsonParser", 8, "must be value: " + err_part() );
+    JARANGO_THROW_IF( !skip_space_comment(), "JsonParser", 8, "must be value " + err_part() );
 
     switch( jsontext[cur_pos] )
     {
@@ -198,13 +198,6 @@ void JsonParser::parse_value(const std::string &name, JsonBuilderBase &builder)
     }
         break;
 
-    /*case jsEndArray:
-        --cur_pos;
-        break;  // empty array
-    case jsEndObject:
-        --cur_pos;
-        break;  // empty object
-*/
     default:  // addScalar true/false/null/number
     {
         auto pos_end_value = jsontext.find_first_of( ",]}", cur_pos );
@@ -215,6 +208,7 @@ void JsonParser::parse_value(const std::string &name, JsonBuilderBase &builder)
         }
         auto valuestr = jsontext.substr(cur_pos, end_size);
         trim(valuestr);
+        JARANGO_THROW_IF( valuestr.empty(), "JsonParser", 8, "must be value " + err_part() );
         builder.testScalar( name, valuestr );
         cur_pos = pos_end_value;
     }
