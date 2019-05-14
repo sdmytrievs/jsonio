@@ -34,6 +34,38 @@ int main(int argc, char* argv[])
         }
 
         // test split
+        auto all_slop16 = read_all_file( "concrete_3T_V07_02.dat" );
+        //std::cout << json::dump(all_slop16) << std::endl;
+
+        auto headers = regexp_extract(all_slop16, "\n\\s*[A-Z_]+\\s*\n");
+        for( auto block: headers )
+        {
+            trim(block, "\n\t ");
+            std::cout << block << std::endl;
+        }
+        auto datas = regexp_split(all_slop16, "\n\\s*[A-Z_]+\\s*\n");
+
+
+        for( auto block: datas )
+        {
+            std::cout << block  << "\n******************" << std::endl;
+        }
+    }
+    catch(...)
+    {
+        std::cout <<  "unknown exception" <<  std::endl;
+    }
+
+    return 0;
+}
+
+
+/**
+ *
+ *
+ *
+ *
+        // test split
         auto all_slop16 = read_all_file( "slop16.dat" );
         //std::cout << json::dump(all_slop16) << std::endl;
 
@@ -68,12 +100,10 @@ int main(int argc, char* argv[])
         /*for( auto block: datas )
         {
             std::cout << block  << "\n******************" << std::endl;
-        }*/
-    }
-    catch(...)
-    {
-        std::cout <<  "unknown exception" <<  std::endl;
-    }
-
-    return 0;
-}
+        }*
+ *
+ *
+ *
+ *
+ *
+ * */
