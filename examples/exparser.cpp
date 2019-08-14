@@ -5,6 +5,8 @@
 using namespace jsonio14;
 using namespace std;
 
+#include <regex>
+
 int main(int argc, char* argv[])
 {
     string test_dir = ".";
@@ -13,6 +15,15 @@ int main(int argc, char* argv[])
 
     try{
 
+        // Simple regular expression matching
+            const std::string fnames[] = {"foo.txt", "-bar.txt", "baz.dat", "2zoidberg"};
+            const std::regex txt_regex("^[a-z].*");
+
+            for (const auto &fname : fnames) {
+                std::cout << fname << ": " << std::regex_match(fname, txt_regex) << '\n';
+            }
+
+        return 0;
         auto fail_json_files =  files_into_directory( test_dir, ".json" );
         for( auto file: fail_json_files)
         {
@@ -31,24 +42,6 @@ int main(int argc, char* argv[])
             {
                 std::cout << "Fail: " << " std::exception: " << e.what() <<  std::endl;
             }
-        }
-
-        // test split
-        auto all_slop16 = read_all_file( "concrete_3T_V07_02.dat" );
-        //std::cout << json::dump(all_slop16) << std::endl;
-
-        auto headers = regexp_extract(all_slop16, "\n\\s*[A-Z_]+\\s*\n");
-        for( auto block: headers )
-        {
-            trim(block, "\n\t ");
-            std::cout << block << std::endl;
-        }
-        auto datas = regexp_split(all_slop16, "\n\\s*[A-Z_]+\\s*\n");
-
-
-        for( auto block: datas )
-        {
-            std::cout << block  << "\n******************" << std::endl;
         }
     }
     catch(...)

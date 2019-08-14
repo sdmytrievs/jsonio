@@ -23,7 +23,7 @@ TEST( JsonioService, regexpSplit )
 //  Function that can be used to extract tokens using regexp
 TEST( JsonioService, regexpExtract )
 {
-    auto tokens = regexp_extract( " %h11 %h22 %h33 ", "%h\\d+" );
+    auto tokens = regexp_extract( " %h11 %h22 hhh %h33 ", "%h\\d+" );
     //std::cout << dump(tokens) << std::endl;
     EXPECT_EQ( "[ \"%h11\", \"%h22\", \"%h33\" ]", json::dump(tokens) );
 }

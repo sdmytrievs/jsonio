@@ -6,14 +6,16 @@ namespace jsonio14 {
 
 int DetailSettings::doublePrecision = 15;
 int DetailSettings::floatPrecision = 7;
+const char* DetailSettings::infiniteValue = "null";
 
-/// Serialization string value to string
+
+// Serializations string value to string.
 template <> std::string v2string( const std::string& value )
 {
     return value;
 }
 
-/// Serialization double value to string
+/// Serializations double value to string.
 template <> std::string v2string( const double& value )
 {
     if(std::isfinite(value))
@@ -23,11 +25,11 @@ template <> std::string v2string( const double& value )
         return vbuf;
     } else
     {
-        return"null";
+        return DetailSettings::infiniteValue;
     }
 }
 
-/// Serialization float value to string
+/// Serializations float value to string.
 template <> std::string v2string( const float& value )
 {
     if(std::isfinite(value))
@@ -37,23 +39,23 @@ template <> std::string v2string( const float& value )
         return vbuf;
     } else
     {
-        return"null";
+        return DetailSettings::infiniteValue;
     }
 }
 
-/// Serialization char value to string
+/// Serialization char value to string.
 template<> std::string v2string( const char& value )
 {
     return std::string(1, value);
 }
 
-/// Serialization char value to string
+/// Serialization char value to string.
 template<> std::string v2string( const unsigned char& value )
 {
     return std::string(1, static_cast<const char>(value));
 }
 
-/// Serialization bool value to string
+/// Serialization bool value to string.
 template<> std::string v2string( const bool& value )
 {
     return value ? "true" : "false";;

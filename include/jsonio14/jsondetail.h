@@ -9,15 +9,20 @@
 namespace jsonio14 {
 
 
-/// Basic class for read/write scalar/array to format
+/// Basic class for read/write scalar/array to format.
 struct DetailSettings
 {
-    static int doublePrecision;	///< Precision of double
-    static int floatPrecision;	///< Precision of float
+    /// Sets the decimal precision to be used to format double values on output operations.
+    static int doublePrecision;
+    /// Sets the decimal precision to be used to format float values on output operations.
+    static int floatPrecision;
+    /// String, if the given floating point number is  infinite or NaN.
+    static const char* infiniteValue;
+
 };
 
 
-/// Read value from string
+/// Read value from string.
 template <typename T>
 bool is( T& x, const std::string& s)
 {
@@ -26,16 +31,16 @@ bool is( T& x, const std::string& s)
 }
 
 
-/// Converts a numeric value to a string.
+/// Serializations a numeric value to a string.
 template < typename T >
 std::string v2string( const T& value )
 {
     return std::to_string(value);
 }
 
-/// Converts a string to a string.
+/// Serializations string value to string.
 template <> std::string v2string( const std::string& value );
-/// Converts a numeric value to a string.
+/// Converts a constant pointer to a character to a string.
 std::string v2string( const char* value );
 
 /// Deserialization from string.
