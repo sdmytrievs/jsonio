@@ -1,32 +1,33 @@
 #pragma once
 
 #include <exception>
-#include <stdexcept> // runtime_error
+#include <stdexcept>
 #include <string>
 
 namespace jsonio14 {
 
 
-/// @brief General exception structure into project
+/// @brief General exception structure into project.
 class jarango_exception: public std::exception
 {
 
 public:
 
-    /// Returns the explanatory string
+    /// Returns the explanatory string.
     const char* what() const noexcept override
     {
         return m.what();
     }
 
-    /// The id of the exception
+    /// The id of the exception.
     const int id;
 
-    ///  @brief Create any error exception
-    ///  @param[in] atitle    the title of the exception
-    ///  @param[in] aid       the id of the exception
-    ///  @param[in] what_arg  the explanatory string
-    ///  @return jarango_exception object
+    ///  @brief Create any error exception.
+    ///
+    ///  @param atitle    the title of the exception
+    ///  @param aid       the id of the exception
+    ///  @param what_arg  the explanatory string
+    ///  @return jarango_exception object.
     static jarango_exception create(const std::string& atitle, int aid, const std::string& what_arg)
     {
         std::string w = header(atitle, aid) +  ": " + what_arg;
@@ -44,18 +45,18 @@ protected:
 
 private:
 
-    /// An exception object as storage for error messages
+    /// An exception object as storage for error messages.
     std::runtime_error m;
 };
 
 
-/// Throw  jarango_exception
+/// Throw  jarango_exception.
 [[ noreturn ]] inline void JARANGO_THROW( const std::string& title, int id, const std::string& message )
 {
     throw jarango_exception::create(title, id, message);
 }
 
-/// Throw condition jsonio_exception
+/// Throw by condition jsonio_exception.
 inline void JARANGO_THROW_IF(bool error, const std::string& title, int id, const std::string& message )
 {
     if(error) throw jarango_exception::create(title, id, message);

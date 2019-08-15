@@ -23,6 +23,20 @@ std::string regexp_replace(const std::string& instr, const std::string& rgx_str,
 ///  Returns true whether the string matches the regular expression.
 bool regexp_test(const std::string& str, std::string rgx_str);
 
+/// Replace all characters to character in string (in place).
+inline void replace_all(std::string &s, const std::string &characters, char to_character )
+{
+    std::replace_if( s.begin(), s.end(), [=](char ch) {
+        return characters.find_first_of(ch)!=std::string::npos;
+    }, to_character );
+}
+
+template < class T>
+inline bool in_range( const T& x, const T& lower, const T& upper)
+{
+    return (x >= lower && x <= upper);
+}
+
 
 /// Trim all whitespace characters from start (in place).
 inline void ltrim(std::string &s )
@@ -68,20 +82,6 @@ inline void trim(std::string &s, const std::string &characters )
 {
     ltrim(s, characters);
     rtrim(s, characters);
-}
-
-/// Replace all characters to character in string (in place).
-inline void replace_all(std::string &s, const std::string &characters, char to_character )
-{
-    std::replace_if( s.begin(), s.end(), [=](char ch) {
-        return characters.find_first_of(ch)!=std::string::npos;
-    }, to_character );
-}
-
-template < class T>
-inline bool in_range( const T& x, const T& lower, const T& upper)
-{
-    return (x >= lower && x <= upper);
 }
 
 template<typename T>

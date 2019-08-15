@@ -7,7 +7,7 @@
 namespace jsonio14 {
 
 
-/// @brief an interface to store JSON object
+/// @brief An interface to store JSON object.
 /// @class JsonBase represents an abstract item in a tree view.
 /// Item data defines one json object.
 class JsonBase

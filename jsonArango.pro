@@ -41,3 +41,6 @@ SOURCES += \
     examples/exparser.cpp
 
 include($$JSONIO14_DIR/jsonio14.pri)
+
+DISTFILES += \
+    docs/source.md

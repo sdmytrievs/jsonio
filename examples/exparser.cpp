@@ -15,7 +15,7 @@ int main(int argc, char* argv[])
 
     try{
 
-        // Simple regular expression matching
+         // Simple regular expression matching
             const std::string fnames[] = {"foo.txt", "-bar.txt", "baz.dat", "2zoidberg"};
             const std::regex txt_regex("^[a-z].*");
 

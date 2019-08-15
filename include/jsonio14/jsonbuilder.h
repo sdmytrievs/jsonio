@@ -9,13 +9,13 @@ class JsonSchema;
 
 namespace json {
 
-/// @brief dump object to JSON string.
+/// @brief Dump object to JSON string.
 std::string dump( const JsonBase& object, bool dense = false );
 
 /// Serialize object as a JSON formatted stream.
 void dump( std::ostream& os, const JsonBase& object, bool dense = false );
 
-/// Deserialize a JSON document to a object.
+/// Deserialize a JSON string to a object.
 void loads( const std::string& jsonstr, JsonBase& object );
 
 /// Deserialize a JSON document to a free format json object.
@@ -72,32 +72,29 @@ std::string dump( const T& elems  )
     return genjson;
 }
 
-} // namespace jsonio14
+} // namespace json
 
 class JsonObjectBuilder;
 class JsonArrayBuilder;
 
+///  Base interface for builder of JsonBase object.
 class JsonBuilderBase
 {
 
-protected:
-
-    JsonBase&  current_json;
-
-    explicit JsonBuilderBase( JsonBase& object )
-        :current_json{object}
-    { }
-
-    void append_scalar(const std::string &key, const std::string &value, bool noString );
-
 public:
 
+    /// Destructor
     virtual ~JsonBuilderBase()
     {}
 
-    virtual JsonObjectBuilder addObject( const std::string& akey )  = 0;
-    virtual JsonArrayBuilder  addArray( const std::string& akey )  = 0;
-    virtual JsonBuilderBase& addString( const std::string& akey, const std::string& value ) =0;
+    /// Adds a key/ empty Json object pair to the JSON object associated with this object builder.
+    virtual JsonObjectBuilder addObject( const std::string& key )  = 0;
+    /// Adds a key/ empty Json array pair to the JSON object associated with this object builder.
+    virtual JsonArrayBuilder  addArray( const std::string& key )  = 0;
+    /// Adds a key/ string value pair to the JSON object associated with this object builder.
+    virtual JsonBuilderBase& addString( const std::string& key, const std::string& value ) =0;
+    /// Adds a key/ value pair to the JSON object associated with this object builder.
+    /// Infers the value type by parsing input string. Throw Exeption when undefined value type.
     virtual JsonBuilderBase& testScalar(const std::string& key, const std::string& value );
 
     /*template <class T>
@@ -106,13 +103,31 @@ public:
         return static_cast<T>(current_json);
     }*/
 
+protected:
+
+    /// Internal JSON object
+    JsonBase&  current_json;
+
+    /// Constructor
+    explicit JsonBuilderBase( JsonBase& object )
+        :current_json{object}
+    { }
+
+    /// Infers the value type by parsing input string.
+    void append_scalar(const std::string &key, const std::string &value, bool noString );
+
 };
 
+///  A builder for creating JsonBase::Object from scratch.
+///
+///  This class initializes an empty JSON object and provides methods to add name/value pairs to the object.
+///  The methods in this class can be chained to add multiple name/value pairs to the object.
 class JsonObjectBuilder final : public JsonBuilderBase
 {
 
 public:
 
+    /// Constructor
     explicit JsonObjectBuilder( JsonBase& object )
         : JsonBuilderBase{ object }
     {
@@ -120,50 +135,56 @@ public:
         object.update_node( JsonBase::Object, "" );
     }
 
-    // Append functions --------------------------------------
-
+    /// Adds a key/ empty Json object pair to the JSON object associated with this object builder.
     JsonObjectBuilder addObject( const std::string& akey ) override;
 
+    /// Adds a key/ empty Json array pair to the JSON object associated with this object builder.
     JsonArrayBuilder  addArray( const std::string& akey ) override;
 
+    /// Adds a key/ null object pair to the JSON object associated with this object builder.
     JsonObjectBuilder& addNull( const std::string& akey )
     {
         current_json.append_node( akey, JsonBase::Null, "null" );
         return *this;
     }
 
+    /// Adds a key/ boolean value pair to the JSON object associated with this object builder.
     JsonObjectBuilder& addBool( const std::string& akey, bool value )
     {
         current_json.append_node( akey, JsonBase::Bool, v2string(value) );
         return *this;
     }
 
+    /// Adds a key/ integer value pair to the JSON object associated with this object builder.
     JsonObjectBuilder& addInt( const std::string& akey, long value )
     {
         current_json.append_node( akey, JsonBase::Int, v2string(value) );
         return *this;
     }
 
+    /// Adds a key/ float point value pair to the JSON object associated with this object builder.
     JsonObjectBuilder& addDouble( const std::string& akey, double value )
     {
         current_json.append_node( akey, JsonBase::Double, v2string(value) );
         return *this;
     }
 
+    /// Adds a key/ string value pair to the JSON object associated with this object builder.
     JsonObjectBuilder& addString( const std::string& akey, const std::string& value ) override
     {
         current_json.append_node( akey, JsonBase::String, v2string(value) );
         return *this;
     }
 
-    /// Append obvious object - get type from string data
+    /// Adds a key/ a primitive type value pair to the JSON object associated with this object builder.
+    /// Infers the value type by parsing input string.
     JsonObjectBuilder& addScalar(const std::string& key, const std::string& value )
     {
         append_scalar( key,  value, false  );
         return *this;
     }
 
-    /// Add primitive type value (string, number, boolean ).
+    /// Adds a key/ a primitive type value  pair to the JSON object associated with this object builder.
     template <class T,
               std::enable_if_t<!is_container<T>{}&!is_mappish<T>{}, int> = 0 >
     JsonObjectBuilder&  addValue( const std::string& akey, T value )
@@ -173,7 +194,8 @@ public:
         return *this;
     }
 
-    /// Add vector-like objects (std::list, std::vector, std::set, etc) to current Node
+    /// Adds a key/ vector-like object pair to the JSON object associated with this object builder.
+    /// Vector-like objects: std::list, std::vector, std::set, etc.
     template <class T,
               class = typename std::enable_if<is_container<T>{}, bool>::type >
     JsonObjectBuilder&  addVector( const std::string& akey, const T& values  )
@@ -182,7 +204,8 @@ public:
         return *this;
     }
 
-    /// Add map-like objects (std::map, std::unordered_map, etc) to current Node
+    /// Adds a key/ map-like object pair to the JSON object associated with this object builder.
+    /// Map-like objects: std::map, std::unordered_map, etc.
     template <class T,
               class = typename std::enable_if<is_mappish<T>{}, bool>::type >
     JsonObjectBuilder&  addMapKey( const std::string& akey, const T& values  )
@@ -193,11 +216,16 @@ public:
 
 };
 
+/// A builder for creating JsonBase::Array from scratch.
+///
+/// This class initializes an empty JSON array and provides methods to add values to the array.
+/// The methods in this class can be chained to add multiple values to the array.
 class JsonArrayBuilder final : public JsonBuilderBase
 {
 
 public:
 
+    /// Constructor
     explicit JsonArrayBuilder( JsonBase& object )
         : JsonBuilderBase{ object }
     {
@@ -205,50 +233,58 @@ public:
         object.update_node( JsonBase::Array, "" );
     }
 
-    // Append functions --------------------------------------
-
+    /// Adds an empty Json object to the JSON array associated with this object builder.
     JsonObjectBuilder addObject();
 
+    /// Adds an empty Json array to the JSON array associated with this object builder.
     JsonArrayBuilder  addArray();
 
+
+    /// Adds a null object to the JSON array associated with this object builder.
     JsonArrayBuilder& addNull()
     {
         current_json.append_node( nextKey(), JsonBase::Null, "null" );
         return *this;
     }
 
+    /// Adds a boolean value to the JSON array associated with this object builder.
     JsonArrayBuilder& addBool( bool value )
     {
         current_json.append_node( nextKey(), JsonBase::Bool, v2string(value) );
         return *this;
     }
 
+    /// Adds an integer value to the JSON array associated with this object builder.
     JsonArrayBuilder& addInt( long value )
     {
         current_json.append_node( nextKey(), JsonBase::Int, v2string(value) );
         return *this;
     }
 
+    /// Adds a double value to the JSON array associated with this object builder.
     JsonArrayBuilder& addDouble( double value )
     {
         current_json.append_node( nextKey(), JsonBase::Double, v2string(value) );
         return *this;
     }
 
+    /// Adds a string value to the JSON array associated with this object builder.
     JsonArrayBuilder& addString( const std::string& value )
     {
         current_json.append_node( nextKey(), JsonBase::String, v2string(value) );
         return *this;
     }
 
-    /// Append obvious object - get type from string data
+    /// Adds a primitive type value to the JSON array associated with this object builder.
+    /// Infers the value type by parsing input string.
     JsonArrayBuilder& addScalar( const std::string& value )
     {
         append_scalar( nextKey(),  value, false  );
         return *this;
     }
 
-    /// Add primitive type value (string, number, boolean ).
+    /// Adds a primitive type value to the JSON array associated with this object builder.
+    /// A primitive type value: string, number, boolean, etc.
     template <class T,
               std::enable_if_t<!is_container<T>{}&!is_mappish<T>{}, int> = 0 >
     JsonArrayBuilder&  addValue( T value )
@@ -258,7 +294,8 @@ public:
         return *this;
     }
 
-    /// Add vector-like objects (std::list, std::vector, std::set, etc) to current Node
+    /// Adds a vector-like object to the JSON array associated with this object builder.
+    /// Vector-like objects: std::list, std::vector, std::set, etc.
     template <class T,
               class = typename std::enable_if<is_container<T>{}, bool>::type >
     JsonArrayBuilder&  addVector( const T& values  )
@@ -267,7 +304,8 @@ public:
         return *this;
     }
 
-    /// Add map-like objects (std::map, std::unordered_map, etc) to current Node
+    /// Adds a map-like object to the JSON array associated with this object builder.
+    /// Map-like objects: std::map, std::unordered_map, etc.
     template <class T,
               class = typename std::enable_if<is_mappish<T>{}, bool>::type >
     JsonArrayBuilder&  addMapKey( const T& values  )
@@ -278,13 +316,20 @@ public:
 
     // Addition functions with test key
 
+    /// Adds an empty Json object to the JSON array associated with this object builder.
+    /// With testing that the key is correct.
     JsonObjectBuilder addObject( const std::string& akey ) override;
+    /// Adds an empty Json array to the JSON array associated with this object builder.
+    /// With testing that the key is correct.
     JsonArrayBuilder  addArray( const std::string& akey ) override;
+    /// Adds a string value to the JSON array associated with this object builder.
+    /// With testing that the key is correct.
     JsonBuilderBase &addString( const std::string& akey, const std::string& value ) override;
 
+    /// Foresee the next key.
     std::string nextKey() const
     {
-      return  std::to_string( current_json.getChildrenCount() );
+        return  std::to_string( current_json.getChildrenCount() );
     }
 };
 

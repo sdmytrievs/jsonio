@@ -1,4 +1,4 @@
-#include <cmath>
+#include <iomanip>
 #include "jsondetail.h"
 #include "service.h"
 
@@ -9,10 +9,20 @@ int DetailSettings::floatPrecision = 7;
 const char* DetailSettings::infiniteValue = "null";
 
 
-// Serializations string value to string.
+std::string v2string( const char* value )
+{
+    return std::string(value);
+}
+
 template <> std::string v2string( const std::string& value )
 {
     return value;
+}
+
+/// Serialization bool value to string.
+template<> std::string v2string( const bool& value )
+{
+    return value ? "true" : "false";;
 }
 
 /// Serializations double value to string.
@@ -20,9 +30,9 @@ template <> std::string v2string( const double& value )
 {
     if(std::isfinite(value))
     {
-        char vbuf[50];
-        snprintf(vbuf, sizeof vbuf, "%.*lg" , DetailSettings::doublePrecision, value );
-        return vbuf;
+        std::ostringstream os;
+        os << std::setprecision(DetailSettings::doublePrecision) << value;;
+        return os.str();
     } else
     {
         return DetailSettings::infiniteValue;
@@ -34,36 +44,13 @@ template <> std::string v2string( const float& value )
 {
     if(std::isfinite(value))
     {
-        char vbuf[50];
-        snprintf(vbuf, sizeof vbuf, "%.*g" , DetailSettings::floatPrecision, value );
-        return vbuf;
+        std::ostringstream os;
+        os << std::setprecision(DetailSettings::floatPrecision) << value;;
+        return os.str();
     } else
     {
         return DetailSettings::infiniteValue;
     }
-}
-
-/// Serialization char value to string.
-template<> std::string v2string( const char& value )
-{
-    return std::string(1, value);
-}
-
-/// Serialization char value to string.
-template<> std::string v2string( const unsigned char& value )
-{
-    return std::string(1, static_cast<const char>(value));
-}
-
-/// Serialization bool value to string.
-template<> std::string v2string( const bool& value )
-{
-    return value ? "true" : "false";;
-}
-
-std::string v2string( const char* value )
-{
-    return std::string(value);
 }
 
 template <>  bool string2v( const std::string& data, std::string& value )
@@ -79,7 +66,7 @@ template <>  bool string2v( const std::string& data, bool& value )
 }
 
 // "1;2;3" to array { 1, 2, 3 }
-std::queue<int> split_int( const std::string& str_data, const std::string& delimiters )
+std::queue<int> split_int( const std::string& str_data, const std::string& delimiter )
 {
     std::queue<int> res;
     int value;
@@ -89,14 +76,14 @@ std::queue<int> split_int( const std::string& str_data, const std::string& delim
 
     std::string str = str_data;
 
-    size_t pos = str.find( delimiters );
+    size_t pos = str.find( delimiter );
     while( pos != std::string::npos )
     {
         auto part = str.substr(0, pos);
         if( is<int>( value, str.substr(0, pos) ) )
             res.push( value );
-        str = str.substr( pos + delimiters.length() );
-        pos = str.find( delimiters );
+        str = str.substr( pos + delimiter.length() );
+        pos = str.find( delimiter );
     }
     if( is<int>( value, str ) )
         res.push( value );

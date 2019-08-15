@@ -9,98 +9,12 @@
 #include <unordered_set>
 #include <forward_list>
 
-#include "jsonbuilder.h"
+#include "jsondetail.h"
+#include "type_test.h"
 
 using namespace testing;
 using namespace jsonio14;
 
-TEST( JsonioDetail, dumpString )
-{
-    EXPECT_EQ( "\"Test char *\"", json::dump("Test char *") );
-    std::string str{"Test string"};
-    EXPECT_EQ( "\"Test string\"", json::dump(str) );
-    str = "\\ \b\f\n\r\t ";
-    EXPECT_EQ( "\"\\\\ \\b\\f\\n\\r\\t \"", json::dump(str) );
-}
-
-TEST( JsonioDetail, dumpVector )
-{
-    std::vector<double> dvec = { 1.5, 2.5, 3.5, 4.5 };
-    std::list<std::string> slist = { "v1", "v2", "v3", "v4" };
-    EXPECT_EQ( "[ 1.5, 2.5, 3.5, 4.5 ]", json::dump(dvec));
-    EXPECT_EQ( "[ \"v1\", \"v2\", \"v3\", \"v4\" ]", json::dump(slist));
-}
-
-TEST( JsonioDetail, dumpMap )
-{
-    std::map<std::string, bool> vmapb = { {"key1", true }, {"key2", false } };
-    std::map<std::string, std::string> vmaps = { {"key1", "val4" }, {"key2", "val5" } };
-    EXPECT_EQ( "{ \"key1\":true, \"key2\":false }", json::dump(vmapb));
-    EXPECT_EQ( "{ \"key1\":\"val4\", \"key2\":\"val5\" }",json::dump(vmaps));
-}
-
-TEST( JsonioDetail, v2string )
-{
-    EXPECT_EQ( "Test char *", v2string("Test char *") );
-    std::string str{"Test string"};
-    EXPECT_EQ( str, v2string(str) );
-    EXPECT_EQ( "n", v2string('n') );
-    unsigned char ch = 'Q';
-    EXPECT_EQ( "Q", v2string(ch)  );
-
-    EXPECT_EQ( "true" , v2string(true) );
-    EXPECT_EQ( "false" , v2string(false) );
-    EXPECT_EQ( std::to_string(10) , v2string(10) );
-    EXPECT_EQ( std::to_string(-10L) , v2string(-10L) );
-    EXPECT_EQ( "1.5" , v2string(1.5f) );
-    EXPECT_EQ( "1e-05" , v2string(1e-5) );
-}
-
-
-TEST( JsonioDetail, string2v )
-{
-    long lval;
-    double dval;
-    EXPECT_TRUE( string2v( "1000", lval ) );
-    EXPECT_EQ( lval, 1000L );
-    EXPECT_TRUE( string2v( "1.5", dval ) );
-    EXPECT_EQ( dval, 1.5 );
-    EXPECT_TRUE( string2v( "null", lval ) );
-    EXPECT_EQ( lval, std::numeric_limits<long>::min() );
-    EXPECT_TRUE( string2v( "null", dval ) );
-    EXPECT_EQ( dval, std::numeric_limits<double>::min() );
-
-    bool bval;
-    std::string sval;
-    EXPECT_TRUE( string2v( "true", bval ) );
-    EXPECT_EQ( bval, true );
-    EXPECT_TRUE( string2v( "Test string", sval ) );
-    EXPECT_EQ( sval, "Test string" );
-
-    EXPECT_TRUE( string2v( "null", bval ) );
-    EXPECT_EQ( bval, false );
-    EXPECT_TRUE( string2v( "null", sval ) );
-    EXPECT_EQ( sval, "null" );
-}
-
-
-TEST( JsonioDetail, isType )
-{
-    long lval;
-    double dval;
-
-    EXPECT_TRUE( is<long>( lval, "1000" ) );
-    EXPECT_EQ( lval, 1000L );
-
-    EXPECT_TRUE( is<double>( dval, "1.5" ) );
-    EXPECT_EQ( dval, 1.5 );
-    EXPECT_TRUE( is<double>( dval, "-1e-5" ) );
-    EXPECT_EQ( dval, -1e-5 );
-
-    EXPECT_FALSE( is<long>( lval, "1.5" ) );
-    EXPECT_FALSE( is<long>( lval, "e1" ) );
-    EXPECT_FALSE( is<long>( lval, "true" ) );
-}
 
 TEST( JsonioDetail, isContainer )
 {
@@ -151,9 +65,83 @@ TEST( JsonioDetail, isMappish )
     EXPECT_FALSE( is_mappish<std::string>::value );
 }
 
+//------------------------------------------------------------------------------------
+
+TEST( JsonioDetail, v2string )
+{
+    EXPECT_EQ( "Test char *", v2string("Test char *") );
+    std::string str{"Test string"};
+    EXPECT_EQ( str, v2string(str) );
+    EXPECT_EQ( "n", v2string('n') );
+    unsigned char ch = 'Q';
+    EXPECT_EQ( "Q", v2string(ch)  );
+
+    EXPECT_EQ( "true" , v2string(true) );
+    EXPECT_EQ( "false" , v2string(false) );
+    EXPECT_EQ( std::to_string(10) , v2string(10) );
+    EXPECT_EQ( std::to_string(-10L) , v2string(-10L) );
+    EXPECT_EQ( "1.5" , v2string(1.5f) );
+    EXPECT_EQ( "1e-05" , v2string(1e-5) );
+
+    EXPECT_EQ( DetailSettings::infiniteValue , v2string(NAN) );
+    EXPECT_EQ( DetailSettings::infiniteValue , v2string(INFINITY) );
+
+    double f =3.14159;
+    auto old = DetailSettings::doublePrecision;
+    DetailSettings::doublePrecision = 3;
+    EXPECT_EQ( "3.14" , v2string(f) );
+    DetailSettings::doublePrecision = old;
+}
+
+
+TEST( JsonioDetail, string2v )
+{
+    long lval;
+    double dval;
+    EXPECT_TRUE( string2v( "1000", lval ) );
+    EXPECT_EQ( lval, 1000L );
+    EXPECT_TRUE( string2v( "1.5", dval ) );
+    EXPECT_EQ( dval, 1.5 );
+    EXPECT_TRUE( string2v( DetailSettings::infiniteValue, lval ) );
+    EXPECT_EQ( lval, std::numeric_limits<long>::min() );
+    EXPECT_TRUE( string2v( DetailSettings::infiniteValue, dval ) );
+    EXPECT_EQ( dval, std::numeric_limits<double>::min() );
+
+    bool bval;
+    std::string sval;
+    EXPECT_TRUE( string2v( "true", bval ) );
+    EXPECT_EQ( bval, true );
+    EXPECT_TRUE( string2v( "Test string", sval ) );
+    EXPECT_EQ( sval, "Test string" );
+
+    EXPECT_TRUE( string2v( DetailSettings::infiniteValue, bval ) );
+    EXPECT_EQ( bval, false );
+    EXPECT_TRUE( string2v( DetailSettings::infiniteValue, sval ) );
+    EXPECT_EQ( sval, DetailSettings::infiniteValue );
+}
+
+
+TEST( JsonioDetail, isType )
+{
+    long lval;
+    double dval;
+
+    EXPECT_TRUE( is<long>( lval, "1000" ) );
+    EXPECT_EQ( lval, 1000L );
+
+    EXPECT_TRUE( is<double>( dval, "1.5" ) );
+    EXPECT_EQ( dval, 1.5 );
+    EXPECT_TRUE( is<double>( dval, "-1e-5" ) );
+    EXPECT_EQ( dval, -1e-5 );
+
+    EXPECT_FALSE( is<long>( lval, "1.5" ) );
+    EXPECT_FALSE( is<long>( lval, "e1" ) );
+    EXPECT_FALSE( is<long>( lval, "true" ) );
+}
+
 TEST( JsonioDetail, Split )
 {
- auto intquery =   split_int( "1;2;3", ";" );
+ auto intquery =   split_int( "1---2---3", "---" );
  EXPECT_EQ( 3, intquery.size() );
  EXPECT_EQ( 1, intquery.front() );
  intquery.pop();

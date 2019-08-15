@@ -195,6 +195,7 @@ JsonFree loads(const std::string &jsonstr)
 
 } // json namespace
 
+// decision about value type
 void JsonBuilderBase::append_scalar(const std::string &key, const std::string &value, bool noString )
 {
     long ival = 0;
@@ -229,7 +230,6 @@ JsonBuilderBase &JsonBuilderBase::testScalar(const std::string &key, const std::
     append_scalar( key,  value, true  );
     return *this;
 }
-
 
 
 JsonObjectBuilder JsonObjectBuilder::addObject(const std::string &akey)
