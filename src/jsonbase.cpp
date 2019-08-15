@@ -1,4 +1,5 @@
 #include "jsonbuilder.h"
+#include "jsondump.h"
 
 namespace jsonio14 {
 

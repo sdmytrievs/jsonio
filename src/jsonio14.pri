@@ -8,7 +8,8 @@ HEADERS += \
     $$JSONIO14_HEADERS_DIR/jsonbase.h \
     $$JSONIO14_HEADERS_DIR/jsonfree.h \
     $$JSONIO14_HEADERS_DIR/jsonbuilder.h \
-    $$JSONIO14_HEADERS_DIR/jsonparser.h
+    $$JSONIO14_HEADERS_DIR/jsonparser.h \
+    $$JSONIO14_HEADERS_DIR/jsondump.h
 
 
 SOURCES += \
@@ -18,7 +19,8 @@ SOURCES += \
     $$JSONIO14_DIR/jsonbase.cpp \
     $$JSONIO14_DIR/jsonfree.cpp \
     $$JSONIO14_DIR/jsonbuilder.cpp \
-    $$JSONIO14_DIR/jsonparser.cpp
+    $$JSONIO14_DIR/jsonparser.cpp \
+    $$PWD/jsondump.cpp
 
 
 

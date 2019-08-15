@@ -5,15 +5,34 @@
 namespace jsonio14 {
 
 
-/// Class for read/write json structure from/to text file or string
+/// Class for read JsonBase structure from json string.
 class JsonParser
 {
 
     const std::size_t err_block_size{20};
 
+public:
+
+    /// Constructor
+    explicit JsonParser( const std::string &jsondata )
+    {
+     set_string( jsondata );
+    }
+
+    /// Update string to parse.
+    void set_string( const std::string &jsondata )
+    {
+       jsontext = jsondata;
+       cur_pos = 0;
+       end_pos = jsondata.length();
+    }
+
+    /// Parse internal string to the JSON object result_object;
+    void parse_to( JsonBase& result_object );
+
 protected:
 
-    /// Text to parse
+    /// Internal string to parse
     std::string jsontext;
     std::size_t cur_pos{0};
     std::size_t end_pos{0};
@@ -29,15 +48,6 @@ protected:
 
     /// Get substr with error
     std::string err_part() const;
-
-public:
-
-    explicit JsonParser(const std::string &jsondata):
-        jsontext{jsondata}, cur_pos{0}, end_pos{jsondata.length()}
-    { }
-    /// Parse json string to internal structure data
-    void parse_to( JsonBase& out );
-
 };
 
 } // namespace jsonio14

@@ -55,3 +55,20 @@ JsonSchema loads( const std::string& schema_name, const std::string& jsonstr );
 ```
 
 > *source: "+";    test: "+-";  example: "-"*
+
+6. jsonparser.h(cpp)
+
+   class JsonParser - read JsonBase structure from json string.
+
+```cpp
+
+JsonFree loads( const std::string &jsonstr )
+{
+    auto object = JsonFree::object();
+    JsonParser parser(jsonstr);
+    parser.parse_to(object);
+    return object;
+}
+
+```
+> *source: "+";    test: "+";  example: "-"*
