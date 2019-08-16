@@ -77,6 +77,7 @@ public:
     /// Return a const reference to arr[i] if this is an array, exception otherwise.
     const JsonFree &operator[](size_t idx) const
     {
+        std::cout << "const JsonFree &operator[](size_t idx)" << std::endl;
         if( isArray() || isObject()  )
         {
             return get_child( idx );
@@ -87,6 +88,7 @@ public:
     /// Return a reference to arr[i] if this is an array, exception otherwise.
     JsonFree &operator[](size_t idx)
     {
+        std::cout << "JsonFree &operator[](size_t idx)" << std::endl;
         if( isArray() || isObject()  )
         {
             return get_child( idx );
@@ -98,6 +100,7 @@ public:
     /// Return a const reference to object[key] if this is an object, exception otherwise.
     const JsonFree &operator[](const std::string &key) const
     {
+        std::cout << "const JsonFree &operator[](const std::string &key)" << std::endl;
         if( isObject()  )
         {
             return get_child( key );
@@ -108,6 +111,7 @@ public:
     /// Return a reference to object[key] if this is an object, exception otherwise.
     JsonFree &operator[](const std::string &key)
     {
+        std::cout << "JsonFree &operator[](const std::string &key)" << std::endl;
         if( isArray() || isObject()  )
         {
             return get_child( key );

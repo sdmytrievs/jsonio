@@ -1,10 +1,10 @@
-## Files descriptions ##
+## Files descriptions
 
 1. exeptions.h
 
 General exception structure into project.
 
-> *source: "+";    test: "-";  example: "-"*
+> _source: "+";    test: "-";  example: "-"_
 
 2. service.h(cpp)
 
@@ -54,7 +54,7 @@ A base interface to store JSON object.
 
 
 > *source: "+-";    test: "+-";  example: "-"*
-> Work about
+> Most virtual functions will test into implementations
 
 6. jsonbuilder.h(cpp)
 
@@ -93,13 +93,13 @@ JsonFree loads( const std::string &jsonstr )
 > *source: "+";  test: "+";  example: "+"*
 > Read NaN and Inf values -> exception
 
-8. jsonfree.h(cpp)
+8. jsonfree.h(cpp)  ( under construction )
 
 class JsonFree - a class to store JSON object
 
 
 > *source: "+-";    test: "-";  example: "-"*
-> Work about, Need tests, examples
+> Need tests, examples
 
 ## Next steps
 

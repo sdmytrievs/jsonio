@@ -1,4 +1,6 @@
 #pragma once
+
+#include <iostream>
 #include <vector>
 #include "jsondetail.h"
 #include "exceptions.h"
@@ -107,6 +109,7 @@ public:
     {
       return size() < 1;
     }
+
     // Get methods ( using in Qt GUI ) --------------------------
 
     virtual const std::string& getKey() const = 0;
