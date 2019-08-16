@@ -59,7 +59,7 @@ void dump2stream( std::ostream& os, const JsonBase& object, int depth, bool dens
 {
     int temp;
     bool first = true;
-    auto objtype = object.getType();
+    auto objtype = object.type();
     auto objsize = object.getChildrenCount();
 
     for( std::size_t ii=0; ii<objsize; ii++ )
@@ -99,7 +99,7 @@ void dump2stream( std::ostream& os, const JsonBase& object, int depth, bool dens
             break;
         }
 
-        switch (childobj->getType())
+        switch (childobj->type())
         {
         // impotant datatypes
         case JsonBase::Null:
@@ -138,7 +138,7 @@ void dump2stream( std::ostream& os, const JsonBase& object, int depth, bool dens
             os << "]";
             break;
         default:
-            os  << "can't print type : " << childobj->getType();
+            os  << "can't print type : " << childobj->type();
         }
     }
     if( !dense )
@@ -155,7 +155,7 @@ std::string dump( const JsonBase &object, bool dense )
 
 void dump( std::ostream &os, const JsonBase &object, bool dense )
 {
-    auto objtype = object.getType();
+    auto objtype = object.type();
     if( objtype == JsonBase::Object )
         os << ( dense ? "{" : "{\n" );
     else

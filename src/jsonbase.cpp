@@ -1,4 +1,3 @@
-#include "jsonbuilder.h"
 #include "jsondump.h"
 
 namespace jsonio14 {
@@ -43,7 +42,7 @@ double JsonBase::toDouble() const
 long JsonBase::toInt() const
 {
     long val = 0;
-    if( getType() == Type::Int or getType() == Type::Bool )
+    if( type() == Type::Int )
     {
         string2v( getFieldValue(), val );
     }

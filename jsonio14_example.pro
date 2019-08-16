@@ -1,6 +1,4 @@
-TARGET = jsonio_example
 TEMPLATE = app
-
 CONFIG += thread console c++14
 CONFIG -= app_bundle
 CONFIG -= qt
@@ -31,7 +29,6 @@ INCLUDEPATH   += $$JSONIO14_DIR
 INCLUDEPATH   += $$JSONIO14_HEADERS_DIR
 
 #LIBS +=  -lcurl  -lvelocypack
-#!win32:LIBS +=  -lboost_regex -lboost_system -lboost_filesystem
 !win32:LIBS +=  -lboost_system -lboost_filesystem
 
 OBJECTS_DIR   = obj
@@ -40,8 +37,8 @@ include($$JSONIO14_DIR/jsonio14.pri)
 
 SOURCES += \
 #        main.cpp \
-#    examples/exbuilder.cpp \
-     examples/exparser.cpp
+      examples/exbuilder.cpp
+#     examples/exparser.cpp
 
 DISTFILES += \
     docs/source.md

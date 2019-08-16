@@ -38,27 +38,27 @@ public:
 
     /// This function returns true if and only if the JSON type is Object.
     virtual bool isObject() const
-    { return getType() == Type::Object; }
+    { return type() == Type::Object; }
 
     /// This function returns true if and only if the JSON type is Array.
     virtual bool isArray() const
-    { return  getType() == Type::Array; }
+    { return  type() == Type::Array; }
 
     /// This function returns true if and only if the JSON type is a numeric value.
     virtual bool isNumber( ) const
-    { return  getType() == Type::Int or getType() == Type::Double; }
+    { return  type() == Type::Int or type() == Type::Double; }
 
     /// This function returns true if and only if the JSON type is boolean.
     virtual bool isBool() const
-    { return getType() == Type::Bool; }
+    { return type() == Type::Bool; }
 
     /// This function returns true if and only if the JSON type is Null object.
     virtual bool isNull() const
-    { return getType() == Type::Null; }
+    { return type() == Type::Null; }
 
     /// This function returns true if and only if the JSON type is String
     virtual bool isString() const
-    { return getType() == Type::String; }
+    { return type() == Type::String; }
 
     /// @brief return whether type is primitive
     /// This function returns true if and only if the JSON type is primitive
@@ -88,16 +88,25 @@ public:
     virtual bool   toBool() const;
 
     /// Get object type.
-    virtual Type getType() const = 0;
+    virtual Type type() const = 0;
 
     /// @brief return the type as string
     ///   Returns the type name as string to be used in error messages - usually to
     ///   indicate that a function was called on a wrong JSON type.
-    virtual const char* getTypeName() const
+    virtual const char* typeName() const
     {
-        return  typeName( getType() );
+        return  typeName( type() );
     }
 
+    std::size_t size() const
+    {
+      return  getChildrenCount();
+    }
+
+    bool empty() const
+    {
+      return size() < 1;
+    }
     // Get methods ( using in Qt GUI ) --------------------------
 
     virtual const std::string& getKey() const = 0;
@@ -163,7 +172,7 @@ public:
               class = typename std::enable_if<is_container<T>{}, bool>::type >
     bool getArray( T& values  )
     {
-        JARANGO_THROW_IF( !isArray(), "JsonBase", 11, "cannot use getArray with " + std::string( getTypeName() ) );
+        JARANGO_THROW_IF( !isArray(), "JsonBase", 11, "cannot use getArray with " + std::string( typeName() ) );
         values.clear();
         typename T::value_type val;
         for ( size_t ii=0; ii<getChildrenCount(); ii++)
@@ -179,7 +188,7 @@ public:
               class = typename std::enable_if<is_mappish<Map>{}, bool>::type >
     bool getMapKey( Map& values  )
     {
-        JARANGO_THROW_IF( !isObject(), "JsonBase", 12, "cannot use getMapKey with " + std::string( getTypeName() ) );
+        JARANGO_THROW_IF( !isObject(), "JsonBase", 12, "cannot use getMapKey with " + std::string( typeName() ) );
         values.clear();
         typename Map::value_type val;
         typename Map::key_type key;

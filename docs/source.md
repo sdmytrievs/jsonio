@@ -46,7 +46,7 @@ JsonSchema loads( const std::string& schema_name, const std::string& jsonstr );
 ```
 
 > *source: "+";    test: "+-";  example: "-"*
-> Must be more tests about dump/undump strings
+> Could be more tests about dump/undump strings
 
 5. jsonbase.h(cpp)   ( under construction )
 
@@ -63,14 +63,19 @@ A base interface to store JSON object.
 
 ```cpp
 
+auto jsFree =JsonFree::object();
+JsonObjectBuilder jsBuilder(jsFree);
 
+jsBuilder.addNull( "vnull").addBool( "vbool", true ).addInt( "vint", 3 )
+         .addDouble( "vdouble", 1e-10 ).addString( "vstring", "Test String" );
+
+json::dump(std::cout, jsFree, false );
 
 ```
 
-> *source: "+";    test: "-";  example: "-"*
-> Need  examples and tests
+> *source: "+";    test: "+";  example: "+"*
 
-6. jsonparser.h(cpp)
+7. jsonparser.h(cpp)
 
 class JsonParser - read JsonBase structure from json string.
 
@@ -85,10 +90,10 @@ JsonFree loads( const std::string &jsonstr )
 }
 
 ```
-> *source: "+";    test: "+";  example: "-"*
-> Need examples
+> *source: "+";  test: "+";  example: "+"*
+> Read NaN and Inf values -> exception
 
-7. jsonfree.h(cpp)
+8. jsonfree.h(cpp)
 
 class JsonFree - a class to store JSON object
 

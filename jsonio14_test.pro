@@ -4,7 +4,6 @@ CONFIG -= app_bundle
 CONFIG += thread
 CONFIG -= qt
 
-
 !win32 {
   DEFINES += __unix
 }
@@ -25,7 +24,6 @@ JSONIO14_DIR =  $$PWD/src
 JSONIO14_HEADERS_DIR =  $$PWD/include/jsonio14
 TESTS_DIR =  $$PWD/tests
 
-
 DEPENDPATH   += $$JSONIO14_DIR
 DEPENDPATH   += $$JSONIO14_HEADERS_DIR
 DEPENDPATH   += $$TESTS_DIR
@@ -35,11 +33,12 @@ INCLUDEPATH   += $$JSONIO14_HEADERS_DIR
 INCLUDEPATH   += $$TESTS_DIR
 
 #LIBS +=  -lcurl  -lvelocypack
-!win32:LIBS +=  -lboost_regex -lboost_system -lboost_filesystem
+!win32:LIBS +=  -lboost_system -lboost_filesystem
+
+OBJECTS_DIR   = obj
 
 include($$TESTS_DIR/gtest_dependency.pri)
 include($$JSONIO14_DIR/jsonio14.pri)
-
 
 HEADERS += \
         $$TESTS_DIR/tst_jsonio.h \

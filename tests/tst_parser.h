@@ -14,14 +14,14 @@ using namespace jsonio14;
 TEST( JsonioParser, TestNullBool )
 {
     auto jsFree = json::loads("[ null ]");
-    EXPECT_EQ( JsonBase::Null, jsFree[0].getType() );
+    EXPECT_EQ( JsonBase::Null, jsFree[0].type() );
 
     jsFree = json::loads("[true]");
-    EXPECT_EQ( JsonBase::Bool, jsFree[0].getType() );
+    EXPECT_EQ( JsonBase::Bool, jsFree[0].type() );
     EXPECT_TRUE(jsFree[0].toBool());
 
     jsFree = json::loads("[false]");
-    EXPECT_EQ( JsonBase::Bool, jsFree[0].getType() );
+    EXPECT_EQ( JsonBase::Bool, jsFree[0].type() );
     EXPECT_FALSE(jsFree[0].toBool());
 }
 
@@ -30,7 +30,7 @@ TEST( JsonioParser, TestDouble )
     auto TEST_DOUBLE = [](const std::string & json_string, const double expected)
     {
         auto jsFree = json::loads(json_string);
-        EXPECT_EQ( JsonBase::Double, jsFree[0].getType() );
+        EXPECT_EQ( JsonBase::Double, jsFree[0].type() );
         EXPECT_NEAR( expected, jsFree[0].toDouble(), 1e-20 );
     };
 
@@ -79,7 +79,7 @@ TEST( JsonioParser, TestInt )
     auto TEST_INT = [](const std::string & json_string, const long expected)
     {
         auto jsFree = json::loads(json_string);
-        EXPECT_EQ( JsonBase::Int, jsFree[0].getType() );
+        EXPECT_EQ( JsonBase::Int, jsFree[0].type() );
         EXPECT_EQ( expected, jsFree[0].toInt() );
     };
 
@@ -101,7 +101,7 @@ TEST( JsonioParser, TestString )
     auto TEST_STRING = [](const std::string & json_string, const std::string& expected)
     {
         auto jsFree = json::loads(json_string);
-        EXPECT_EQ( JsonBase::String, jsFree[0].getType() );
+        EXPECT_EQ( JsonBase::String, jsFree[0].type() );
         EXPECT_EQ( expected, jsFree[0].toString() );
     };
 
@@ -115,28 +115,28 @@ TEST( JsonioParser, TestString )
 TEST( JsonioParser, TestObject )
 {
     auto jsFree = json::loads("{}");
-    EXPECT_EQ( JsonBase::Object, jsFree.getType() );
+    EXPECT_EQ( JsonBase::Object, jsFree.type() );
 
     jsFree = json::loads(" { \"abc\": 11 } ");
-    EXPECT_EQ( JsonBase::Object, jsFree.getType() );
+    EXPECT_EQ( JsonBase::Object, jsFree.type() );
     EXPECT_EQ( jsFree["abc"].toInt(), 11 );
 
     jsFree = json::loads(" { \"abc\": 11, \"dfg\": [ true ] } ");
-    EXPECT_EQ( JsonBase::Object, jsFree.getType() );
+    EXPECT_EQ( JsonBase::Object, jsFree.type() );
     EXPECT_TRUE( jsFree["dfg"][0].toBool() );
 }
 
 TEST( JsonioParser, TestArray )
 {
     auto jsFree = json::loads("[]");
-    EXPECT_EQ( JsonBase::Array, jsFree.getType() );
+    EXPECT_EQ( JsonBase::Array, jsFree.type() );
 
     jsFree = json::loads(" [ \"abc\", 11, 12 ] ");
-    EXPECT_EQ( JsonBase::Array, jsFree.getType() );
+    EXPECT_EQ( JsonBase::Array, jsFree.type() );
     EXPECT_EQ( jsFree[1].toInt(), 11 );
 
     jsFree = json::loads(" [ [ true, false ] ] ");
-    EXPECT_EQ( JsonBase::Array, jsFree.getType() );
+    EXPECT_EQ( JsonBase::Array, jsFree.type() );
     EXPECT_TRUE( jsFree[0][0].toBool() );
 }
 

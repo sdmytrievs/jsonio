@@ -36,7 +36,7 @@ TEST( JsonioDump, dumpVector )
     EXPECT_EQ( "[ \"v1\", \"v2\", \"v3\", \"v4\" ]", json::dump(slist));
 }
 
-TEST( JsonioBuilder, dumpMap )
+TEST( JsonioDump, dumpMap )
 {
     std::map<std::string, bool> vmapb = { {"key1", true }, {"key2", false } };
     std::map<std::string, std::string> vmaps = { {"key1", "val4" }, {"key2", "val5" } };
@@ -45,7 +45,7 @@ TEST( JsonioBuilder, dumpMap )
 }
 
 // Must be more tests about dump/undump strings
-TEST( JsonioParser, TestUndumpString )
+TEST( JsonioDump, TestUndumpString )
 {
     std::string sdata("");
     json::undumpString(sdata);
