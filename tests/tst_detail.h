@@ -10,6 +10,7 @@
 #include <forward_list>
 
 #include "jsondetail.h"
+#include "exceptions.h"
 #include "type_test.h"
 
 using namespace testing;
@@ -149,10 +150,8 @@ TEST( JsonioDetail, Split )
  intquery.pop();
  EXPECT_EQ( 3, intquery.front() );
 
- auto intquery2 =   split_int( "1;;3", ";" );
- EXPECT_EQ( 2, intquery2.size() );
- auto intquery3 =   split_int( ";1e;3;", ";" );
- EXPECT_EQ( 1, intquery3.size() );
+ EXPECT_THROW( split_int( "1;;3", ";" ), jarango_exception );
+ EXPECT_THROW( split_int( ";1e;3;", ";" ), jarango_exception );
 
  auto strquery = split("a:bb:ccc", ":" );
  EXPECT_EQ( 3, strquery.size() );

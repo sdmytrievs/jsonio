@@ -3,7 +3,7 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock-matchers.h>
 
-#include "jsonbuilder.h"
+#include "jsondump.h"
 #include "jsonfree.h"
 #include "service.h"
 
@@ -165,12 +165,3 @@ TEST( JsonioParser, TestPass )
   }
 }
 
-// moved it to
-namespace jsonio14 {
-void undumpString( std::string& strvalue );
-}
-TEST( JsonioParser, TestUndumpString )
-{
- std::string sdata("");
- undumpString(sdata);
-}

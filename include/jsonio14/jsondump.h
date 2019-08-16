@@ -72,6 +72,10 @@ std::string dump( const T& elems  )
     return genjson;
 }
 
+///  @brief Scan a string literal.
+///  Back to dump escaped string.
+void undumpString( std::string& strvalue );
+
 } // namespace json
 
 } // namespace jsonio14

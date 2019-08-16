@@ -2,7 +2,7 @@
 
 1. exeptions.h
 
-   General exception structure into project.
+General exception structure into project.
 
 > *source: "+";    test: "-";  example: "-"*
 
@@ -25,21 +25,12 @@
 
 > *source: "+";    test: "+";  example: "-"*
 
-4. jsonbase.h(cpp)   ( under construction )
-
-  A base interface to store JSON object.
-
-
-> *source: "+-";    test: "+-";  example: "-"*
-
-5. jsonbuilder.h(cpp)
+4. jsondump.h(cpp)
 
     - Dump escaped string (json::dump)
     - Serialize an integral type value,  vector-like objects and  map-like objects to a json string (json::dump)
     - Serialize a JsonBase object as a JSON formatted stream (json::dump)
     - Deserialize a JSON string to a object (json::loads)
-    - class JsonObjectBuilder - builder for creating JsonBase::Object models from scratch
-    - class JsonArrayBuilder -  builder for creating JsonBase::Array from scratch
 
 ```cpp
 
@@ -55,10 +46,33 @@ JsonSchema loads( const std::string& schema_name, const std::string& jsonstr );
 ```
 
 > *source: "+";    test: "+-";  example: "-"*
+> Must be more tests about dump/undump strings
+
+5. jsonbase.h(cpp)   ( under construction )
+
+A base interface to store JSON object.
+
+
+> *source: "+-";    test: "+-";  example: "-"*
+> Work about
+
+6. jsonbuilder.h(cpp)
+
+    - class JsonObjectBuilder - builder for creating JsonBase::Object models from scratch
+    - class JsonArrayBuilder -  builder for creating JsonBase::Array from scratch
+
+```cpp
+
+
+
+```
+
+> *source: "+";    test: "-";  example: "-"*
+> Need  examples and tests
 
 6. jsonparser.h(cpp)
 
-   class JsonParser - read JsonBase structure from json string.
+class JsonParser - read JsonBase structure from json string.
 
 ```cpp
 
@@ -72,3 +86,34 @@ JsonFree loads( const std::string &jsonstr )
 
 ```
 > *source: "+";    test: "+";  example: "-"*
+> Need examples
+
+7. jsonfree.h(cpp)
+
+class JsonFree - a class to store JSON object
+
+
+> *source: "+-";    test: "-";  example: "-"*
+> Work about, Need tests, examples
+
+## Next steps
+
+Move dbarango API to other github project
+
+8. json2file.h(cpp)
+9. thrift_schema.h(cpp)
+10. settings.h(cpp)
+11. jsonschema.h(cpp)
+12. dbquerydef.h(cpp)
+13. dbconnect.h(cpp)
+14. dbarango.h(cpp)
+15. dbcollection.h(cpp)
+16. dbdocument.h(cpp)
+17. dbjsondoc.h(cpp)
+18. dbschemadoc.h(cpp)
+19. dbvertexdoc.h(cpp)
+20. dbedgedoc.h(cpp)
+21. traversal.h(cpp)
+
+Work about jsonimpex
+Work about jsonui

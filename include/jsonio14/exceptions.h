@@ -40,7 +40,7 @@ protected:
 
     static std::string header(const std::string& aname, int aid)
     {
-        return "[ jsonio." + aname + "." + std::to_string(aid) + " ] ";
+        return "jsonio." + aname + "." + std::to_string(aid);
     }
 
 private:

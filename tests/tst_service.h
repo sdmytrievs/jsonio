@@ -35,6 +35,16 @@ TEST( JsonioService, regexpReplace )
     EXPECT_EQ( "there is a sub-sequence in the string", resstr );
 }
 
+
+//  Function that can be used to replase text using regexp
+TEST( JsonioService, regexprTest )
+{
+    EXPECT_TRUE( regexp_test("foo.txt", "^[a-z].*") );
+    EXPECT_FALSE( regexp_test("-bar.txt", "^[a-z].*") );
+    EXPECT_TRUE( regexp_test("baz.dat", "^[a-z].*") );
+    EXPECT_FALSE( regexp_test("2zoidberg", "^[a-z].*") );
+}
+
 TEST( JsonioService, Trim )
 {
     std::string str{" \t\rTest \n "};

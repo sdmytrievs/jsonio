@@ -1,4 +1,5 @@
 #include "jsonparser.h"
+#include "jsondump.h"
 #include "exceptions.h"
 #include "service.h"
 
@@ -14,8 +15,6 @@ enum {
     jsValueSeparator = ',',//0x2c,
     jsQuote = '\"'      //0x22
 };
-
-void undumpString( std::string& strvalue );
 
 void JsonParser::parse_to( JsonBase &out )
 {
@@ -179,7 +178,7 @@ void JsonParser::parse_value(const std::string &name, JsonBuilderBase &builder)
         std::string str;
         parse_string( str );
         // conwert all pair ('\\''\n') to one simbol '\n' and other
-        undumpString( str );
+        json::undumpString( str );
         builder.addString( name, str );
     }
         break;
@@ -213,134 +212,6 @@ void JsonParser::parse_value(const std::string &name, JsonBuilderBase &builder)
         cur_pos = pos_end_value;
     }
         break;
-    }
-}
-
-// use decoder --------------------------------------------
-// https://github.com/dropbox/json11/blob/master/json11.cpp
-// see other https://github.com/nlohmann/json/blob/develop/include/nlohmann/detail/input/lexer.hpp
-
-/* esc(c)
- *
- * Format char c suitable for printing in an error message.
- */
-static inline std::string esc(char c) {
-    char buf[12];
-    if (static_cast<uint8_t>(c) >= 0x20 && static_cast<uint8_t>(c) <= 0x7f) {
-        snprintf(buf, sizeof buf, "'%c' (%d)", c, c);
-    } else {
-        snprintf(buf, sizeof buf, "(%d)", c);
-    }
-    return std::string(buf);
-}
-
-/* encode_utf8(pt, out)
- *
- * Encode pt as UTF-8 and add it to out.
- */
-void encode_utf8(long pt, std::string & out) {
-    if (pt < 0)
-        return;
-
-    if (pt < 0x80) {
-        out += static_cast<char>(pt);
-    } else if (pt < 0x800) {
-        out += static_cast<char>((pt >> 6) | 0xC0);
-        out += static_cast<char>((pt & 0x3F) | 0x80);
-    } else if (pt < 0x10000) {
-        out += static_cast<char>((pt >> 12) | 0xE0);
-        out += static_cast<char>(((pt >> 6) & 0x3F) | 0x80);
-        out += static_cast<char>((pt & 0x3F) | 0x80);
-    } else {
-        out += static_cast<char>((pt >> 18) | 0xF0);
-        out += static_cast<char>(((pt >> 12) & 0x3F) | 0x80);
-        out += static_cast<char>(((pt >> 6) & 0x3F) | 0x80);
-        out += static_cast<char>((pt & 0x3F) | 0x80);
-    }
-}
-
-void undumpString( std::string& strvalue )
-{
-    if(strvalue.empty())
-        return;
-
-    if( strvalue.find_first_of("\\") != std::string::npos )
-    {
-        std::string resstr = "";
-        size_t ii=0;
-        long last_escaped_codepoint = -1;
-
-        while( ii<strvalue.length()  )
-        {
-            if( strvalue[ii]  == '\\')
-            {
-                ii++;
-                auto ch = strvalue[ii++];
-
-                if( ch == 'u')
-                {
-                    // Extract 4-byte escape sequence
-                    std::string esc = strvalue.substr(ii, 4);
-                    // Explicitly check length of the substring. The following loop
-                    // relies on std::string returning the terminating NUL when
-                    // accessing str[length]. Checking here reduces brittleness.
-                    JARANGO_THROW_IF( esc.length() < 4, "JsonParser", 10, "bad \\u escape: " + esc );
-                    for (size_t j = 0; j < 4; j++) {
-                        JARANGO_THROW_IF( !in_range(esc[j], 'a', 'f') and !in_range(esc[j], 'A', 'F') and !in_range(esc[j], '0', '9'),
-                                          "JsonParser", 11, "bad \\u escape: " + esc );
-                    }
-                    long codepoint = strtol(esc.data(), nullptr, 16);
-
-                    // JSON specifies that characters outside the BMP shall be encoded as a pair
-                    // of 4-hex-digit \u escapes encoding their surrogate pair components. Check
-                    // whether we're in the middle of such a beast: the previous codepoint was an
-                    // escaped lead (high) surrogate, and this is a trail (low) surrogate.
-                    if (in_range<long>(last_escaped_codepoint, 0xD800, 0xDBFF)
-                            && in_range<long>(codepoint, 0xDC00, 0xDFFF)) {
-                        // Reassemble the two surrogate pairs into one astral-plane character, per
-                        // the UTF-16 algorithm.
-                        encode_utf8((((last_escaped_codepoint - 0xD800) << 10)
-                                     | (codepoint - 0xDC00)) + 0x10000, resstr);
-                        last_escaped_codepoint = -1;
-                    } else {
-                        encode_utf8(last_escaped_codepoint, resstr);
-                        last_escaped_codepoint = codepoint;
-                    }
-
-                    ii += 4;
-                    continue;
-                }
-
-                encode_utf8(last_escaped_codepoint, resstr);
-                last_escaped_codepoint = -1;
-
-                switch( ch )
-                {
-                case '\"': resstr += '\"'; break;
-                case '\'': resstr += '\''; break;
-                case '\\': resstr += '\\'; break;
-                case '/':  resstr += '/';  break;
-                case 'n':  resstr += '\n'; break;
-                case 'r':  resstr += '\r'; break;
-                case 't':  resstr += '\t'; break;
-                case 'b':  resstr += '\b'; break;
-                case 'f':  resstr += '\f'; break;
-                default:
-                    JARANGO_THROW( "JsonParser", 13, "invalid escape character " + esc(ch) );
-                }
-            }
-            else
-            {
-                encode_utf8(last_escaped_codepoint, resstr);
-                last_escaped_codepoint = -1;
-                auto ch = strvalue[ii++];
-                JARANGO_THROW_IF( in_range<long>(ch, 0, 0x1f),
-                                  "JsonParser", 12, "unescaped in string" );
-                resstr += ch;
-            }
-        }
-        encode_utf8(last_escaped_codepoint, resstr);
-        strvalue =  resstr;
     }
 }
 

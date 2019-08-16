@@ -1,6 +1,7 @@
 #include <iomanip>
 #include "jsondetail.h"
 #include "service.h"
+#include "exceptions.h"
 
 namespace jsonio14 {
 
@@ -80,8 +81,12 @@ std::queue<int> split_int( const std::string& str_data, const std::string& delim
     while( pos != std::string::npos )
     {
         auto part = str.substr(0, pos);
-        if( is<int>( value, str.substr(0, pos) ) )
+        if( is<int>( value, str.substr(0, pos) ) ){
             res.push( value );
+        }
+        else {
+          JARANGO_THROW( "detail", 1, "illegal input value " + str_data );
+        }
         str = str.substr( pos + delimiter.length() );
         pos = str.find( delimiter );
     }
