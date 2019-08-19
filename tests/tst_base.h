@@ -336,3 +336,46 @@ TEST( JsonioBase, getValueMapKey )
     jsFree.getValue(vumaps2);
     EXPECT_EQ( vumaps, vumaps2 );
 }
+
+
+template <typename T>
+class JsonioBaseTest : public ::testing::Test
+{
+
+public:
+
+    const std::string schemaName = "SimpleSchemaTest";
+    const std::string input_json = "{\"vbool\":true,\"vint\":-100,\"vdouble\":1e-10,\"vstring\":\"Test string\","
+                                   "\"vlist\":[1.7,2.7,3.7,5.7],\"vmap\":{\"key1\":\"val1\",\"key2\":\"val2\"}}";
+
+    virtual void SetUp()
+    { }
+
+    virtual void TearDown()
+    {
+        delete test_object;
+    }
+
+    T* test_object = nullptr;
+
+};
+
+template<> void JsonioBaseTest<JsonFree>::SetUp()
+{
+    test_object = new  JsonFree( JsonFree::object() );
+    json::loads( input_json, *test_object );
+}
+
+using JsonTypes = ::testing::Types<JsonFree>;
+TYPED_TEST_SUITE(JsonioBaseTest, JsonTypes);
+
+TYPED_TEST(JsonioBaseTest, isTop )
+{
+    const auto& obj = *this->test_object;
+    EXPECT_TRUE( obj.isTop());
+    EXPECT_FALSE( obj["vlist"].isTop() );
+}
+
+
+
+

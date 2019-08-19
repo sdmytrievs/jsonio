@@ -53,7 +53,7 @@ JsonSchema loads( const std::string& schema_name, const std::string& jsonstr );
 A base interface to store JSON object.
 
 
-> *source: "+-";    test: "+-";  example: "-"*
+> *source: "+-";    test: "+";  example: "-"*
 > Most virtual functions will test into implementations
 
 6. jsonbuilder.h(cpp)
