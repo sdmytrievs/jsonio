@@ -41,4 +41,6 @@ SOURCES += \
 #      examples/exparser.cpp
 
 DISTFILES += \
-    docs/source.md
+    Resources/docs/source.md \
+    Resources/thrift/schema_test.thrift
+
