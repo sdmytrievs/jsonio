@@ -51,7 +51,8 @@ std::string dump( const T& elems  )
     {
         genjson += " "+dump( row ) + ",";
     }
-    genjson.pop_back();
+    if( !elems.empty() )
+        genjson.pop_back();
     genjson += " ]";
     return genjson;
 }
@@ -67,7 +68,8 @@ std::string dump( const T& elems  )
         genjson += " \"" + row.first + "\"";
         genjson += ":" + dump(row.second) + ",";
     }
-    genjson.pop_back();
+    if( !elems.empty() )
+        genjson.pop_back();
     genjson += " }";
     return genjson;
 }

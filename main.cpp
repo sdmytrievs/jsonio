@@ -20,7 +20,9 @@ using namespace std;
 using namespace jsonio14;
 
 
+#include <forward_list>
 
+/*
 void TestBaseType()
 {
     auto jsFree =JsonFree::object();
@@ -63,15 +65,28 @@ void TestBaseType()
 //    jsFree["method"] = vmap1;
     //jsFree["vlonglong"] = vlonglong;
 }
+*/
 
 
 int main()
 {
     //TestBaseType();
     cout << "Hello World!" << endl;
+    std::map<std::string, int> vmap2, vmap = { {"key1", 4 }, {"key2", 5 } };
+    auto jsFree = json::loads("{\"key1\":4,\"key2\":5}\n");
+    jsFree.getMapKey(vmap2);
+    std::cout << json::dump(vmap2) << std::endl;
 
-    auto jsFree = JsonFree::object();
-    JsonObjectBuilder jsBuilder(jsFree);
+/*
+    std::vector<std::string> vvecs = { "v1", "v2", "v3", "v4" };
+    std::vector<std::string> vvecs2;
+    auto jsFree = json::loads("[\"v1\",\"v2\",\"v3\",\"v4\"]\n");
+    jsFree.getArray(vvecs2);
+
+    std::cout << dump(vvecs2) << std::endl;
+*/
+    return 0;
+  /*  JsonObjectBuilder jsBuilder(jsFree);
 
     jsBuilder.addString( "name", "ComplexObject" );
     auto arr = jsBuilder.addArray("array");
@@ -98,7 +113,7 @@ int main()
               << jsFree["array"]["3"].getFieldPath() << " : "
               << jsFree["object"]["version"].getFieldPath() << " : "
               << jsFree["object"]["comment"].getFieldPath() << " : " << std::endl;
-
+*/
     return 0;
 }
 
@@ -106,7 +121,7 @@ int main()
 // ----------------  old --------------------------
 void testDumps()
 {
-    string str("Test string.");
+/*    string str("Test string.");
 
 
     std::cout << v2string(true) << std::endl;
@@ -170,5 +185,5 @@ void testDumps()
     std::cout << is_mappish<std::unordered_multimap<std::string, int>>::value << std::endl;    //false
     std::cout << is_mappish<std::set<int>>::value << std::endl;    //false
     std::cout << is_mappish<int>::value << std::endl;              //false
-
+*/
 }

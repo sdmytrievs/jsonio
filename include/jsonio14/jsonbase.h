@@ -126,25 +126,31 @@ public:
 
     virtual std::vector<std::string> getUsedKeys() const = 0;
 
-    /// Get object name
+    /// Get object name.
     virtual std::string getHelpName() const;
 
-    /// Get object description
+    /// Get object description.
     virtual std::string getDescription() const
     {
         return getHelpName();
     }
 
-    /// Get field path to top object
+    /// Get field path to top object.
     std::string getFieldPath() const;
 
     // Get values  --------------------------
+
+    bool getValue( std::string& value  ) const
+    {
+        value = toString(true);
+        return true;
+    }
 
     /// Get primitive value from current Node
     /// Could be get_to( T& value ) function
     template <class T,
               std::enable_if_t<!is_container<T>{}&!is_mappish<T>{}, int> = 0 >
-    bool getValue( T& value  )
+    bool getValue( T& value  ) const
     {
         auto decodedType = typeTraits( value );
         if( decodedType>= Null && decodedType<=String )
@@ -157,7 +163,7 @@ public:
     /// Get array-like data from current Node
     template <class T,
               std::enable_if_t<is_container<T>{}&!is_mappish<T>{}, int> = 0 >
-    bool getValue( T& value  )
+    bool getValue( T& value  ) const
     {
         return getArray( value );
     }
@@ -165,15 +171,16 @@ public:
     /// Get map-like data from current Node
     template <class T,
               std::enable_if_t<is_container<T>{}&is_mappish<T>{}, int> = 0 >
-    bool getValue( T& value  )
+    bool getValue( T& value  ) const
     {
         return getMapKey( value );
     }
 
-    /// Get  vector-like objects (std::list, std::vector, std::set, etc) from current Node
+    /// Get  vector-like objects (std::list, std::vector ) from current Node
+    /// Container must have emplace_back function
     template <class T,
               class = typename std::enable_if<is_container<T>{}, bool>::type >
-    bool getArray( T& values  )
+    bool getArray( T& values  ) const
     {
         JARANGO_THROW_IF( !isArray(), "JsonBase", 11, "cannot use getArray with " + std::string( typeName() ) );
         values.clear();
@@ -189,19 +196,21 @@ public:
     /// Get map-like objects (std::map, std::unordered_map, etc) to current Node
     template <class Map,
               class = typename std::enable_if<is_mappish<Map>{}, bool>::type >
-    bool getMapKey( Map& values  )
+    bool getMapKey( Map& values  ) const
     {
         JARANGO_THROW_IF( !isObject(), "JsonBase", 12, "cannot use getMapKey with " + std::string( typeName() ) );
         values.clear();
-        typename Map::value_type val;
-        typename Map::key_type key;
+        using Tkey = std::remove_const_t<typename Map::value_type::first_type>; //may need to remove const
+        using Tval = std::remove_const_t<typename Map::value_type::second_type>;
 
+        Tval val;
+        Tkey key;
         for ( size_t ii=0; ii<getChildrenCount(); ii++)
         {
             if( !string2v( getChild(ii)->getKey(), key ) )
                 continue;
             if( getChild(ii)->getValue( val ) )
-                values[key] = val;
+                 values.emplace( key, val);
         }
         return true;
     }

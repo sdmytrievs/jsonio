@@ -33,15 +33,15 @@ bool is( T& x, const std::string& s)
 template < typename T >
 std::string v2string( const T& value )
 {
-    if(std::isfinite(value))
-    {
+    //if(std::isfinite(value))
+    //{
         std::ostringstream os;
         os << value;;
         return os.str();
-    } else
-    {
-        return DetailSettings::infiniteValue;
-    }
+    //} else
+    //{
+    //    return DetailSettings::infiniteValue;
+    //}
 }
 
 /// Serializations string value to string.

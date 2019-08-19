@@ -14,6 +14,11 @@ template <> JsonBase::Type JsonBase::typeTraits( const bool& )
     return JsonBase::Bool;
 }
 
+template <> JsonBase::Type JsonBase::typeTraits( const char& )
+{
+    return JsonBase::String;
+}
+
 template <> JsonBase::Type JsonBase::typeTraits( const std::string& )
 {
     return JsonBase::String;
