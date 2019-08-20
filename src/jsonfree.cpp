@@ -32,12 +32,12 @@ JsonFree::JsonFree( const JsonFree &obj ):
     copy(obj);
 }
 
-JsonFree::JsonFree( JsonFree &&obj ):
-    field_type(obj.field_type), field_key( std::move(obj.field_key) ), field_value( "" ),
-    ndx_in_parent(0), parent_object(nullptr)
+/*JsonFree::JsonFree( JsonFree &&obj )noexcept:
+    field_type(obj.field_type), field_key( obj.field_key ), field_value( "" ),
+    ndx_in_parent(obj.ndx_in_parent), parent_object(obj.parent_object)
 {
     move(std::move(obj));
-}
+}*/
 
 std::vector<std::string> JsonFree::getUsedKeys() const
 {

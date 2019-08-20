@@ -140,7 +140,7 @@ public:
 
     // Get values  --------------------------
 
-    bool getValue( std::string& value  ) const
+    bool get_to( std::string& value  ) const
     {
         value = toString(true);
         return true;
@@ -150,7 +150,7 @@ public:
     /// Could be get_to( T& value ) function
     template <class T,
               std::enable_if_t<!is_container<T>{}&!is_mappish<T>{}, int> = 0 >
-    bool getValue( T& value  ) const
+    bool get_to( T& value  ) const
     {
         auto decodedType = typeTraits( value );
         if( decodedType>= Null && decodedType<=String )
@@ -163,31 +163,31 @@ public:
     /// Get array-like data from current Node
     template <class T,
               std::enable_if_t<is_container<T>{}&!is_mappish<T>{}, int> = 0 >
-    bool getValue( T& value  ) const
+    bool get_to( T& value  ) const
     {
-        return getArray( value );
+        return get_to_list( value );
     }
 
     /// Get map-like data from current Node
     template <class T,
               std::enable_if_t<is_container<T>{}&is_mappish<T>{}, int> = 0 >
-    bool getValue( T& value  ) const
+    bool get_to( T& value  ) const
     {
-        return getMapKey( value );
+        return get_to_map( value );
     }
 
     /// Get  vector-like objects (std::list, std::vector ) from current Node
     /// Container must have emplace_back function
     template <class T,
               class = typename std::enable_if<is_container<T>{}, bool>::type >
-    bool getArray( T& values  ) const
+    bool get_to_list( T& values  ) const
     {
         JARANGO_THROW_IF( !isArray(), "JsonBase", 11, "cannot use getArray with " + std::string( typeName() ) );
         values.clear();
         typename T::value_type val;
         for ( size_t ii=0; ii<getChildrenCount(); ii++)
         {
-            if( getChild(ii)->getValue( val ) )
+            if( getChild(ii)->get_to( val ) )
                 values.emplace_back(val);
         }
         return true;
@@ -196,7 +196,7 @@ public:
     /// Get map-like objects (std::map, std::unordered_map, etc) to current Node
     template <class Map,
               class = typename std::enable_if<is_mappish<Map>{}, bool>::type >
-    bool getMapKey( Map& values  ) const
+    bool get_to_map( Map& values  ) const
     {
         JARANGO_THROW_IF( !isObject(), "JsonBase", 12, "cannot use getMapKey with " + std::string( typeName() ) );
         values.clear();
@@ -209,7 +209,7 @@ public:
         {
             if( !string2v( getChild(ii)->getKey(), key ) )
                 continue;
-            if( getChild(ii)->getValue( val ) )
+            if( getChild(ii)->get_to( val ) )
                  values.emplace( key, val);
         }
         return true;
@@ -217,10 +217,16 @@ public:
 
     // Set methods  --------------------------
 
+    bool set_from( const std::string& value  )
+    {
+        update_node(  String, v2string(value) );
+        return true;
+    }
+
     /// Set Value to current Node
     template <class T,
               std::enable_if_t<!is_container<T>{}&!is_mappish<T>{}, int> = 0 >
-    bool setValue( const T& value  )
+    bool set_from( const T& value  )
     {
         auto decodedType = typeTraits( value );
         if( decodedType>= Null && decodedType<=String )
@@ -234,49 +240,43 @@ public:
     /// Set Array to current Node
     template <class T,
               std::enable_if_t<is_container<T>{}&!is_mappish<T>{}, int> = 0 >
-    bool setValue( const T& value  )
+    bool set_from( const T& value  )
     {
-        setArray( value );
+        set_list_from( value );
         return true;
     }
 
     /// Set Map to current Node
     template <class T,
               std::enable_if_t<is_container<T>{}&is_mappish<T>{}, int> = 0 >
-    bool setValue( const T& value  )
+    bool set_from( const T& value  )
     {
-        setMapKey( value );
-        return true;
-    }
-
-    bool setValue( const std::string& value  )
-    {
-        update_node(  String, v2string(value) );
+        set_map_from( value );
         return true;
     }
 
     /// Set  vector-like objects (std::list, std::vector, std::set, etc) to current Node
     template <class T,
               class = typename std::enable_if<is_container<T>{}, bool>::type >
-    void setArray( const T& values  )
+    void set_list_from( const T& values  )
     {
         int ii{0};
         update_node(  Array, "" );
         for( const auto& el: values )
         {
-            append_node( std::to_string(ii++), UNDEFINED, "" ).setValue(el);
+            append_node( std::to_string(ii++), UNDEFINED, "" ).set_from(el);
         }
     }
 
     /// Set map-like objects (std::map, std::unordered_map, etc) to current Node
     template <class T,
               class = typename std::enable_if<is_mappish<T>{}, bool>::type >
-    void setMapKey( const T& values  )
+    void set_map_from( const T& values  )
     {
         update_node(  Object, "" );
         for( const auto& el: values )
         {
-            append_node( el.first, UNDEFINED, "" ).setValue(el.second);
+            append_node( el.first, UNDEFINED, "" ).set_from(el.second);
         }
     }
 

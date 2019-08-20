@@ -47,9 +47,11 @@ double JsonBase::toDouble() const
 long JsonBase::toInt() const
 {
     long val = 0;
-    if( type() == Type::Int )
+    if( isNumber() )
     {
-        string2v( getFieldValue(), val );
+        double dval = 0.0;
+        string2v( getFieldValue(), dval );
+        val = static_cast<long>(dval);
     }
     return val;
 }

@@ -48,13 +48,13 @@ JsonSchema loads( const std::string& schema_name, const std::string& jsonstr );
 > *source: "+";    test: "+-";  example: "-"*
 > Could be more tests about dump/undump strings
 
-5. jsonbase.h(cpp)   ( under construction )
+5. jsonbase.h(cpp)
 
 A base interface to store JSON object.
 
 
 > *source: "+-";    test: "+";  example: "-"*
-> Most virtual functions will test into implementations
+> Added typed test to most virtual functions
 
 6. jsonbuilder.h(cpp)
 
@@ -91,7 +91,7 @@ JsonFree loads( const std::string &jsonstr )
 
 ```
 > *source: "+";  test: "+";  example: "+"*
-> Read NaN and Inf values -> exception
+> Read NaN and Inf values -> exception?
 
 8. jsonfree.h(cpp)  ( under construction )
 
@@ -99,7 +99,7 @@ class JsonFree - a class to store JSON object
 
 
 > *source: "+-";    test: "-";  example: "-"*
-> Need tests, examples
+> Need examples, test special functions ( clear, remove )
 
 ## Next steps
 

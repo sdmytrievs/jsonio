@@ -72,10 +72,19 @@ int main()
 {
     //TestBaseType();
     cout << "Hello World!" << endl;
-    std::map<std::string, int> vmap2, vmap = { {"key1", 4 }, {"key2", 5 } };
-    auto jsFree = json::loads("{\"key1\":4,\"key2\":5}\n");
-    jsFree.getMapKey(vmap2);
-    std::cout << json::dump(vmap2) << std::endl;
+    const std::string input_json = "{\"vbool\":true,\"vint\":-100,\"vdouble\":1e-10,\"vstring\":\"Test string\","
+                                   "\"vlist\":[1.7,2.7,3.7,5.7],\"vmap\":{\"key1\":\"val1\",\"key2\":\"val2\"}}";
+
+    auto jsFree = json::loads(input_json);
+
+
+    jsFree["vdouble"] = 99;
+    jsFree["vmap"]["key1"] = "newval1";
+    jsFree["vmap.key2"] = "newval22";
+
+    std::cout << json::dump(jsFree) << std::endl;
+
+    std::cout << jsFree.isTop() <<  " -- " << jsFree["vdouble"].isTop() << " -- " << jsFree["vmap"].isTop() << std::endl;
 
 /*
     std::vector<std::string> vvecs = { "v1", "v2", "v3", "v4" };

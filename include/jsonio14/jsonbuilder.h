@@ -130,7 +130,7 @@ public:
               class = typename std::enable_if<is_container<T>{}, bool>::type >
     JsonObjectBuilder&  addVector( const std::string& akey, const T& values  )
     {
-        current_json.append_node( akey, JsonBase::Array, "" ).setArray( values  );
+        current_json.append_node( akey, JsonBase::Array, "" ).set_list_from( values  );
         return *this;
     }
 
@@ -140,7 +140,7 @@ public:
               class = typename std::enable_if<is_mappish<T>{}, bool>::type >
     JsonObjectBuilder&  addMapKey( const std::string& akey, const T& values  )
     {
-        current_json.append_node( akey, JsonBase::Object, "" ).setMapKey( values  );
+        current_json.append_node( akey, JsonBase::Object, "" ).set_map_from( values  );
         return *this;
     }
 
@@ -230,7 +230,7 @@ public:
               class = typename std::enable_if<is_container<T>{}, bool>::type >
     JsonArrayBuilder&  addVector( const T& values  )
     {
-        current_json.append_node( nextKey(), JsonBase::Array, "" ).setArray( values  );
+        current_json.append_node( nextKey(), JsonBase::Array, "" ).set_list_from( values  );
         return *this;
     }
 
@@ -240,7 +240,7 @@ public:
               class = typename std::enable_if<is_mappish<T>{}, bool>::type >
     JsonArrayBuilder&  addMapKey( const T& values  )
     {
-        current_json.append_node( nextKey(), JsonBase::Object, "" ).setMapKey( values  );
+        current_json.append_node( nextKey(), JsonBase::Object, "" ).set_map_from( values  );
         return *this;
     }
 

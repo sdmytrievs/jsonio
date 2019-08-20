@@ -33,7 +33,8 @@ public:
     /// Copy constructor
     JsonFree(const JsonFree &obj );
     /// Move constructor
-    JsonFree( JsonFree &&obj );
+    JsonFree( JsonFree &&obj ) = default;
+    //JsonFree( JsonFree &&obj ) noexcept;
     /// Destructor
     ~JsonFree() override {}
 
@@ -70,7 +71,7 @@ public:
     template <class T>
     JsonFree &operator =( const T& value )
     {
-       setValue( value  );
+       set_from( value  );
        return *this;
     }
 
