@@ -20,13 +20,13 @@ template <> std::string v2string( const std::string& value )
     return value;
 }
 
-/// Serialization bool value to string.
+// Serialization bool value to string.
 template<> std::string v2string( const bool& value )
 {
     return value ? "true" : "false";;
 }
 
-/// Serializations double value to string.
+// Serializations double value to string.
 template <> std::string v2string( const double& value )
 {
     if(std::isfinite(value))
@@ -40,7 +40,7 @@ template <> std::string v2string( const double& value )
     }
 }
 
-/// Serializations float value to string.
+// Serializations float value to string.
 template <> std::string v2string( const float& value )
 {
     if(std::isfinite(value))

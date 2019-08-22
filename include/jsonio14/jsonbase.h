@@ -344,6 +344,8 @@ public:
 };
 
 std::ostream &operator<<(std::ostream& os, const JsonBase& obj);
-
+template <> JsonBase::Type JsonBase::typeTraits( const bool& );
+template <> JsonBase::Type JsonBase::typeTraits( const char& );
+template <> JsonBase::Type JsonBase::typeTraits( const std::string& );
 
 } // namespace jsonio14

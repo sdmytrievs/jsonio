@@ -82,7 +82,7 @@ TEST( JsonioDetail, v2string )
     EXPECT_EQ( std::to_string(10) , v2string(10) );
     EXPECT_EQ( std::to_string(-10L) , v2string(-10L) );
     EXPECT_EQ( "1.5" , v2string(1.5f) );
-    EXPECT_EQ( "1e-05" , v2string(1e-5) );
+    EXPECT_EQ( "2.5" , v2string(2.5) );
 
     EXPECT_EQ( DetailSettings::infiniteValue , v2string(NAN) );
     EXPECT_EQ( DetailSettings::infiniteValue , v2string(INFINITY) );

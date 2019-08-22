@@ -44,6 +44,12 @@ std::string v2string( const T& value )
     //}
 }
 
+/// Serializations double value to string.
+template <> std::string v2string( const double& value );
+/// Serializations float value to string.
+template <> std::string v2string( const float& value );
+/// Serialization bool value to string.
+template<> std::string v2string( const bool& value );
 /// Serializations string value to string.
 template <> std::string v2string( const std::string& value );
 /// Converts a constant pointer to a character to a string.
