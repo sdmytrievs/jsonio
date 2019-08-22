@@ -76,7 +76,7 @@ TEST( JsonioParser, TestDouble )
 
 TEST( JsonioParser, TestInt )
 {
-    auto TEST_INT = [](const std::string & json_string, const long long expected)
+    auto TEST_INT = [](const std::string & json_string, const long expected)
     {
         auto jsFree = json::loads(json_string);
         EXPECT_EQ( JsonBase::Int, jsFree[0].type() );
@@ -90,9 +90,25 @@ TEST( JsonioParser, TestInt )
     TEST_INT("[+10]", 10);
     TEST_INT("[1000000]", 1000000);
 
+    auto TEST_LONG = [](const std::string & json_string, const long long expected)
+    {
+        auto jsFree = json::loads(json_string);
+        if( expected > std::numeric_limits<long>::max() ||
+            expected < std::numeric_limits<long>::min() )
+        {
+            EXPECT_EQ( JsonBase::Double, jsFree[0].type() );
+            EXPECT_DOUBLE_EQ( expected, jsFree[0].toDouble() );
+        }
+        else
+        {
+            EXPECT_EQ( JsonBase::Int, jsFree[0].type() );
+            EXPECT_EQ( expected, jsFree[0].toInt() );
+        }
+    };
+
     // limits
-   TEST_INT("[-9223372036854775807]", -9223372036854775807L);
-   TEST_INT("[+9223372036854775807]", +9223372036854775807L);
+   TEST_LONG("[-9223372036854775807]", -9223372036854775807);
+   TEST_LONG("[+9223372036854775807]", +9223372036854775807);
 }
 
 

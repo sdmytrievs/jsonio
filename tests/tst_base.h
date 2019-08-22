@@ -345,7 +345,7 @@ class JsonioBaseTest : public ::testing::Test
 public:
 
     const std::string schemaName = "SimpleSchemaTest";
-    const std::string input_json = "{\"vbool\":true,\"vint\":-100,\"vdouble\":1e-10,\"vstring\":\"Test string\","
+    const std::string input_json = "{\"vbool\":true,\"vint\":-100,\"vdouble\":5.2,\"vstring\":\"Test string\","
                                    "\"vlist\":[1.7,2.7,3.7,5.7],\"vmap\":{\"key1\":\"val1\",\"key2\":\"val2\"}}";
 
     virtual void SetUp()
@@ -422,12 +422,12 @@ TYPED_TEST( JsonioBaseTest, toType )
     EXPECT_EQ( false, obj["vlist"].toBool() );
 
     EXPECT_EQ( -100, obj["vint"].toDouble() );
-    EXPECT_EQ( 1e-10, obj["vdouble"].toDouble() );
+    EXPECT_EQ( 5.2, obj["vdouble"].toDouble() );
     EXPECT_EQ( 0.0, obj["vbool"].toDouble() );
     EXPECT_EQ( 0.0, obj["vlist"].toDouble() );
 
     EXPECT_EQ( -100, obj["vint"].toInt() );
-    EXPECT_EQ( 0, obj["vdouble"].toInt() );
+    EXPECT_EQ( 5, obj["vdouble"].toInt() );
     obj["vdouble"] = 2.5;
     EXPECT_EQ( 2, obj["vdouble"].toInt() );
     EXPECT_EQ( 0, obj["vbool"].toInt() );
@@ -473,7 +473,7 @@ TYPED_TEST( JsonioBaseTest, getQtGUI )
     EXPECT_EQ( "key1", obj["vmap"]["key1"].getKey() );
 
     EXPECT_EQ( "true", obj["vbool"].getFieldValue() );
-    EXPECT_EQ( "1e-10", obj["vdouble"].getFieldValue() );
+    EXPECT_EQ( "5.2", obj["vdouble"].getFieldValue() );
     EXPECT_EQ( "2.7", obj["vlist"][1].getFieldValue() );
     EXPECT_EQ( "val1", obj["vmap"]["key1"].getFieldValue() );
     EXPECT_EQ( "", obj["vlist"].getFieldValue() );
@@ -526,7 +526,7 @@ TYPED_TEST( JsonioBaseTest, get_to )
 
     double vdouble;
     obj["vdouble"].get_to( vdouble );
-    EXPECT_EQ( 1e-10, vdouble );
+    EXPECT_EQ( 5.2, vdouble );
 
     std::string vstr;
     obj["vstring"].get_to( vstr );
