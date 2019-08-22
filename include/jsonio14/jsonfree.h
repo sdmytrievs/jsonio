@@ -75,12 +75,12 @@ public:
        return *this;
     }
 
-    template <typename T> operator T()
+    /*template <typename T> operator T()
     {
       T value;
       get_from( value );
       return value;
-    }
+    }*/
 
     /// Return a const reference to arr[i] if this is an array, exception otherwise.
     const JsonFree &operator[](size_t idx) const

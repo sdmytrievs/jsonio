@@ -427,9 +427,9 @@ TYPED_TEST( JsonioBaseTest, toType )
     EXPECT_EQ( 0.0, obj["vlist"].toDouble() );
 
     EXPECT_EQ( -100, obj["vint"].toInt() );
-    EXPECT_EQ( 5, obj["vdouble"].toInt() );
+    EXPECT_EQ( 0, obj["vdouble"].toInt() );
     obj["vdouble"] = 2.5;
-    EXPECT_EQ( 2, obj["vdouble"].toInt() );
+    EXPECT_EQ( 0, obj["vdouble"].toInt() );
     EXPECT_EQ( 0, obj["vbool"].toInt() );
     EXPECT_EQ( 0, obj["vlist"].toInt() );
 
