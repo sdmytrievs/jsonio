@@ -76,7 +76,7 @@ public:
     ///
     template <typename T> T get() const
     {
-      T value;
+      T value;// = T(0);
       get_to( value );
       return value;
     }
