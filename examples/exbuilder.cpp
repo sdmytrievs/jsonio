@@ -17,7 +17,7 @@ void buildArray()
     for( int ii=0; ii<5; ++ii )
         jsBuilder.addValue( val*ii );
 
-    json::dump(std::cout, jsFree, false);
+    jsFree.dump(std::cout, false);
 }
 
 
@@ -38,7 +38,7 @@ void buildOneObject()
     jsBuilder.addVector( "vlist", vlist );
     jsBuilder.addMapKey( "vumap", vumaps );
 
-    json::dump(std::cout, jsFree, false);
+    jsFree.dump(std::cout, false);
 }
 
 void buildComplexObject()
@@ -56,7 +56,7 @@ void buildComplexObject()
 
     auto obj = jsBuilder.addObject("object").addInt("version", 1).addString("comment", "Test example");
 
-    std::cout << json::dump( jsFree, false );
+    std::cout << jsFree;
 }
 
 /// Infers the value type by parsing input string.
@@ -69,7 +69,7 @@ void buildObjectInfers()
             .addScalar( "vbool2", "false" ).addScalar( "vint", "3" )
             .addScalar( "vdouble", "1e-10" ).addScalar( "vstring", "Test String" );
 
-    json::dump(std::cout, jsFree, false );
+    jsFree.dump(std::cout, false );
 }
 
 int main()

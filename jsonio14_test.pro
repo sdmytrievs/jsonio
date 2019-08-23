@@ -61,3 +61,6 @@ HEADERS += \
 
 SOURCES += \
         $$TESTS_DIR/main.cpp
+
+DISTFILES += \
+    Resources/docs/source.md

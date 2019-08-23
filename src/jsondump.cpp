@@ -1,6 +1,6 @@
 #include <iomanip>
 #include "jsondump.h"
-#include "jsonparser.h"
+//#include "jsonparser.h"
 #include "jsonfree.h"
 #include "service.h"
 
@@ -8,6 +8,28 @@
 namespace jsonio14 {
 
 namespace json {
+
+std::string dump(const JsonBase &object, bool dense)
+{
+    return object.dump(dense);
+}
+
+void dump(std::ostream &os, const JsonBase &object, bool dense)
+{
+    object.dump( os, dense );
+}
+
+void loads(const std::string &jsonstr, JsonBase &object)
+{
+    object.loads(jsonstr);
+}
+
+JsonFree loads(const std::string &jsonstr)
+{
+    auto object = JsonFree::object();
+    object.loads(jsonstr);
+    return object;
+}
 
 std::string dump(const std::string &value )
 {
@@ -55,144 +77,6 @@ std::string dump(const char *value )
     return dump( std::string(value) );
 }
 
-void dump2stream( std::ostream& os, const JsonBase& object, int depth, bool dense )
-{
-    int temp;
-    bool first = true;
-    auto objtype = object.type();
-    auto objsize = object.getChildrenCount();
-
-    for( std::size_t ii=0; ii<objsize; ii++ )
-    {
-        auto childobj = object.getChild( ii);
-
-        // do not print empty data
-        if( childobj->getKey() == "_key" && childobj->getFieldValue().empty() )
-            continue;
-        if( childobj->getKey() == "_id" && childobj->getFieldValue().empty() )
-            continue;
-
-        if( !first )
-            os << ( dense ? "," : ",\n" );
-        else
-            first = false;
-
-        // before print
-        switch( objtype )
-        {
-        case JsonBase::Object:
-            if(!dense)
-            {
-                for (temp = 0; temp <= depth; temp++)
-                    os <<  "     ";
-            }
-            os << "\"" << childobj->getKey() << ( dense ? "\":" : "\" :   " );
-            break;
-        case JsonBase::Array:
-            if(!dense)
-            {
-                for (temp = 0; temp <= depth; temp++)
-                    os << "     ";
-            }
-            break;
-        default:
-            break;
-        }
-
-        switch (childobj->type())
-        {
-        // impotant datatypes
-        case JsonBase::Null:
-            os << "null";
-            break;
-        case JsonBase::Bool:
-        case JsonBase::Int:
-            os << childobj->getFieldValue();
-            break;
-        case JsonBase::Double:
-            os << std::setprecision(DetailSettings::doublePrecision) << childobj->toDouble();
-            break;
-        case JsonBase::String:
-            os << dump( childobj->getFieldValue() );
-            break;
-
-            // main constructions
-        case JsonBase::Object:
-            os << ( dense ? "{" : "{\n" );
-            dump2stream( os, *childobj, depth + 1, dense );
-            if(!dense)
-            {
-                for (temp = 0; temp <= depth; temp++)
-                    os << "     ";
-            }
-            os << "}";
-            break;
-        case JsonBase::Array:
-            os << ( dense ? "[" : "[\n" );
-            dump2stream(os, *childobj, depth + 1, dense );
-            if(!dense)
-            {
-                for (temp = 0; temp <= depth; temp++)
-                    os << "     ";
-            }
-            os << "]";
-            break;
-        default:
-            os  << "can't print type : " << childobj->type();
-        }
-    }
-    if( !dense )
-        os << "\n";
-}
-
-
-std::string dump( const JsonBase &object, bool dense )
-{
-    std::stringstream os;
-    dump(os, object, dense);
-    return os.str();
-}
-
-void dump( std::ostream &os, const JsonBase &object, bool dense )
-{
-    auto objtype = object.type();
-    if( objtype == JsonBase::Object )
-        os << ( dense ? "{" : "{\n" );
-    else
-        if( objtype == JsonBase::Array )
-            os << ( dense ? "[" : "[\n" );
-        else
-            if( objtype == JsonBase::String )
-            {
-                os << dump( object.getFieldValue() );
-                return;
-            }
-            else
-            {
-                os << object.getFieldValue();
-                return;
-            }
-
-    dump2stream( os, object, 0, dense );
-    if( objtype == JsonBase::Object )
-        os << "}\n";
-    else
-        os << "]\n";
-}
-
-void loads(const std::string &jsonstr, JsonBase &object)
-{
-    JsonParser parser(jsonstr);
-    parser.parse_to(object);
-}
-
-JsonFree loads(const std::string &jsonstr)
-{
-    auto object = JsonFree::object();
-    JsonParser parser(jsonstr);
-    parser.parse_to(object);
-    return object;
-}
 
 // use decoder --------------------------------------------
 // https://github.com/dropbox/json11/blob/master/json11.cpp
@@ -323,6 +207,7 @@ void undumpString( std::string& strvalue )
         strvalue =  resstr;
     }
 }
+
 
 } // json namespace
 

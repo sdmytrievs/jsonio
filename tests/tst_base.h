@@ -58,31 +58,31 @@ TEST( JsonioBase, set_list_from )
     jsFree.set_list_from(vvecs);
     EXPECT_TRUE( jsFree.isArray() );
     EXPECT_EQ( jsFree.size(), 4 );
-    EXPECT_EQ( "[\"v1\",\"v2\",\"v3\",\"v4\"]\n", json::dump( jsFree, true ) );
+    EXPECT_EQ( "[\"v1\",\"v2\",\"v3\",\"v4\"]\n", jsFree.dump(  true ) );
 
     std::set<int> vset = { 1, 2, 6, 4 };
     jsFree.set_list_from(vset);
     EXPECT_TRUE( jsFree.isArray() );
     EXPECT_EQ( jsFree.size(), 4 );
-    EXPECT_EQ( "[1,2,4,6]\n", json::dump( jsFree, true ) );
+    EXPECT_EQ( "[1,2,4,6]\n", jsFree.dump(  true ) );
 
     std::list<double> vlist = { 1.7, 2.7, 4.7, 3.7, .5 };
     jsFree.set_list_from(vlist);
     EXPECT_TRUE( jsFree.isArray() );
     EXPECT_EQ( jsFree.size(), 5 );
-    EXPECT_EQ( "[1.7,2.7,4.7,3.7,0.5]\n", json::dump( jsFree, true ) );
+    EXPECT_EQ( "[1.7,2.7,4.7,3.7,0.5]\n", jsFree.dump(  true ) );
 
     std::vector<int> vvec = { 1, 2, 4, 3};
     jsFree.set_list_from(vvec);
     EXPECT_TRUE( jsFree.isArray() );
     EXPECT_EQ( jsFree.size(), 4 );
-    EXPECT_EQ( "[1,2,4,3]\n", json::dump( jsFree, true ) );
+    EXPECT_EQ( "[1,2,4,3]\n", jsFree.dump(  true ) );
 
     std::forward_list<int> fwd_list= {11,12,13,14,15};
     jsFree.set_list_from(fwd_list);
     EXPECT_TRUE( jsFree.isArray() );
     EXPECT_EQ( jsFree.size(), 5 );
-    EXPECT_EQ( "[11,12,13,14,15]\n", json::dump( jsFree, true ) );
+    EXPECT_EQ( "[11,12,13,14,15]\n", jsFree.dump(  true ) );
 
     std::unordered_set<int> uset = {1, 3, 5, 4, 5};
     jsFree.set_list_from(uset);
@@ -93,7 +93,7 @@ TEST( JsonioBase, set_list_from )
     jsFree.set_list_from(mset);
     EXPECT_TRUE( jsFree.isArray() );
     EXPECT_EQ( jsFree.size(), 5 );
-    EXPECT_EQ( "[1,3,4,5,5]\n", json::dump( jsFree, true ) );
+    EXPECT_EQ( "[1,3,4,5,5]\n", jsFree.dump(  true ) );
 }
 
 
@@ -105,13 +105,13 @@ TEST( JsonioBase, set_map_from )
     jsFree.set_map_from(vmap);
     EXPECT_TRUE( jsFree.isObject() );
     EXPECT_EQ( jsFree.size(), 2 );
-    EXPECT_EQ( "{\"key1\":4,\"key2\":5}\n", json::dump( jsFree, true ) );
+    EXPECT_EQ( "{\"key1\":4,\"key2\":5}\n", jsFree.dump(  true ) );
 
     std::unordered_map<std::string, std::string> vumaps = { {"key1", "val4" }, {"key2", "val5" } };
     jsFree.set_map_from(vumaps);
     EXPECT_TRUE( jsFree.isObject() );
     EXPECT_EQ( jsFree.size(), 2 );
-    EXPECT_EQ( "{\"key2\":\"val5\",\"key1\":\"val4\"}\n", json::dump( jsFree, true ) );
+    EXPECT_EQ( "{\"key2\":\"val5\",\"key1\":\"val4\"}\n", jsFree.dump(  true ) );
 
     //std::multimap<std::string, int> vmmap = { {"key1", 4 }, {"key2", 5 }/*, {"key1", 8 }*/ };
     // not used  jsFree.set_map_from(vmmap);
@@ -172,31 +172,31 @@ TEST( JsonioBase, set_fromArray )
     jsFree.set_from(vvecs);
     EXPECT_TRUE( jsFree.isArray() );
     EXPECT_EQ( jsFree.size(), 4 );
-    EXPECT_EQ( "[\"v1\",\"v2\",\"v3\",\"v4\"]\n", json::dump( jsFree, true ) );
+    EXPECT_EQ( "[\"v1\",\"v2\",\"v3\",\"v4\"]\n", jsFree.dump(  true ) );
 
     std::set<int> vset = { 1, 2, 6, 4 };
     jsFree.set_from(vset);
     EXPECT_TRUE( jsFree.isArray() );
     EXPECT_EQ( jsFree.size(), 4 );
-    EXPECT_EQ( "[1,2,4,6]\n", json::dump( jsFree, true ) );
+    EXPECT_EQ( "[1,2,4,6]\n", jsFree.dump(  true ) );
 
     std::list<double> vlist = { 1.7, 2.7, 4.7, 3.7, .5 };
     jsFree.set_from(vlist);
     EXPECT_TRUE( jsFree.isArray() );
     EXPECT_EQ( jsFree.size(), 5 );
-    EXPECT_EQ( "[1.7,2.7,4.7,3.7,0.5]\n", json::dump( jsFree, true ) );
+    EXPECT_EQ( "[1.7,2.7,4.7,3.7,0.5]\n", jsFree.dump(  true ) );
 
     std::vector<int> vvec = { 1, 2, 4, 3};
     jsFree.set_from(vvec);
     EXPECT_TRUE( jsFree.isArray() );
     EXPECT_EQ( jsFree.size(), 4 );
-    EXPECT_EQ( "[1,2,4,3]\n", json::dump( jsFree, true ) );
+    EXPECT_EQ( "[1,2,4,3]\n", jsFree.dump(  true ) );
 
     std::forward_list<int> fwd_list= {11,12,13,14,15};
     jsFree.set_from(fwd_list);
     EXPECT_TRUE( jsFree.isArray() );
     EXPECT_EQ( jsFree.size(), 5 );
-    EXPECT_EQ( "[11,12,13,14,15]\n", json::dump( jsFree, true ) );
+    EXPECT_EQ( "[11,12,13,14,15]\n", jsFree.dump(  true ) );
 
     std::unordered_set<int> uset = {1, 3, 5, 4, 5};
     jsFree.set_from(uset);
@@ -207,7 +207,7 @@ TEST( JsonioBase, set_fromArray )
     jsFree.set_from(mset);
     EXPECT_TRUE( jsFree.isArray() );
     EXPECT_EQ( jsFree.size(), 5 );
-    EXPECT_EQ( "[1,3,4,5,5]\n", json::dump( jsFree, true ) );
+    EXPECT_EQ( "[1,3,4,5,5]\n", jsFree.dump(  true ) );
 }
 
 TEST( JsonioBase, set_fromMapKey )
@@ -218,13 +218,13 @@ TEST( JsonioBase, set_fromMapKey )
     jsFree.set_from(vmap);
     EXPECT_TRUE( jsFree.isObject() );
     EXPECT_EQ( jsFree.size(), 2 );
-    EXPECT_EQ( "{\"key1\":4,\"key2\":5}\n", json::dump( jsFree, true ) );
+    EXPECT_EQ( "{\"key1\":4,\"key2\":5}\n", jsFree.dump(  true ) );
 
     std::unordered_map<std::string, std::string> vumaps = { {"key1", "val4" }, {"key2", "val5" } };
     jsFree.set_from(vumaps);
     EXPECT_TRUE( jsFree.isObject() );
     EXPECT_EQ( jsFree.size(), 2 );
-    EXPECT_EQ( "{\"key2\":\"val5\",\"key1\":\"val4\"}\n", json::dump( jsFree, true ) );
+    EXPECT_EQ( "{\"key2\":\"val5\",\"key1\":\"val4\"}\n", jsFree.dump(  true ) );
 }
 
 TEST( JsonioBase, get_to_list )
@@ -235,12 +235,12 @@ TEST( JsonioBase, get_to_list )
     EXPECT_EQ( vvecs, vvecs2 );
 
     std::list<double> vlist2, vlist = { 1.7, 2.7, 4.7, 3.7, .5 };
-    json::loads("[1.7,2.7,4.7,3.7,0.5]\n", jsFree);
+    jsFree.loads("[1.7,2.7,4.7,3.7,0.5]\n");
     jsFree.get_to_list(vlist2);
     EXPECT_EQ( vlist, vlist2 );
 
     std::vector<int> vvec2, vvec = { 1, 2, 4, 3};
-    json::loads("[1,2,4,3]\n", jsFree);
+    jsFree.loads("[1,2,4,3]\n");
     jsFree.get_to_list(vvec2);
     EXPECT_EQ( vvec, vvec2 );
 
@@ -309,12 +309,12 @@ TEST( JsonioBase, get_toArray )
     EXPECT_EQ( vvecs, vvecs2 );
 
     std::list<double> vlist2, vlist = { 1.7, 2.7, 4.7, 3.7, .5 };
-    json::loads("[1.7,2.7,4.7,3.7,0.5]\n", jsFree);
+    jsFree.loads("[1.7,2.7,4.7,3.7,0.5]\n");
     jsFree.get_to(vlist2);
     EXPECT_EQ( vlist, vlist2 );
 
     std::vector<int> vvec2, vvec = { 1, 2, 4, 3};
-    json::loads("[1,2,4,3]\n", jsFree);
+    jsFree.loads("[1,2,4,3]\n");
     jsFree.get_to(vvec2);
     EXPECT_EQ( vvec, vvec2 );
 
@@ -363,7 +363,7 @@ public:
 template<> void JsonioBaseTest<JsonFree>::SetUp()
 {
     test_object = new  JsonFree( JsonFree::object() );
-    json::loads( input_json, *test_object );
+    test_object->loads( input_json );
 }
 
 using JsonTypes = ::testing::Types<JsonFree>;
@@ -506,10 +506,10 @@ TYPED_TEST( JsonioBaseTest, getQtGUI )
     EXPECT_EQ( usekeys, obj.getUsedKeys() );
 
     // getFieldPath
-    EXPECT_EQ( "vdouble", obj["vdouble"].getFieldPath() );
-    EXPECT_EQ( "vlist.1", obj["vlist"][1].getFieldPath() );
-    EXPECT_EQ( "vmap.key1", obj["vmap"]["key1"].getFieldPath() );
-    EXPECT_EQ( "top", obj.getFieldPath() );
+    EXPECT_EQ( "vdouble", obj["vdouble"].get_field_path() );
+    EXPECT_EQ( "vlist.1", obj["vlist"][1].get_field_path() );
+    EXPECT_EQ( "vmap.key1", obj["vmap"]["key1"].get_field_path() );
+    EXPECT_EQ( "top", obj.get_field_path() );
 }
 
 TYPED_TEST( JsonioBaseTest, get_to )

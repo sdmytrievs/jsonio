@@ -1,5 +1,11 @@
 #include <iostream>
+#include <set>
+#include <list>
 #include <map>
+#include <unordered_map>
+#include <unordered_set>
+#include <forward_list>
+
 #include "jsondump.h"
 #include "jsonfree.h"
 #include "service.h"
@@ -27,20 +33,106 @@ void CreateanObject()
     std::cout <<  "Created JSON object: \n"  <<  obj <<  std::endl;
 }
 
-void Serialization_Deserialization()
+void SerializationDeserialization()
 {
     // You can create a JSON object (deserialization)
     auto obj =  json::loads( "{ \"happy\": true, \"pi\": 3.141 }" );
     // You can also get a string representation of a JSON value (serialize)
-    std::cout <<  " Result: "  <<  json::dump( obj, true) <<  std::endl;
+    std::cout <<  " Result: "  <<  obj.dump(true) <<  std::endl;
+}
+
+/// STL-like access
+void AccesstoObject()
+{
+    auto obj =  json::loads( "{\"vbool\":true,\"vint\":-100,\"vdouble\":5.2,\"vstring\":\"Test string\","
+                             "\"vlist\":[1.7,2.7,3.7,5.7],\"vmap\":{\"key1\":\"val1\",\"key2\":\"val2\"}}" );
+
+    // Convenience type checkers
+    obj.isTop();
+    obj["vbool"].isNull();
+    obj["vbool"].isBool();
+    obj["vdouble"].isNumber();
+    obj["vmap"].isObject();
+    obj["vlist"].isArray();
+    obj["vdouble"].isString();
+
+    // getter/setter
+    int  vint;
+    std::vector<double> vlist;
+    std::map<std::string, std::string> vumap;
+    std::string vstr;
+
+    bool vbool = obj["vbool"].get<bool>();
+    auto vint2 = obj["vint"].get<int>();
+    obj["vint"].get_to(vint);
+    obj["vstring"].get_to(vstr);
+    obj["vlist"].get_to(vlist);
+    obj["vmap"].get_to(vumap);
+    const auto mapdump = obj["vmap"].get<std::string>();
+
+    // Other stuff
+    obj.size();
+    obj.empty();
+    obj.type();
+    obj["vlist"].clear();
+}
+
+// Conversion from STL containers
+void STLcontainers()
+{
+    auto jsFree = JsonFree::object();
+
+    std::vector<std::string> vvec2, vvec = { "v1", "v2", "v3", "v4" };
+    jsFree.set_from(vvec);
+    std::cout<< "vector\n" << jsFree.dump(  true );
+    jsFree.get_to(vvec2);
+    std::cout<< json::dump( vvec2 ) << std::endl;
+
+    std::set<int> vset = { 1, 2, 6, 4 };
+    jsFree.set_from(vset);
+    std::cout<< "set\n" << jsFree.dump(  true );
+
+    std::list<double> vlist2, vlist = { 1.7, 2.7, 4.7, 3.7, .5 };
+    jsFree.set_list_from(vlist);
+    std::cout<< "list\n" << jsFree.dump(  true );
+    jsFree.get_to_list(vlist2);
+    std::cout<< json::dump( vlist2 ) << std::endl;
+
+    std::forward_list<int> fwd_list= {11,12,13,14,15};
+    jsFree.set_from(fwd_list);
+    std::cout<< "forward_list\n" << jsFree.dump(  true );
+
+    std::unordered_set<int> uset = {1, 3, 5, 4, 5};
+    jsFree.set_list_from(uset);
+    std::cout<< "unordered_set\n" << jsFree.dump(  true );
+
+    std::multiset<int> mset = {1, 3, 5, 4, 5};
+    jsFree.set_from(mset);
+    std::cout<< "multiset\n" << jsFree.dump(  true ) << std::endl;
+
+    // ----------------------------------------------------------
+
+    std::map<std::string, int> vmap2, vmap = { {"key1", 4 }, {"key2", 5 } };
+    jsFree.set_from(vmap);
+    std::cout<< "map\n" << jsFree.dump(  true );
+    jsFree.get_to(vmap2);
+    std::cout<< json::dump( vmap2 ) << std::endl;
+
+    std::unordered_map<std::string, std::string> vumap2, vumaps = { {"key1", "val4" }, {"key2", "val5" } };
+    jsFree.set_map_from(vumaps);
+    std::cout<< "unordered_map\n" << jsFree.dump(  true );
+    jsFree.get_to_map(vumap2);
+    std::cout<< json::dump( vumap2 ) << std::endl;
 }
 
 
-int main(int argc, char* argv[])
+int main(int , char** )
 {
     try{
         CreateanObject();
-        Serialization_Deserialization();
+        SerializationDeserialization();
+        AccesstoObject();
+        STLcontainers();
     }
     catch(jarango_exception& e)
     {

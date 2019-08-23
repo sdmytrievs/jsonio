@@ -80,6 +80,15 @@ public:
 
     // Get methods  --------------------------
 
+    /// @brief Dump object to JSON string.
+    std::string dump( bool dense = false ) const;
+
+    /// Serialize object as a JSON formatted stream.
+    void dump(std::ostream &os, bool dense = false) const;
+
+    /// Deserialize a JSON document to a json object.
+    virtual void loads( const std::string& jsonstr );
+
     /// Returns a std::string with the json contained in this object.
     virtual std::string toString(bool dense = false) const;
     /// Returns the object converted to a double value.
@@ -110,36 +119,9 @@ public:
       return size() < 1;
     }
 
-    // Get methods ( using in Qt GUI ) --------------------------
-
-    virtual const std::string& getKey() const = 0;
-
-    virtual size_t getNdx() const = 0;
-
-    virtual const std::string& getFieldValue() const = 0;
-
-    virtual std::size_t getChildrenCount() const = 0;
-
-    virtual const JsonBase* getChild( std::size_t ndx ) const = 0;
-
-    virtual const JsonBase* getParent() const = 0;
-
-    virtual std::vector<std::string> getUsedKeys() const = 0;
-
-    /// Get object name.
-    virtual std::string getHelpName() const;
-
-    /// Get object description.
-    virtual std::string getDescription() const
-    {
-        return getHelpName();
-    }
-
-    /// Get field path to top object.
-    std::string getFieldPath() const;
-
     // Get values  --------------------------
 
+    /// Get internal data to json string
     bool get_to( std::string& value  ) const
     {
         value = toString(true);
@@ -295,10 +277,72 @@ public:
     /// Resize top level array
     //virtual bool resizeArray( const std::vector<std::size_t>& sizes, const std::string& defval  = "" ) = 0;
 
+
+    // Field path  methods --------------------------
+
+    /// Get field path to top object.
+    std::string get_field_path() const;
+
+    /* to be done
+    virtual bool exist_path( const std::string& fieldpath ) const
+    {
+        return false;
+    }
+
+    template <typename T>
+    bool get_to_path( const std::string& fieldpath, T& val, const T& defval = T(0)  ) const
+    {
+
+         return false;
+    }
+
+    bool get_to_key( const std::string& fieldpath, std::string& key, const std::string& defkey = "---"  ) const
+    {
+
+         return false;
+    }
+
+    template <typename T>
+    bool set_from_path( const std::string& fieldpath, const T& val  )
+    {
+
+         return false;
+    }
+    */
+
+protected:
+
+    // Get methods ( using in Qt GUI ) --------------------------
+
+    virtual const std::string& getKey() const = 0;
+
+    virtual size_t getNdx() const = 0;
+
+    virtual const std::string& getFieldValue() const = 0;
+
+    virtual std::size_t getChildrenCount() const = 0;
+
+    virtual const JsonBase* getChild( std::size_t ndx ) const = 0;
+
+    virtual const JsonBase* getParent() const = 0;
+
+    virtual std::vector<std::string> getUsedKeys() const = 0;
+
+    /// Get object name.
+    virtual std::string getHelpName() const;
+
+    /// Get object description.
+    virtual std::string getDescription() const
+    {
+        return getHelpName();
+    }
+
+
 private:
 
     virtual void update_node(  Type atype, const std::string& avalue ) =0;
     virtual JsonBase& append_node( const std::string& akey, Type atype, const std::string& avalue ) =0;
+    void dump2stream(std::ostream &os, int depth, bool dense) const;
 
 public:
 
@@ -336,7 +380,6 @@ public:
     ///   Returns the type name as string to be used in error messages - usually to
     ///   indicate that a function was called on a wrong JSON type.
     static const char* typeName(Type type);
-
 
     friend class JsonBuilderBase;
     friend class JsonObjectBuilder;

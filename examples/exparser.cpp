@@ -29,7 +29,7 @@ int main(int argc, char* argv[])
                 //std::cout <<  "\nStart: " << file << "'" << json_data<< "'\n";
 
                 auto jsFree =  json::loads( json_data );
-                //std::cout <<  "Pass: " <<  " Result: "  <<  json::dump( jsFree, true) <<  std::endl;
+                //std::cout <<  "Pass: " <<  " Result: "  <<  jsFree.dump(true) <<  std::endl;
                 std::cout <<  "Pass: " <<  file <<  std::endl;
             }
             catch( jarango_exception& e )
