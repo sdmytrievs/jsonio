@@ -1,12 +1,17 @@
 # JSONIO14
 
-JSONIO library and API for Data Exchange Interface (RAM, files and ArangoDB remote and local backends)
+## JSONIO library and API for creating structured data exchange interfaces 
+(in RAM, via files, and using ArangoDB remote and local instances).
 
-The advantages use jsonio json parser:
+TBD  Why use JSONIO? 
 
-1. The same API would be implemented for schema defined json.
+Advantages of the JSONIO JSON parser:
 
-2. Fixed order of keys into object. This is important on GUI and dump output.
+1. Full support of JSON schemas (the same API can be used for schemaless and for schema-related JSON documents).
 
-3. Could be use into jsonui editor, schema bases DB.
+2. Fixed order of JSON object keys in the document (convenient for rendering in GUIs and comparing dump JSON output).
+
+3. Comprises the basis of JSONUI GUI widgets for editing and viewing schema-related and schemaless JSON documents kept in NoSQL databases such as ArangoDB.
+
+
 
