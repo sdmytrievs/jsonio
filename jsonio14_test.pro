@@ -56,6 +56,7 @@ HEADERS += \
         $$TESTS_DIR/tst_detail.h \
         $$TESTS_DIR/tst_dump.h   \
         $$TESTS_DIR/tst_base.h \
+        $$TESTS_DIR/tst_base_api.h \
         $$TESTS_DIR/tst_builder.h \
         $$TESTS_DIR/tst_parser.h
 

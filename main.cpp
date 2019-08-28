@@ -26,12 +26,10 @@ void AccesstoObjectError()
 
     // getter/setter
     int  vint;
-    std::vector<double> vlist;
+    std::vector<double> vlist{0,1};
     std::map<std::string, std::string> vumap;
     std::string vstr;
 
-    bool vbool = obj["vbool"].get<bool>();
-    auto vint2 = obj["vint"].get<int>();
     obj["vint"].get_to(vint);
     obj["vstring"].get_to(vstr);
     obj["vlist"].get_to(vlist);
@@ -41,15 +39,19 @@ void AccesstoObjectError()
     // not exist field
     std::cout << "obj[\"noexist\"].get_to(vint): " <<  obj["noexist"].get_to(vint)
               << " value is " << vint << std::endl;
-     double dd= -101;
-     std::cout << "obj[\"noexist\"].get_to(dd): " <<  obj["noexist1"].get_to(dd)
-               << " value is " << dd << std::endl;
+    double dd= -101;
+    std::cout << "obj[\"noexist\"].get_to(dd): " <<  obj["noexist1"].get_to(dd)
+              << " value is " << dd << std::endl;
 
-     std::cout << "obj[\"noexist\"].get_to(vlist): " <<  obj["noexist2"].get_to(vlist)
-               << " value is " << json::dump(vlist) << std::endl;
+    auto res =  obj["noexist2"].get_to(vlist);
+    std::cout << "obj[\"noexist\"].get_to(vlist): " <<  res << " value is " << json::dump(vlist) << std::endl;
 
-     std::cout << "obj[\"noexist\"].get_to(vstr): " <<  obj["noexist3"].get_to(vstr)
-               << " value is " << vstr << std::endl;
+    res = obj["noexist3"].get_to(vstr);
+    std::cout << "obj[\"noexist\"].get_to(vstr): " <<  res  << " value is " << vstr << std::endl;
+
+    res = obj["noexist4"].get_to(vumap);
+    std::cout << "obj[\"noexist\"].get_to(vumap): " <<  res  << " value is " << json::dump(vumap) << std::endl;
+
 
     //std::map<std::string, int> vmap1 = {{std::string("key") , 12}};
     //auto vmap2 = {{std::string("key") , 12}};

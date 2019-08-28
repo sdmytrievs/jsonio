@@ -9,7 +9,7 @@ class JsonSchema;
 
 namespace json {
 
-/*
+
 /// @brief Dump object to JSON string.
 std::string dump( const JsonBase& object, bool dense = false );
 
@@ -18,7 +18,7 @@ void dump( std::ostream& os, const JsonBase& object, bool dense = false );
 
 /// Deserialize a JSON string to a object.
 void loads( const std::string& jsonstr, JsonBase& object );
-*/
+
 
 /// Deserialize a JSON document to a free format json object.
 JsonFree loads( const std::string& jsonstr );

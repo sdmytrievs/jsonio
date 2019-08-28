@@ -4,7 +4,7 @@
 namespace jsonio14 {
 
 JsonFree::JsonFree( JsonBase::Type atype, const std::string &akey, const std::string &avalue, JsonFree *aparent ):
-    field_type(atype), field_key(akey), field_value(avalue), ndx_in_parent(0), parent_object(aparent)
+    field_type(atype), field_key(akey), field_value(avalue), ndx_in_parent(0), parent_object(aparent), children()
 {
     if(parent_object)
     {
@@ -12,22 +12,10 @@ JsonFree::JsonFree( JsonBase::Type atype, const std::string &akey, const std::st
     }
 }
 
-void JsonFree::update_node(JsonBase::Type atype, const std::string &avalue)
-{
-   children.clear();
-   field_type = atype;
-   field_value = avalue;
-}
-
-JsonFree& JsonFree::append_node(const std::string &akey, JsonBase::Type atype, const std::string &avalue )
-{
-  children.emplace_back( JsonFree{atype, akey, avalue, this} );
-  return children.back();
-}
 
 JsonFree::JsonFree( const JsonFree &obj ):
     field_type(obj.field_type), field_key(obj.field_key), field_value(obj.field_value),
-    ndx_in_parent(0), parent_object(nullptr)
+    ndx_in_parent(0), parent_object(nullptr), children()
 {
     copy(obj);
 }
@@ -55,6 +43,44 @@ bool JsonFree::remove()
         return false;
     return parent_object->remove_child( this );
 }
+
+
+void JsonFree::update_node(JsonBase::Type atype, const std::string &avalue)
+{
+   children.clear();
+   field_type = atype;
+   field_value = avalue;
+}
+
+JsonFree& JsonFree::append_node(const std::string &akey, JsonBase::Type atype, const std::string &avalue )
+{
+  children.emplace_back( JsonFree{atype, akey, avalue, this} );
+  return children.back();
+}
+
+JsonFree *JsonFree::field(const std::string &fieldpath) const
+{
+    auto names = split(fieldpath, ".");
+    return field(names);
+}
+
+JsonFree *JsonFree::field(std::queue<std::string> names) const
+{
+    if( names.empty() )
+        return const_cast<JsonFree *>(this);
+
+    auto fname = names.front();
+    names.pop();
+
+    auto element = std::find_if( children.begin(), children.end(),
+                                 [=]( auto value ) { return value.getKey() == fname; });
+    if( element == children.end() )
+    {
+        return nullptr;
+    }
+    return element->field(names);
+}
+
 
 // key and parent not changed
 void JsonFree::copy(const JsonFree &obj)
@@ -97,7 +123,7 @@ JsonFree& JsonFree::get_child(const std::string &key)
                                  [=]( auto value ) { return value.getKey() == key; });
     if( element == children.end() )
     {
-        return append_node( key, JsonBase::Object, "" );
+        return append_node( key, JsonBase::Null, "" );
         //return children.back();
     }
     return *element;

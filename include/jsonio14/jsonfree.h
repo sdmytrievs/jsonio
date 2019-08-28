@@ -6,13 +6,9 @@
 namespace jsonio14 {
 
 
-//template <class TJson> class JsonFactory;
-
 /// @brief a class to store JSON object
 class JsonFree final : public JsonBase
 {
-
-private:
 
 public:
 
@@ -46,15 +42,6 @@ public:
         return *this;
     }
 
-    JsonFree &operator =( JsonFree &other)
-    {
-        if ( this != &other)
-        {
-            copy(other);
-        }
-        return *this;
-    }
-
     /// Move assignment
     JsonFree &operator =( JsonFree &&other)
     {
@@ -71,14 +58,6 @@ public:
     {
        set_from( value  );
        return *this;
-    }
-
-    ///
-    template <typename T> T get() const
-    {
-      T value;// = T(0);
-      get_to( value );
-      return value;
     }
 
     /// Return a const reference to arr[i] if this is an array, exception otherwise.
@@ -119,6 +98,8 @@ public:
     JsonFree &operator[](const std::string &key)
     {
         //std::cout << "JsonFree &operator[](const std::string &key)" << std::endl;
+        if( isNull() )
+           update_node( JsonBase::Object, "" );
         if( isArray() || isObject()  )
         {
             return get_child( key );
@@ -196,6 +177,10 @@ private:
 
     void update_node(  JsonBase::Type atype, const std::string& avalue ) override;
     JsonFree &append_node( const std::string& akey, JsonBase::Type atype, const std::string& avalue ) override;
+    /// Get field by fieldpath ("name1.name2.name3")
+    JsonFree *field(  const std::string& fieldpath ) const override;
+    /// Get field by fieldpath
+    JsonFree *field( std::queue<std::string> names ) const override;
 
     /// Deep copy children
     void copy(const JsonFree &obj);

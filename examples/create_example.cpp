@@ -62,13 +62,10 @@ void AccesstoObject()
     std::map<std::string, std::string> vumap;
     std::string vstr;
 
-    bool vbool = obj["vbool"].get<bool>();
-    auto vint2 = obj["vint"].get<int>();
     obj["vint"].get_to(vint);
     obj["vstring"].get_to(vstr);
     obj["vlist"].get_to(vlist);
     obj["vmap"].get_to(vumap);
-    const auto mapdump = obj["vmap"].get<std::string>();
 
     // Other stuff
     obj.size();

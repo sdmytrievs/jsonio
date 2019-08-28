@@ -14,7 +14,7 @@ class JsonParser
 public:
 
     /// Constructor
-    explicit JsonParser( const std::string &jsondata )
+    explicit JsonParser( const std::string &jsondata ):jsontext()
     {
      set_string( jsondata );
     }

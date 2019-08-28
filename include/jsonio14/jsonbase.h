@@ -129,7 +129,6 @@ public:
     }
 
     /// Get primitive value from current Node
-    /// Could be get_to( T& value ) function
     template <class T,
               std::enable_if_t<!is_container<T>{}&!is_mappish<T>{}, int> = 0 >
     bool get_to( T& value  ) const
@@ -164,8 +163,10 @@ public:
               class = typename std::enable_if<is_container<T>{}, bool>::type >
     bool get_to_list( T& values  ) const
     {
-        JARANGO_THROW_IF( !isArray(), "JsonBase", 11, "cannot use getArray with " + std::string( typeName() ) );
         values.clear();
+        if( isNull() )
+            return true;
+        JARANGO_THROW_IF( !isStructured(), "JsonBase", 11, "cannot use getArray with " + std::string( typeName() ) );
         typename T::value_type val;
         for ( size_t ii=0; ii<getChildrenCount(); ii++)
         {
@@ -180,8 +181,10 @@ public:
               class = typename std::enable_if<is_mappish<Map>{}, bool>::type >
     bool get_to_map( Map& values  ) const
     {
-        JARANGO_THROW_IF( !isObject(), "JsonBase", 12, "cannot use getMapKey with " + std::string( typeName() ) );
         values.clear();
+        if( isNull() )
+            return true;
+        JARANGO_THROW_IF( !isStructured(), "JsonBase", 12, "cannot use getMapKey with " + std::string( typeName() ) );
         using Tkey = std::remove_const_t<typename Map::value_type::first_type>; //may need to remove const
         using Tval = std::remove_const_t<typename Map::value_type::second_type>;
 
@@ -283,32 +286,48 @@ public:
     /// Get field path to top object.
     std::string get_field_path() const;
 
-    /* to be done
+    /// Test exist field path
     virtual bool exist_path( const std::string& fieldpath ) const
     {
+        return ( field( fieldpath ) != nullptr ) ;
+    }
+
+    /// Get value from current Node by field path
+    template <typename T>
+    bool get_to_path( const std::string& fieldpath, T& val, const T& defval   ) const
+    {
+        auto pobj = field( fieldpath );
+        if( pobj && pobj->get_to(val) )
+            return true;
+
+        val = defval;
         return false;
     }
 
-    template <typename T>
-    bool get_to_path( const std::string& fieldpath, T& val, const T& defval = T(0)  ) const
-    {
-
-         return false;
-    }
-
+    /// Get key field from current Node by field path
     bool get_to_key( const std::string& fieldpath, std::string& key, const std::string& defkey = "---"  ) const
     {
-
-         return false;
+        auto pobj = field( fieldpath );
+        if( pobj ) {
+            key =  pobj->getFieldValue();
+            return true;
+        }
+        else {
+            key = defkey;
+            return false;
+        }
     }
 
+    /// Set value to current Node by field path
     template <typename T>
     bool set_from_path( const std::string& fieldpath, const T& val  )
     {
-
-         return false;
+        auto pobj = field( fieldpath );
+        if( pobj ) {
+            return pobj->set_from(val);
+        }
+        return false;
     }
-    */
 
 protected:
 
@@ -343,6 +362,10 @@ private:
     virtual void update_node(  Type atype, const std::string& avalue ) =0;
     virtual JsonBase& append_node( const std::string& akey, Type atype, const std::string& avalue ) =0;
     void dump2stream(std::ostream &os, int depth, bool dense) const;
+    /// Get field by fieldpath ("name1.name2.name3")
+    virtual JsonBase *field(  const std::string& fieldpath ) const = 0;
+    /// Get field by fieldpath
+    virtual JsonBase *field( std::queue<std::string> names ) const = 0;
 
 public:
 

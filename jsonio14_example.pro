@@ -5,6 +5,12 @@ CONFIG -= qt
 
 !win32 {
   DEFINES += __unix
+QMAKE_CFLAGS += pedantic -Wall -Wextra -Wwrite-strings -Werror
+QMAKE_CXXFLAGS += -ansi -pedantic -Wall -Wextra -Weffc++
+#QMAKE_CXXFLAGS += -Wall -Wextra -Wformat-nonliteral -Wcast-align -Wpointer-arith \
+# -Wmissing-declarations -Winline -Wundef \
+# -Wcast-qual -Wshadow -Wwrite-strings -Wno-unused-parameter \
+#-Wfloat-equal -pedantic -ansi
 }
 
 macx-g++ {
@@ -46,8 +52,8 @@ OBJECTS_DIR   = obj
 include($$JSONIO14_DIR/jsonio14.pri)
 
 SOURCES += \
-       main.cpp
-#      examples/create_example.cpp \
+#       main.cpp
+      examples/create_example.cpp \
 #      examples/exbuilder.cpp
 #      examples/exparser.cpp
 

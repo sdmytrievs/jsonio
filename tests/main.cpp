@@ -5,6 +5,7 @@
 #include "tst_builder.h"
 #include "tst_parser.h"
 #include "tst_base.h"
+#include "tst_base_api.h"
 
 
 #include <gtest/gtest.h>
