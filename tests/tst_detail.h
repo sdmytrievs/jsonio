@@ -162,5 +162,54 @@ TEST( JsonioDetail, Split )
  EXPECT_EQ( "ccc", strquery.front() );
 
  auto strquery2 = split("::bb::ccc::", ":" );
- EXPECT_EQ( 7, strquery2.size() );
+ EXPECT_EQ( 2, strquery2.size() );
+
+ strquery = split("name1.name2.name3", "./[]" );
+ EXPECT_EQ( 3, strquery.size() );
+ EXPECT_EQ( "name1", strquery.front() );
+ strquery.pop();
+ EXPECT_EQ( "name2", strquery.front() );
+ strquery.pop();
+ EXPECT_EQ( "name3", strquery.front() );
+
+ strquery = split("name1.name2[3].name3", "./[]" );
+ EXPECT_EQ( 4, strquery.size() );
+ EXPECT_EQ( "name1", strquery.front() );
+ strquery.pop();
+ EXPECT_EQ( "name2", strquery.front() );
+ strquery.pop();
+ EXPECT_EQ( "3", strquery.front() );
+ strquery.pop();
+ EXPECT_EQ( "name3", strquery.front() );
+
+ strquery = split("/name1/name2[3]/name3", "./[]" );
+ EXPECT_EQ( 4, strquery.size() );
+ EXPECT_EQ( "name1", strquery.front() );
+ strquery.pop();
+ EXPECT_EQ( "name2", strquery.front() );
+ strquery.pop();
+ EXPECT_EQ( "3", strquery.front() );
+ strquery.pop();
+ EXPECT_EQ( "name3", strquery.front() );
+
+ strquery = split("/name1/name2/3/name3", "./[]" );
+ EXPECT_EQ( 4, strquery.size() );
+ EXPECT_EQ( "name1", strquery.front() );
+ strquery.pop();
+ EXPECT_EQ( "name2", strquery.front() );
+ strquery.pop();
+ EXPECT_EQ( "3", strquery.front() );
+ strquery.pop();
+ EXPECT_EQ( "name3", strquery.front() );
+
+ strquery = split("[\"name1\"][\"name2\"][3][\"name3\"]", "./[]\"" );
+ EXPECT_EQ( 4, strquery.size() );
+ EXPECT_EQ( "name1", strquery.front() );
+ strquery.pop();
+ EXPECT_EQ( "name2", strquery.front() );
+ strquery.pop();
+ EXPECT_EQ( "3", strquery.front() );
+ strquery.pop();
+ EXPECT_EQ( "name3", strquery.front() );
+
 }

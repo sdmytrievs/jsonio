@@ -128,7 +128,9 @@ public:
         return true;
     }
 
-    /// Get primitive value from current Node
+    /// Explicit type conversion between the JSON value and a compatible primitive value.
+    /// The value is filled into the input parameter.
+    /// @return true if JSON value can  be converted to value type.
     template <class T,
               std::enable_if_t<!is_container<T>{}&!is_mappish<T>{}, int> = 0 >
     bool get_to( T& value  ) const
@@ -141,7 +143,9 @@ public:
         return false;
     }
 
-    /// Get array-like data from current Node
+    /// Explicit type conversion between the JSON value and a compatible array-like value.
+    /// The value is filled into the input parameter.
+    /// @return true if JSON value can  be converted to value type.
     template <class T,
               std::enable_if_t<is_container<T>{}&!is_mappish<T>{}, int> = 0 >
     bool get_to( T& value  ) const
@@ -149,7 +153,9 @@ public:
         return get_to_list( value );
     }
 
-    /// Get map-like data from current Node
+    /// Explicit type conversion between the JSON value and a compatible  map-like value.
+    /// The value is filled into the input parameter.
+    /// @return true if JSON value can  be converted to value type.
     template <class T,
               std::enable_if_t<is_container<T>{}&is_mappish<T>{}, int> = 0 >
     bool get_to( T& value  ) const
@@ -157,8 +163,10 @@ public:
         return get_to_map( value );
     }
 
-    /// Get  vector-like objects (std::list, std::vector ) from current Node
-    /// Container must have emplace_back function
+    /// Explicit type conversion between the JSON value and a compatible array-like value.
+    /// The value (std::list, std::vector ) is filled into the input parameter.
+    /// @return true if JSON value can  be converted to value type.
+    /// Container must have emplace_back function.
     template <class T,
               class = typename std::enable_if<is_container<T>{}, bool>::type >
     bool get_to_list( T& values  ) const
@@ -166,7 +174,9 @@ public:
         values.clear();
         if( isNull() )
             return true;
-        JARANGO_THROW_IF( !isStructured(), "JsonBase", 11, "cannot use getArray with " + std::string( typeName() ) );
+        //JARANGO_THROW_IF( !isStructured(), "JsonBase", 11, "cannot use getArray with " + std::string( typeName() ) );
+        if( !isStructured() )
+            return false;
         typename T::value_type val;
         for ( size_t ii=0; ii<getChildrenCount(); ii++)
         {
@@ -176,7 +186,9 @@ public:
         return true;
     }
 
-    /// Get map-like objects (std::map, std::unordered_map, etc) to current Node
+    /// Explicit type conversion between the JSON value and a compatible  map-like value.
+    /// The value (std::map, std::unordered_map ) is filled into the input parameter.
+    /// @return true if JSON value can  be converted to value type.
     template <class Map,
               class = typename std::enable_if<is_mappish<Map>{}, bool>::type >
     bool get_to_map( Map& values  ) const
@@ -184,8 +196,10 @@ public:
         values.clear();
         if( isNull() )
             return true;
-        JARANGO_THROW_IF( !isStructured(), "JsonBase", 12, "cannot use getMapKey with " + std::string( typeName() ) );
-        using Tkey = std::remove_const_t<typename Map::value_type::first_type>; //may need to remove const
+        //JARANGO_THROW_IF( !isStructured(), "JsonBase", 12, "cannot use getMapKey with " + std::string( typeName() ) );
+        if( !isStructured() )
+            return false;
+        using Tkey = std::remove_const_t<typename Map::value_type::first_type>;
         using Tval = std::remove_const_t<typename Map::value_type::second_type>;
 
         Tval val;
@@ -283,18 +297,32 @@ public:
 
     // Field path  methods --------------------------
 
-    /// Get field path to top object.
+    /// Return a string representation of the jsonpath to top field.
     std::string get_field_path() const;
 
-    /// Test exist field path
+    /// Check if a JSON object contains a certain jsonpath.
+    /// The following jsonpath expression could be used
+    ///     "name1.name2.3.name3"
+    ///     "name1.name2[3].name3"
+    ///     "/name1/name2/3/name3"
+    ///     "/name1/name2[3]/name3"
+    ///     "[\"name1\"][\"name2\"][3][\"name3\"]"
     virtual bool exist_path( const std::string& fieldpath ) const
     {
         return ( field( fieldpath ) != nullptr ) ;
     }
 
-    /// Get value from current Node by field path
+    /// Explicit type conversion between the JSON path value and a compatible primitive value.
+    /// The following jsonpath expression could be used
+    ///     "name1.name2.3.name3"
+    ///     "name1.name2[3].name3"
+    ///     "/name1/name2/3/name3"
+    ///     "/name1/name2[3]/name3"
+    ///     "[\"name1\"][\"name2\"][3][\"name3\"]"
+    /// The value is filled into the input parameter.
+    /// @return true if JSON value exist and can be converted to value type.
     template <typename T>
-    bool get_to_path( const std::string& fieldpath, T& val, const T& defval   ) const
+    bool get_vea_path( const std::string& fieldpath, T& val, const T& defval   ) const
     {
         auto pobj = field( fieldpath );
         if( pobj && pobj->get_to(val) )
@@ -304,28 +332,35 @@ public:
         return false;
     }
 
-    /// Get key field from current Node by field path
-    bool get_to_key( const std::string& fieldpath, std::string& key, const std::string& defkey = "---"  ) const
+    /// Get key field from the JSON path value.
+    bool get_key_vea_path( const std::string& fieldpath, std::string& key, const std::string& defkey = "---"  ) const
     {
         auto pobj = field( fieldpath );
-        if( pobj ) {
+        if( pobj )
+        {
             key =  pobj->getFieldValue();
             return true;
         }
-        else {
-            key = defkey;
-            return false;
-        }
+
+        key = defkey;
+        return false;
     }
 
-    /// Set value to current Node by field path
+    /// Use jsonpath to modify any value in a JSON object.
+    /// The following jsonpath expression could be used
+    ///     "name1.name2.3.name3"
+    ///     "name1.name2[3].name3"
+    ///     "/name1/name2/3/name3"
+    ///     "/name1/name2[3]/name3"
+    ///     "[\"name1\"][\"name2\"][3][\"name3\"]"
+    /// @return true if jsonpath present in a JSON object.
     template <typename T>
-    bool set_from_path( const std::string& fieldpath, const T& val  )
+    bool set_vea_path( const std::string& fieldpath, const T& val  )
     {
         auto pobj = field( fieldpath );
-        if( pobj ) {
+        if( pobj )
             return pobj->set_from(val);
-        }
+
         return false;
     }
 
@@ -363,7 +398,7 @@ private:
     virtual JsonBase& append_node( const std::string& akey, Type atype, const std::string& avalue ) =0;
     void dump2stream(std::ostream &os, int depth, bool dense) const;
     /// Get field by fieldpath ("name1.name2.name3")
-    virtual JsonBase *field(  const std::string& fieldpath ) const = 0;
+    JsonBase *field(  const std::string& fieldpath ) const;
     /// Get field by fieldpath
     virtual JsonBase *field( std::queue<std::string> names ) const = 0;
 

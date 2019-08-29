@@ -177,8 +177,6 @@ private:
 
     void update_node(  JsonBase::Type atype, const std::string& avalue ) override;
     JsonFree &append_node( const std::string& akey, JsonBase::Type atype, const std::string& avalue ) override;
-    /// Get field by fieldpath ("name1.name2.name3")
-    JsonFree *field(  const std::string& fieldpath ) const override;
     /// Get field by fieldpath
     JsonFree *field( std::queue<std::string> names ) const override;
 

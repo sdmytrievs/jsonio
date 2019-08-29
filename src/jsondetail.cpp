@@ -107,7 +107,7 @@ std::queue<std::string> split(const std::string& str, const std::string& delimit
     auto pos = str.find_first_of(delimiters, start);
     while(pos != std::string::npos)
     {
-        //if(pos != start) // ignore empty tokens
+        if(pos != start) // ignore empty tokens
         {
             auto vv = std::string(str, start, pos - start);
             trim(vv);
@@ -116,8 +116,8 @@ std::queue<std::string> split(const std::string& str, const std::string& delimit
         start = pos + 1;
         pos = str.find_first_of(delimiters, start);
     }
-    //if(start < str.length()) // ignore trailing delimiter
-    v.push( std::string (str, start, str.length() - start) );
+    if(start < str.length()) // ignore trailing delimiter
+        v.push( std::string (str, start, str.length() - start) );
     return v;
 }
 
