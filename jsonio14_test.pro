@@ -58,7 +58,8 @@ HEADERS += \
         $$TESTS_DIR/tst_base.h \
         $$TESTS_DIR/tst_base_api.h \
         $$TESTS_DIR/tst_builder.h \
-        $$TESTS_DIR/tst_parser.h
+        $$TESTS_DIR/tst_parser.h \
+        $$TESTS_DIR/tst_base_complex.h
 
 SOURCES += \
         $$TESTS_DIR/main.cpp

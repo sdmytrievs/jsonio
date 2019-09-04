@@ -298,7 +298,7 @@ public:
     // Field path  methods --------------------------
 
     /// Return a string representation of the jsonpath to top field.
-    std::string get_field_path() const;
+    std::string get_path() const;
 
     /// Check if a JSON object contains a certain jsonpath.
     /// The following jsonpath expression could be used
@@ -307,7 +307,7 @@ public:
     ///     "/name1/name2/3/name3"
     ///     "/name1/name2[3]/name3"
     ///     "[\"name1\"][\"name2\"][3][\"name3\"]"
-    virtual bool exist_path( const std::string& fieldpath ) const
+    virtual bool path_if_exists( const std::string& fieldpath ) const
     {
         return ( field( fieldpath ) != nullptr ) ;
     }
@@ -322,7 +322,7 @@ public:
     /// The value is filled into the input parameter.
     /// @return true if JSON value exist and can be converted to value type.
     template <typename T>
-    bool get_vea_path( const std::string& fieldpath, T& val, const T& defval   ) const
+    bool get_value_via_path( const std::string& fieldpath, T& val, const T& defval   ) const
     {
         auto pobj = field( fieldpath );
         if( pobj && pobj->get_to(val) )
@@ -333,7 +333,7 @@ public:
     }
 
     /// Get key field from the JSON path value.
-    bool get_key_vea_path( const std::string& fieldpath, std::string& key, const std::string& defkey = "---"  ) const
+    bool get_key_via_path( const std::string& fieldpath, std::string& key, const std::string& defkey = "---"  ) const
     {
         auto pobj = field( fieldpath );
         if( pobj )
@@ -355,7 +355,7 @@ public:
     ///     "[\"name1\"][\"name2\"][3][\"name3\"]"
     /// @return true if jsonpath present in a JSON object.
     template <typename T>
-    bool set_vea_path( const std::string& fieldpath, const T& val  )
+    bool set_value_via_path( const std::string& fieldpath, const T& val  )
     {
         auto pobj = field( fieldpath );
         if( pobj )

@@ -79,7 +79,7 @@ std::string JsonBase::getHelpName() const
 }
 
 /// Get Field Path from Node
-std::string JsonBase::get_field_path() const
+std::string JsonBase::get_path() const
 {
     if( isTop() || getParent()->isTop()  )
     {
@@ -87,7 +87,7 @@ std::string JsonBase::get_field_path() const
     }
     else
     {
-        return  getParent()->get_field_path()+"."+ getKey();
+        return  getParent()->get_path()+"."+ getKey();
     }
 }
 

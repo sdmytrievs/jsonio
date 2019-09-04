@@ -180,10 +180,10 @@ TYPED_TEST( JsonioBaseTest, getQtGUI )
     EXPECT_EQ( usekeys, obj.getUsedKeys() );
 
     // getFieldPath
-    EXPECT_EQ( "vdouble", obj["vdouble"].get_field_path() );
-    EXPECT_EQ( "vlist.1", obj["vlist"][1].get_field_path() );
-    EXPECT_EQ( "vmap.key1", obj["vmap"]["key1"].get_field_path() );
-    EXPECT_EQ( "top", obj.get_field_path() );
+    EXPECT_EQ( "vdouble", obj["vdouble"].get_path() );
+    EXPECT_EQ( "vlist.1", obj["vlist"][1].get_path() );
+    EXPECT_EQ( "vmap.key1", obj["vmap"]["key1"].get_path() );
+    EXPECT_EQ( "top", obj.get_path() );
 }
 
 TYPED_TEST( JsonioBaseTest, get_to )
@@ -307,12 +307,14 @@ TYPED_TEST( JsonioBaseTest, get_to_illegal_value )
     EXPECT_EQ( vstr, "[1.7,2.7,3.7,5.7]\n" );
 
     std::list<std::string> vlist;
-    EXPECT_THROW( obj["vdouble"].get_to( vlist ), jarango_exception );
+    EXPECT_FALSE( obj["vdouble"].get_to( vlist ) );
+    EXPECT_TRUE( vlist.empty() );
     EXPECT_TRUE( obj["vmap"].get_to(vlist));
     EXPECT_FALSE( vlist.empty() );
 
     std::unordered_map<std::string, double> vumaps;
-    EXPECT_THROW( obj["vstring"].get_to( vumaps ), jarango_exception );
+    EXPECT_FALSE( obj["vstring"].get_to( vumaps ) );
+    EXPECT_TRUE( vumaps.empty() );
     EXPECT_TRUE( obj["vlist"].get_to(vumaps));
     EXPECT_FALSE( vumaps.empty() );
 }

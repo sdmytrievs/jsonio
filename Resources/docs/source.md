@@ -104,7 +104,7 @@ class JsonFree - a class to store JSON object
 
 To do:
 
-I. Implement
+I. test Implementation
 
 ```cpp
 
@@ -121,11 +121,22 @@ bool set_from_path( const std::string& fieldpath, const T& val  )
 ```
 
 
-II. Test access to not existing  or illegal type fields
+II. Test clear, remove
 
 III. Add functions to resize arrays and get size ( 1D, 2D, 3D .... )
 
 IV. Add iterators ?
+
+V. New API working with schemas
+
+ a. We create Interfaces   StructDef and FieldDef  for working with schema descriptions
+ b. Then public classes ThriftStructDef and ThiftFieldDef implementation
+ c. In future we can have JsonStructDef and JsonFieldDef implementation [JsonShema](http://json-schema.org/)
+ d. Functions getVertexList, getEdgesList, getVertexCollection, getEdgeCollection, getVertexName could be moved to database implementation and add functions for set this data. This data could be setted when read thrift scheas or other place.
+ e. Into SchemaJson get links to base StructDef and FieldDef and implement ```c++ template<type T> static SchemaJson::object( const string& schema_name ) ```
+ f. Into  SchemaJson use ```c++ const  StructDef* const;   const  FieldDef* const  ``` for only read data.
+ g. Into  StructDef functions: getName(), testUnion(), getOtherStruct( struct_name ), getField( field_name ).
+ h. Into FieldDef add get functions for all fields.
 
 ## Next steps
 

@@ -11,6 +11,54 @@
 #include "service.h"
 using namespace jsonio14;
 
+/// Create object example
+void CreateanObject();
+///
+void SerializationDeserialization();
+
+/// STL-like access
+void AccesstoObject();
+/// Conversion from STL containers
+void STLcontainers();
+
+void FieldPathMethods()
+{
+    std::string input_json = "{\"about\":{\"version\":1,\"description\":\"About\"},\"formats\":"
+                                       "{\"int\":{\"width\":5,\"precision\":0},\"float\":{\"width\":10,\"precision\":4},"
+                                       "\"double\":{\"width\":15,\"precision\":6}},\"data\":[{\"group\":\"float\",\"value\":1.4},"
+                                       "{\"group\":\"int\",\"value\":100},{\"group\":\"double\",\"value\":1e-10},{\"group\":\"double\",\"value\":1e10}],"
+                                       "\"values\":[[1,2,3],[11,12,13]]}";
+
+    auto obj =  json::loads( input_json );
+    auto path = obj["about"]["description"].get_path();
+
+    std::cout << path << std::endl;
+}
+
+int main(int , char** )
+{
+    try{
+        //CreateanObject();
+        //SerializationDeserialization();
+        //AccesstoObject();
+        //STLcontainers();
+        FieldPathMethods();
+    }
+    catch(jarango_exception& e)
+    {
+        std::cout <<   e.what() <<  std::endl;
+    }
+    catch(std::exception& e)
+    {
+        std::cout <<   "std::exception: " << e.what() <<  std::endl;
+    }
+    catch(...)
+    {
+        std::cout <<  "unknown exception" <<  std::endl;
+    }
+
+    return 0;
+}
 
 void CreateanObject()
 {
@@ -121,29 +169,3 @@ void STLcontainers()
     jsFree.get_to_map(vumap2);
     std::cout<< json::dump( vumap2 ) << std::endl;
 }
-
-
-int main(int , char** )
-{
-    try{
-        CreateanObject();
-        SerializationDeserialization();
-        AccesstoObject();
-        STLcontainers();
-    }
-    catch(jarango_exception& e)
-    {
-        std::cout <<   e.what() <<  std::endl;
-    }
-    catch(std::exception& e)
-    {
-        std::cout <<   "std::exception: " << e.what() <<  std::endl;
-    }
-    catch(...)
-    {
-        std::cout <<  "unknown exception" <<  std::endl;
-    }
-
-    return 0;
-}
-
