@@ -137,6 +137,7 @@ TYPED_TEST( JsonioBaseTest, getTypeSize )
     EXPECT_TRUE( obj["vbool"].empty() );
 }
 
+/*
 TYPED_TEST( JsonioBaseTest, getQtGUI )
 {
     const auto& obj = *this->test_object;
@@ -185,6 +186,7 @@ TYPED_TEST( JsonioBaseTest, getQtGUI )
     EXPECT_EQ( "vmap.key1", obj["vmap"]["key1"].get_path() );
     EXPECT_EQ( "top", obj.get_path() );
 }
+*/
 
 TYPED_TEST( JsonioBaseTest, get_to )
 {

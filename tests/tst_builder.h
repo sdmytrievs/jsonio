@@ -160,7 +160,7 @@ TEST( JsonioBuilder, JsonArrayBuilder )
             .addDouble( 1e-10 ).addString( "Test String" );
 
     EXPECT_TRUE( jsFree.isArray() );
-    EXPECT_EQ( jsFree.getChildrenCount(), 6 );
+    EXPECT_EQ( jsFree.size(), 6 );
     EXPECT_TRUE( jsFree[0].isNull() );
 
     EXPECT_TRUE( jsFree[1].isBool() );
@@ -189,7 +189,7 @@ TEST( JsonioBuilder, JsonIntArrayBuilder )
         jsBuilder.addValue( ii );
 
     EXPECT_TRUE( jsFree.isArray() );
-    EXPECT_EQ( jsFree.getChildrenCount(), 5 );
+    EXPECT_EQ( jsFree.size(), 5 );
 
     EXPECT_TRUE( jsFree[0].isNumber() );
     EXPECT_EQ( jsFree[0].toInt(), 0 );

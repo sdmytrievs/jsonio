@@ -27,6 +27,7 @@ JsonFree::JsonFree( JsonFree &&obj ) noexcept:
     move(std::move(obj));
 }
 
+
 std::vector<std::string> JsonFree::getUsedKeys() const
 {
     std::vector<std::string> usekeys;
@@ -36,6 +37,20 @@ std::vector<std::string> JsonFree::getUsedKeys() const
     }
     return usekeys;
 }
+
+bool JsonFree::clear()
+{
+    children.clear();
+    if( isBool() )
+       field_value = "false";
+    else if( isNumber() )
+       field_value = "0";
+    else
+       field_value = "";
+
+    return true;
+}
+
 
 bool JsonFree::remove()
 {
@@ -81,6 +96,7 @@ JsonFree *JsonFree::field(std::queue<std::string> names) const
 void JsonFree::copy(const JsonFree &obj)
 {
     field_type =  obj.field_type;
+    // field_key =  obj.field_key; // copy only data
     field_value = obj.field_value;
 
     children.clear();
@@ -96,6 +112,7 @@ void JsonFree::copy(const JsonFree &obj)
 void JsonFree::move(JsonFree &&obj)
 {
     field_type =  obj.field_type;
+    field_key =  std::move(obj.field_key);  // stl using
     field_value = std::move(obj.field_value);
     //children = std::move(obj.children);
     children.clear();
@@ -122,7 +139,7 @@ JsonFree& JsonFree::get_child(std::size_t idx)
 JsonFree& JsonFree::get_child(const std::string &key)
 {
     auto element = std::find_if( children.begin(), children.end(),
-                                 [=]( auto value ) { return value.getKey() == key; });
+                                 [=]( auto& value ) { return value.getKey() == key; });
     if( element == children.end() )
     {
         return append_node( key, JsonBase::Null, "" );
@@ -135,7 +152,7 @@ JsonFree& JsonFree::get_child(const std::string &key)
 const JsonFree& JsonFree::get_child(const std::string &key) const
 {
     auto element = std::find_if( children.begin(), children.end(),
-                                 [=]( auto value ) { return value.getKey() == key; });
+                                 [=]( auto& value ) { return value.getKey() == key; });
     if( element == children.end() )
     {
         JARANGO_THROW( "JsonFree", 26, "key '" + key + "' not found" );

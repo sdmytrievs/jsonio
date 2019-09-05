@@ -282,11 +282,7 @@ public:
     // Update methods  --------------------------
 
     /// Clear field and set value to default (null).
-    virtual bool clear()
-    {
-        update_node(  Null, "null" );
-        return true;
-    }
+    virtual bool clear() = 0;
 
     /// Remove current field from json.
     virtual bool remove() = 0;

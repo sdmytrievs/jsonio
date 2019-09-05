@@ -104,25 +104,6 @@ class JsonFree - a class to store JSON object
 
 To do:
 
-I. test Implementation
-
-```cpp
-
-virtual bool exist_path( const std::string& fieldpath ) const
-
-template <typename T>
-bool get_to_path( const std::string& fieldpath, T& val, const T& defval = T(0)  ) const
-
-bool get_to_key( const std::string& fieldpath, std::string& key, const std::string& defkey = "---"  ) const
-
-template <typename T>
-bool set_from_path( const std::string& fieldpath, const T& val  )
-
-```
-
-
-II. Test clear, remove
-
 III. Add functions to resize arrays and get size ( 1D, 2D, 3D .... )
 
 IV. Add iterators ?

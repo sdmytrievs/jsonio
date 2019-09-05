@@ -27,8 +27,8 @@ public:
     /// Copy constructor
     JsonFree(const JsonFree &obj );
     /// Move constructor
-    //JsonFree( JsonFree &&obj ) = default;
     JsonFree( JsonFree &&obj ) noexcept;
+    //JsonFree( JsonFree &&obj ) = default; not worked
     /// Destructor
     ~JsonFree() override {}
 
@@ -113,12 +113,21 @@ public:
     bool isTop() const override
     { return parent_object == nullptr; }
 
-
     // Get methods  --------------------------
 
     Type type() const override
     {   return  field_type;  }
 
+
+    // Update methods  --------------------------
+
+    /// Clear field and set value to default (null).
+    virtual bool clear() override;
+
+    // Remove current field
+    bool remove() override;
+
+protected:
 
     // Get methods ( using in Qt GUI model ) --------------------------
 
@@ -147,14 +156,6 @@ public:
     {  return parent_object;  }
 
     std::vector<std::string> getUsedKeys() const override;
-
-
-    // Update methods  --------------------------
-
-
-    // Remove current field
-    bool remove() override;
-
 
 private:
 
@@ -198,20 +199,9 @@ private:
 
 // Add iterator?
 // add resize array 2D, 3D ....
-/// Get field by fieldpath ("name1.name2.name3")
-//virtual JsonDom *field(  const std::string& fieldpath ) const = 0;
-/// Get field by fieldpath
-//virtual JsonDom *field( std::queue<std::string> names ) const = 0;
-/// Get Value bhy path  from Node
-/// If field is not number, the false will be returned.
-//template <class T>
-//bool findValue( const std::string& keypath, T& value  ) const
 // Update functions  -----------------------------------
 /// Resize top level Array
 //virtual void resizeArray( const std::vector<std::size_t>& sizes, const std::string& defval  = "" ) = 0;
-/// Set value to children Node
-//template <class T>
-//bool setFieldValue( const std::string& keypath, const T& value  )
 //virtual bool updateTypeTop( int newtype ) = 0;
 //
 /// Set _id to Node

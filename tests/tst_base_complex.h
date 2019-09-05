@@ -55,22 +55,67 @@ TYPED_TEST( JsonioBaseComplexTest, GetPath )
     EXPECT_EQ( "data.1.value", obj["data"][1]["value"].get_path());
     EXPECT_EQ( "values.0.2", obj["values"][0][2].get_path());
 
-    /*EXPECT_TRUE( obj.isTop());
-    EXPECT_FALSE( obj["vbool"].isTop() );
-    EXPECT_FALSE( obj["vlist"].isTop() );
-    EXPECT_FALSE( obj["vmap"]["key1"].isTop() );*/
+    EXPECT_TRUE( obj.path_if_exists( "formats.float.width" ) );
+    EXPECT_TRUE( obj.path_if_exists( "/formats/int/width" ) );
+    EXPECT_TRUE( obj.path_if_exists( "data[1].value" ) );
+    EXPECT_TRUE( obj.path_if_exists( "values[0][2]" ) );
+    EXPECT_TRUE( obj.path_if_exists( "about" ) );
+
+    EXPECT_FALSE( obj.path_if_exists( "formats.float.other" ) );
+    EXPECT_FALSE( obj.path_if_exists( "data[1].value1" ) );
+    EXPECT_FALSE( obj.path_if_exists( "values[2][2]" ) );
+    EXPECT_FALSE( obj.path_if_exists( "about.version1" ) );
 }
 
-TYPED_TEST( JsonioBaseComplexTest, isStructured1 )
+TYPED_TEST( JsonioBaseComplexTest, ValueViaPath )
 {
-    const auto& obj = *this->test_object;
-    /*EXPECT_TRUE( obj.isStructured());
+    auto& obj = *this->test_object;
+    double dval;
+    EXPECT_TRUE( obj.get_value_via_path( "formats.float.width", dval, 1.5 ) );
+    EXPECT_EQ( dval, 10);
+    EXPECT_TRUE( obj.get_value_via_path( "data[1].value", dval, 1.5 ) );
+    EXPECT_EQ( dval, 100);
+    EXPECT_FALSE( obj.get_value_via_path( "data[4].value", dval, 1.5 ) );
+    EXPECT_EQ( dval, 1.5);
 
-    EXPECT_TRUE( obj["vlist"].isStructured() );
-    EXPECT_TRUE( obj["vmap"].isStructured() );
-    EXPECT_TRUE( obj["vlist"].isArray() );
-    EXPECT_TRUE( obj["vmap"].isObject() );
+    dval = 2.5;
+    EXPECT_TRUE( obj.set_value_via_path( "data[1].value", dval ) );
+    EXPECT_EQ( obj["data"][1]["value"].toDouble(), dval );
+    EXPECT_FALSE( obj.set_value_via_path( "data[4].value", dval ) );
 
-    EXPECT_FALSE( obj["vbool"].isStructured() );
-    EXPECT_FALSE( obj["vmap"]["key1"].isStructured() );*/
+    std::string sval;
+    EXPECT_TRUE( obj.get_value_via_path( "data[2]", sval, std::string("undefined") ) );
+    EXPECT_EQ( sval, "{\"group\":\"double\",\"value\":1e-10}\n");
+    EXPECT_TRUE( obj.get_key_via_path( "data[2]", sval ) );
+    EXPECT_EQ( sval, "");
+}
+
+
+TYPED_TEST( JsonioBaseComplexTest, ClearRemove )
+{
+    auto& obj = *this->test_object;
+
+    EXPECT_TRUE( obj["data"][1]["value"].clear() );
+    EXPECT_EQ( obj["data"][1]["value"].toDouble(), 0 );
+
+    EXPECT_TRUE( obj["about"]["description"].clear() );
+    EXPECT_EQ( obj["about"]["description"].toString(), "" );
+
+    EXPECT_TRUE( obj["formats"]["float"].clear() );
+    EXPECT_EQ( obj["formats"]["float"].toString(true), "{}\n" );
+
+    EXPECT_FALSE( obj.remove() );
+
+    //EXPECT_EQ( obj["about"].toString(true), "{\"version\":1,\"description\":\"\"}\n" );
+    EXPECT_TRUE( obj["about"]["version"].remove() );
+    //EXPECT_EQ( obj["about"].toString(true), "{\"description\":\"\"}\n" );
+    EXPECT_TRUE( obj.path_if_exists( "about" ) );
+    EXPECT_FALSE( obj.path_if_exists( "about.version" ) );
+
+    EXPECT_EQ( obj["data"].size(), 4 );
+    EXPECT_TRUE( obj["data"][1].remove() );
+    EXPECT_EQ( obj["data"].size(), 3 );
+    EXPECT_EQ( obj["data"].toString(true),
+            "[{\"group\":\"float\",\"value\":1.4},{\"group\":\"double\",\"value\":1e-10},{\"group\":\"double\",\"value\":10000000000}]\n" );
+
 }
