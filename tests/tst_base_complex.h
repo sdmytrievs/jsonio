@@ -51,9 +51,9 @@ TYPED_TEST( JsonioBaseComplexTest, GetPath )
     const auto& obj = *this->test_object;
 
     EXPECT_EQ( "about.description", obj["about"]["description"].get_path());
-   // EXPECT_EQ( "formats.float.width", obj["formats"]["float"]["width"].get_path());
-   // EXPECT_EQ( "data.1.value", obj["data"][1]["value"].get_path());
-   // EXPECT_EQ( "values.0.2", obj["values"][0][2].get_path());
+    EXPECT_EQ( "formats.float.width", obj["formats"]["float"]["width"].get_path());
+    EXPECT_EQ( "data.1.value", obj["data"][1]["value"].get_path());
+    EXPECT_EQ( "values.0.2", obj["values"][0][2].get_path());
 
     /*EXPECT_TRUE( obj.isTop());
     EXPECT_FALSE( obj["vbool"].isTop() );

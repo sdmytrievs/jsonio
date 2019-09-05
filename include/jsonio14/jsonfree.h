@@ -27,8 +27,8 @@ public:
     /// Copy constructor
     JsonFree(const JsonFree &obj );
     /// Move constructor
-    JsonFree( JsonFree &&obj ) = default;
-    //JsonFree( JsonFree &&obj ) noexcept;
+    //JsonFree( JsonFree &&obj ) = default;
+    JsonFree( JsonFree &&obj ) noexcept;
     /// Destructor
     ~JsonFree() override {}
 
