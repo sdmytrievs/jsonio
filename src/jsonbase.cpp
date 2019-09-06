@@ -249,6 +249,44 @@ void JsonBase::loads( const std::string &jsonstr )
     parser.parse_to(*this);
 }
 
+std::string JsonBase::checked_value( JsonBase::Type type, const std::string& newvalue )
+{
+    std::string chvalue = newvalue;
+    switch ( type )
+    {
+    case Null:
+        chvalue = "null";
+        break;
+    case Bool:
+        if( chvalue != "true" )
+            chvalue = "false";
+        break;
+    case Int: {
+        int ival;
+        if( !string2v( chvalue, ival ) )
+            chvalue = "0";
+    }
+        break;
+    case Double: {
+        double dval;
+        if( !string2v( chvalue, dval ) )
+            chvalue = "0.0";
+    }
+        break;
+    case String:
+        if( chvalue.empty() )
+            chvalue = "";//emptiness;
+        break;
+        // main constructions
+    case Object:
+    case Array:
+    default:
+        chvalue = "";
+        break;
+    }
+    return chvalue;
+}
+
 
 /* Temporaly not used
  *

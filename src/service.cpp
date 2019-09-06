@@ -111,6 +111,18 @@ std::vector<std::string> split2(const std::string& s, char delimiter)
 }
 
 
+std::vector<size_t> min_vector(const std::vector<size_t>& lhs, const std::vector<size_t>& rhs)
+{
+    std::vector<size_t> result;
+    auto size = std::min(lhs.size(), rhs.size() );
+    for( std::size_t ii=0; ii<size; ++ii )
+    {
+       result.push_back( std::min(lhs[ii], rhs[ii] ));
+    }
+    std::copy( rhs.begin(), rhs.end(), std::back_inserter(result) );
+    return result;
+}
+
 /*
 
  Inserting several elements into an STL container efficiently

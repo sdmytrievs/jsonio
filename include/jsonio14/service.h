@@ -108,5 +108,7 @@ bool definitelyLessThan( const T& a, const T& b, const T& epsilon = std::numeric
     return (b - a) > ( (fabs(a) < fabs(b) ? fabs(b) : fabs(a)) * epsilon);
 }
 
+/// Generate vector with minimal values from two vectors
+std::vector<size_t> min_vector(const std::vector<size_t>& lhs, const std::vector<size_t>& rhs);
 
 } // namespace jsonio14

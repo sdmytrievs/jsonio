@@ -119,6 +119,10 @@ public:
       return size() < 1;
     }
 
+    /// Get sizes of complex array ( 2D, 3D ... ).
+    /// Important: get only sizes of first children.
+    virtual std::vector<size_t> array_sizes() const = 0;
+
     // Get values  --------------------------
 
     /// Get internal data to json string
@@ -287,8 +291,17 @@ public:
     /// Remove current field from json.
     virtual bool remove() = 0;
 
-    /// Resize top level array
-    //virtual bool resizeArray( const std::vector<std::size_t>& sizes, const std::string& defval  = "" ) = 0;
+    /// Resize array ( 1D, 2D, 3D ... ).
+    /// Set up defval values if the JSON type of elements is primitive
+    virtual void array_resize( const std::vector<size_t> &sizes, const std::string& defval )
+    {
+        JARANGO_THROW_IF( !isArray(), "JsonBase", 11, "cannot resize not array data " + std::string( typeName() ) );
+        resize_array_level( 0, sizes, defval  );
+    }
+
+    /// Resize 1D array.
+    /// Set up defval values if the JSON type of elements is primitive.
+    virtual void array_resize( std::size_t size, const std::string &defval ) = 0;
 
 
     // Field path  methods --------------------------
@@ -387,7 +400,6 @@ protected:
         return getHelpName();
     }
 
-
 private:
 
     virtual void update_node(  Type atype, const std::string& avalue ) =0;
@@ -397,6 +409,7 @@ private:
     JsonBase *field(  const std::string& fieldpath ) const;
     /// Get field by fieldpath
     virtual JsonBase *field( std::queue<std::string> names ) const = 0;
+    virtual void resize_array_level(size_t level, const std::vector<size_t> &sizes, const std::string &defval)=0;
 
 public:
 
@@ -434,6 +447,9 @@ public:
     ///   Returns the type name as string to be used in error messages - usually to
     ///   indicate that a function was called on a wrong JSON type.
     static const char* typeName(Type type);
+
+    /// Return legal value for type.
+    static std::string checked_value( JsonBase::Type type, const std::string &newvalue );
 
     friend class JsonBuilderBase;
     friend class JsonObjectBuilder;

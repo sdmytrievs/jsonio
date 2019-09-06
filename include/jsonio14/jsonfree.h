@@ -12,17 +12,17 @@ class JsonFree final : public JsonBase
 
 public:
 
-   /// Create object JSON value
-   static  JsonFree object( const std::string& key = "top" )
-   {
+    /// Create object JSON value
+    static  JsonFree object( const std::string& key = "top" )
+    {
         return JsonFree( Object, key, "" );
-   }
+    }
 
-   /// Create array JSON value
-   static  JsonFree array( const std::string& key = "top" )
-   {
-       return JsonFree( Array, key, "" );
-   }
+    /// Create array JSON value
+    static  JsonFree array( const std::string& key = "top" )
+    {
+        return JsonFree( Array, key, "" );
+    }
 
     /// Copy constructor
     JsonFree(const JsonFree &obj );
@@ -56,8 +56,8 @@ public:
     template <class T>
     JsonFree &operator =( const T& value )
     {
-       set_from( value  );
-       return *this;
+        set_from( value  );
+        return *this;
     }
 
     /// Return a const reference to arr[i] if this is an array, exception otherwise.
@@ -99,7 +99,7 @@ public:
     {
         //std::cout << "JsonFree &operator[](const std::string &key)" << std::endl;
         if( isNull() )
-           update_node( JsonBase::Object, "" );
+            update_node( JsonBase::Object, "" );
         if( isArray() || isObject()  )
         {
             return get_child( key );
@@ -118,14 +118,22 @@ public:
     Type type() const override
     {   return  field_type;  }
 
+    /// Get sizes of complex array ( 2D, 3D ... ).
+    /// Important: get only sizes of first children.
+    std::vector<size_t> array_sizes() const override;
+
 
     // Update methods  --------------------------
 
-    /// Clear field and set value to default (null).
+    /// Clear field and set value to default (empty or 0).
     virtual bool clear() override;
 
-    // Remove current field
+    /// Remove current field.
     bool remove() override;
+
+    /// Resize 1D array.
+    /// Set up defval values if the JSON type of elements is primitive.
+    void array_resize( std::size_t size, const std::string &defval ) override;
 
 protected:
 
@@ -195,17 +203,17 @@ private:
     bool remove_child(JsonFree *child);
     bool remove_child(std::size_t idx);
     bool remove_child(const std::string &key);
+
+    void resize_array_level(size_t level, const std::vector<size_t> &sizes, const std::string &defval) override;
+
 };
 
 // Add iterator?
-// add resize array 2D, 3D ....
-// Update functions  -----------------------------------
-/// Resize top level Array
-//virtual void resizeArray( const std::vector<std::size_t>& sizes, const std::string& defval  = "" ) = 0;
 //virtual bool updateTypeTop( int newtype ) = 0;
 //
 /// Set _id to Node
 //virtual void setOid_( const std::string& _oid  );
+//
 /// Set up string json value to array or struct field
 //void setComplexValue(const std::string& newval );
 
