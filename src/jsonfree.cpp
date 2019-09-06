@@ -247,7 +247,11 @@ void JsonFree::array_resize( std::size_t  newsize, const std::string& defval  )
             for( auto ii=children.size(); ii<newsize; ii++)
             {
                 children.emplace_back( JsonFree{defchild} );
-                if( defchild.isPrimitive() )
+                children.back().field_key = std::to_string(ii);
+                children.back().ndx_in_parent = ii;
+                children.back().parent_object = this;
+
+                if( !defval.empty() && defchild.isPrimitive() )
                     children.back().field_value = chdefval;
             }
         }

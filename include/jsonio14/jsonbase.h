@@ -293,7 +293,7 @@ public:
 
     /// Resize array ( 1D, 2D, 3D ... ).
     /// Set up defval values if the JSON type of elements is primitive
-    virtual void array_resize( const std::vector<size_t> &sizes, const std::string& defval )
+    virtual void array_resize_xD( const std::vector<size_t> &sizes, const std::string& defval )
     {
         JARANGO_THROW_IF( !isArray(), "JsonBase", 11, "cannot resize not array data " + std::string( typeName() ) );
         resize_array_level( 0, sizes, defval  );

@@ -119,3 +119,20 @@ TYPED_TEST( JsonioBaseComplexTest, ClearRemove )
             "[{\"group\":\"float\",\"value\":1.4},{\"group\":\"double\",\"value\":1e-10},{\"group\":\"double\",\"value\":10000000000}]\n" );
 
 }
+
+TYPED_TEST( JsonioBaseComplexTest, ArrayResize )
+{
+    auto& obj = *this->test_object;
+
+    auto sizes = obj["values"].array_sizes();
+    EXPECT_EQ( 2, sizes.size() );
+    EXPECT_EQ( 2, sizes[0] );
+    EXPECT_EQ( 3, sizes[1] );
+
+    obj["values"].array_resize_xD({3,5}, "5");
+    EXPECT_EQ( obj["values"].dump(true), "[[1,2,3,5,5],[11,12,13,5,5],[1,2,3,5,5]]\n" );
+    obj["values"].array_resize_xD({4,3}, "5");
+    EXPECT_EQ( obj["values"].dump(true), "[[1,2,3],[11,12,13],[1,2,3],[1,2,3]]\n" );
+    obj["values"].array_resize_xD({2,2}, "");
+    EXPECT_EQ( obj["values"].dump(true), "[[1,2],[11,12]]\n" );
+}

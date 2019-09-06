@@ -336,3 +336,26 @@ TEST( JsonioBase, get_toMapKey )
     jsFree.get_to(vumaps2);
     EXPECT_EQ( vumaps, vumaps2 );
 }
+
+TEST( JsonioBase, checked_value )
+{
+    EXPECT_EQ( "string", JsonBase::checked_value( JsonBase::String, "string" ) );
+    EXPECT_EQ( "false", JsonBase::checked_value( JsonBase::Bool, "string" ) );
+    EXPECT_EQ( "true", JsonBase::checked_value( JsonBase::Bool, "true" ) );
+    EXPECT_EQ( "0", JsonBase::checked_value( JsonBase::Int, "string" ) );
+    EXPECT_EQ( "10", JsonBase::checked_value( JsonBase::Int, "10" ) );
+    EXPECT_EQ( "0", JsonBase::checked_value( JsonBase::Int, "1.5" ) );
+    EXPECT_EQ( "0.0", JsonBase::checked_value( JsonBase::Double, "2string" ) );
+    EXPECT_EQ( "10", JsonBase::checked_value( JsonBase::Double, "10" ) );
+    EXPECT_EQ( "1.5", JsonBase::checked_value( JsonBase::Double, "1.5" ) );
+
+    EXPECT_EQ( "", JsonBase::checked_value( JsonBase::Object, "string" ) );
+    EXPECT_EQ( "", JsonBase::checked_value( JsonBase::Array, "string" ) );
+
+    auto obj = json::loads("{\"key1\":4,\"key2\":5}\n");
+    obj["vsetnew"] = JsonFree::array("vsetnew");
+    EXPECT_EQ( obj["vsetnew"].dump(true), "[]\n" );
+    obj["vsetnew"].array_resize(3, "4.1");
+    EXPECT_EQ( obj["vsetnew"].dump(true), "[4.1,4.1,4.1]\n" );
+
+}

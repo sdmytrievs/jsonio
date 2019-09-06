@@ -135,6 +135,7 @@ public:
     /// Set up defval values if the JSON type of elements is primitive.
     void array_resize( std::size_t size, const std::string &defval ) override;
 
+
 protected:
 
     // Get methods ( using in Qt GUI model ) --------------------------

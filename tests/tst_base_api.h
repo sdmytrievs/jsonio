@@ -320,3 +320,19 @@ TYPED_TEST( JsonioBaseTest, get_to_illegal_value )
     EXPECT_TRUE( obj["vlist"].get_to(vumaps));
     EXPECT_FALSE( vumaps.empty() );
 }
+
+TYPED_TEST( JsonioBaseTest, ArrayResize )
+{
+    auto& obj = *this->test_object;
+
+    auto sizes = obj["vlist"].array_sizes();
+    EXPECT_EQ( 1, sizes.size() );
+    EXPECT_EQ( 4, sizes[0] );
+
+    obj["vlist"].array_resize(2, "5");
+    EXPECT_EQ( obj["vlist"].dump(true), "[1.7,2.7]\n" );
+    obj["vlist"].array_resize(6, "5");
+    EXPECT_EQ( obj["vlist"].dump(true), "[1.7,2.7,5,5,5,5]\n" );
+    obj["vlist"].array_resize(8, "");
+    EXPECT_EQ( obj["vlist"].dump(true), "[1.7,2.7,5,5,5,5,1.7,1.7]\n" );
+}

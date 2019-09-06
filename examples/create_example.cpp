@@ -33,8 +33,6 @@ void FieldPathMethods()
     auto path = obj["about"]["description"].get_path();
     std::cout << path << std::endl;
 
-
-
 }
 
 int main(int , char** )
