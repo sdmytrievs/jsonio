@@ -16,10 +16,6 @@ public:
     using iterator = std::vector<JsonFree>::iterator;
     /// A const iterator for a JsonFree container
     using const_iterator = std::vector<JsonFree>::const_iterator;
-    /// A reverse iterator for a JsonFree container
-    using reverse_iterator =std::vector<JsonFree>::reverse_iterator;
-    /// A const reverse iterator for a JsonFree container
-    using const_reverse_iterator = std::vector<JsonFree>::const_reverse_iterator;
 
     /// Create object JSON value
     static  JsonFree object( const std::string& key = "top" )
