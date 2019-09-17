@@ -336,3 +336,30 @@ TYPED_TEST( JsonioBaseTest, ArrayResize )
     obj["vlist"].array_resize(8, "");
     EXPECT_EQ( obj["vlist"].dump(true), "[1.7,2.7,5,5,5,5,1.7,1.7]\n" );
 }
+
+TYPED_TEST( JsonioBaseTest, Iterators )
+{
+    auto& obj = *this->test_object;
+
+    // range-based for
+    size_t ii=0;
+    for (const auto& element : obj["vlist"])
+    {
+        EXPECT_EQ( obj["vlist"][ii++].toDouble(), element.toDouble() );
+    }
+    EXPECT_EQ( ii, obj["vlist"].size() );
+
+    // range-based for
+    ii=0;
+    for (auto it = obj["vdouble"].begin(); it != obj["vdouble"].end(); ++it, ++ii);
+    EXPECT_EQ( ii, 0 );
+
+
+    // iterate the array
+    ii=0;
+    for (auto it = obj.begin(); it != obj.end(); ++it)
+    {
+        EXPECT_EQ( obj[ii++].toString(), it->toString() );
+    }
+    EXPECT_EQ( ii, obj.size() );
+}

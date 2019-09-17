@@ -97,15 +97,37 @@ JsonFree loads( const std::string &jsonstr )
 
 class JsonFree - a class to store JSON object
 
+```cpp
 
-> *source: "+-";    test: "-";  example: "-"*
-> Need examples, test special functions ( clear, remove )
+int  vint{15};
+std::vector<double> vlist{ 17, 27 };
+std::map<std::string, std::string> vumap{ {"key1", "val1" }, {"key2", "val2" } };
+std::string vstr{"New string"};
+
+auto obj = JsonFree::object();
+
+obj["vbool"] = true;
+obj["vint"] = vint;
+obj["vdouble"] = 2.5;
+obj["vcstring"] = "const char * string";
+obj["vstr"] =  vstr;
+obj["vlist"] = vlist;
+obj["vmap"] = vumap;
+obj["vmap"]["key3"] = 10;
+
+
+for (JsonFree::iterator it = obj.begin(); it != obj.end(); ++it) {
+  std::cout << it->toString(true) << '\n';
+}
+
+
+```
+
+> *source: "+";    test: "-";  example: "-"*
 
 
 To do:
 
-
-IV. Add iterators ?
 
 V. New API working with schemas
 

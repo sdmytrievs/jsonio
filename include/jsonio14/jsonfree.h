@@ -12,6 +12,15 @@ class JsonFree final : public JsonBase
 
 public:
 
+    /// An iterator for a JsonFree container
+    using iterator = std::vector<JsonFree>::iterator;
+    /// A const iterator for a JsonFree container
+    using const_iterator = std::vector<JsonFree>::const_iterator;
+    /// A reverse iterator for a JsonFree container
+    using reverse_iterator =std::vector<JsonFree>::reverse_iterator;
+    /// A const reverse iterator for a JsonFree container
+    using const_reverse_iterator = std::vector<JsonFree>::const_reverse_iterator;
+
     /// Create object JSON value
     static  JsonFree object( const std::string& key = "top" )
     {
@@ -105,6 +114,30 @@ public:
             return get_child( key );
         }
         JARANGO_THROW( "JsonFree", 24, "cannot use operator[] with a string argument with " + std::string( typeName() ) );
+    }
+
+    /// @brief returns an iterator to one past the last element.
+    iterator end()
+    {
+      return children.end();
+    }
+
+    /// @brief returns an iterator to the first element.
+    iterator begin()
+    {
+      return children.begin();
+    }
+
+    /// @brief returns a const iterator to one past the last element.
+    const_iterator cend()
+    {
+      return children.cend();
+    }
+
+    /// @brief returns a const iterator to the first element
+    const_iterator cbegin() const
+    {
+      return children.cbegin();
     }
 
     // Test methods  --------------------------------------------
