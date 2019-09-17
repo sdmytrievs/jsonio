@@ -23,7 +23,7 @@ template <> std::string v2string( const std::string& value )
 // Serialization bool value to string.
 template<> std::string v2string( const bool& value )
 {
-    return value ? "true" : "false";;
+    return value ? "true" : "false";
 }
 
 // Serializations double value to string.
@@ -32,7 +32,7 @@ template <> std::string v2string( const double& value )
     if(std::isfinite(value))
     {
         std::ostringstream os;
-        os << std::setprecision(DetailSettings::doublePrecision) << value;;
+        os << std::setprecision(DetailSettings::doublePrecision) << value;
         return os.str();
     } else
     {
@@ -46,7 +46,7 @@ template <> std::string v2string( const float& value )
     if(std::isfinite(value))
     {
         std::ostringstream os;
-        os << std::setprecision(DetailSettings::floatPrecision) << value;;
+        os << std::setprecision(DetailSettings::floatPrecision) << value;
         return os.str();
     } else
     {

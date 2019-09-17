@@ -104,7 +104,6 @@ class JsonFree - a class to store JSON object
 
 To do:
 
-III. Add functions to resize arrays and get size ( 1D, 2D, 3D .... )
 
 IV. Add iterators ?
 
