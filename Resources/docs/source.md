@@ -93,9 +93,9 @@ JsonFree loads( const std::string &jsonstr )
 > *source: "+";  test: "+";  example: "+"*
 > Read NaN and Inf values -> exception?
 
-8. jsonfree.h(cpp)  ( under construction )
+8. jsonfree.h(cpp)
 
-class JsonFree - a class to store JSON object
+class JsonFree - a class to store free schema JSON object
 
 ```cpp
 
@@ -124,6 +124,13 @@ for (JsonFree::iterator it = obj.begin(); it != obj.end(); ++it) {
 ```
 
 > *source: "+";    test: "-";  example: "-"*
+
+9. io_settings.h(cpp)  ( under construction )
+
+class JsonioSettings - storing preferences to JSONIO
+
+
+> *source: "+-";    test: "-";  example: "-"*
 
 
 To do:
@@ -161,3 +168,13 @@ Move dbarango API to other github project
 
 Work about jsonimpex
 Work about jsonui
+
+## Best practices
+
+// Top 25 C++ API design mistakes and how to avoid them
+// https://www.acodersjourney.com/top-25-cplusplus-api-design-mistakes-and-how-to-avoid-them/
+
+// https://stackoverflow.com/questions/1008019/c-singleton-design-pattern
+// If you need global access to an object, make it a global, like std::cout. But don't constrain the number of instances that can be created.
+
+

@@ -30,7 +30,7 @@ int main(int , char** )
         //SerializationDeserialization();
         //AccesstoObject();
         //STLcontainers();
-        //FieldPathMethods();
+        FieldPathMethods();
     }
     catch(jarango_exception& e)
     {

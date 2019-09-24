@@ -104,19 +104,19 @@ public:
     /// @brief return the type as string
     ///   Returns the type name as string to be used in error messages - usually to
     ///   indicate that a function was called on a wrong JSON type.
-    virtual const char* typeName() const
+    const char* typeName() const
     {
         return  typeName( type() );
     }
 
     std::size_t size() const
     {
-      return  getChildrenCount();
+        return  getChildrenCount();
     }
 
     bool empty() const
     {
-      return size() < 1;
+        return size() < 1;
     }
 
     /// Get sizes of complex array ( 2D, 3D ... ).
@@ -213,7 +213,7 @@ public:
             if( !string2v( getChild(ii)->getKey(), key ) )
                 continue;
             if( getChild(ii)->get_to( val ) )
-                 values.emplace( key, val);
+                values.emplace( key, val);
         }
         return true;
     }
@@ -316,9 +316,9 @@ public:
     ///     "/name1/name2/3/name3"
     ///     "/name1/name2[3]/name3"
     ///     "[\"name1\"][\"name2\"][3][\"name3\"]"
-    virtual bool path_if_exists( const std::string& fieldpath ) const
+    virtual bool path_if_exists( const std::string& jsonpath ) const
     {
-        return ( field( fieldpath ) != nullptr ) ;
+        return ( field( jsonpath ) != nullptr ) ;
     }
 
     /// Explicit type conversion between the JSON path value and a compatible primitive value.
@@ -331,9 +331,9 @@ public:
     /// The value is filled into the input parameter.
     /// @return true if JSON value exist and can be converted to value type.
     template <typename T>
-    bool get_value_via_path( const std::string& fieldpath, T& val, const T& defval   ) const
+    bool get_value_via_path( const std::string& jsonpath, T& val, const T& defval   ) const
     {
-        auto pobj = field( fieldpath );
+        auto pobj = field( jsonpath );
         if( pobj && pobj->get_to(val) )
             return true;
 
@@ -342,9 +342,9 @@ public:
     }
 
     /// Get key field from the JSON path value.
-    bool get_key_via_path( const std::string& fieldpath, std::string& key, const std::string& defkey = "---"  ) const
+    bool get_key_via_path( const std::string& jsonpath, std::string& key, const std::string& defkey = "---"  ) const
     {
-        auto pobj = field( fieldpath );
+        auto pobj = field( jsonpath );
         if( pobj )
         {
             key =  pobj->getFieldValue();
@@ -364,14 +364,17 @@ public:
     ///     "[\"name1\"][\"name2\"][3][\"name3\"]"
     /// @return true if jsonpath present in a JSON object.
     template <typename T>
-    bool set_value_via_path( const std::string& fieldpath, const T& val  )
+    bool set_value_via_path( const std::string& jsonpath, const T& val  )
     {
-        auto pobj = field( fieldpath );
+        auto pobj = field_add( jsonpath );
         if( pobj )
             return pobj->set_from(val);
 
         return false;
     }
+
+    /// Return a reference to object[jsonpath] if an object can be create, exception otherwise.
+    virtual JsonBase &add_object_via_path(const std::string &jsonpath) = 0;
 
 protected:
 
@@ -407,8 +410,11 @@ private:
     void dump2stream(std::ostream &os, int depth, bool dense) const;
     /// Get field by fieldpath ("name1.name2.name3")
     JsonBase *field(  const std::string& fieldpath ) const;
-    /// Get field by fieldpath
     virtual JsonBase *field( std::queue<std::string> names ) const = 0;
+    /// Get field by fieldpath ("name1.name2.name3")
+    JsonBase *field_add(  const std::string& fieldpath );
+    virtual JsonBase *field_add(std::queue<std::string> names) = 0;
+
     virtual void resize_array_level(size_t level, const std::vector<size_t> &sizes, const std::string &defval)=0;
 
 public:

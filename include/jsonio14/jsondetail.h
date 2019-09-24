@@ -36,7 +36,7 @@ std::string v2string( const T& value )
     //if(std::isfinite(value))
     //{
         std::ostringstream os;
-        os << value;;
+        os << value;
         return os.str();
     //} else
     //{

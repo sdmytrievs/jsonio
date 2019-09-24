@@ -2,6 +2,11 @@ TEMPLATE = app
 CONFIG += thread console c++14
 CONFIG -= app_bundle
 CONFIG -= qt
+# https://resources.qt.io/qt-world-summit-2018/qtws18-kdabs-opensource-tools-for-qt-milian-wolff-kdab
+#Clazy
+#GammaRay
+#Heaptrack
+#Hotspot
 
 !win32 {
   DEFINES += __unix
@@ -60,4 +65,6 @@ SOURCES += \
 DISTFILES += \
     Resources/docs/source.md \
     Resources/thrift/schema_test.thrift
+
+
 

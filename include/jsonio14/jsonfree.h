@@ -115,25 +115,25 @@ public:
     /// @brief returns an iterator to one past the last element.
     iterator end()
     {
-      return children.end();
+        return children.end();
     }
 
     /// @brief returns an iterator to the first element.
     iterator begin()
     {
-      return children.begin();
+        return children.begin();
     }
 
     /// @brief returns a const iterator to one past the last element.
     const_iterator cend()
     {
-      return children.cend();
+        return children.cend();
     }
 
     /// @brief returns a const iterator to the first element
     const_iterator cbegin() const
     {
-      return children.cbegin();
+        return children.cbegin();
     }
 
     // Test methods  --------------------------------------------
@@ -164,6 +164,8 @@ public:
     /// Set up defval values if the JSON type of elements is primitive.
     void array_resize( std::size_t size, const std::string &defval ) override;
 
+    /// Return a reference to object[jsonpath] if an object can be create, exception otherwise.
+    virtual JsonFree &add_object_via_path(const std::string &jsonpath) override;
 
 protected:
 
@@ -218,6 +220,8 @@ private:
     JsonFree &append_node( const std::string& akey, JsonBase::Type atype, const std::string& avalue ) override;
     /// Get field by fieldpath
     JsonFree *field( std::queue<std::string> names ) const override;
+    /// Add field by fieldpath
+    JsonFree *field_add(std::queue<std::string> names) override;
 
     /// Deep copy children
     void copy(const JsonFree &obj);

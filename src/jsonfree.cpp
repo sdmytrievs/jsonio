@@ -77,7 +77,7 @@ JsonFree& JsonFree::append_node(const std::string &akey, JsonBase::Type atype, c
 }
 
 
-JsonFree *JsonFree::field(std::queue<std::string> names) const
+JsonFree *JsonFree::field(std::queue<std::string> names ) const
 {
     if( names.empty() )
         return const_cast<JsonFree *>(this);
@@ -94,6 +94,40 @@ JsonFree *JsonFree::field(std::queue<std::string> names) const
     return element->field(names);
 }
 
+JsonFree *JsonFree::field_add(std::queue<std::string> names )
+{
+    if( names.empty() )
+        return const_cast<JsonFree *>(this);
+
+    auto fname = names.front();
+    names.pop();
+
+    auto element = std::find_if( children.begin(), children.end(),
+                                 [=]( const auto& value ) { return value.getKey() == fname; });
+    if( element == children.end() )
+    {
+        if( isObject() )
+        {
+            append_node( fname, JsonBase::Object, "" );
+            return children.back().field_add(names);
+        }
+        else
+            return nullptr;
+    }
+    return element->field_add(names);
+}
+
+JsonFree &JsonFree::add_object_via_path(const std::string &jsonpath)
+{
+    auto names = split(jsonpath, "./[]\"");
+    auto pobj = field_add( names );
+    if( pobj )
+    {
+        pobj->update_node( JsonBase::Object, "" );
+        return *pobj;
+    }
+    JARANGO_THROW( "JsonBase", 12, "cannot create object with jsonpath " + std::string( jsonpath ) );
+}
 
 // key and parent not changed
 void JsonFree::copy(const JsonFree &obj)
