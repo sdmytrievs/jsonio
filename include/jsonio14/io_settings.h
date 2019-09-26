@@ -20,13 +20,13 @@ public:
     /// Check if a section object contains a certain jsonpath.
     bool contains(const std::string& jsonpath ) const
     {
-        return head_object.path_if_exists( jsonpath );
+        return head_object->path_if_exists( jsonpath );
     }
 
     /// @brief Dump section to JSON string.
     std::string dump() const
     {
-        return  head_object.dump( true );
+        return  head_object->dump( true );
     }
 
     /// Get Directory path from Node
@@ -46,7 +46,7 @@ public:
     T value( const std::string& jsonpath, const T& defvalue  ) const
     {
         T avalue;
-        head_object.get_value_via_path( jsonpath, avalue, defvalue );
+        head_object->get_value_via_path( jsonpath, avalue, defvalue );
         return avalue;
     }
 
@@ -61,7 +61,7 @@ public:
     template <class T>
     bool setValue( const std::string& jsonpath, const T& value  )
     {
-        if( head_object.set_value_via_path( jsonpath, value ) )
+        if( head_object->set_value_via_path( jsonpath, value ) )
         {
             sync();
             return true;
@@ -78,7 +78,7 @@ protected:
 
     /// Constructor
     SectionSettings( const JsonioSettings& iosettins,
-                     JsonFree& topData ):
+                     JsonFree* topData ):
         io_settins( iosettins ),head_object( topData )
     { }
 
@@ -86,9 +86,9 @@ protected:
     const JsonioSettings& io_settins;
 
     /// Head object for section.
-    JsonFree& head_object;
+    JsonFree* head_object;
 
-    void change_head( JsonFree& new_head_object )
+    void change_head( JsonFree* new_head_object )
     {
         head_object = new_head_object;
     }
@@ -120,7 +120,7 @@ public:
     SectionSettings section( const std::string& section_jsonpath )
     {
         JsonFree& data = all_settings.add_object_via_path(section_jsonpath);
-        return SectionSettings( *this, data );
+        return SectionSettings( *this, &data );
     }
 
     /// Returns true if there exists a setting called key; returns false otherwise.

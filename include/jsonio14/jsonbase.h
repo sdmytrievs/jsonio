@@ -2,9 +2,10 @@
 
 #include <iostream>
 #include <vector>
-#include "jsondetail.h"
+#include <queue>
 #include "exceptions.h"
 #include "type_test.h"
+#include "jsondetail.h"
 
 namespace jsonio14 {
 
@@ -222,7 +223,7 @@ public:
 
     bool set_from( const std::string& value  )
     {
-        update_node(  String, v2string(value) );
+        update_node(  String, /*v2string*/(value) );
         return true;
     }
 

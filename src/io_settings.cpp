@@ -84,8 +84,8 @@ std::string SectionSettings::directoryPath( const std::string& fldpath, const st
 
 JsonioSettings::JsonioSettings( const std::string& /*config_file_path*/ ):
     /*config_file( config_file_path ),*/ all_settings(JsonFree::object()),
-    top_section( SectionSettings( *this, all_settings ) ),
-    jsonio_section( SectionSettings( *this, all_settings ) )
+    top_section( SectionSettings( *this, &all_settings ) ),
+    jsonio_section( SectionSettings( *this, &all_settings ) )
 {
     getDataFromPreferences();
 }
@@ -101,7 +101,7 @@ void JsonioSettings::getDataFromPreferences()
     //if( configuration_file.exist() )
     //      configuration_file.load( all_settings );
     JsonFree& data = all_settings.add_object_via_path(jsonio_section_name);
-    jsonio_section.change_head( data );
+    jsonio_section.change_head( &data );
     HomeDir = value( "common.UserHomeDirectoryPath", std::string("") );
     HomeDir = expandHomeDir( HomeDir, "" ); // "~" or empty generally refers to the user's home directory
     UserDir = directoryPath( "common.WorkDirectoryPath", std::string(".") );
