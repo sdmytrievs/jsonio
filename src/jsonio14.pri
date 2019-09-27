@@ -1,5 +1,4 @@
 
-
 HEADERS += \
     $$JSONIO14_HEADERS_DIR/type_test.h \
     $$JSONIO14_HEADERS_DIR/exceptions.h \
@@ -10,8 +9,8 @@ HEADERS += \
     $$JSONIO14_HEADERS_DIR/jsonbuilder.h \
     $$JSONIO14_HEADERS_DIR/jsonparser.h \
     $$JSONIO14_HEADERS_DIR/jsonfree.h \
-    $$JSONIO14_HEADERS_DIR/io_settings.h \
-    $$JSONIO14_HEADERS_DIR/txt2file.h
+    $$JSONIO14_HEADERS_DIR/txt2file.h \
+    $$JSONIO14_HEADERS_DIR/io_settings.h
 
 
 SOURCES += \
@@ -23,8 +22,8 @@ SOURCES += \
     $$JSONIO14_DIR/jsonbuilder.cpp \
     $$JSONIO14_DIR/jsonparser.cpp \
     $$JSONIO14_DIR/jsonfree.cpp \
-    $$JSONIO14_DIR/io_settings.cpp \
-    $$JSONIO14_DIR/txt2file.cpp
+    $$JSONIO14_DIR/txt2file.cpp \
+    $$JSONIO14_DIR/io_settings.cpp
 
 
 

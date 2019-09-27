@@ -50,7 +50,7 @@ INCLUDEPATH   += $$JSONIO14_HEADERS_DIR
 
 #LIBS +=  -lcurl  -lvelocypack
 win32:LIBS +=   -lboost_system-mgw73-mt-d-x64-1_70 -lboost_filesystem-mgw73-mt-d-x64-1_70
-!win32:LIBS +=  -lboost_system -lboost_filesystem
+!win32:LIBS +=  -lboost_system -lboost_filesystem -lstdc++fs
 
 OBJECTS_DIR   = obj
 

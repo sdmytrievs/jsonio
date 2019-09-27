@@ -2,7 +2,7 @@
 
 #include <iostream>
 #include <vector>
-#include "jsonfree.h"
+#include "txt2file.h"
 
 namespace jsonio14 {
 
@@ -185,7 +185,7 @@ public:
 private:
 
     /// Internal Data File
-    /// FJson config_file;
+    JsonFile config_file;
 
     /// Properties for program
     JsonFree all_settings;

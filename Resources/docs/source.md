@@ -125,7 +125,17 @@ for (JsonFree::iterator it = obj.begin(); it != obj.end(); ++it) {
 
 > *source: "+";    test: "-";  example: "-"*
 
-9. io_settings.h(cpp)  ( under construction )
+9. txt2file.h(cpp)  ( need tests and example )
+
+Functions and classes to work with text files and directories.
+Classes for read/write json objects and json arrays files.
+Subset of the Filesystem library provides facilities for performing operations on file systems and their components, such as paths, regular files, and directories.
+
+
+> *source: "+";    test: "-";  example: "-"*
+
+
+10. io_settings.h(cpp)  ( under construction )
 
 class JsonioSettings - storing preferences to JSONIO
 
@@ -134,6 +144,10 @@ class JsonioSettings - storing preferences to JSONIO
 
 
 To do:
+
+- add test for new functions JsonFree and object["key"]=otherobject;
+- add test and example for filesystem
+- add tests for io_settings
 
 
 V. New API working with schemas
