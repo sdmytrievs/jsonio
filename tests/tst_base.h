@@ -11,7 +11,6 @@
 
 #include "jsonfree.h"
 #include "jsondump.h"
-
 using namespace testing;
 using namespace jsonio14;
 
@@ -357,5 +356,24 @@ TEST( JsonioBase, checked_value )
     EXPECT_EQ( obj["vsetnew"].dump(true), "[]\n" );
     obj["vsetnew"].array_resize(3, "4.1");
     EXPECT_EQ( obj["vsetnew"].dump(true), "[4.1,4.1,4.1]\n" );
+
+}
+
+
+//-------------------------------------------------------------------------------------
+
+TEST( JsonioBase, ObjectAssignment)
+{
+    auto obj = json::loads("{\"about\":{\"version\":1,\"description\":\"About\"},\"formats\":"
+                           "{\"int\":{\"width\":5,\"precision\":0}}}");
+
+    auto obj2 = json::loads("{\"width\":20,\"precision\":10}");
+    obj["formats"]["obj2"] = obj2;
+    EXPECT_EQ( obj["formats"].size(), 2 );
+    EXPECT_EQ( obj["formats"]["obj2"].dump(true), "{\"width\":20,\"precision\":10}\n" );
+
+    obj["formats"]["obj3"] = json::loads("{\"width\":30,\"precision\":15}"); // move assigned !!!! Problem key
+    EXPECT_EQ( obj["formats"].size(), 3 );
+    EXPECT_EQ( obj["formats"]["top"].dump(true), "{\"width\":30,\"precision\":15}\n" );
 
 }

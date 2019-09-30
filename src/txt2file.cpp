@@ -168,10 +168,10 @@ bool TxtFile::check_permission(TxtFile::OpenModeTypes mode) const
         bret = (perms & fs::perms::others_read) != fs::perms::none;
         break;
     case  WriteOnly:
+    case  Append:
         bret = (perms & fs::perms::others_write) != fs::perms::none;
         break;
     case  ReadWrite:
-    case  Append:
         bret = (perms & fs::perms::others_read) != fs::perms::none &&
                 (perms & fs::perms::others_write) != fs::perms::none ;
         break;

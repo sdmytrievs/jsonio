@@ -4,7 +4,7 @@
 
 General exception structure into project.
 
-> _source: "+";    test: "-";  example: "-"_
+> _source: "+";    test: "-";  example: "+"_
 
 2. service.h(cpp)
 
@@ -123,7 +123,7 @@ for (JsonFree::iterator it = obj.begin(); it != obj.end(); ++it) {
 
 ```
 
-> *source: "+";    test: "-";  example: "-"*
+> *source: "+";    test: "+";  example: "+"*
 
 9. txt2file.h(cpp)  ( need tests and example )
 
@@ -165,9 +165,7 @@ V. New API working with schemas
 
 Move dbarango API to other github project
 
-8. json2file.h(cpp)
 9. thrift_schema.h(cpp)
-10. settings.h(cpp)
 11. jsonschema.h(cpp)
 12. dbquerydef.h(cpp)
 13. dbconnect.h(cpp)

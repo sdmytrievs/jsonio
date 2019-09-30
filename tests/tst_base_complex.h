@@ -90,6 +90,26 @@ TYPED_TEST( JsonioBaseComplexTest, ValueViaPath )
     EXPECT_EQ( sval, "");
 }
 
+TYPED_TEST( JsonioBaseComplexTest, AddValueViaPath )
+{
+    auto& obj = *this->test_object;
+
+    auto new_obj1 = obj.add_object_via_path("formats.add_object1");
+    EXPECT_TRUE( new_obj1.isObject() );
+    EXPECT_TRUE( new_obj1.empty() );
+    EXPECT_TRUE( obj.path_if_exists( "formats.add_object1" ) );
+
+    EXPECT_THROW( obj.add_object_via_path("data[10]"), jarango_exception );
+
+    int iwidth = 10;
+    EXPECT_TRUE( obj.set_value_via_path( "formats.add_object2.width", iwidth ) );
+    EXPECT_TRUE( obj["formats"]["add_object2"].isObject() );
+    EXPECT_FALSE( obj["formats"]["add_object2"].empty() );
+    EXPECT_EQ( obj["formats"]["add_object2"]["width"].toInt(), iwidth );
+
+    EXPECT_FALSE( obj.set_value_via_path( "data[4].value", 2.5 ) );
+}
+
 
 TYPED_TEST( JsonioBaseComplexTest, ClearRemove )
 {
@@ -136,3 +156,5 @@ TYPED_TEST( JsonioBaseComplexTest, ArrayResize )
     obj["values"].array_resize_xD({2,2}, "");
     EXPECT_EQ( obj["values"].dump(true), "[[1,2],[11,12]]\n" );
 }
+
+

@@ -3,7 +3,7 @@
 namespace jsonio14 {
 
 const std::string version = "v1.0";
-const std::string groupName = "jsonio";
+//const std::string groupName = "jsonio";
 std::string JsonioSettings::settingsFileName = "jsonio14-config.json";
 
 JsonioSettings& ioSettings()

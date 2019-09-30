@@ -6,6 +6,7 @@
 #include "jsondump.h"
 #include "jsonfree.h"
 #include "service.h"
+#include "txt2file.h"
 
 using namespace testing;
 using namespace jsonio14;
@@ -163,7 +164,7 @@ TEST( JsonioParser, TestFail )
   auto fail_json_files =  files_into_directory( "fail" );
   for( auto file: fail_json_files)
   {
-     auto json_data = read_all_file( file );
+     auto json_data = read_ascii_file( file );
      EXPECT_THROW( json::loads( json_data ) , jarango_exception );
   }
 }
@@ -176,7 +177,7 @@ TEST( JsonioParser, TestPass )
   auto fail_json_files =  files_into_directory( "pass" );
   for( auto file: fail_json_files)
   {
-     auto json_data = read_all_file( file );
+     auto json_data = read_ascii_file( file );
      EXPECT_NO_THROW( json::loads( json_data )  );
   }
 }

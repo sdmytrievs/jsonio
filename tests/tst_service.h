@@ -5,7 +5,9 @@
 
 
 #include "service.h"
+#include "txt2file.h"
 #include "jsondump.h"
+#include "exceptions.h"
 
 using namespace testing;
 using namespace jsonio14;
@@ -60,4 +62,46 @@ TEST( JsonioService, Replace )
     std::string str{"Test \t\n:"};
     replace_all( str, " \t\n", '_' );
     EXPECT_EQ( "Test___:", str );
+}
+
+// Test filesystem ----------------------------------------------------------------------
+
+#include <fstream>
+#include <experimental/filesystem>
+namespace fs = std::experimental::filesystem;
+
+TEST( Jsoniofilesystem, HomeDir )
+{
+   auto current_path =  fs::current_path();
+   std::cout << "Current path is " << fs::current_path() << '\n';
+
+   std::string homedir, rel_path;
+   EXPECT_NO_THROW( homedir = home_dir());
+#ifdef _WIN32
+   EXPECT_EQ( homedir, current_path.root_path());
+#else
+   EXPECT_TRUE( current_path.native().rfind(homedir, 0) == 0 );
+#endif
+  rel_path = current_path.native().substr(homedir.length());
+  rel_path = "~"+rel_path;
+
+  EXPECT_EQ( current_path.native(), expand_home_dir( rel_path, homedir ));
+  EXPECT_EQ( current_path.native(), expand_home_dir( rel_path, "" ));
+}
+
+TEST( Jsoniofilesystem, TestDir )
+{
+    std::string test_dir = "test_dir";
+    if(path_exist( test_dir ) )
+    fs::remove_all(test_dir);
+    fs::create_directory(test_dir);
+    std::ofstream(test_dir+"/file1.txt").put('a');
+    std::ofstream(test_dir+"/file2.txt").put('b');
+    std::ofstream(test_dir+"/file3.json").put('1');
+
+    auto files = files_into_directory( test_dir, "txt");
+    EXPECT_EQ( files.size(), 2);
+    EXPECT_EQ( files[0], test_dir+"/file1.txt");
+    EXPECT_EQ( files[1], test_dir+"/file2.txt");
+
 }
