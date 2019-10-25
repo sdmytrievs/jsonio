@@ -31,7 +31,11 @@ void JsonParser::parse_to( JsonBase &out )
         JsonArrayBuilder jsBuilder(out);
         parse_array( jsBuilder );
     }
-    // else ??? update value Scalar
+    else // update value Scalar
+    {
+      set_scalar(out, std::string(jsontext.substr(cur_pos)) );
+      cur_pos = std::string::npos;
+    }
     skip_space_comment();
     JARANGO_THROW_IF( cur_pos < end_pos, "JsonParser", 14, "extra value after close: " + err_part() );
 }
@@ -215,5 +219,28 @@ void JsonParser::parse_value(const std::string &name, JsonBuilderBase &builder)
     }
 }
 
+// decision about value type
+void JsonParser::set_scalar( JsonBase& result_object, const std::string &value )
+{
+    long ival = 0;
+    double dval=0.;
+
+    if( value == "~" || value == "null" )
+            ;//result_object.set_from(  nullptr );
+        else
+            if( value == "true" )
+                result_object.set_from( true );
+            else
+                if( value == "false" )
+                    result_object.set_from( false );
+                else
+                    if( is<long>( ival, value ) )
+                        result_object.set_from( ival );
+                    else
+                        if( is<double>( dval, value ))
+                            result_object.set_from(  dval );
+                        else
+                            result_object.set_from( value );
+}
 
 } // namespace jsonio14

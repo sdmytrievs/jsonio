@@ -44,9 +44,10 @@ TEST( JsonioBase, typeTraits )
     EXPECT_EQ( JsonBase::Array, JsonBase::typeTraits( vlist ) );
     EXPECT_EQ( JsonBase::Object, JsonBase::typeTraits( vmap ) );
     EXPECT_EQ( JsonBase::Object, JsonBase::typeTraits( vumaps ) );
-    EXPECT_EQ( JsonBase::UNDEFINED, JsonBase::typeTraits( nullptr ) );
     EXPECT_EQ( JsonBase::String, JsonBase::typeTraits( std::string("TestString") ) );
     EXPECT_EQ( JsonBase::String, JsonBase::typeTraits( "Test char *" ) );
+    //EXPECT_EQ( JsonBase::UNDEFINED, JsonBase::typeTraits( nullptr ) );
+    EXPECT_EQ( JsonBase::Null, JsonBase::typeTraits( nullptr ) );
 }
 
 TEST( JsonioBase, set_list_from )

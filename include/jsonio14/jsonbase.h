@@ -24,7 +24,6 @@ protected:
 public:
 
     enum Type {
-        UNDEFINED = -1,
         Null = 1,
         Bool = 2,    // T_BOOL
         Int = 8,     // T_I32
@@ -141,7 +140,7 @@ public:
     bool get_to( T& value  ) const
     {
         auto decodedType = typeTraits( value );
-        if( decodedType>= Null && decodedType<=String )
+        if( decodedType> Null && decodedType<=String )
         {
             return string2v( getFieldValue(), value );
         }
@@ -233,9 +232,14 @@ public:
     bool set_from( const T& value  )
     {
         auto decodedType = typeTraits( value );
-        if( decodedType>= Null && decodedType<=String )
+        if( decodedType> Null && decodedType<=String )
         {
             update_node(  decodedType, v2string(value) );
+            return true;
+        }
+        if( decodedType== Null)
+        {
+            update_node(  decodedType, v2string("null") );
             return true;
         }
         return false;
@@ -268,7 +272,7 @@ public:
         update_node(  Array, "" );
         for( const auto& el: values )
         {
-            append_node( std::to_string(ii++), UNDEFINED, "" ).set_from(el);
+            append_node( std::to_string(ii++), Null, "" ).set_from(el);
         }
     }
 
@@ -280,7 +284,7 @@ public:
         update_node(  Object, "" );
         for( const auto& el: values )
         {
-            append_node( el.first, UNDEFINED, "" ).set_from(el.second);
+            append_node( el.first, Null, "" ).set_from(el.second);
         }
     }
 
@@ -424,7 +428,7 @@ public:
     template < class T>
     static Type typeTraits( const T& )
     {
-        Type decodedType  = UNDEFINED;
+        Type decodedType  = Null;
 
         if( std::is_integral<T>::value )
         {
@@ -445,7 +449,7 @@ public:
         return   decodedType;
     }
 
-    static Type typeTraits( const char * )
+    static Type typeTraits( const char* )
     {
         return String;
     }

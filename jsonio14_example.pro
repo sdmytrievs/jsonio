@@ -58,9 +58,9 @@ include($$JSONIO14_DIR/jsonio14.pri)
 
 SOURCES += \
 #       main.cpp
-      examples/create_example.cpp \
+#      examples/create_example.cpp \
 #      examples/exbuilder.cpp
-#      examples/exparser.cpp
+      examples/exparser.cpp
 
 DISTFILES += \
     Resources/docs/source.md \

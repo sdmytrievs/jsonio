@@ -36,9 +36,9 @@ public:
     enum OpenModeTypes {
         NotOpen,       ///<	The device is not open.
         ReadOnly,      ///<	The device is open for reading.
-        WriteOnly, 	 ///<	The device is open for writing.
+        WriteOnly, 	   ///< The device is open for writing.
         ReadWrite,     ///<	ReadOnly | WriteOnly	The device is open for reading and writing.
-        Append	     ///<	The device is opened in append mode so that all data is written to the end of the file.
+        Append	       ///<	The device is opened in append mode so that all data is written to the end of the file.
     };
 
     /// Constructor

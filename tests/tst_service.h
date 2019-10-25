@@ -93,7 +93,7 @@ TEST( Jsoniofilesystem, TestDir )
 {
     std::string test_dir = "test_dir";
     if(path_exist( test_dir ) )
-    fs::remove_all(test_dir);
+        fs::remove_all(test_dir);
     fs::create_directory(test_dir);
     std::ofstream(test_dir+"/file1.txt").put('a');
     std::ofstream(test_dir+"/file2.txt").put('b');
@@ -103,5 +103,161 @@ TEST( Jsoniofilesystem, TestDir )
     EXPECT_EQ( files.size(), 2);
     EXPECT_EQ( files[0], test_dir+"/file1.txt");
     EXPECT_EQ( files[1], test_dir+"/file2.txt");
+}
 
+TEST( Jsoniofilesystem, TestTextFile )
+{
+    std::string fpath = "test.txt";
+    std::string fdata = "TxtFile test data";
+
+    std::ofstream stream;
+    stream.open(fpath);
+    stream << fdata;
+    stream.close();
+
+    TxtFile ftxt(fpath);
+    EXPECT_EQ( ftxt.path(), fpath );
+    EXPECT_EQ( ftxt.name(), "test" );
+    EXPECT_EQ( ftxt.ext(), "txt" );
+    EXPECT_EQ( ftxt.dir(), "");
+    EXPECT_EQ( ftxt.type(), TxtFile::Txt );
+
+    EXPECT_TRUE( ftxt.exist() );
+    EXPECT_FALSE( ftxt.isOpened() );
+    EXPECT_TRUE( ftxt.check_permission( TxtFile::ReadOnly ) );
+    EXPECT_TRUE( ftxt.check_permission( TxtFile::WriteOnly ) );
+    EXPECT_TRUE( ftxt.check_permission( TxtFile::ReadWrite ) );
+
+    EXPECT_EQ( ftxt.load_all(), fdata );
+}
+
+TEST( Jsoniofilesystem, TestJsonFile )
+{
+    std::string fpath = "test.json";
+    std::string fdata = "{\"width\":20,\"precision\":10}";
+
+    std::ofstream stream;
+    stream.open(fpath);
+    stream << fdata;
+    stream.close();
+
+    JsonFile ftxt(fpath);
+    EXPECT_EQ( ftxt.path(), fpath );
+    EXPECT_EQ( ftxt.name(), "test" );
+    EXPECT_EQ( ftxt.ext(), "json" );
+    EXPECT_EQ( ftxt.dir(), "");
+    EXPECT_EQ( ftxt.type(), TxtFile::Json );
+
+    EXPECT_TRUE( ftxt.exist() );
+    EXPECT_EQ( ftxt.load_all(), fdata );
+
+    auto obj = JsonFree::object();
+    EXPECT_NO_THROW( ftxt.load(obj) );
+    EXPECT_EQ( ftxt.load_json(), obj.toString(true) );
+
+    EXPECT_FALSE( ftxt.isOpened() );
+}
+
+TEST( Jsoniofilesystem, TestJsonFileWrite )
+{
+    std::string fpath = "testwrite.json";
+    std::string fdata = "{\"width\":20,\"precision\":10}";
+    auto obj = json::loads(fdata);
+
+    JsonFile ftxt(fpath);
+    EXPECT_EQ( ftxt.path(), fpath );
+    EXPECT_EQ( ftxt.type(), TxtFile::Json );
+
+    EXPECT_NO_THROW( ftxt.save(obj) );
+    EXPECT_EQ( ftxt.load_json(), obj.toString(true) );
+
+    EXPECT_FALSE( ftxt.isOpened() );
+}
+
+
+TEST( Jsoniofilesystem, TestJsonArrayFileSave )
+{
+    std::string fpath = "test_array_write.json";
+
+    JsonArrayFile fjson(fpath);
+    EXPECT_EQ( fjson.path(), fpath );
+    EXPECT_EQ( fjson.type(), TxtFile::Json );
+    EXPECT_NO_THROW( fjson.Open(TxtFile::WriteOnly) );
+
+    for( size_t ii=0; ii<5; ii++)
+        EXPECT_TRUE( fjson.saveNext( std::string("{ \"key\": ")+std::to_string(ii)+"}") );
+
+    EXPECT_TRUE( fjson.isOpened() );
+    EXPECT_NO_THROW( fjson.Close() );
+    EXPECT_EQ( fjson.load_json(), "[{\"key\":0},{\"key\":1},{\"key\":2},{\"key\":3},{\"key\":4}]\n" );
+}
+
+TEST( Jsoniofilesystem, TestJsonArrayFileSaveSimple )
+{
+    std::string fpath = "test_array_write2.json";
+
+    JsonArrayFile fjson(fpath);
+    EXPECT_EQ( fjson.path(), fpath );
+    EXPECT_EQ( fjson.type(), TxtFile::Json );
+    EXPECT_NO_THROW( fjson.Open(TxtFile::WriteOnly) );
+
+    for( size_t ii=0; ii<5; ii++)
+        EXPECT_TRUE( fjson.saveNext( std::to_string(ii) ) );
+
+    EXPECT_TRUE( fjson.isOpened() );
+    EXPECT_NO_THROW( fjson.Close() );
+    EXPECT_EQ( fjson.load_json(), "[0,1,2,3,4]\n" );
+}
+
+
+TEST( Jsoniofilesystem, TestJsonArrayFileLoad )
+{
+    std::string fpath = "test_array_load.json";
+    std::string fdata = "[{\"key\":0},{\"key\":1},{\"key\":2},{\"key\":3},{\"key\":4}]";
+    auto obj = JsonFree::object();
+
+    std::ofstream stream;
+    stream.open(fpath);
+    stream << fdata;
+    stream.close();
+
+    JsonArrayFile fjson(fpath);
+    EXPECT_EQ( fjson.path(), fpath );
+    EXPECT_EQ( fjson.type(), TxtFile::Json );
+    EXPECT_NO_THROW( fjson.Open(TxtFile::ReadOnly) );
+    EXPECT_TRUE( fjson.isOpened() );
+
+    for( size_t ii=0; ii<5; ii++)
+    {
+        EXPECT_TRUE( fjson.loadNext( obj ));
+        EXPECT_EQ( obj.toString(true), std::string("{\"key\":")+std::to_string(ii)+"}\n" );
+    }
+    EXPECT_NO_THROW( fjson.Close() );
+    EXPECT_EQ( fjson.load_json(), "[{\"key\":0},{\"key\":1},{\"key\":2},{\"key\":3},{\"key\":4}]\n" );
+}
+
+TEST( Jsoniofilesystem, TestJsonArrayFileLoadSimple )
+{
+    std::string fpath = "test_array_load2.json";
+    std::string fdata = "[0,1,2,3,4]\n";
+    auto obj = JsonFree::object();
+
+    std::ofstream stream;
+    stream.open(fpath);
+    stream << fdata;
+    stream.close();
+
+    JsonArrayFile fjson(fpath);
+    EXPECT_EQ( fjson.path(), fpath );
+    EXPECT_EQ( fjson.type(), TxtFile::Json );
+    EXPECT_NO_THROW( fjson.Open(TxtFile::ReadOnly) );
+    EXPECT_TRUE( fjson.isOpened() );
+
+    for( size_t ii=0; ii<5; ii++)
+    {
+        EXPECT_TRUE( fjson.loadNext( obj ));
+        EXPECT_EQ( obj.toString(true), std::to_string(ii) );
+    }
+    EXPECT_NO_THROW( fjson.Close() );
+    EXPECT_EQ( fjson.load_json(), fdata );
 }

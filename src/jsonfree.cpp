@@ -169,7 +169,11 @@ const JsonFree& JsonFree::get_child(std::size_t idx) const
 
 JsonFree& JsonFree::get_child(std::size_t idx)
 {
-    JARANGO_THROW_IF( idx>=getChildrenCount(), "JsonFree", 25, "array index " + std::to_string(idx) + " is out of range" );
+    JARANGO_THROW_IF( idx>getChildrenCount(), "JsonFree", 25, "array index " + std::to_string(idx) + " is out of range" );
+    if( idx==getChildrenCount() ) // next element
+    {
+        return append_node( std::to_string(idx), JsonBase::Null, "" );
+    }
     return children[idx];
 }
 

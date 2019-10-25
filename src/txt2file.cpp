@@ -148,8 +148,10 @@ TxtFile::TxtFile(const std::string &fpath):
 
     file_path = ps;
     file_dir =  ps.parent_path();
-    file_name = ps.filename();
+    file_name = ps.stem();
     file_ext = ps.extension();
+    if( !file_ext.empty() )
+      file_ext = file_ext.substr(1);
 }
 
 bool TxtFile::exist() const
@@ -169,11 +171,11 @@ bool TxtFile::check_permission(TxtFile::OpenModeTypes mode) const
         break;
     case  WriteOnly:
     case  Append:
-        bret = (perms & fs::perms::others_write) != fs::perms::none;
+        bret = (perms & fs::perms::owner_write) != fs::perms::none;
         break;
     case  ReadWrite:
         bret = (perms & fs::perms::others_read) != fs::perms::none &&
-                (perms & fs::perms::others_write) != fs::perms::none ;
+                (perms & fs::perms::owner_write) != fs::perms::none ;
         break;
     default:
         break;
@@ -248,7 +250,7 @@ bool JsonArrayFile::loadNext( JsonBase &object )
 bool JsonArrayFile::saveNext(const std::string &strjson)
 {
    loaded_ndx = arr_object.size();
-   arr_object[ loaded_ndx ] = JsonFree::object(); //??? do we need
+ //  arr_object[ loaded_ndx ] = JsonFree::object(); //??? do we need
    arr_object[ loaded_ndx ].loads(strjson);
    return true;
 }

@@ -1,7 +1,7 @@
 #include <iostream>
 #include "jsondump.h"
+#include "txt2file.h"
 #include "jsonfree.h"
-#include "service.h"
 using namespace jsonio14;
 using namespace std;
 
@@ -25,11 +25,11 @@ int main(int argc, char* argv[])
         for( auto file: fail_json_files)
         {
             try{
-                auto json_data = read_all_file( file );
+                auto json_data = read_ascii_file( file );
                 //std::cout <<  "\nStart: " << file << "'" << json_data<< "'\n";
 
                 auto jsFree =  json::loads( json_data );
-                std::cout <<  "Pass: " <<  " Result: "  <<  jsFree.dump(true) <<  std::endl;
+                //std::cout <<  "Pass: " <<  " Result: "  <<  jsFree.dump(true) <<  std::endl;
                 std::cout <<  "Pass: " <<  file <<  std::endl;
             }
             catch( jarango_exception& e )

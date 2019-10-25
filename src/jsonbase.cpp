@@ -105,8 +105,6 @@ const char *JsonBase::typeName(JsonBase::Type type)
         return "string";
     case Bool:
         return "boolean";
-    case UNDEFINED:
-        return "undefined";
     default:
         return "number";
     }
