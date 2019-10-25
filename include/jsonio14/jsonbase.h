@@ -220,6 +220,12 @@ public:
 
     // Set methods  --------------------------
 
+    bool set_null()
+    {
+        update_node(  Null, "null" );
+        return true;
+    }
+
     bool set_from( const std::string& value  )
     {
         update_node(  String, /*v2string*/(value) );
@@ -239,7 +245,7 @@ public:
         }
         if( decodedType== Null)
         {
-            update_node(  decodedType, v2string("null") );
+            update_node(  decodedType, ("null") );
             return true;
         }
         return false;

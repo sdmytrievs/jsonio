@@ -226,7 +226,7 @@ void JsonParser::set_scalar( JsonBase& result_object, const std::string &value )
     double dval=0.;
 
     if( value == "~" || value == "null" )
-            ;//result_object.set_from(  nullptr );
+            result_object.set_null();
         else
             if( value == "true" )
                 result_object.set_from( true );
