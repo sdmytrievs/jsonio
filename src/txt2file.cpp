@@ -220,7 +220,7 @@ void JsonFile::saveJson(const JsonBase& object) const
 {
     std::fstream fout(file_path, std::ios::out );
     JARANGO_THROW_IF( !fout.good(), "filesystem", 5, "file save error...  " + file_path );
-    object.dump( fout, true );
+    object.dump( fout, false );
 }
 
 //  JsonArrayFile --------------------------------------------------------------------------

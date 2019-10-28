@@ -48,7 +48,7 @@ protected:
 
     /// Get substr with error
     std::string err_part() const;
-    void set_scalar(JsonBase &result_object, const std::string &value );
+    void set_scalar(JsonBase &result_object );
 
 };
 

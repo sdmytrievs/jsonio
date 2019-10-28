@@ -123,7 +123,8 @@ JsonFree &JsonFree::add_object_via_path(const std::string &jsonpath)
     auto pobj = field_add( names );
     if( pobj )
     {
-        pobj->update_node( JsonBase::Object, "" );
+        if( !pobj->isObject())
+            pobj->update_node( JsonBase::Object, "" );
         return *pobj;
     }
     JARANGO_THROW( "JsonBase", 12, "cannot create object with jsonpath " + std::string( jsonpath ) );

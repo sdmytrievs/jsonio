@@ -124,8 +124,8 @@ for (JsonFree::iterator it = obj.begin(); it != obj.end(); ++it) {
 ```
 
 > *source: "+";    test: "+";  example: "+"*
-> Error when move assignment: object["key"]= std::move(otherobject);
-> key vould be overwrite by otherobject key
+> Error when move assignment: object["key"]= std::move(anotherobject);
+> key would be overwritten by anotherobject key
 
 9. txt2file.h(cpp)
 
@@ -137,17 +137,17 @@ Subset of the Filesystem library provides facilities for performing operations o
 > *source: "+";    test: "+";  example: "-"*
 
 
-10. io_settings.h(cpp)  ( under construction )
+10. io_settings.h(cpp)  ( could be new functions in future )
 
 class JsonioSettings - storing preferences to JSONIO
 
 
-> *source: "+-";    test: "-";  example: "-"*
+> *source: "+-";    test: "+";  example: "-"*
 
 
 To do:
 
-- add tests for io_settings
+- add time compare tests json parsers
 
 V. New API working with schemas
 

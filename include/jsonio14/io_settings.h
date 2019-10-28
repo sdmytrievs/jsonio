@@ -153,7 +153,7 @@ public:
     /// Writes any unsaved changes to permanent storage
     virtual void sync() const
     {
-        // configuration_file.save( all_settings );
+        config_file.save( all_settings );
     }
 
     // jsonio internal data links ------------------------------

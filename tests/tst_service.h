@@ -8,6 +8,7 @@
 #include "txt2file.h"
 #include "jsondump.h"
 #include "exceptions.h"
+#include "io_settings.h"
 
 using namespace testing;
 using namespace jsonio14;
@@ -260,4 +261,82 @@ TEST( Jsoniofilesystem, TestJsonArrayFileLoadSimple )
     }
     EXPECT_NO_THROW( fjson.Close() );
     EXPECT_EQ( fjson.load_json(), fdata );
+}
+
+
+//---------------------------------------------------------------------
+
+TEST( JsonioSettings, TestSettingsCreate )
+{
+    std::string fpath = "test1.cfg.json";
+    if(path_exist( fpath ) )
+        fs::remove_all(fpath);
+
+    JsonioSettings  tst_settings( fpath );
+    auto sec_test = tst_settings.section("common.test");
+    EXPECT_FALSE( sec_test.contains("UseString") );
+    EXPECT_FALSE( tst_settings.contains("common.test.UseBool") );
+
+    sec_test.setValue("UseString","Test string" );
+    sec_test.setValue("UseBool", true);
+    sec_test.setValue("UseInt",1 );
+    sec_test.setValue("UseDouble", 2.5 );
+
+    EXPECT_TRUE( sec_test.contains("UseString") );
+    EXPECT_TRUE( tst_settings.contains("common.test.UseBool") );
+
+    JsonFile ftxt(fpath);
+    EXPECT_EQ( ftxt.load_json(),
+         "{\"jsonio\":{},\"common\":{\"test\":{\"UseString\":\"Test string\",\"UseBool\":true,\"UseInt\":1,\"UseDouble\":2.5}}}\n" );
+
+    if(path_exist( fpath ) )
+        fs::remove_all(fpath);
+}
+
+TEST( JsonioSettings, TestSettingsRead )
+{
+    std::string fpath = "test2.cfg.json";
+    std::string fdata = "{\"common\":{\"test\":{\"UseString\":\"Test string\",\"UseBool\":true,\"UseInt\":1,\"UseDouble\":2.5}}}";
+
+    std::ofstream stream;
+    stream.open(fpath);
+    stream << fdata << std::endl;
+    stream.close();
+
+    JsonioSettings  tst_settings( fpath );
+    auto sec_test = tst_settings.section("common.test");
+    EXPECT_TRUE( sec_test.contains("UseString") );
+    EXPECT_TRUE( tst_settings.contains("common.test.UseBool") );
+
+    EXPECT_EQ( sec_test.value("UseString", std::string("default")), "Test string" );
+    EXPECT_EQ( sec_test.value("UseBool", false), true );
+    EXPECT_EQ( sec_test.value("UseInt", 5), 1 );
+    EXPECT_EQ( sec_test.value("UseDouble", 3.8), 2.5 );
+
+    if(path_exist( fpath ) )
+        fs::remove_all(fpath);
+}
+
+TEST( JsonioSettings, TestSettingsPath )
+{
+    std::string fpath = "test3.cfg.json";
+
+    JsonioSettings  tst_settings( fpath );
+    tst_settings.setHomeDir("~/newJSONIO/jsonio14" );
+    tst_settings.setValue("common.ResourcesDirectory","~/Resources" );
+    tst_settings.setValue("common.SchemasDirectory","~/Resources/data/schemas" );
+    tst_settings.setUserDir("." );
+
+    EXPECT_EQ( tst_settings.userDir(), "." );
+    EXPECT_EQ( tst_settings.homeDir(), "/home/svd/newJSONIO/jsonio14" );
+    EXPECT_EQ( tst_settings.resourcesDir(), "/home/svd/newJSONIO/jsonio14/Resources" );
+    EXPECT_EQ( tst_settings.directoryPath( "common.SchemasDirectory",  std::string("") ),
+               "/home/svd/newJSONIO/jsonio14/Resources/data/schemas" );
+
+    JsonFile fjson(fpath);
+    EXPECT_EQ( fjson.load_json(), "{\"jsonio\":{},\"common\":{\"UserHomeDirectoryPath\":\"~/newJSONIO/jsonio14\","
+                                  "\"ResourcesDirectory\":\"~/Resources\",\"SchemasDirectory\":\"~/Resources/data/schemas\","
+                                  "\"WorkDirectoryPath\":\".\"}}\n" );
+    if(path_exist( fpath ) )
+        fs::remove_all(fpath);
 }

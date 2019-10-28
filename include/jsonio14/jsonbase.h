@@ -245,7 +245,7 @@ public:
         }
         if( decodedType== Null)
         {
-            update_node(  decodedType, ("null") );
+            set_null();
             return true;
         }
         return false;
