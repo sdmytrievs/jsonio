@@ -1,7 +1,7 @@
 #include <iostream>
-#include "jsondump.h"
-#include "txt2file.h"
-#include "jsonfree.h"
+#include "jsonio14/jsondump.h"
+#include "jsonio14/txt2file.h"
+#include "jsonio14/jsonfree.h"
 using namespace jsonio14;
 using namespace std;
 

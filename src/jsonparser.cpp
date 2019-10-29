@@ -1,7 +1,7 @@
-#include "jsonparser.h"
-#include "jsondump.h"
-#include "exceptions.h"
-#include "service.h"
+#include "jsonio14/jsonparser.h"
+#include "jsonio14/jsondump.h"
+#include "jsonio14/exceptions.h"
+#include "jsonio14/service.h"
 
 
 namespace jsonio14 {

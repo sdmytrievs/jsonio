@@ -7,8 +7,8 @@
 #include <unistd.h>
 #endif
 
-#include "txt2file.h"
-#include "jsonfree.h"
+#include "jsonio14/txt2file.h"
+#include "jsonio14/jsonfree.h"
 
 //#include "boost/filesystem.hpp"
 //namespace fs = boost::filesystem;

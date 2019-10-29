@@ -9,10 +9,10 @@
 #include <unordered_set>
 #include <forward_list>
 
-#include "service.h"
-#include "jsonbuilder.h"
-#include "jsondump.h"
-#include "jsonfree.h"
+#include "jsonio14/service.h"
+#include "jsonio14/jsonbuilder.h"
+#include "jsonio14/jsondump.h"
+#include "jsonio14/jsonfree.h"
 
 using namespace testing;
 using namespace jsonio14;

@@ -1,7 +1,7 @@
 #include <iomanip>
-#include "jsondetail.h"
-#include "service.h"
-#include "exceptions.h"
+#include "jsonio14/jsondetail.h"
+#include "jsonio14/service.h"
+#include "jsonio14/exceptions.h"
 
 namespace jsonio14 {
 

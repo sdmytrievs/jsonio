@@ -40,7 +40,7 @@ win32 {
 
 # Define the directory where jsonArango source code is located
 JSONIO14_DIR =  $$PWD/src
-JSONIO14_HEADERS_DIR =  $$PWD/include/jsonio14
+JSONIO14_HEADERS_DIR =  $$PWD/include
 
 DEPENDPATH   += $$JSONIO14_DIR
 DEPENDPATH   += $$JSONIO14_HEADERS_DIR

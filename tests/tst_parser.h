@@ -3,10 +3,10 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock-matchers.h>
 
-#include "jsondump.h"
-#include "jsonfree.h"
-#include "service.h"
-#include "txt2file.h"
+#include "jsonio14/jsondump.h"
+#include "jsonio14/jsonfree.h"
+#include "jsonio14/service.h"
+#include "jsonio14/txt2file.h"
 
 using namespace testing;
 using namespace jsonio14;

@@ -6,7 +6,7 @@
 #include <list>
 #include <map>
 #include <unordered_map>
-#include "jsonfree.h"
+#include "jsonio14/jsonfree.h"
 
 using namespace testing;
 using namespace jsonio14;

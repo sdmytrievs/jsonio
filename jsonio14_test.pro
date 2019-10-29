@@ -30,7 +30,7 @@ win32 {
 
 # Define the directory where jsonio14 source code is located
 JSONIO14_DIR =  $$PWD/src
-JSONIO14_HEADERS_DIR =  $$PWD/include/jsonio14
+JSONIO14_HEADERS_DIR =  $$PWD/include
 TESTS_DIR =  $$PWD/tests
 
 DEPENDPATH   += $$JSONIO14_DIR

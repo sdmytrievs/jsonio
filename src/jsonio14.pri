@@ -1,16 +1,16 @@
 
 HEADERS += \
-    $$JSONIO14_HEADERS_DIR/type_test.h \
-    $$JSONIO14_HEADERS_DIR/exceptions.h \
-    $$JSONIO14_HEADERS_DIR/service.h \
-    $$JSONIO14_HEADERS_DIR/jsondetail.h \
-    $$JSONIO14_HEADERS_DIR/jsondump.h   \
-    $$JSONIO14_HEADERS_DIR/jsonbase.h \
-    $$JSONIO14_HEADERS_DIR/jsonbuilder.h \
-    $$JSONIO14_HEADERS_DIR/jsonparser.h \
-    $$JSONIO14_HEADERS_DIR/jsonfree.h \
-    $$JSONIO14_HEADERS_DIR/txt2file.h \
-    $$JSONIO14_HEADERS_DIR/io_settings.h
+    $$JSONIO14_HEADERS_DIR/jsonio14/type_test.h \
+    $$JSONIO14_HEADERS_DIR/jsonio14/exceptions.h \
+    $$JSONIO14_HEADERS_DIR/jsonio14/service.h \
+    $$JSONIO14_HEADERS_DIR/jsonio14/jsondetail.h \
+    $$JSONIO14_HEADERS_DIR/jsonio14/jsondump.h   \
+    $$JSONIO14_HEADERS_DIR/jsonio14/jsonbase.h \
+    $$JSONIO14_HEADERS_DIR/jsonio14/jsonbuilder.h \
+    $$JSONIO14_HEADERS_DIR/jsonio14/jsonparser.h \
+    $$JSONIO14_HEADERS_DIR/jsonio14/jsonfree.h \
+    $$JSONIO14_HEADERS_DIR/jsonio14/txt2file.h \
+    $$JSONIO14_HEADERS_DIR/jsonio14/io_settings.h
 
 
 SOURCES += \

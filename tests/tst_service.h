@@ -4,11 +4,11 @@
 #include <gmock/gmock-matchers.h>
 
 
-#include "service.h"
-#include "txt2file.h"
-#include "jsondump.h"
-#include "exceptions.h"
-#include "io_settings.h"
+#include "jsonio14/service.h"
+#include "jsonio14/txt2file.h"
+#include "jsonio14/jsondump.h"
+#include "jsonio14/exceptions.h"
+#include "jsonio14/io_settings.h"
 
 using namespace testing;
 using namespace jsonio14;

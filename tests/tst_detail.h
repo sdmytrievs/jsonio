@@ -9,9 +9,9 @@
 #include <unordered_set>
 #include <forward_list>
 
-#include "jsondetail.h"
-#include "exceptions.h"
-#include "type_test.h"
+#include "jsonio14/jsondetail.h"
+#include "jsonio14/exceptions.h"
+#include "jsonio14/type_test.h"
 
 using namespace testing;
 using namespace jsonio14;

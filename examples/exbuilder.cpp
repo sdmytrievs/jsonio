@@ -2,9 +2,9 @@
 #include <unordered_map>
 #include <list>
 
-#include "jsonbuilder.h"
-#include "jsondump.h"
-#include "jsonfree.h"
+#include "jsonio14/jsonbuilder.h"
+#include "jsonio14/jsondump.h"
+#include "jsonio14/jsonfree.h"
 using namespace jsonio14;
 using namespace std;
 
