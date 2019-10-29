@@ -154,6 +154,13 @@ bool JsonParser::parse_string( std::string &str )
 
     while( jsontext[cur_pos] != jsQuote || lastCh )
     {
+        // non-UTF-8 sequence
+        if (  static_cast<uint8_t>(jsontext[cur_pos]) < 0x20)
+        {
+          // control character
+          JARANGO_THROW( "JsonParser", 10, "Unexpected control character" + err_part() );
+        }
+
         str += jsontext[cur_pos];
         if( jsontext[cur_pos] == '\\' )
             lastCh = !lastCh;
