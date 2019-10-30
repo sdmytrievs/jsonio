@@ -189,7 +189,7 @@ GTEST_API_ std::string DiffStrings(const std::string& left,
 //   expected_value:      "5"
 //   actual_value:        "6"
 //
-// The ignoring_case parameter is true iff the assertion is a
+// The ignoring_case parameter is true if and only if the assertion is a
 // *_STRCASEEQ*.  When it's true, the string " (ignoring case)" will
 // be inserted into the message.
 GTEST_API_ AssertionResult EqFailure(const char* expected_expression,
@@ -318,15 +318,15 @@ class FloatingPoint {
   // Returns the sign bit of this number.
   Bits sign_bit() const { return kSignBitMask & u_.bits_; }
 
-  // Returns true iff this is NAN (not a number).
+  // Returns true if and only if this is NAN (not a number).
   bool is_nan() const {
     // It's a NAN if the exponent bits are all ones and the fraction
     // bits are not entirely zeros.
     return (exponent_bits() == kExponentBitMask) && (fraction_bits() != 0);
   }
 
-  // Returns true iff this number is at most kMaxUlps ULP's away from
-  // rhs.  In particular, this function:
+  // Returns true if and only if this number is at most kMaxUlps ULP's away
+  // from rhs.  In particular, this function:
   //
   //   - returns false if either number is (or both are) NAN.
   //   - treats really large numbers as almost equal to infinity.
@@ -662,7 +662,7 @@ struct NameGeneratorSelector {
 };
 
 template <typename NameGenerator>
-void GenerateNamesRecursively(Types0, std::vector<std::string>*, int) {}
+void GenerateNamesRecursively(internal::None, std::vector<std::string>*, int) {}
 
 template <typename NameGenerator, typename Types>
 void GenerateNamesRecursively(Types, std::vector<std::string>* result, int i) {
@@ -729,7 +729,7 @@ class TypeParameterizedTest {
 
 // The base case for the compile time recursion.
 template <GTEST_TEMPLATE_ Fixture, class TestSel>
-class TypeParameterizedTest<Fixture, TestSel, Types0> {
+class TypeParameterizedTest<Fixture, TestSel, internal::None> {
  public:
   static bool Register(const char* /*prefix*/, const CodeLocation&,
                        const char* /*case_name*/, const char* /*test_names*/,
@@ -781,7 +781,7 @@ class TypeParameterizedTestSuite {
 
 // The base case for the compile time recursion.
 template <GTEST_TEMPLATE_ Fixture, typename Types>
-class TypeParameterizedTestSuite<Fixture, Templates0, Types> {
+class TypeParameterizedTestSuite<Fixture, internal::None, Types> {
  public:
   static bool Register(const char* /*prefix*/, const CodeLocation&,
                        const TypedTestSuitePState* /*state*/,
@@ -847,60 +847,15 @@ class GTEST_API_ Random {
   GTEST_DISALLOW_COPY_AND_ASSIGN_(Random);
 };
 
-// Defining a variable of type CompileAssertTypesEqual<T1, T2> will cause a
-// compiler error iff T1 and T2 are different types.
-template <typename T1, typename T2>
-struct CompileAssertTypesEqual;
-
-template <typename T>
-struct CompileAssertTypesEqual<T, T> {
-};
-
-// Removes the reference from a type if it is a reference type,
-// otherwise leaves it unchanged.  This is the same as
-// tr1::remove_reference, which is not widely available yet.
-template <typename T>
-struct RemoveReference { typedef T type; };  // NOLINT
-template <typename T>
-struct RemoveReference<T&> { typedef T type; };  // NOLINT
-
-// A handy wrapper around RemoveReference that works when the argument
-// T depends on template parameters.
-#define GTEST_REMOVE_REFERENCE_(T) \
-    typename ::testing::internal::RemoveReference<T>::type
-
-// Removes const from a type if it is a const type, otherwise leaves
-// it unchanged.  This is the same as tr1::remove_const, which is not
-// widely available yet.
-template <typename T>
-struct RemoveConst { typedef T type; };  // NOLINT
-template <typename T>
-struct RemoveConst<const T> { typedef T type; };  // NOLINT
-
-// MSVC 8.0, Sun C++, and IBM XL C++ have a bug which causes the above
-// definition to fail to remove the const in 'const int[3]' and 'const
-// char[3][4]'.  The following specialization works around the bug.
-template <typename T, size_t N>
-struct RemoveConst<const T[N]> {
-  typedef typename RemoveConst<T>::type type[N];
-};
-
-// A handy wrapper around RemoveConst that works when the argument
-// T depends on template parameters.
-#define GTEST_REMOVE_CONST_(T) \
-    typename ::testing::internal::RemoveConst<T>::type
-
 // Turns const U&, U&, const U, and U all into U.
 #define GTEST_REMOVE_REFERENCE_AND_CONST_(T) \
-    GTEST_REMOVE_CONST_(GTEST_REMOVE_REFERENCE_(T))
+  typename std::remove_const<typename std::remove_reference<T>::type>::type
 
 // IsAProtocolMessage<T>::value is a compile-time bool constant that's
-// true iff T is type proto2::Message or a subclass of it.
+// true if and only if T is type proto2::Message or a subclass of it.
 template <typename T>
 struct IsAProtocolMessage
-    : public bool_constant<
-  std::is_convertible<const T*, const ::proto2::Message*>::value> {
-};
+    : public std::is_convertible<const T*, const ::proto2::Message*> {};
 
 // When the compiler sees expression IsContainerTest<C>(0), if C is an
 // STL-style container class, the first overload of IsContainerTest
@@ -967,7 +922,7 @@ template <typename C,
 struct IsRecursiveContainerImpl;
 
 template <typename C>
-struct IsRecursiveContainerImpl<C, false> : public false_type {};
+struct IsRecursiveContainerImpl<C, false> : public std::false_type {};
 
 // Since the IsRecursiveContainerImpl depends on the IsContainerTest we need to
 // obey the same inconsistencies as the IsContainerTest, namely check if
@@ -977,9 +932,9 @@ template <typename C>
 struct IsRecursiveContainerImpl<C, true> {
   using value_type = decltype(*std::declval<typename C::const_iterator>());
   using type =
-      is_same<typename std::remove_const<
-                  typename std::remove_reference<value_type>::type>::type,
-              C>;
+      std::is_same<typename std::remove_const<
+                       typename std::remove_reference<value_type>::type>::type,
+                   C>;
 };
 
 // IsRecursiveContainer<Type> is a unary compile-time predicate that
@@ -990,13 +945,6 @@ struct IsRecursiveContainerImpl<C, true> {
 // boost::filesystem::path.
 template <typename C>
 struct IsRecursiveContainer : public IsRecursiveContainerImpl<C>::type {};
-
-// EnableIf<condition>::type is void when 'Cond' is true, and
-// undefined when 'Cond' is false.  To use SFINAE to make a function
-// overload only apply when a particular expression is true, add
-// "typename EnableIf<expression>::type* = 0" as the last parameter.
-template<bool> struct EnableIf;
-template<> struct EnableIf<true> { typedef void type; };  // NOLINT
 
 // Utilities for native arrays.
 
@@ -1120,10 +1068,9 @@ class NativeArray {
   }
 
  private:
-  enum {
-    kCheckTypeIsNotConstOrAReference = StaticAssertTypeEqHelper<
-        Element, GTEST_REMOVE_REFERENCE_AND_CONST_(Element)>::value
-  };
+  static_assert(!std::is_const<Element>::value, "Type must not be const");
+  static_assert(!std::is_reference<Element>::value,
+                "Type must not be a reference");
 
   // Initializes this object with a copy of the input.
   void InitCopy(const Element* array, size_t a_size) {
@@ -1176,25 +1123,29 @@ struct MakeIndexSequence
 template <>
 struct MakeIndexSequence<0> : IndexSequence<> {};
 
-// FIXME: This implementation of ElemFromList is O(1) in instantiation depth,
-// but it is O(N^2) in total instantiations. Not sure if this is the best
-// tradeoff, as it will make it somewhat slow to compile.
-template <typename T, size_t, size_t>
-struct ElemFromListImpl {};
-
-template <typename T, size_t I>
-struct ElemFromListImpl<T, I, I> {
-  using type = T;
+template <size_t>
+struct Ignore {
+  Ignore(...);  // NOLINT
 };
 
-// Get the Nth element from T...
-// It uses O(1) instantiation depth.
-template <size_t N, typename I, typename... T>
-struct ElemFromList;
+template <typename>
+struct ElemFromListImpl;
+template <size_t... I>
+struct ElemFromListImpl<IndexSequence<I...>> {
+  // We make Ignore a template to solve a problem with MSVC.
+  // A non-template Ignore would work fine with `decltype(Ignore(I))...`, but
+  // MSVC doesn't understand how to deal with that pack expansion.
+  // Use `0 * I` to have a single instantiation of Ignore.
+  template <typename R>
+  static R Apply(Ignore<0 * I>..., R (*)(), ...);
+};
 
-template <size_t N, size_t... I, typename... T>
-struct ElemFromList<N, IndexSequence<I...>, T...>
-    : ElemFromListImpl<T, N, I>... {};
+template <size_t N, typename... T>
+struct ElemFromList {
+  using type =
+      decltype(ElemFromListImpl<typename MakeIndexSequence<N>::type>::Apply(
+          static_cast<T (*)()>(nullptr)...));
+};
 
 template <typename... T>
 class FlatTuple;
@@ -1204,9 +1155,7 @@ struct FlatTupleElemBase;
 
 template <typename... T, size_t I>
 struct FlatTupleElemBase<FlatTuple<T...>, I> {
-  using value_type =
-      typename ElemFromList<I, typename MakeIndexSequence<sizeof...(T)>::type,
-                            T...>::type;
+  using value_type = typename ElemFromList<I, T...>::type;
   FlatTupleElemBase() = default;
   explicit FlatTupleElemBase(value_type t) : value(std::move(t)) {}
   value_type value;
@@ -1244,12 +1193,12 @@ class FlatTuple
   explicit FlatTuple(T... t) : FlatTuple::FlatTupleBase(std::move(t)...) {}
 
   template <size_t I>
-  const typename ElemFromList<I, Indices, T...>::type& Get() const {
+  const typename ElemFromList<I, T...>::type& Get() const {
     return static_cast<const FlatTupleElemBase<FlatTuple, I>*>(this)->value;
   }
 
   template <size_t I>
-  typename ElemFromList<I, Indices, T...>::type& Get() {
+  typename ElemFromList<I, T...>::type& Get() {
     return static_cast<FlatTupleElemBase<FlatTuple, I>*>(this)->value;
   }
 };
@@ -1400,13 +1349,17 @@ constexpr bool InstantiateTypedTestCase_P_IsDeprecated() { return true; }
 
 // Helper macro for defining tests.
 #define GTEST_TEST_(test_suite_name, test_name, parent_class, parent_id)      \
+  static_assert(sizeof(GTEST_STRINGIFY_(test_suite_name)) > 1,                \
+                "test_suite_name must not be empty");                         \
+  static_assert(sizeof(GTEST_STRINGIFY_(test_name)) > 1,                      \
+                "test_name must not be empty");                               \
   class GTEST_TEST_CLASS_NAME_(test_suite_name, test_name)                    \
       : public parent_class {                                                 \
    public:                                                                    \
     GTEST_TEST_CLASS_NAME_(test_suite_name, test_name)() {}                   \
                                                                               \
    private:                                                                   \
-    virtual void TestBody();                                                  \
+    void TestBody() override;                                                 \
     static ::testing::TestInfo* const test_info_ GTEST_ATTRIBUTE_UNUSED_;     \
     GTEST_DISALLOW_COPY_AND_ASSIGN_(GTEST_TEST_CLASS_NAME_(test_suite_name,   \
                                                            test_name));       \

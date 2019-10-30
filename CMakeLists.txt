@@ -2,14 +2,15 @@
 cmake_minimum_required(VERSION 2.8)
 
 # Set the name of the project
-project(jsonio14)
+project(jsonio14 CXX C)
 
-
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_MACOSX_RPATH ON)
 
 # Define variables with the GNU standard installation directories
 include(GNUInstallDirs)
-
 
 # Set the default build type to Release
 if(NOT CMAKE_BUILD_TYPE)
@@ -22,7 +23,8 @@ endif()
 # Define which types of libraries to build
 option(BUILD_SHARED_LIBS "Build shared libraries." ON)
 option(BUILD_STATIC_LIBS "Build static libraries." ON)
-option(BUILD_EXAMPLES "Build shared libraries." ON)
+option(BuildExamples "Build EXAMPLES" ON)
+option(BuildTests "Build test suite" ON)
 
 # Currently is not setup to produce a dynamic library using MSVC, only static
 if(${CMAKE_CXX_COMPILER_ID} STREQUAL MSVC)
@@ -71,5 +73,15 @@ add_subdirectory(src)
 link_directories(${CMAKE_BINARY_DIR}/src)
 
 # Build the examples
-add_subdirectory(examples)
+if(BuildExamples)
+    add_subdirectory(examples)
+endif()
+
+
+# Run the tests
+if(BuildTests)
+    add_subdirectory(tests)
+endif()
+
+include(CPack) #should be last command
 

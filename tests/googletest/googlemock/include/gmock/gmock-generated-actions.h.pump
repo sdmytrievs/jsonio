@@ -182,16 +182,15 @@ $template
 //
 // CAVEAT:
 //
-// ACTION*() can only be used in a namespace scope.  The reason is
-// that C++ doesn't yet allow function-local types to be used to
-// instantiate templates.  The up-coming C++0x standard will fix this.
-// Once that's done, we'll consider supporting using ACTION*() inside
-// a function.
+// ACTION*() can only be used in a namespace scope as templates cannot be
+// declared inside of a local class.
+// Users can, however, define any local functors (e.g. a lambda) that
+// can be used as actions.
 //
 // MORE INFORMATION:
 //
 // To learn more about using these macros, please search for 'ACTION' on
-// https://github.com/google/googletest/blob/master/googlemock/docs/CookBook.md
+// https://github.com/google/googletest/blob/master/googlemock/docs/cook_book.md
 
 $range i 0..n
 $range k 0..n-1
@@ -396,7 +395,7 @@ $range k 0..n-1
       typedef typename ::testing::internal::Function<F>::ArgumentTuple\
           args_type;\
       explicit gmock_Impl GMOCK_INTERNAL_INIT_##value_params {}\
-      virtual return_type Perform(const args_type& args) {\
+      return_type Perform(const args_type& args) override {\
         return ::testing::internal::ActionHelper<return_type, gmock_Impl>::\
             Perform(this, args);\
       }\
@@ -483,7 +482,7 @@ $var macro_name = [[$if i==0 [[ACTION]] $elif i==1 [[ACTION_P]]
       typedef typename ::testing::internal::Function<F>::ArgumentTuple\
           args_type;\
       [[$if i==1 [[explicit ]]]]gmock_Impl($ctor_param_list)$inits {}\
-      virtual return_type Perform(const args_type& args) {\
+      return_type Perform(const args_type& args) override {\
         return ::testing::internal::ActionHelper<return_type, gmock_Impl>::\
             Perform(this, args);\
       }\
