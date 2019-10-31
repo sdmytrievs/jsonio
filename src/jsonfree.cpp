@@ -36,7 +36,7 @@ std::vector<std::string> JsonFree::getUsedKeys() const
     std::vector<std::string> usekeys;
     for( const auto& el: children )
     {
-        usekeys.push_back( el.getKey() );
+        usekeys.push_back( el->getKey() );
     }
     return usekeys;
 }
@@ -72,8 +72,9 @@ void JsonFree::update_node(JsonBase::Type atype, const std::string &avalue)
 
 JsonFree& JsonFree::append_node(const std::string &akey, JsonBase::Type atype, const std::string &avalue )
 {
-    children.emplace_back( JsonFree{atype, akey, avalue, this} );
-    return children.back();
+    auto shptr = new JsonFree(atype, akey, avalue, this);
+    children.push_back( std::shared_ptr<JsonFree>(shptr) );
+    return *children.back();
 }
 
 
@@ -86,12 +87,12 @@ JsonFree *JsonFree::field(std::queue<std::string> names ) const
     names.pop();
 
     auto element = std::find_if( children.begin(), children.end(),
-                                 [=]( const auto& value ) { return value.getKey() == fname; });
+                                 [=]( const auto& value ) { return value->getKey() == fname; });
     if( element == children.end() )
     {
         return nullptr;
     }
-    return element->field(names);
+    return element->get()->field(names);
 }
 
 JsonFree *JsonFree::field_add(std::queue<std::string> names )
@@ -103,18 +104,18 @@ JsonFree *JsonFree::field_add(std::queue<std::string> names )
     names.pop();
 
     auto element = std::find_if( children.begin(), children.end(),
-                                 [=]( const auto& value ) { return value.getKey() == fname; });
+                                 [=]( const auto& value ) { return value->getKey() == fname; });
     if( element == children.end() )
     {
         if( isObject() )
         {
             append_node( fname, JsonBase::Object, "" );
-            return children.back().field_add(names);
+            return children.back()->field_add(names);
         }
         else
             return nullptr;
     }
-    return element->field_add(names);
+    return element->get()->field_add(names);
 }
 
 JsonFree &JsonFree::add_object_via_path(const std::string &jsonpath)
@@ -140,9 +141,9 @@ void JsonFree::copy(const JsonFree &obj)
     children.clear();
     for( auto child: obj.children )
     {
-        children.push_back( JsonFree(child) );
-        children.back().parent_object = this;
-        children.back().ndx_in_parent = children.size()-1;
+        children.push_back( std::make_shared<JsonFree>(*child) );
+        children.back()->parent_object = this;
+        children.back()->ndx_in_parent = children.size()-1;
     }
 }
 
@@ -150,22 +151,21 @@ void JsonFree::copy(const JsonFree &obj)
 void JsonFree::move(JsonFree &&obj)
 {
     field_type =  obj.field_type;
-    field_key =  std::move(obj.field_key);  // stl using
+    // field_key =  std::move(obj.field_key);  // stl using
     field_value = std::move(obj.field_value);
-    //children = std::move(obj.children);
-    children.clear();
-    for( auto child: obj.children )
+
+    children = std::move(obj.children);
+    obj.children.clear();
+    for( auto child: children )
     {
-        children.push_back( std::move(child) );
-        children.back().parent_object = this;
-        children.back().ndx_in_parent = children.size()-1;
+        children.back()->parent_object = this;
     }
 }
 
 const JsonFree& JsonFree::get_child(std::size_t idx) const
 {
     JARANGO_THROW_IF( idx>=getChildrenCount(), "JsonFree", 25,  "array index " + std::to_string(idx) + " is out of range" );
-    return children[idx];
+    return *children[idx];
 }
 
 JsonFree& JsonFree::get_child(std::size_t idx)
@@ -175,31 +175,31 @@ JsonFree& JsonFree::get_child(std::size_t idx)
     {
         return append_node( std::to_string(idx), JsonBase::Null, "" );
     }
-    return children[idx];
+    return *children[idx];
 }
 
 JsonFree& JsonFree::get_child(const std::string &key)
 {
     auto element = std::find_if( children.begin(), children.end(),
-                                 [=]( const auto& value ) { return value.getKey() == key; });
+                                 [=]( const auto& value ) { return value->getKey() == key; });
     if( element == children.end() )
     {
         return append_node( key, JsonBase::Null, "" );
         //return children.back();
     }
-    return *element;
+    return *element->get();
 }
 
 
 const JsonFree& JsonFree::get_child(const std::string &key) const
 {
     auto element = std::find_if( children.begin(), children.end(),
-                                 [=]( const auto& value ) { return value.getKey() == key; });
+                                 [=]( const auto& value ) { return value->getKey() == key; });
     if( element == children.end() )
     {
         JARANGO_THROW( "JsonFree", 26, "key '" + key + "' not found" );
     }
-    return *element;
+    return *element->get();
 }
 
 
@@ -224,10 +224,10 @@ bool JsonFree::remove_child( JsonFree* child )
     int thisndx = -1;
     for(std::size_t ii=0; ii< children.size(); ii++ )
     {
-        if( &children[ii] == child )
+        if( children[ii].get() == child )
             thisndx = static_cast<int>(ii);
         if( thisndx >= 0 )
-            children[ii].ndx_in_parent--;
+            children[ii]->ndx_in_parent--;
     }
     if( thisndx >= 0 )
     {   children.erase(children.begin() + thisndx);
@@ -245,7 +245,7 @@ std::vector<size_t> JsonFree::array_sizes() const
 
     if( !empty() )
     {
-        sizes = children[0].array_sizes();
+        sizes = children[0]->array_sizes();
     }
 
     sizes.insert( sizes.begin(), size() );
@@ -265,7 +265,7 @@ void JsonFree::resize_array_level( size_t level, const std::vector<size_t>& size
 
     // Resize next level
     for( auto& child:  children )
-        child.resize_array_level( level+1, sizes, defval );
+        child->resize_array_level( level+1, sizes, defval );
 }
 
 void JsonFree::array_resize( std::size_t  newsize, const std::string& defval  )
@@ -281,17 +281,17 @@ void JsonFree::array_resize( std::size_t  newsize, const std::string& defval  )
         if( children.size()>0 )
         {
             const auto defchild = children[0];
-            auto chdefval = checked_value( defchild.type(), defval );
+            auto chdefval = checked_value( defchild->type(), defval );
 
             for( auto ii=children.size(); ii<newsize; ii++)
             {
-                children.emplace_back( JsonFree{defchild} );
-                children.back().field_key = std::to_string(ii);
-                children.back().ndx_in_parent = ii;
-                children.back().parent_object = this;
+                children.emplace_back( std::make_shared<JsonFree>(*defchild) );
+                children.back()->field_key = std::to_string(ii);
+                children.back()->ndx_in_parent = ii;
+                children.back()->parent_object = this;
 
-                if( !defval.empty() && defchild.isPrimitive() )
-                    children.back().field_value = chdefval;
+                if( !defval.empty() && defchild->isPrimitive() )
+                    children.back()->field_value = chdefval;
             }
         }
         else

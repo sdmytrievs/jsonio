@@ -14,8 +14,8 @@ using namespace std;
 //https://qtcreator.gres.biz/page/gtest/#%D1%81%D0%BA%D0%B0%D1%87%D0%B0%D1%82%D1%8C
 // https://doc.qt.io/qtcreator/creator-autotest.html
 
-#include "jsonfree.h"
-#include "jsondump.h"
+#include "jsonio14/jsonfree.h"
+#include "jsonio14/jsondump.h"
 using namespace jsonio14;
 
 /// STL-like access
