@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include "exceptions.h"
 #include "jsonbase.h"
 
@@ -13,20 +14,20 @@ class JsonFree final : public JsonBase
 public:
 
     /// An iterator for a JsonFree container
-    using iterator = std::vector<JsonFree>::iterator;
+    using iterator = std::vector<std::shared_ptr<JsonFree>>::iterator;
     /// A const iterator for a JsonFree container
-    using const_iterator = std::vector<JsonFree>::const_iterator;
+    using const_iterator = std::vector<std::shared_ptr<JsonFree>>::const_iterator;
 
     /// Create object JSON value
     static  JsonFree object( const std::string& key = "top" )
     {
-        return JsonFree( Object, key, "" );
+        return JsonFree( Object, key, "", nullptr );
     }
 
     /// Create array JSON value
     static  JsonFree array( const std::string& key = "top" )
     {
-        return JsonFree( Array, key, "" );
+        return JsonFree( Array, key, "", nullptr );
     }
 
     /// Copy constructor
@@ -187,7 +188,7 @@ protected:
     {
         if( ndx < getChildrenCount() )
         {
-            return  &children[ndx];
+            return  children[ndx].get();
         }
         return nullptr;
     }
@@ -211,10 +212,10 @@ private:
     /// Parent object
     JsonFree *parent_object;
     /// Children objects for Object or Array
-    std::vector<JsonFree> children;
+    std::vector<std::shared_ptr<JsonFree>> children;
 
     /// Object constructor
-    JsonFree( JsonBase::Type atype, const std::string &akey, const std::string& avalue, JsonFree *aparent = nullptr );
+    JsonFree( JsonBase::Type atype, const std::string &akey, const std::string& avalue, JsonFree *aparent  );
 
     void update_node(  JsonBase::Type atype, const std::string& avalue ) override;
     JsonFree &append_node( const std::string& akey, JsonBase::Type atype, const std::string& avalue ) override;

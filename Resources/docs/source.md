@@ -117,15 +117,13 @@ obj["vmap"]["key3"] = 10;
 
 
 for (JsonFree::iterator it = obj.begin(); it != obj.end(); ++it) {
-  std::cout << it->toString(true) << '\n';
+  std::cout << it->get()->toString(true) << '\n';
 }
 
 
 ```
 
 > *source: "+";    test: "+";  example: "+"*
-> Error when move assignment: object["key"]= std::move(anotherobject);
-> key would be overwritten by anotherobject key
 
 9. txt2file.h(cpp)
 
@@ -147,7 +145,7 @@ class JsonioSettings - storing preferences to JSONIO
 
 To do:
 
-- add time compare tests json parsers
+- add top level std::shared_ptr
 
 V. New API working with schemas
 

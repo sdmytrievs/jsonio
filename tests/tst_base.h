@@ -372,8 +372,8 @@ TEST( JsonioBase, ObjectAssignment)
     EXPECT_EQ( obj["formats"].size(), 2 );
     EXPECT_EQ( obj["formats"]["obj2"].dump(true), "{\"width\":20,\"precision\":10}\n" );
 
-    obj["formats"]["obj3"] = json::loads("{\"width\":30,\"precision\":15}"); // move assigned !!!! Problem key
+    obj["formats"]["obj3"] = json::loads("{\"width\":30,\"precision\":15}");
     EXPECT_EQ( obj["formats"].size(), 3 );
-    EXPECT_EQ( obj["formats"]["top"].dump(true), "{\"width\":30,\"precision\":15}\n" );
+    EXPECT_EQ( obj["formats"]["obj3"].dump(true), "{\"width\":30,\"precision\":15}\n" );
 
 }
