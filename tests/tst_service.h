@@ -77,22 +77,25 @@ TEST( Jsoniofilesystem, HomeDir )
    std::string homedir, rel_path;
    EXPECT_NO_THROW( homedir = home_dir());
 #ifdef _WIN32
-   EXPECT_EQ( homedir, current_path.root_path());
+   EXPECT_EQ( homedir, current_path.root_path().string());
 #else
    EXPECT_TRUE( current_path.native().rfind(homedir, 0) == 0 );
 #endif
-  rel_path = current_path.native().substr(homedir.length());
+  std::string newpath =current_path.string();
+  rel_path = newpath.substr(homedir.length());
   rel_path = "~"+rel_path;
 
-  EXPECT_EQ( current_path.native(), expand_home_dir( rel_path, homedir ));
-  EXPECT_EQ( current_path.native(), expand_home_dir( rel_path, "" ));
+  EXPECT_EQ( current_path.string(), expand_home_dir( rel_path, homedir ));
+  EXPECT_EQ( current_path.string(), expand_home_dir( rel_path, "" ));
 }
 
 TEST( Jsoniofilesystem, TestDir )
 {
     std::string test_dir = "test_dir";
-    if(path_exist( test_dir ) )
+#ifndef _WIN32
+    if( path_exist( test_dir ) )
         fs::remove_all(test_dir);
+#endif
     fs::create_directory(test_dir);
     std::ofstream(test_dir+"/file1.txt").put('a');
     std::ofstream(test_dir+"/file2.txt").put('b');
@@ -100,8 +103,13 @@ TEST( Jsoniofilesystem, TestDir )
 
     auto files = files_into_directory( test_dir, "txt");
     EXPECT_EQ( files.size(), 2);
+#ifdef _WIN32
+    EXPECT_EQ( files[0], test_dir+"\\file1.txt");
+    EXPECT_EQ( files[1], test_dir+"\\file2.txt");
+#else
     EXPECT_EQ( files[0], test_dir+"/file1.txt");
     EXPECT_EQ( files[1], test_dir+"/file2.txt");
+#endif
 }
 
 TEST( Jsoniofilesystem, TestTextFile )
@@ -326,10 +334,17 @@ TEST( JsonioSettings, TestSettingsPath )
     tst_settings.setUserDir("." );
 
     EXPECT_EQ( tst_settings.userDir(), "." );
+#ifdef _WIN32
+    EXPECT_EQ( tst_settings.homeDir(), "D:\\/newJSONIO/jsonio14" );
+    EXPECT_EQ( tst_settings.resourcesDir(), "D:\\/newJSONIO/jsonio14/Resources" );
+    EXPECT_EQ( tst_settings.directoryPath( "common.SchemasDirectory",  std::string("") ),
+               "D:\\/newJSONIO/jsonio14/Resources/data/schemas" );
+#elif
     EXPECT_EQ( tst_settings.homeDir(), "/home/svd/newJSONIO/jsonio14" );
     EXPECT_EQ( tst_settings.resourcesDir(), "/home/svd/newJSONIO/jsonio14/Resources" );
     EXPECT_EQ( tst_settings.directoryPath( "common.SchemasDirectory",  std::string("") ),
                "/home/svd/newJSONIO/jsonio14/Resources/data/schemas" );
+#endif
 
     JsonFile fjson(fpath);
     EXPECT_EQ( fjson.load_json(), "{\"jsonio\":{},\"common\":{\"UserHomeDirectoryPath\":\"~/newJSONIO/jsonio14\","

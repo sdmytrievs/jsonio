@@ -344,7 +344,7 @@ TYPED_TEST( JsonioBaseTest, Iterators )
     size_t ii=0;
     for (const auto& element : obj["vlist"])
     {
-        EXPECT_EQ( obj["vlist"][ii++].toDouble(), element.toDouble() );
+        EXPECT_EQ( obj["vlist"][ii++].toDouble(), element->toDouble() );
     }
     EXPECT_EQ( ii, obj["vlist"].size() );
 
@@ -358,7 +358,7 @@ TYPED_TEST( JsonioBaseTest, Iterators )
     ii=0;
     for (auto it = obj.begin(); it != obj.end(); ++it)
     {
-        EXPECT_EQ( obj[ii++].toString(), it->toString() );
+        EXPECT_EQ( obj[ii++].toString(), (*it)->toString() );
     }
     EXPECT_EQ( ii, obj.size() );
 }

@@ -25,12 +25,17 @@ namespace jsonio14 {
 // This should work under Linux, Unix and OS X, for Windows you need to make a slight modification.
 std::string  home_dir()
 {
-    const char *homeDir;
 #ifdef _WIN32
-    //char homedir[MAX_PATH];
-    //snprintf(homedir, MAX_PATH, "%s%s", getenv("HOMEDRIVE"), getenv("HOMEPATH"));
-    homeDir =  getenv("HOMEDRIVE");
+    //const char *homeDir;
+    //char homedir[1000];
+    //snprintf(homedir, 1000, "%s%s", getenv("HOMEDRIVE"), getenv("HOMEPATH"));
+    //homeDir = getenv("HOMEDRIVE");
+    std::string homeDir;
+    auto current_path =  fs::current_path();
+    homeDir = current_path.root_path().string();
+    return homeDir;
 #else
+    const char *homeDir;
     homeDir = getenv("HOME");
 
     if( !homeDir )
@@ -39,10 +44,10 @@ std::string  home_dir()
         if (pwd)
             homeDir = pwd->pw_dir;
     }
-#endif
     JARANGO_THROW_IF( !homeDir, "filesystem", 1,  "HOME environment variable not set.");
     //std::cout << "Home directory is " << homeDir << std::endl;
     return std::string(homeDir);
+#endif
 }
 
 //  "~" generally refers to the user's home directory, this is solely an artifact of tilde expansion in Unix shells.
@@ -156,10 +161,10 @@ TxtFile::TxtFile(const std::string &fpath):
 {
     fs::path ps(fpath);
 
-    file_path = ps;
-    file_dir =  ps.parent_path();
-    file_name = ps.stem();
-    file_ext = ps.extension();
+    file_path = ps.string();
+    file_dir =  ps.parent_path().string();
+    file_name = ps.stem().string();
+    file_ext = ps.extension().string();
     if( !file_ext.empty() )
       file_ext = file_ext.substr(1);
 }

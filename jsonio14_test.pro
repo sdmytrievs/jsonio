@@ -43,7 +43,7 @@ INCLUDEPATH   += $$TESTS_DIR
 
 #LIBS +=  -lcurl  -lvelocypack
 #!win32:LIBS +=  -lboost_system -lboost_filesystem -lstdc++fs
-!win32:LIBS +=  -lstdc++fs
+LIBS +=  -lstdc++fs
 
 OBJECTS_DIR   = obj
 

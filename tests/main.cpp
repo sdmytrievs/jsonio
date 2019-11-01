@@ -3,14 +3,14 @@
 
 #include "tst_jsonio.h"
 #include "tst_service.h"
-#include "tst_detail.h"
+/*#include "tst_detail.h"
 #include "tst_dump.h"
 #include "tst_builder.h"
 #include "tst_parser.h"
 #include "tst_base.h"
-//#include "tst_base_api.h"
-//#include "tst_base_complex.h"
-
+#include "tst_base_api.h"
+#include "tst_base_complex.h"
+*/
 
 
 // https://doc.qt.io/qtcreator/creator-autotest.html
