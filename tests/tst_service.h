@@ -339,7 +339,7 @@ TEST( JsonioSettings, TestSettingsPath )
     EXPECT_EQ( tst_settings.resourcesDir(), "D:\\/newJSONIO/jsonio14/Resources" );
     EXPECT_EQ( tst_settings.directoryPath( "common.SchemasDirectory",  std::string("") ),
                "D:\\/newJSONIO/jsonio14/Resources/data/schemas" );
-#elif
+#else
     EXPECT_EQ( tst_settings.homeDir(), "/home/svd/newJSONIO/jsonio14" );
     EXPECT_EQ( tst_settings.resourcesDir(), "/home/svd/newJSONIO/jsonio14/Resources" );
     EXPECT_EQ( tst_settings.directoryPath( "common.SchemasDirectory",  std::string("") ),
