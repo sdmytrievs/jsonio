@@ -28,15 +28,10 @@ TEST( JsonioService, regexpExtract )
     //std::cout << dump(tokens) << std::endl;
     EXPECT_EQ( "[ \"%h11\", \"%h22\", \"%h33\" ]", json::dump(tokens) );
 
-
-    /*tokens = regexp_extract(
-     "\"limitsTP\":null,\"m_compressibility\":10,\"m_expansivity\":null,\"name\":\"Al(OH)4-\",\"reaction\":null",
-                "(?<=,)[^,\n]+(?=null,)" );
-    std::cout << json::dump(tokens) << std::endl;
-    //EXPECT_EQ( "[ \"%h11\", \"%h22\", \"%h33\" ]", json::dump(tokens) );
-  */
-
-
+    tokens = regexp_extract(
+                    "\"limitsTP\":null,\"m_compressibility\":10,\"m_expansivity\":null,\"name\":\"Al(OH)4-\",\"reaction\":null,",
+                               "(?!,)[^,\n]+(?=null,)" );
+    EXPECT_EQ( "[ \"\\\"limitsTP\\\":\", \"\\\"m_expansivity\\\":\", \"\\\"reaction\\\":\" ]", json::dump(tokens) );
 }
 
 //  Function that can be used to replase text using regexp

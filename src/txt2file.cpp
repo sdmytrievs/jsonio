@@ -51,14 +51,14 @@ std::string  home_dir()
 }
 
 //  "~" generally refers to the user's home directory, this is solely an artifact of tilde expansion in Unix shells.
-std::string expand_home_dir( const std::string& inPath, const std::string& homeDir )
+std::string expand_home_dir( const std::string& in_path, const std::string& in_home_dir )
 {
     static std::string  aHomeDir(home_dir());
 
-    if( inPath.size () > 0 && inPath[0] == '~')
-        return (( homeDir.empty() ? aHomeDir: homeDir) + inPath.substr(1));
+    if( in_path.size () > 0 && in_path[0] == '~')
+        return (( in_home_dir.empty() ? aHomeDir: in_home_dir) + in_path.substr(1));
     else
-        return inPath;
+        return in_path;
 }
 
 

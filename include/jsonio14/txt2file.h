@@ -18,7 +18,7 @@ bool path_exist( const std::string& path );
 std::string  home_dir();
 ///  Link path to home directory
 ///  "~" generally refers to the user's home directory.
-std::string expand_home_dir( const std::string& inPath, const std::string& homeDir = "" );
+std::string expand_home_dir( const std::string& path, const std::string& home_dir = "" );
 
 
 ///  Base interface for working with text files.
@@ -42,7 +42,7 @@ public:
     };
 
     /// Constructor
-    TxtFile(const std::string& fname, const std::string& fext, const std::string& fdir="" );
+    TxtFile(const std::string& name, const std::string& ext, const std::string& dir="" );
     /// Constructor from path
     TxtFile(const std::string& fpath);
 
@@ -93,8 +93,8 @@ class JsonFile : public TxtFile
 public:
 
     /// Constructor
-    JsonFile( const std::string& fName, const std::string& fExt, const std::string& fDir=""):
-        TxtFile( fName, fExt, fDir )
+    JsonFile( const std::string& name, const std::string& ext, const std::string& dir=""):
+        TxtFile( name, ext, dir )
     {
         file_type =  Json;
     }
@@ -132,8 +132,8 @@ class JsonArrayFile : public JsonFile
 public:
 
     /// Constructor
-    JsonArrayFile( const std::string& fName, const std::string& fExt, const std::string& fDir=""):
-       JsonFile( fName, fExt, fDir ), arr_object( JsonFree::array() )
+    JsonArrayFile( const std::string& name, const std::string& ext, const std::string& dir=""):
+       JsonFile( name, ext, dir ), arr_object( JsonFree::array() )
     { }
     /// Constructor from path
     JsonArrayFile( const std::string& path):

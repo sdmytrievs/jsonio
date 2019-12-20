@@ -189,4 +189,5 @@ Work about jsonui
 // https://stackoverflow.com/questions/1008019/c-singleton-design-pattern
 // If you need global access to an object, make it a global, like std::cout. But don't constrain the number of instances that can be created.
 
-
+// http://www.vishalchovatiya.com/21-new-features-of-modern-cpp-to-use-in-your-project/
+// 21 new features of Modern C++ to use in your project

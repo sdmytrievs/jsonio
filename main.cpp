@@ -16,6 +16,7 @@ using namespace std;
 
 #include "jsonio14/jsonfree.h"
 #include "jsonio14/jsondump.h"
+#include "jsonio14/service.h"
 using namespace jsonio14;
 
 /// STL-like access
@@ -61,6 +62,7 @@ int main()
 {
     cout << "Hello World!" << endl;
     try{
+
         AccesstoObjectError();
     }
     catch(jarango_exception& e)
