@@ -27,6 +27,16 @@ TEST( JsonioService, regexpExtract )
     auto tokens = regexp_extract( " %h11 %h22 hhh %h33 ", "%h\\d+" );
     //std::cout << dump(tokens) << std::endl;
     EXPECT_EQ( "[ \"%h11\", \"%h22\", \"%h33\" ]", json::dump(tokens) );
+
+
+    /*tokens = regexp_extract(
+     "\"limitsTP\":null,\"m_compressibility\":10,\"m_expansivity\":null,\"name\":\"Al(OH)4-\",\"reaction\":null",
+                "(?<=,)[^,\n]+(?=null,)" );
+    std::cout << json::dump(tokens) << std::endl;
+    //EXPECT_EQ( "[ \"%h11\", \"%h22\", \"%h33\" ]", json::dump(tokens) );
+  */
+
+
 }
 
 //  Function that can be used to replase text using regexp
@@ -104,11 +114,11 @@ TEST( Jsoniofilesystem, TestDir )
     auto files = files_into_directory( test_dir, "txt");
     EXPECT_EQ( files.size(), 2);
 #ifdef _WIN32
-    EXPECT_EQ( files[0], test_dir+"\\file1.txt");
-    EXPECT_EQ( files[1], test_dir+"\\file2.txt");
+    EXPECT_TRUE(std::find(files.begin(), files.end(),test_dir+"\\file1.txt")!=files.end() );
+    EXPECT_TRUE(std::find(files.begin(), files.end(),test_dir+"\\file2.txt")!=files.end() );
 #else
-    EXPECT_EQ( files[0], test_dir+"/file1.txt");
-    EXPECT_EQ( files[1], test_dir+"/file2.txt");
+    EXPECT_TRUE(std::find(files.begin(), files.end(),test_dir+"/file1.txt")!=files.end() );
+    EXPECT_TRUE(std::find(files.begin(), files.end(),test_dir+"/file2.txt")!=files.end() );
 #endif
 }
 
@@ -328,6 +338,7 @@ TEST( JsonioSettings, TestSettingsPath )
     std::string fpath = "test3.cfg.json";
 
     JsonioSettings  tst_settings( fpath );
+    std::string ahome_dir = home_dir();
     tst_settings.setHomeDir("~/newJSONIO/jsonio14" );
     tst_settings.setValue("common.ResourcesDirectory","~/Resources" );
     tst_settings.setValue("common.SchemasDirectory","~/Resources/data/schemas" );
@@ -340,10 +351,10 @@ TEST( JsonioSettings, TestSettingsPath )
     EXPECT_EQ( tst_settings.directoryPath( "common.SchemasDirectory",  std::string("") ),
                "D:\\/newJSONIO/jsonio14/Resources/data/schemas" );
 #else
-    EXPECT_EQ( tst_settings.homeDir(), "/home/svd/newJSONIO/jsonio14" );
-    EXPECT_EQ( tst_settings.resourcesDir(), "/home/svd/newJSONIO/jsonio14/Resources" );
+    EXPECT_EQ( tst_settings.homeDir(), ahome_dir+"/newJSONIO/jsonio14" );
+    EXPECT_EQ( tst_settings.resourcesDir(), ahome_dir+"/newJSONIO/jsonio14/Resources" );
     EXPECT_EQ( tst_settings.directoryPath( "common.SchemasDirectory",  std::string("") ),
-               "/home/svd/newJSONIO/jsonio14/Resources/data/schemas" );
+               ahome_dir+"/newJSONIO/jsonio14/Resources/data/schemas" );
 #endif
 
     JsonFile fjson(fpath);

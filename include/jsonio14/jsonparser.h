@@ -40,11 +40,11 @@ protected:
     bool skip_space();
     bool skip_space_comment();
     bool parse_string( std::string& str );
-    void parse_value( const std::string& name, JsonBuilderBase& builder );
+    void parse_value( int depth, const std::string& name, JsonBuilderBase& builder );
     /// Parse internal jsontext string to json structure (with first {)
-    void parse_object( JsonObjectBuilder& builder );
+    void parse_object( int depth, JsonObjectBuilder& builder );
     /// Parse internal jsontext string to json structure (with first [)
-    void parse_array( JsonArrayBuilder& builder );
+    void parse_array( int depth, JsonArrayBuilder& builder );
 
     /// Get substr with error
     std::string err_part() const;

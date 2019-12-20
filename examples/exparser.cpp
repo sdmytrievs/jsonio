@@ -11,7 +11,7 @@ int main(int argc, char* argv[])
 {
     string test_dir = ".";
     //test_dir = "pass";
-    //test_dir = "fail";
+    test_dir = "fail";
     //test_dir = "nst_json_testsuite/test_parsing";
     //test_dir = "nst_json_testsuite2/test_parsing";
 
@@ -26,7 +26,7 @@ int main(int argc, char* argv[])
         {
             try{
                 auto json_data = read_ascii_file( file );
-                //std::cout <<  "\nStart: " << file << "'" << json_data<< "'\n";
+                std::cout <<  "\nStart: " << file << "'" << json_data<< "'\n";
 
                 auto jsFree =  json::loads( json_data );
                 //std::cout <<  "Pass: " <<  " Result: "  <<  jsFree.dump(true) <<  std::endl;

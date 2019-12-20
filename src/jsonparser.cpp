@@ -6,6 +6,8 @@
 
 namespace jsonio14 {
 
+static const int json_max_depth = 10000;
+
 enum {
     jsBeginArray = '[',    //0x5b,
     jsBeginObject = '{',   //0x7b,
@@ -24,12 +26,12 @@ void JsonParser::parse_to( JsonBase &out )
     if( jsontext[cur_pos] == jsBeginObject )
     {
         JsonObjectBuilder jsBuilder(out);
-        parse_object( jsBuilder );
+        parse_object( 0, jsBuilder );
     }
     else if( jsontext[cur_pos] == jsBeginArray )
     {
         JsonArrayBuilder jsBuilder(out);
-        parse_array( jsBuilder );
+        parse_array( 0, jsBuilder );
     }
     else // update value Scalar
     {
@@ -40,7 +42,7 @@ void JsonParser::parse_to( JsonBase &out )
 }
 
 //  object = { "<key1>" : <value1>, ... , "<keyN>" : <valueN> }
-void JsonParser::parse_object(JsonObjectBuilder &builder)
+void JsonParser::parse_object( int depth, JsonObjectBuilder &builder)
 {
     std::string keyn;
     if( jsontext[cur_pos] == jsBeginObject )
@@ -65,7 +67,7 @@ void JsonParser::parse_object(JsonObjectBuilder &builder)
         else
             JARANGO_THROW(  "JsonParser", 4, "missing ':' : " + err_part() );
 
-        parse_value( keyn,  builder );
+        parse_value( depth, keyn,  builder );
         JARANGO_THROW_IF( !skip_space_comment(), "JsonParser", 1, "unterminated object: " + err_part() );
 
         if( jsontext[cur_pos] == jsEndObject  )
@@ -80,7 +82,7 @@ void JsonParser::parse_object(JsonObjectBuilder &builder)
 }
 
 //    array = [ <value1>, ... <valueN> ]
-void JsonParser::parse_array(JsonArrayBuilder &builder)
+void JsonParser::parse_array( int depth, JsonArrayBuilder &builder)
 {
     if( jsontext[cur_pos] == jsBeginArray )
         cur_pos++;
@@ -94,7 +96,7 @@ void JsonParser::parse_array(JsonArrayBuilder &builder)
     }
 
     do {
-        parse_value( builder.nextKey(),  builder );
+        parse_value( depth, builder.nextKey(),  builder );
         JARANGO_THROW_IF( !skip_space_comment(), "JsonParser", 6, "unterminated array: " + err_part() );
         if( jsontext[cur_pos] == jsEndArray  )
         {
@@ -177,8 +179,9 @@ bool JsonParser::parse_string( std::string &str )
     return true;
 }
 
-void JsonParser::parse_value(const std::string &name, JsonBuilderBase &builder)
+void JsonParser::parse_value( int depth, const std::string &name, JsonBuilderBase &builder)
 {
+    JARANGO_THROW_IF( depth > json_max_depth, "JsonParser", 10, "exceeded maximum nesting depth " + err_part() );
     JARANGO_THROW_IF( !skip_space_comment(), "JsonParser", 8, "must be value " + err_part() );
 
     switch( jsontext[cur_pos] )
@@ -196,14 +199,14 @@ void JsonParser::parse_value(const std::string &name, JsonBuilderBase &builder)
     case jsBeginArray:
     {
         auto childobj =  builder.addArray(  name );
-        parse_array( childobj );
+        parse_array( depth+1, childobj );
     }
         break;
 
     case jsBeginObject:
     {
         auto childobj =  builder.addObject( name );
-        parse_object( childobj );
+        parse_object( depth+1, childobj );
     }
         break;
 

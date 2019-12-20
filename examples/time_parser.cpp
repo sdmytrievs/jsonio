@@ -90,10 +90,10 @@ int nlohmann_parse_test( const std::vector<std::string>& json_files )
 
 int main(int argc, char* argv[])
 {
-    char parser = 'j';
+    char parser = 'v';
     std::string test_dir = ".";
     //test_dir = "pass";
-    //test_dir = "fail";
+    test_dir = "fail";
     //test_dir = "nst_json_testsuite/test_parsing";
     //test_dir = "nst_json_testsuite2/test_parsing";
 
