@@ -9,6 +9,7 @@
 
 namespace jsonio14 {
 
+using list_names_t =  std::vector<std::string>;
 
 /// @brief An interface to store JSON object.
 /// @class JsonBase represents an abstract item in a tree view.
@@ -403,7 +404,7 @@ protected:
 
     virtual const JsonBase* getParent() const = 0;
 
-    virtual std::vector<std::string> getUsedKeys() const = 0;
+    virtual list_names_t getUsedKeys() const = 0;
 
     /// Get object name.
     virtual std::string getHelpName() const;

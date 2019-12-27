@@ -196,7 +196,7 @@ protected:
     const JsonBase* getParent() const override
     {  return parent_object;  }
 
-    std::vector<std::string> getUsedKeys() const override;
+    list_names_t getUsedKeys() const override;
 
 private:
 

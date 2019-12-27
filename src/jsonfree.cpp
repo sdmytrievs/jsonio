@@ -31,9 +31,9 @@ JsonFree::JsonFree( JsonFree &&obj ) noexcept:
 
 
 
-std::vector<std::string> JsonFree::getUsedKeys() const
+list_names_t JsonFree::getUsedKeys() const
 {
-    std::vector<std::string> usekeys;
+    list_names_t usekeys;
     for( const auto& el: children )
     {
         usekeys.push_back( el->getKey() );

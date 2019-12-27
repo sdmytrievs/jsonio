@@ -99,9 +99,9 @@ void copy_file( const std::string& source,  const std::string& target )
 
 
 // Get all  regular file names from the directory.
-std::vector<std::string> files_into_directory( const std::string& directory_path, const std::string& sample )
+list_names_t files_into_directory( const std::string& directory_path, const std::string& sample )
 {
-    std::vector<std::string> fileNames;
+    list_names_t fileNames;
 
     if( !directory_path.empty() )
     {

@@ -10,7 +10,9 @@ HEADERS += \
     $$JSONIO14_HEADERS_DIR/jsonio14/jsonparser.h \
     $$JSONIO14_HEADERS_DIR/jsonio14/jsonfree.h \
     $$JSONIO14_HEADERS_DIR/jsonio14/txt2file.h \
-    $$JSONIO14_HEADERS_DIR/jsonio14/io_settings.h
+    $$JSONIO14_HEADERS_DIR/jsonio14/io_settings.h \
+    $$JSONIO14_HEADERS_DIR/jsonio14/schema.h \
+    $$JSONIO14_HEADERS_DIR/jsonio14/schema_thrift.h
 
 
 SOURCES += \
@@ -23,7 +25,8 @@ SOURCES += \
     $$JSONIO14_DIR/jsonparser.cpp \
     $$JSONIO14_DIR/jsonfree.cpp \
     $$JSONIO14_DIR/txt2file.cpp \
-    $$JSONIO14_DIR/io_settings.cpp
+    $$JSONIO14_DIR/io_settings.cpp \
+#    $$JSONIO14_DIR/schema_thrift.cpp
 
 
 
