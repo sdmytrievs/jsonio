@@ -48,6 +48,9 @@ public:
         fld_optional = 2
     };
 
+    /// Destructor
+    virtual ~FieldDef() = default;
+
     /// Field id
     virtual int id() const = 0;
 
@@ -80,13 +83,13 @@ class StructDef
 public:
 
     /// Get name of structure
-    const char* name() const {
-        return schema_name.c_str();
+    const std::string& name() const {
+        return schema_name;
     }
 
     /// Get description of structure
-    const char* description() const {
-        return schema_description.c_str();
+    const std::string& description() const {
+        return schema_description;
     }
 
     /// Test structure is Union
@@ -129,11 +132,11 @@ public:
             return fields[it->second].get();
     }
 
-private:
+protected:
 
-    std::string schema_name;                    ///< Name of strucure
-    bool is_union;                              ///< True if union
-    std::string  schema_description;            ///< Comment
+    std::string schema_name = "";                    ///< Name of strucure
+    bool is_union = false;                              ///< True if union
+    std::string  schema_description = "";            ///< Comment
 
     std::vector< std::shared_ptr<FieldDef>> fields;   ///< List of fields
 
@@ -152,16 +155,16 @@ class EnumDef
 
 public:
 
-    const static int empty_enum = std::numeric_limits<int>::min();
+    static int empty_enum;
 
     /// Get name of enum
-    const char* name() const {
-        return enum_name.c_str();
+    const std::string& name() const {
+        return enum_name;
     }
 
     /// Get description of structure
-    const char* description() const {
-        return enum_sdoc.c_str();
+    const std::string& description() const {
+        return enum_sdoc;
     }
 
     /// Get enum name by value
@@ -205,7 +208,7 @@ public:
         return members;
     }
 
-private:
+protected:
 
     std::string  enum_name;                       ///< Name of enum
     std::string  enum_sdoc;                      ///< Comment
@@ -283,7 +286,7 @@ public:
         enums.clear();
     }
 
-private:
+ protected:
 
     std::map<std::string, std::string> files; ///< List of readed files (name, doc)
 

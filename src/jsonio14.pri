@@ -26,7 +26,7 @@ SOURCES += \
     $$JSONIO14_DIR/jsonfree.cpp \
     $$JSONIO14_DIR/txt2file.cpp \
     $$JSONIO14_DIR/io_settings.cpp \
-#    $$JSONIO14_DIR/schema_thrift.cpp
+    $$JSONIO14_DIR/schema_thrift.cpp
 
 
 

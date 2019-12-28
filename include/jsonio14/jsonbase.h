@@ -318,6 +318,9 @@ public:
 
     // Field path  methods --------------------------
 
+    /// Get field by fieldpath ("name1.name2.name3")
+    const JsonBase *field(  const std::string& fieldpath ) const;
+
     /// Return a string representation of the jsonpath to top field.
     std::string get_path() const;
 
@@ -420,8 +423,8 @@ private:
     virtual void update_node(  Type atype, const std::string& avalue ) =0;
     virtual JsonBase& append_node( const std::string& akey, Type atype, const std::string& avalue ) =0;
     void dump2stream(std::ostream &os, int depth, bool dense) const;
-    /// Get field by fieldpath ("name1.name2.name3")
-    JsonBase *field(  const std::string& fieldpath ) const;
+    // Get field by fieldpath ("name1.name2.name3")
+    //JsonBase *field(  const std::string& fieldpath ) const;
     virtual JsonBase *field( std::queue<std::string> names ) const = 0;
     /// Get field by fieldpath ("name1.name2.name3")
     JsonBase *field_add(  const std::string& fieldpath );

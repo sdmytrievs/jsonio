@@ -1,43 +1,11 @@
-//  This is JSONIO library+API (https://bitbucket.org/gems4/jsonio)
-//
-/// \file thrift_schema.cpp
-/// Implementation of classes and functions to work with Thrift Schemas
-//
-// JSONIO is a C++ library and API aimed at implementing the interfaces
-// for exchanging the structured data between NoSQL database backends,
-// JSON/YAML/XML files, and client-server RPC (remote procedure calls).
-//
-// Copyright (c) 2015-2016 Svetlana Dmytriieva (svd@ciklum.com) and
-//   Dmitrii Kulik (dmitrii.kulik@psi.ch)
-//
-// This program is free software: you can redistribute it and/or modify
-// it under the terms of the GNU (Lesser) General Public License as published
-// by the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-// See the GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with this program. If not, see <http://www.gnu.org/licenses/>.
-//
-// JSONIO depends on the following open-source software products:
-// Apache Thrift (https://thrift.apache.org); Pugixml (http://pugixml.org);
-// YAML-CPP (https://github.com/jbeder/yaml-cpp); EJDB (http://ejdb.org).
-//
 
-#include <fstream>
-#include "jsonio/thrift_schema.h"
-#include "jsonio/jsondomfree.h"
-#include "jsonio/tf_json.h"
-using namespace std;
+#include "jsonio14/schema_thrift.h"
+#include "jsonio14/service.h"
+#include "jsonio14/txt2file.h"
+#include "jsonio14/jsondump.h"
 
-namespace jsonio {
 
-ThriftFieldDef ThriftStructDef::emptyfield = { -1, "", {}, 2, "", "", "", "", DOUBLE_EMPTY, DOUBLE_EMPTY };
-int ThriftEnumDef::emptyenum = SHORT_EMPTY;
+namespace jsonio14 {
 
 static const char * key_name = "name";
 static const char * key_doc = "doc";
@@ -62,315 +30,211 @@ static const char * key_minval ="minval";
 static const char * key_maxval ="maxval";
 static const char * key_class ="class";
 static const char * key_required ="required";
-static const char * key_req_out ="req_out";
+const char * key_req_out ="req_out";
 static const char * key_optional ="optional";
-static const char * key_undefined ="undefined";
+static const std::string key_undefined ="undefined";
 
 static const char * key_members ="members";
 static const char * key_value ="value";
 static const char * key_structs ="structs";
 static const char * key_enums ="enums";
 
+std::map<std::string, ThriftFieldDef::FieldType> ThriftFieldDef::name_to_thrift_types;
+int EnumDef::empty_enum = std::numeric_limits<int>::min();
 
-
-void ThriftSchema::setTypeMap()
+void ThriftFieldDef::setTypeMap()
 {
-  name_to_thrift_types.insert(pair<string, int>("stop", Th_STOP));
-  name_to_thrift_types.insert(pair<string, int>("void", Th_VOID));
-  name_to_thrift_types.insert(pair<string, int>("bool", Th_BOOL));
-  name_to_thrift_types.insert(pair<string, int>("byte", Th_BYTE));
-  name_to_thrift_types.insert(pair<string, int>("i8", Th_I08));
-  name_to_thrift_types.insert(pair<string, int>("i16", Th_I16));
-  name_to_thrift_types.insert(pair<string, int>("i32", Th_I32));
-  name_to_thrift_types.insert(pair<string, int>("u64", Th_U64));
-  name_to_thrift_types.insert(pair<string, int>("i64", Th_I64 ));
-  name_to_thrift_types.insert(pair<string, int>("double", Th_DOUBLE));
-  name_to_thrift_types.insert(pair<string, int>("string", Th_STRING));
-  name_to_thrift_types.insert(pair<string, int>("utf7", Th_UTF7));
-  name_to_thrift_types.insert(pair<string, int>("struct", Th_STRUCT));
-  name_to_thrift_types.insert(pair<string, int>("union", Th_STRUCT));
-  name_to_thrift_types.insert(pair<string, int>("exception", Th_STRUCT));
-  name_to_thrift_types.insert(pair<string, int>("map", Th_MAP));
-  name_to_thrift_types.insert(pair<string, int>("set", Th_SET));
-  name_to_thrift_types.insert(pair<string, int>("list", Th_LIST));
-  name_to_thrift_types.insert(pair<string, int>("utf8", Th_UTF8));
-  name_to_thrift_types.insert(pair<string, int>("utf16", Th_UTF16));
+    name_to_thrift_types["stop"]= FieldDef::Th_STOP;
+    name_to_thrift_types["void"]= FieldDef::Th_VOID;
+    name_to_thrift_types["bool"]= FieldDef::Th_BOOL;
+    name_to_thrift_types["byte"]= FieldDef::Th_BYTE;
+    name_to_thrift_types["i8"]= FieldDef::Th_I08;
+    name_to_thrift_types["i16"]= FieldDef::Th_I16;
+    name_to_thrift_types["i32"]= FieldDef::Th_I32;
+    name_to_thrift_types["u64"]= FieldDef::Th_U64;
+    name_to_thrift_types["i64"]= FieldDef::Th_I64 ;
+    name_to_thrift_types["double"]= FieldDef::Th_DOUBLE;
+    name_to_thrift_types["string"]= FieldDef::Th_STRING;
+    name_to_thrift_types["utf7"]= FieldDef::Th_UTF7;
+    name_to_thrift_types["struct"]= FieldDef::Th_STRUCT;
+    name_to_thrift_types["union"]= FieldDef::Th_STRUCT;
+    name_to_thrift_types["exception"]= FieldDef::Th_STRUCT;
+    name_to_thrift_types["map"]= FieldDef::Th_MAP;
+    name_to_thrift_types["set"]= FieldDef::Th_SET;
+    name_to_thrift_types["list"]= FieldDef::Th_LIST;
+    name_to_thrift_types["utf8"]= FieldDef::Th_UTF8;
+    name_to_thrift_types["utf16"]= FieldDef::Th_UTF16;
 }
 
 
 /// Read json schema for one thrift structure from bsondata
-void ThriftStructDef::readSchema( const JsonDom* object )
+void ThriftFieldDef::readField( const JsonFree& field_object )
 {
-    // read information about structure
-    if(!object->findValue( key_name, name ) )
-        name = key_undefined;  // May be exeption
-    if(!object->findValue(  key_isException, isException ) )
-        isException=false;
-    if(!object->findValue(  key_isUnion, isUnion ) )
-        isUnion=false;
-    if(!object->findValue(  key_doc, sDoc ) )
-        sDoc="";
-   replaceall(sDoc, "\t\r\n", ' ' );
-   // read to_select
-   object->findArray(  key_toselect, keyIdSelect );
-   // read to_key
-   object->findArray(  key_tokeytemplate, keyTemplateSelect );
-   // read unique_fields
-   object->findArray(  key_unique_fields, uniqueList );
+    field_object.get_value_via_path( key_key, f_id, -1 );
+    field_object.get_value_via_path( key_name, f_name, key_undefined );
+    field_object.get_value_via_path<std::string>( key_doc, f_doc, "" );
+    replace_all(f_doc, "\t\r\n", ' ' );
+    field_object.get_value_via_path<std::string>( key_class, class_name,  "");   // "class": enum name
+    // default value we get to string for different types
+    field_object.get_value_via_path<std::string>( key_default, f_default, "" );
+    field_object.get_value_via_path( key_minval, minval, std::numeric_limits<double>::min() );
+    field_object.get_value_via_path( key_maxval, maxval, std::numeric_limits<double>::max() );
 
-    // read arrays of fields
-    auto fieldsarr  =object->field( key_fields );
-    for( uint ii=0; ii<fieldsarr->getChildrenCount(); ii++ )
-    {
+    std::string requred;
+    field_object.get_value_via_path<std::string>( key_required, requred, key_req_out);
+    if( requred == key_required )
+        f_required = fld_required;
+    else if( requred == key_optional )
+        f_required = fld_optional;
+    else
+        f_required = fld_default;
 
-       auto fieldsobject = fieldsarr->getChild( ii);
-       ThriftFieldDef value;
-       if(!fieldsobject->findValue( key_key, value.fId ) )
-            value.fId=-1;
-       if(!fieldsobject->findValue( key_name, value.fName ) )
-            value.fName=key_undefined;
-
-        string requred;
-        if(!fieldsobject->findValue( key_required, requred ) )
-            requred=key_req_out;
-        if(requred == key_required )
-             value.fRequired = fld_required;
-            else if( requred == key_optional )
-                   value.fRequired = fld_optional;
-                 else
-                    value.fRequired = fld_default;
-
-        // vector<int> fTypeId; // "typeId"+"type"+"elemTypeId"+"elemType"  - all levels
-        if(!fieldsobject->findValue( key_class, value.className ) )
-           value.className = "";   // "class": enum name
-
-        string  typeId;
-        if(!fieldsobject->findValue( key_typeId, typeId ) )
-            value.fTypeId.push_back(Th_VOID);
-        else
-            read_type_spec(fieldsobject, value, key_type, typeId);
-
-        // default value we get to string for different types
-        fieldsobject->findValue( key_default, value.fDefault );
-        value.insertedDefault = "";
-
-        if(!fieldsobject->findValue( key_doc, value.fDoc ) )
-            value.fDoc="";
-        replaceall(value.fDoc, "\t\r\n", ' ' );
-        if(!fieldsobject->findValue( key_minval, value.minval ) )
-            value.minval=DOUBLE_EMPTY;
-        if(!fieldsobject->findValue( key_maxval, value.maxval ) )
-            value.maxval=DOUBLE_EMPTY;
-
-        fields.push_back( value );
-        //id2index.insert( pair<int, uint>(value.fId, ii));
-        //name2index.insert( pair<string, uint>(value.fName, ii) );
-        id2index[value.fId] = ii;
-        name2index[value.fName] = ii;
-    }
-
+    // vector<int> fTypeId; // "typeId"+"type"+"elemTypeId"+"elemType"  - all levels
+    std::string  typeId;
+    if( !field_object.get_value_via_path<std::string>(  key_typeId, typeId, ""  ) )
+        f_type_id.push_back(Th_VOID);
+    else
+        read_type_spec(field_object, key_type, typeId);
 }
 
 /// Read json schema for thrift structure from bsondata
-void ThriftStructDef::read_type_spec( const JsonDom* object,
-        ThriftFieldDef& value, const char* keyspec, const string& typeID)
+void ThriftFieldDef::read_type_spec( const JsonFree& field_object,
+                                     const char* keyspec, const std::string& typeID)
 {
-   auto it = ThriftSchema::name_to_thrift_types.find(typeID);
-   if( it == ThriftSchema::name_to_thrift_types.end() )
-    jsonioErr("Undefined type", typeID );
+    auto it = name_to_thrift_types.find(typeID);
+    if( it == name_to_thrift_types.end() )
+        JARANGO_THROW( "ThriftSchema", 1, "undefined field type " + typeID  );
 
-   ThType type = static_cast<ThType>(it->second);
-   value.fTypeId.push_back(type);
+    auto type = it->second;
+    f_type_id.push_back(type);
 
-  if( type == Th_STRUCT )
-  {
-    auto nextobj = object->field( keyspec );
-    if(!nextobj->findValue( key_class, value.className ) )
-        jsonioErr("Undefined class name", typeID );
-    size_t pos = value.className.find_last_of('.');
-    if( pos != std::string::npos)
-       value.className.erase(0, pos+1);
-  } else if ( type == Th_MAP)
-   {
-     auto nextobj = object->field( keyspec );
-     string  typeId;
-     if(!nextobj->findValue(  key_keyTypeId, typeId ) )
-         value.fTypeId.push_back(Th_VOID);
-     else
-         read_type_spec(nextobj, value, key_keyType, typeId);
-     if(!nextobj->findValue(  key_valueTypeId, typeId ) )
-         value.fTypeId.push_back(Th_VOID);
-     else
-         read_type_spec(nextobj, value, key_valueType, typeId);
-  }
-    else
-      if (type == Th_LIST || type == Th_SET)
-      {
-        auto nextobj = object->field( keyspec );
-        string  typeId;
-        if(!nextobj->findValue(  key_elemTypeId, typeId ) )
-              value.fTypeId.push_back(Th_VOID);
+    if( type == Th_STRUCT )
+    {
+        auto nextobj = field_object[ keyspec ];
+        if( !field_object.get_value_via_path<std::string>(  key_class, class_name, "" ) )
+            JARANGO_THROW( "ThriftSchema", 2, "undefined class name "+typeID );
+        size_t pos = class_name.find_last_of('.');
+        if( pos != std::string::npos)
+            class_name.erase(0, pos+1);
+    }
+    else if ( type == Th_MAP)
+    {
+        auto nextobj = field_object[ keyspec ];
+        std::string  newtypeId;
+        if( !nextobj.get_value_via_path<std::string>(  key_keyTypeId, newtypeId, ""  ) )
+            f_type_id.push_back(Th_VOID);
         else
-              read_type_spec(nextobj, value, key_elemType, typeId);
-      }
+            read_type_spec(nextobj, key_keyType, newtypeId);
+
+        if( !nextobj.get_value_via_path<std::string>(  key_valueTypeId, newtypeId, ""  ) )
+            f_type_id.push_back(Th_VOID);
+        else
+            read_type_spec(nextobj, key_valueType, newtypeId);
+
+    }
+    else  if (type == Th_LIST || type == Th_SET)
+    {
+        auto nextobj = field_object[ keyspec ];
+        std::string  newtypeId;
+        if( !nextobj.get_value_via_path<std::string>(  key_elemTypeId, newtypeId, ""  ) )
+            f_type_id.push_back(Th_VOID);
+        else
+            read_type_spec(nextobj, key_elemType, newtypeId);
+    }
 }
 
-//---------------------------------------------------------------------------
 
-/// Read json schema for one thrift enum from bsondata
-void ThriftEnumDef::readEnum( const JsonDom* object )
+/// Read json schema for one thrift structure from bsondata
+void ThriftStructDef::readSchema( const JsonFree& object )
 {
-    // read information about enum
-    if(!object->findValue( key_name, name ) )
-        name = key_undefined;  // May be exeption
-    if(!object->findValue( key_doc, sDoc ) )
-        sDoc="";
-    replaceall(sDoc, "\t\r\n", ' ' );
+    // read information about structure
+    object.get_value_via_path( key_name, schema_name, key_undefined );
+    object.get_value_via_path( key_isException, is_exception, false );
+    object.get_value_via_path( key_isUnion, is_union, false );
+    object.get_value_via_path<std::string>( key_doc, schema_description, "" );
+    replace_all( schema_description, "\t\r\n", ' ' );
+
+    // read to_select
+    object.get_value_via_path( key_toselect, key_id_list, {} );
+    // read to_key
+    object.get_value_via_path( key_tokeytemplate, key_template_list, {} );
+    // read unique_fields
+    object.get_value_via_path( key_unique_fields, unique_list, {} );
 
     // read arrays of fields
-    string ename, edoc;
-    int eId;
-    auto fieldsarr  =  object->field( key_members );
-    for( std::size_t ii=0; ii<fieldsarr->getChildrenCount(); ii++ )
+    auto fieldsarr  = object[key_fields];
+    size_t ii = 0;
+    for ( const auto& element : fieldsarr )
     {
-        auto fieldsobject = fieldsarr->getChild(ii);
-
-        if(!fieldsobject->findValue(  key_name, ename ) )
-           ename=key_undefined;
-        if(!fieldsobject->findValue(  key_doc, edoc ) )
-            edoc="";
-        replaceall(edoc, "\t\r\n", ' ' );
-        if(!fieldsobject->findValue(  key_value, eId ) )
-            eId=emptyenum;
-
-        name2index.insert( pair<string, int>(ename, eId) );
-        name2doc.insert( pair<string, string>(ename, edoc) );
+        auto new_field = std::make_shared<ThriftFieldDef>(*element);
+        fields.push_back( new_field );
+        id2index[new_field->id()] = ii;
+        name2index[new_field->name()] = ii++;
     }
+}
 
+
+/// Read json schema for one thrift enum from bsondata
+void ThriftEnumDef::readEnum( const JsonFree& object )
+{
+    // read information about enum
+    object.get_value_via_path( key_name, enum_name,  key_undefined);  // May be exeption
+    object.get_value_via_path<std::string>( key_doc, enum_sdoc, "" );
+    replace_all(enum_sdoc, "\t\r\n", ' ' );
+
+    // read arrays of fields
+    std::string ename, edoc;
+    int eId;
+    auto fieldsarr  =  object[ key_members ];
+    for( const auto& element : fieldsarr )
+    {
+        element->get_value_via_path( key_name, ename , key_undefined);
+        element->get_value_via_path<std::string>( key_doc, edoc, "" );
+        replace_all(edoc, "\t\r\n", ' ' );
+        element->get_value_via_path( key_value, eId, empty_enum );
+
+        name2index[ ename ] = eId;
+        index2name[ eId ] = ename;
+        name2doc[ ename ] =  edoc;
+    }
 }
 
 //-----------------------------------------------------------
 
-map<string, int> ThriftSchema::name_to_thrift_types;
-
 // Read thrift schema from json file fileName
-void ThriftSchema::addSchemaFile( const char *fileName )
+void ThriftSchema::addSchemaFile( const std::string& file_path )
 {
-    shared_ptr<JsonDomFree> node(JsonDomFree::newObject());
-
-    // Reading work structure from json text file
-    fstream fin(fileName, ios::in);
-    jsonioErrIf( !fin.good() , fileName, "Fileread error...");
-
-    if( !parseJsonToNode( fin, node.get() ))
-        return;
+    auto json_data = read_ascii_file( file_path );
+    auto jsFree =  json::loads( json_data );
 
     // copy schema to internal structures
-    readSchema( node.get() );
+    readSchema( jsFree );
 }
 
 /// Read bson data with thrift schema
-void ThriftSchema::readSchema( const JsonDom* object )
+void ThriftSchema::readSchema( const JsonFree& object )
 {
-    string fname, fdoc;
-    // read information about enum
-    if(!object->findValue( key_name, fname ) )
-        fname = key_undefined;  // May be exeption
-    if(!object->findValue( key_doc, fdoc ) )
-        fdoc="";
-    files.insert( pair<string, string>(fname, fdoc) );
+    std::string fname, fdoc;
+    object.get_value_via_path( key_name, fname , key_undefined);
+    object.get_value_via_path<std::string>( key_doc, fdoc, "" );
+    files[ fname ] = fdoc;
 
     // read enum array
-    auto enumsarr  = object->field( key_enums );
-    for( std::size_t ii=0; ii<enumsarr->getChildrenCount(); ii++ )
+    auto enumsarr  = object[ key_enums ];
+    for( const auto& enumobject : enumsarr )
     {
-        auto enumobject = enumsarr->getChild(ii);
-        ThriftEnumDef* enumdata = new ThriftEnumDef(enumobject);
-        enums.insert( pair<string, unique_ptr<ThriftEnumDef>>
-                    (enumdata->getName(), unique_ptr<ThriftEnumDef>(enumdata )) );
+        auto enumdata = std::make_shared<ThriftEnumDef>(*enumobject);
+        enums[ enumdata->name() ] = enumdata;
     }
 
     // read structs array
-    auto structsarr  = object->field( key_structs );
-    for( std::size_t ii=0; ii<structsarr->getChildrenCount(); ii++ )
+    auto structsarr  = object[ key_structs ];
+    for( const auto& structobject : structsarr )
     {
-        auto structobject = structsarr->getChild(ii);
-        ThriftStructDef* structdata = new ThriftStructDef(structobject);
-        structs.insert( pair<string, unique_ptr<ThriftStructDef>>
-                    (structdata->getName(), unique_ptr<ThriftStructDef>(structdata )) );
-
-        const ThriftFieldDef* typeFld = structdata->getFieldDef( "_type" );
-        const ThriftFieldDef* labelFld = structdata->getFieldDef( "_label" );
-        string label, name;
-        if( typeFld != nullptr && labelFld != nullptr )
-        {
-            if( typeFld->fDefault == "vertex")
-            {
-                label = labelFld->fDefault;
-                name = structdata->getName();
-                vertexes[label ] = name;
-                vertexCollections[name ] = label+"s";
-            }
-            else if( typeFld->fDefault == "edge")
-                 {
-                    label = labelFld->fDefault;
-                    auto name1 = structdata->getName();
-                    edges[ label ] = name1;
-                    edgeCollections[ name1 ] = label;
-                    allEdgesTraverse.push_back(label);
-                }
-        }
-    }
-
-}
-
-/// Get structs names list
-vector<string> ThriftSchema::getStructsList( bool withDoc ) const
-{
-  vector<string> members;
-  auto it = structs.begin();
-  while( it != structs.end() )
-  {
-     string vasl = it->first;
-     if( withDoc  )
-     {
-        vasl+= ',';
-        vasl+= it->second->getComment();
-     }
-     members.push_back(vasl);
-     it++;
-  }
-  return members;
-}
-
-
-void ThriftSchema::findPathTo(const string &schemaname, const string &fieldname, std::set<string> &paths, const string &fieldhead) const
-{
-    if( schemaname.empty() )
-        return;
-
-    ThriftStructDef* strDef2 = getStruct( schemaname );
-    if( strDef2 == nullptr )
-        return;
-
-    for( const auto& field: strDef2->fields )
-    {
-        if( field.fName == fieldname )
-        {
-            paths.insert(fieldhead);
-        }
-
-        if( !field.fTypeId.empty() && field.fTypeId.back() == Th_STRUCT )
-        {
-            auto newfieldhead = fieldhead;
-            if( !newfieldhead.empty() )
-                newfieldhead += ".";
-            newfieldhead += field.fName;
-            findPathTo( field.className, fieldname, paths, newfieldhead);
-        }
+        auto structdata = std::make_shared<ThriftStructDef>(*structobject);
+        structs[ structdata->name() ] = structdata;
     }
 }
 
 
-
-} // namespace jsonio
+} // namespace jsonio14

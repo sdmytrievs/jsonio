@@ -3,6 +3,7 @@
 #include <memory>
 #include <map>
 #include "jsonio14/schema.h"
+#include "jsonio14/jsonfree.h"
 
 namespace jsonio14 {
 
@@ -13,6 +14,15 @@ class ThriftFieldDef : public FieldDef
 {
 
 public:
+
+    static void setTypeMap();
+
+    /// Constructor - read information from json/bson schema
+    ThriftFieldDef( const JsonFree& object ):
+        FieldDef(), f_type_id()
+    {
+        readField( object );
+    }
 
     /// Field id
     virtual int id() const override {
@@ -52,30 +62,33 @@ public:
 
 protected:
 
-    int f_id;                         ///< Key id
-    std::string f_name;               ///< Field Name
+    static std::map<std::string, FieldType> name_to_thrift_types;
+
+    int f_id = -1;                         ///< Key id
+    std::string f_name = "";               ///< Field Name
     std::vector<FieldType> f_type_id; ///< Type or all "typeId"+"type"+"elemTypeId"+"elemTypeId"  - all levels
-    FieldRequered f_required;         ///< A requiredness attribute (REQURED_FIELD)
-    std::string  f_default;           ///< Default value
-    std::string  inserted_default;    ///< Default value from editor
-    std::string  class_name;          ///< "class": Struct or enum name for corresponding field type
-    std::string  f_doc;               ///< "doc" - Comment string
-    double minval;
-    double maxval;
+    FieldRequered f_required = fld_default;         ///< A requiredness attribute (REQURED_FIELD)
+    std::string  f_default ="";           ///< Default value
+    std::string  inserted_default="";    ///< Default value from editor
+    std::string  class_name="";          ///< "class": Struct or enum name for corresponding field type
+    std::string  f_doc="";               ///< "doc" - Comment string
+    double minval = std::numeric_limits<double>::min();
+    double maxval = std::numeric_limits<double>::max();
+
+    void readField( const JsonFree& object );
+    void read_type_spec( const JsonFree& object, const char* keyspec, const std::string& typeID);
 };
 
 /// Thrift structs definition
 class ThriftStructDef: public StructDef
 {
-
-    void readSchema( const JsonBase* object );
-    void read_type_spec( const JsonBase* object,
-                         ThriftFieldDef& value, const char* keyspec, const std::string& typeID);
+    bool is_exception = false;
+    void readSchema( const JsonFree& object );
 
 public:
 
     /// Constructor - read information from json/bson schema
-    ThriftStructDef( const JsonBase* object ): StructDef()
+    ThriftStructDef( const JsonFree& object ): StructDef()
     {
         readSchema( object );
     }
@@ -86,12 +99,12 @@ public:
 class ThriftEnumDef: public EnumDef
 {
 
-    void readEnum( const JsonBase* object );
+    void readEnum( const JsonFree& object );
 
 public:
 
     /// ThriftEnumDef - read information from json schema
-    ThriftEnumDef( const JsonBase* object )
+    ThriftEnumDef( const JsonFree& object )
     {
         readEnum( object );
     }
@@ -101,17 +114,15 @@ public:
 class ThriftSchema : public SchemasData
 {
 
-    void readSchema( const JsonBase* object );
-    void setTypeMap();
+    void readSchema( const JsonFree& object );
 
 public:
 
-    static std::map<std::string, int> name_to_thrift_types;
 
     /// ThriftSchema - constructor
     ThriftSchema():SchemasData()
     {
-        setTypeMap();
+        ThriftFieldDef::setTypeMap();
     }
 
     /// Read thrift schema from json file fileName

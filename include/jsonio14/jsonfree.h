@@ -126,7 +126,7 @@ public:
     }
 
     /// @brief returns a const iterator to one past the last element.
-    const_iterator cend()
+    const_iterator cend() const
     {
         return children.cend();
     }
