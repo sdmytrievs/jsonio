@@ -6,7 +6,7 @@ namespace jsonio14 {
 
 
 /// Class for read JsonBase structure from json string.
-class JsonParser
+class JsonParser final
 {
 
     const std::size_t err_block_size{20};

@@ -1,8 +1,9 @@
 #pragma once
 
-#include <memory>
 #include <map>
-#include "jsonio14/jsonbase.h"
+#include <memory>
+#include <functional>
+#include "jsonio14/txt2file.h"
 
 
 namespace jsonio14 {
@@ -18,24 +19,24 @@ public:
     /// #include <thrift/protocol/TVirtualProtocol.h>
     /// Enumerated definition of the types that the Thrift protocol supports.
     enum FieldType {
-        Th_STOP       = 0,
-        Th_VOID       = 1,
-        Th_BOOL       = 2,
-        Th_BYTE       = 3,
-        Th_I08        = 3,
-        Th_I16        = 6,
-        Th_I32        = 8,
-        Th_U64        = 9,
-        Th_I64        = 10,
-        Th_DOUBLE     = 4,
-        Th_STRING     = 11,
-        Th_UTF7       = 11,
-        Th_STRUCT     = 12,
-        Th_MAP        = 13,
-        Th_SET        = 14,
-        Th_LIST       = 15,
-        Th_UTF8       = 16,
-        Th_UTF16      = 17
+        T_STOP       = 0,
+        T_VOID       = 1,
+        T_BOOL       = 2,
+        T_BYTE       = 3,
+        T_I08        = 3,
+        T_I16        = 6,
+        T_I32        = 8,
+        T_U64        = 9,
+        T_I64        = 10,
+        T_DOUBLE     = 4,
+        T_STRING     = 11,
+        T_UTF7       = 11,
+        T_STRUCT     = 12,
+        T_MAP        = 13,
+        T_SET        = 14,
+        T_LIST       = 15,
+        T_UTF8       = 16,
+        T_UTF16      = 17
     };
 
 
@@ -81,6 +82,9 @@ class StructDef
 {
 
 public:
+
+    /// Destructor
+    virtual ~StructDef() = default;
 
     /// Get name of structure
     const std::string& name() const {
@@ -135,17 +139,17 @@ public:
 protected:
 
     std::string schema_name = "";                    ///< Name of strucure
-    bool is_union = false;                              ///< True if union
+    bool is_union = false;                           ///< True if union
     std::string  schema_description = "";            ///< Comment
 
-    std::vector< std::shared_ptr<FieldDef>> fields;   ///< List of fields
+    std::vector< std::shared_ptr<FieldDef>> fields = {};   ///< List of fields
 
-    std::map<int, size_t> id2index;
-    std::map<std::string, size_t> name2index;
+    std::map<int, size_t> id2index ={};
+    std::map<std::string, size_t> name2index ={};
 
-    list_names_t  key_id_list;
-    list_names_t  key_template_list;
-    list_names_t  unique_list;
+    list_names_t  key_id_list ={};
+    list_names_t  key_template_list ={};
+    list_names_t  unique_list ={};
 
 };
 
@@ -156,6 +160,9 @@ class EnumDef
 public:
 
     static int empty_enum;
+
+    /// Destructor
+    virtual ~EnumDef() = default;
 
     /// Get name of enum
     const std::string& name() const {
@@ -210,23 +217,50 @@ public:
 
 protected:
 
-    std::string  enum_name;                       ///< Name of enum
-    std::string  enum_sdoc;                      ///< Comment
-    std::map<std::string, int> name2index;       ///< Members of enum
-    std::map<int, std::string> index2name;       ///< Members of enum
-    std::map<std::string, std::string> name2doc; ///< Comments of enum
+    std::string  enum_name ="";                       ///< Name of enum
+    std::string  enum_sdoc ="";                      ///< Comment
+    std::map<std::string, int> name2index ={};       ///< Members of enum
+    std::map<int, std::string> index2name ={};       ///< Members of enum
+    std::map<std::string, std::string> name2doc ={}; ///< Comments of enum
 
 };
 
+using schema_files_t = std::map<std::string, std::string>;
+using schemas_t = std::map<std::string, std::shared_ptr<StructDef>>;
+using enums_t = std::map<std::string, std::shared_ptr<EnumDef>>;
+/// Factory method fetching schema definition from a json format strin
+using  SchemaReadFactory = std::function<void( const std::string& jsondata, schema_files_t& files,
+schemas_t& schemas,  enums_t& enums )>;
+
+
 /// Thrift schema definition
-class SchemasData
+class SchemasData final
 {
 
 public:
 
-    /// Read thrift schema from json file fileName
-    virtual void addSchemaFile( const std::string& file_path ) = 0;
+    /// Registering new schemas format and Factory Method where instances are actually created
+    void addSchemaFormat( const std::string& schema_type, SchemaReadFactory method )
+    {
+        methods[schema_type] = method;
+    }
 
+    /// Read schema description from json file file_path
+    void addSchemaFile( const std::string& format_type, const std::string& file_path )
+    {
+        auto json_data = read_ascii_file( file_path );
+        addSchemaFormat( format_type, json_data );
+    }
+
+    /// Read schema description from json string
+    void addSchemaFormat( const std::string& format_type, const std::string& json_string )
+    {
+        if(json_string.empty())
+            return;
+        auto read_method = methods.find(format_type);
+        if( read_method != methods.end() )
+            read_method->second(json_string, files, structs, enums);
+    }
 
     /// Get description of structure
     StructDef* getStruct(const std::string& struct_name) const
@@ -286,13 +320,17 @@ public:
         enums.clear();
     }
 
- protected:
+protected:
 
-    std::map<std::string, std::string> files; ///< List of readed files (name, doc)
+    /// Dictionary of readed files (name, doc)
+    schema_files_t files;
+    /// Dictionary of all structures
+    schemas_t structs;
+    /// Dictionary of all enums
+    enums_t enums;
 
-    std::map<std::string, std::shared_ptr<StructDef>> structs; ///< List of all structures
-    std::map<std::string, std::shared_ptr<EnumDef>> enums;     ///< List of all enums
-
+    /// Dictionary of implemented schemas  for Factory Method
+    std::map<std::string, SchemaReadFactory> methods;
 };
 
 } // namespace jsonio14

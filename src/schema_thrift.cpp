@@ -1,7 +1,6 @@
 
 #include "jsonio14/schema_thrift.h"
 #include "jsonio14/service.h"
-#include "jsonio14/txt2file.h"
 #include "jsonio14/jsondump.h"
 
 
@@ -44,26 +43,29 @@ int EnumDef::empty_enum = std::numeric_limits<int>::min();
 
 void ThriftFieldDef::setTypeMap()
 {
-    name_to_thrift_types["stop"]= FieldDef::Th_STOP;
-    name_to_thrift_types["void"]= FieldDef::Th_VOID;
-    name_to_thrift_types["bool"]= FieldDef::Th_BOOL;
-    name_to_thrift_types["byte"]= FieldDef::Th_BYTE;
-    name_to_thrift_types["i8"]= FieldDef::Th_I08;
-    name_to_thrift_types["i16"]= FieldDef::Th_I16;
-    name_to_thrift_types["i32"]= FieldDef::Th_I32;
-    name_to_thrift_types["u64"]= FieldDef::Th_U64;
-    name_to_thrift_types["i64"]= FieldDef::Th_I64 ;
-    name_to_thrift_types["double"]= FieldDef::Th_DOUBLE;
-    name_to_thrift_types["string"]= FieldDef::Th_STRING;
-    name_to_thrift_types["utf7"]= FieldDef::Th_UTF7;
-    name_to_thrift_types["struct"]= FieldDef::Th_STRUCT;
-    name_to_thrift_types["union"]= FieldDef::Th_STRUCT;
-    name_to_thrift_types["exception"]= FieldDef::Th_STRUCT;
-    name_to_thrift_types["map"]= FieldDef::Th_MAP;
-    name_to_thrift_types["set"]= FieldDef::Th_SET;
-    name_to_thrift_types["list"]= FieldDef::Th_LIST;
-    name_to_thrift_types["utf8"]= FieldDef::Th_UTF8;
-    name_to_thrift_types["utf16"]= FieldDef::Th_UTF16;
+    if( !name_to_thrift_types.empty())
+        return;
+
+    name_to_thrift_types["stop"]= FieldDef::T_STOP;
+    name_to_thrift_types["void"]= FieldDef::T_VOID;
+    name_to_thrift_types["bool"]= FieldDef::T_BOOL;
+    name_to_thrift_types["byte"]= FieldDef::T_BYTE;
+    name_to_thrift_types["i8"]= FieldDef::T_I08;
+    name_to_thrift_types["i16"]= FieldDef::T_I16;
+    name_to_thrift_types["i32"]= FieldDef::T_I32;
+    name_to_thrift_types["u64"]= FieldDef::T_U64;
+    name_to_thrift_types["i64"]= FieldDef::T_I64 ;
+    name_to_thrift_types["double"]= FieldDef::T_DOUBLE;
+    name_to_thrift_types["string"]= FieldDef::T_STRING;
+    name_to_thrift_types["utf7"]= FieldDef::T_UTF7;
+    name_to_thrift_types["struct"]= FieldDef::T_STRUCT;
+    name_to_thrift_types["union"]= FieldDef::T_STRUCT;
+    name_to_thrift_types["exception"]= FieldDef::T_STRUCT;
+    name_to_thrift_types["map"]= FieldDef::T_MAP;
+    name_to_thrift_types["set"]= FieldDef::T_SET;
+    name_to_thrift_types["list"]= FieldDef::T_LIST;
+    name_to_thrift_types["utf8"]= FieldDef::T_UTF8;
+    name_to_thrift_types["utf16"]= FieldDef::T_UTF16;
 }
 
 
@@ -92,7 +94,7 @@ void ThriftFieldDef::readField( const JsonFree& field_object )
     // vector<int> fTypeId; // "typeId"+"type"+"elemTypeId"+"elemType"  - all levels
     std::string  typeId;
     if( !field_object.get_value_via_path<std::string>(  key_typeId, typeId, ""  ) )
-        f_type_id.push_back(Th_VOID);
+        f_type_id.push_back(T_VOID);
     else
         read_type_spec(field_object, key_type, typeId);
 }
@@ -108,7 +110,7 @@ void ThriftFieldDef::read_type_spec( const JsonFree& field_object,
     auto type = it->second;
     f_type_id.push_back(type);
 
-    if( type == Th_STRUCT )
+    if( type == T_STRUCT )
     {
         auto nextobj = field_object[ keyspec ];
         if( !field_object.get_value_via_path<std::string>(  key_class, class_name, "" ) )
@@ -117,27 +119,27 @@ void ThriftFieldDef::read_type_spec( const JsonFree& field_object,
         if( pos != std::string::npos)
             class_name.erase(0, pos+1);
     }
-    else if ( type == Th_MAP)
+    else if ( type == T_MAP)
     {
         auto nextobj = field_object[ keyspec ];
         std::string  newtypeId;
         if( !nextobj.get_value_via_path<std::string>(  key_keyTypeId, newtypeId, ""  ) )
-            f_type_id.push_back(Th_VOID);
+            f_type_id.push_back(T_VOID);
         else
             read_type_spec(nextobj, key_keyType, newtypeId);
 
         if( !nextobj.get_value_via_path<std::string>(  key_valueTypeId, newtypeId, ""  ) )
-            f_type_id.push_back(Th_VOID);
+            f_type_id.push_back(T_VOID);
         else
             read_type_spec(nextobj, key_valueType, newtypeId);
 
     }
-    else  if (type == Th_LIST || type == Th_SET)
+    else  if (type == T_LIST || type == T_SET)
     {
         auto nextobj = field_object[ keyspec ];
         std::string  newtypeId;
         if( !nextobj.get_value_via_path<std::string>(  key_elemTypeId, newtypeId, ""  ) )
-            f_type_id.push_back(Th_VOID);
+            f_type_id.push_back(T_VOID);
         else
             read_type_spec(nextobj, key_elemType, newtypeId);
     }
@@ -201,19 +203,14 @@ void ThriftEnumDef::readEnum( const JsonFree& object )
 
 //-----------------------------------------------------------
 
-// Read thrift schema from json file fileName
-void ThriftSchema::addSchemaFile( const std::string& file_path )
+// Read thrift schema from json string
+void ThriftSchemaRead( const std::string& jsondata, schema_files_t& files,
+                       schemas_t& structs,  enums_t& enums )
 {
-    auto json_data = read_ascii_file( file_path );
-    auto jsFree =  json::loads( json_data );
+    ThriftFieldDef::setTypeMap();
+    auto object =  json::loads( jsondata );
 
-    // copy schema to internal structures
-    readSchema( jsFree );
-}
-
-/// Read bson data with thrift schema
-void ThriftSchema::readSchema( const JsonFree& object )
-{
+    // extract schema to internal structures
     std::string fname, fdoc;
     object.get_value_via_path( key_name, fname , key_undefined);
     object.get_value_via_path<std::string>( key_doc, fdoc, "" );

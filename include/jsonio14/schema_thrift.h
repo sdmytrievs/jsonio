@@ -1,9 +1,6 @@
 #pragma once
 
-#include <memory>
-#include <map>
 #include "jsonio14/schema.h"
-#include "jsonio14/jsonfree.h"
 
 namespace jsonio14 {
 
@@ -104,30 +101,16 @@ class ThriftEnumDef: public EnumDef
 public:
 
     /// ThriftEnumDef - read information from json schema
-    ThriftEnumDef( const JsonFree& object )
+    ThriftEnumDef( const JsonFree& object ): EnumDef()
     {
         readEnum( object );
     }
 };
 
 /// Thrift schema definition
-class ThriftSchema : public SchemasData
-{
-
-    void readSchema( const JsonFree& object );
-
-public:
-
-
-    /// ThriftSchema - constructor
-    ThriftSchema():SchemasData()
-    {
-        ThriftFieldDef::setTypeMap();
-    }
-
-    /// Read thrift schema from json file fileName
-    void addSchemaFile( const std::string& file_path ) override;
-};
+/// Read thrift schema from json string
+void ThriftSchemaRead( const std::string& jsondata, schema_files_t& files,
+                                  schemas_t& structs,  enums_t& enums );
 
 } // namespace jsonio14
 

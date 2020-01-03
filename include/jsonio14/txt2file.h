@@ -50,6 +50,15 @@ public:
     virtual ~TxtFile()
     {}
 
+    /// Copy constructor
+    TxtFile(const TxtFile &obj ) = default;
+    /// Move constructor
+    TxtFile( TxtFile &&obj ) = default;
+    /// Copy assignment
+    TxtFile &operator =( const TxtFile &other) = default;
+    /// Move assignment
+    TxtFile &operator =( TxtFile &&other) = default;
+
     /// Checks if the given path corresponds to an existing file.
     bool exist() const;
     /// Check file access permissions for mode ( Other users have read/write permission ).
@@ -133,7 +142,7 @@ public:
 
     /// Constructor
     JsonArrayFile( const std::string& name, const std::string& ext, const std::string& dir=""):
-       JsonFile( name, ext, dir ), arr_object( JsonFree::array() )
+        JsonFile( name, ext, dir ), arr_object( JsonFree::array() )
     { }
     /// Constructor from path
     JsonArrayFile( const std::string& path):
@@ -145,6 +154,15 @@ public:
         if( is_opened )
             Close();
     }
+
+    /// Copy constructor
+    JsonArrayFile(const JsonArrayFile &obj ) = default;
+    /// Move constructor
+    JsonArrayFile( JsonArrayFile &&obj ) = default;
+    /// Copy assignment
+    JsonArrayFile &operator =( const JsonArrayFile &other) = default;
+    /// Move assignment
+    JsonArrayFile &operator =( JsonArrayFile &&other) = default;
 
     /// Load next object data from file to dom object
     bool loadNext( JsonBase&  object );
@@ -163,8 +181,8 @@ public:
 
 protected:
 
-   std::size_t loaded_ndx = 0;   ///< Current loaded
-   JsonFree arr_object;
+    std::size_t loaded_ndx = 0;   ///< Current loaded
+    JsonFree arr_object;
 
 };
 
