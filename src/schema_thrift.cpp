@@ -113,7 +113,7 @@ void ThriftFieldDef::read_type_spec( const JsonFree& field_object,
     if( type == T_STRUCT )
     {
         auto nextobj = field_object[ keyspec ];
-        if( !field_object.get_value_via_path<std::string>(  key_class, class_name, "" ) )
+        if( !nextobj.get_value_via_path<std::string>(  key_class, class_name, "" ) )
             JARANGO_THROW( "ThriftSchema", 2, "undefined class name "+typeID );
         size_t pos = class_name.find_last_of('.');
         if( pos != std::string::npos)

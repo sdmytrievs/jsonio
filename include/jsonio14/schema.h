@@ -136,6 +136,25 @@ public:
             return fields[it->second].get();
     }
 
+    /// Get fields names list
+    list_names_t getFields( bool with_doc ) const
+    {
+        list_names_t members;
+        auto it = fields.begin();
+        while( it != fields.end() )
+        {
+            auto vasl = it->get()->name();
+            if( with_doc  )
+            {
+                vasl+= ',';
+                vasl+= it->get()->description();
+            }
+            members.push_back(vasl);
+            it++;
+        }
+        return members;
+    }
+
 protected:
 
     /// Name of strucure

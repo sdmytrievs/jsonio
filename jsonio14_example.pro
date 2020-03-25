@@ -70,3 +70,4 @@ DISTFILES += \
 
 
 
+#thrift -r -v --gen json

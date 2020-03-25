@@ -17,7 +17,59 @@ using namespace std;
 #include "jsonio14/jsonfree.h"
 #include "jsonio14/jsondump.h"
 #include "jsonio14/service.h"
+#include "jsonio14/schema_thrift.h"
+
 using namespace jsonio14;
+
+/// STL-like access
+void AccesstoObjectError();
+
+
+/// Test read schema
+void ReadThriftSchemas()
+{
+   SchemasData all_schemas;
+
+   all_schemas.addSchemaFormat( schema_thrift, ThriftSchemaRead );
+   all_schemas.addSchemaFile(schema_thrift,"schema_test.json");
+
+   std::cout << "Structs: \n";
+   for( auto& astruct: all_schemas.getStructs(false) )
+        std::cout << astruct  << "\n";
+
+   auto strct = all_schemas.getStruct("ComplexSchemaTest");
+   std::cout << "Fields: \n";
+   for( auto& astruct: strct->getFields(true) )
+        std::cout << astruct  << "\n";
+
+}
+
+
+int main()
+{
+    cout << "Hello World!" << endl;
+    try{
+
+        ReadThriftSchemas();
+        //AccesstoObjectError();
+    }
+    catch(jarango_exception& e)
+    {
+        std::cout <<   e.what() <<  std::endl;
+    }
+    catch(std::exception& e)
+    {
+        std::cout <<   "std::exception: " << e.what() <<  std::endl;
+    }
+    catch(...)
+    {
+        std::cout <<  "unknown exception" <<  std::endl;
+    }
+
+    return 0;
+
+}
+
 
 /// STL-like access
 void AccesstoObjectError()
@@ -57,29 +109,3 @@ void AccesstoObjectError()
     //std::map<std::string, int> vmap1 = {{std::string("key") , 12}};
     //auto vmap2 = {{std::string("key") , 12}};
 }
-
-int main()
-{
-    cout << "Hello World!" << endl;
-    try{
-
-        AccesstoObjectError();
-    }
-    catch(jarango_exception& e)
-    {
-        std::cout <<   e.what() <<  std::endl;
-    }
-    catch(std::exception& e)
-    {
-        std::cout <<   "std::exception: " << e.what() <<  std::endl;
-    }
-    catch(...)
-    {
-        std::cout <<  "unknown exception" <<  std::endl;
-    }
-
-    return 0;
-
-}
-
-

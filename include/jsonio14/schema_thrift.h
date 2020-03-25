@@ -5,6 +5,7 @@
 
 namespace jsonio14 {
 
+const std::string schema_thrift = "thrift";
 
 /// Definition of one field in thrift structure
 /// [id:] [requiredness] type FieldName [=default] [,|;]
