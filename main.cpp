@@ -11,7 +11,7 @@ using namespace std;
 // https://github.com/dropbox/json11
 // https://github.com/nlohmann/json
 // https://cristianadam.eu/20151213/qtcreator-and-google-test/
-//https://qtcreator.gres.biz/page/gtest/#%D1%81%D0%BA%D0%B0%D1%87%D0%B0%D1%82%D1%8C
+// https://qtcreator.gres.biz/page/gtest/#%D1%81%D0%BA%D0%B0%D1%87%D0%B0%D1%82%D1%8C
 // https://doc.qt.io/qtcreator/creator-autotest.html
 
 #include "jsonio14/jsonfree.h"
@@ -79,9 +79,6 @@ int main()
     }
 
     return 0;
-
-
-
 
 }
 

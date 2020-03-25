@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include <map>
 #include <memory>
@@ -77,7 +77,7 @@ public:
 
 };
 
-/// Thrift structs definition
+/// Structured data definition
 class StructDef
 {
 
@@ -101,17 +101,17 @@ public:
         return is_union;
     }
 
-    /// Get unique fields list
+    /// Get fields list used to generate default selection table
     const list_names_t& getSelectedList() const {
-        return key_id_list;
+        return key_select_list;
     }
 
-    /// Get unique fields list
+    /// Get list of fields what must to be unique
     const list_names_t& getUniqueList() const {
         return unique_list;
     }
 
-    /// Get key template fields list
+    /// Get fields list to be used to generate default document id
     const list_names_t& getKeyTemplateList() const {
         return key_template_list;
     }
@@ -138,22 +138,31 @@ public:
 
 protected:
 
-    std::string schema_name = "";                    ///< Name of strucure
-    bool is_union = false;                           ///< True if union
-    std::string  schema_description = "";            ///< Comment
+    /// Name of strucure
+    std::string schema_name = "";
+    /// Comment/description
+    std::string  schema_description = "";
+    /// True if union
+    bool is_union = false;
 
-    std::vector< std::shared_ptr<FieldDef>> fields = {};   ///< List of fields
+    /// List of fields in structure
+    std::vector< std::shared_ptr<FieldDef>> fields = {};
 
+    /// Map field definition by index
     std::map<int, size_t> id2index ={};
+    /// Map field definition by name
     std::map<std::string, size_t> name2index ={};
 
-    list_names_t  key_id_list ={};
+    /// Fields list to default selection
+    list_names_t  key_select_list ={};
+    /// Fields list to be used to generate default document id
     list_names_t  key_template_list ={};
+    /// Combinations of fields what must to be unique
     list_names_t  unique_list ={};
 
 };
 
-/// Thrift enums definition
+/// Enum data definition
 class EnumDef
 {
 
@@ -217,11 +226,16 @@ public:
 
 protected:
 
-    std::string  enum_name ="";                       ///< Name of enum
-    std::string  enum_sdoc ="";                      ///< Comment
-    std::map<std::string, int> name2index ={};       ///< Members of enum
-    std::map<int, std::string> index2name ={};       ///< Members of enum
-    std::map<std::string, std::string> name2doc ={}; ///< Comments of enum
+    /// Name of enum
+    std::string  enum_name ="";
+    /// Comment/description of enum
+    std::string  enum_sdoc ="";
+    /// Map enum name to value
+    std::map<std::string, int> name2index ={};
+    /// Map enum value to name
+    std::map<int, std::string> index2name ={};
+    /// Map enum name to description
+    std::map<std::string, std::string> name2doc ={};
 
 };
 
@@ -229,11 +243,11 @@ using schema_files_t = std::map<std::string, std::string>;
 using schemas_t = std::map<std::string, std::shared_ptr<StructDef>>;
 using enums_t = std::map<std::string, std::shared_ptr<EnumDef>>;
 /// Factory method fetching schema definition from a json format strin
-using  SchemaReadFactory = std::function<void( const std::string& jsondata, schema_files_t& files,
-schemas_t& schemas,  enums_t& enums )>;
+using  SchemaReadFactory = std::function<void( const std::string& jsondata,
+                         schema_files_t& files, schemas_t& schemas,  enums_t& enums )>;
 
 
-/// Thrift schema definition
+///  All json schemas collection
 class SchemasData final
 {
 

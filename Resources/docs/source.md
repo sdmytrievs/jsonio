@@ -143,6 +143,27 @@ class JsonioSettings - storing preferences to JSONIO
 > *source: "+-";    test: "+";  example: "-"*
 
 
+11. schema.h
+
+Interfaces FieldDef - Definition of one field in thrift structure;
+           StructDef - Structured data definition;
+           EnumDef - Enum data definition
+
+Class SchemasData - all json schemas collection
+
+
+> *source: "+";    test: "-";  example: "-"*
+
+
+12. schema_thrift.h(cpp)  ( could be add tests, but tested in jsonio )
+
+Implementation of FieldDef, StructDef, EnumDef interfaces for Thrift schemas
+
+
+> *source: "+";    test: "-";  example: "-"*
+
+
+
 To do:
 
 - add top level std::shared_ptr

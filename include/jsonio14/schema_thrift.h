@@ -1,5 +1,6 @@
-#pragma once
+/// Implementation of FieldDef, StructDef, EnumDef interfaces for Thrift schemas
 
+#pragma once
 #include "jsonio14/schema.h"
 
 namespace jsonio14 {
@@ -61,14 +62,23 @@ protected:
 
     static std::map<std::string, FieldType> name_to_thrift_types;
 
-    int f_id = -1;                         ///< Key id
-    std::string f_name = "";               ///< Field Name
-    std::vector<FieldType> f_type_id; ///< Type or all "typeId"+"type"+"elemTypeId"+"elemTypeId"  - all levels
-    FieldRequered f_required = fld_default;         ///< A requiredness attribute (REQURED_FIELD)
-    std::string  f_default ="";           ///< Default value
-    std::string  inserted_default="";    ///< Default value from editor
-    std::string  class_name="";          ///< "class": Struct or enum name for corresponding field type
-    std::string  f_doc="";               ///< "doc" - Comment string
+    /// Field id
+    int f_id = -1;
+    /// Field Name
+    std::string f_name = "";
+    /// "doc" - Comment string
+    std::string  f_doc="";
+    /// Field Type or all "typeId"+"type"+"elemTypeId"+"elemTypeId"
+    std::vector<FieldType> f_type_id;
+    /// A requiredness attribute (REQURED_FIELD)
+    FieldRequered f_required = fld_default;
+    /// Default value ( json string for struct or array )
+    std::string  f_default ="";
+    /// Default value from editor
+    std::string  inserted_default="";
+    /// "class": Struct or enum name for corresponding field type
+    std::string  class_name="";
+
     double minval = std::numeric_limits<double>::min();
     double maxval = std::numeric_limits<double>::max();
 
@@ -84,7 +94,7 @@ class ThriftStructDef: public StructDef
 
 public:
 
-    /// Constructor - read information from json/bson schema
+    /// Constructor - read information from json schema
     ThriftStructDef( const JsonFree& object ): StructDef()
     {
         readSchema( object );
@@ -105,6 +115,7 @@ public:
     {
         readEnum( object );
     }
+
 };
 
 /// Thrift schema definition

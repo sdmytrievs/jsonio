@@ -39,6 +39,10 @@ TEST( JsonioService, regexpReplace )
 {
     auto resstr = regexp_replace("there is a subsequence in the string" ,"\\b(sub)([^ ]*)","sub-$2");
     EXPECT_EQ( "there is a sub-sequence in the string", resstr );
+
+    std::string rev = "{\"_id\":\"test_vertex_API/eCreate\",\"_key\":\"eCreate\",\"_rev\":\"_aGZ9am----\",\"task\":\"exampleCRUD\"}";
+    auto resrev = regexp_replace(rev ,"(\"_rev\":\"[^\"]*\",)","");
+    EXPECT_EQ( "{\"_id\":\"test_vertex_API/eCreate\",\"_key\":\"eCreate\",\"task\":\"exampleCRUD\"}", resrev );
 }
 
 

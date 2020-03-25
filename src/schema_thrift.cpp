@@ -157,7 +157,7 @@ void ThriftStructDef::readSchema( const JsonFree& object )
     replace_all( schema_description, "\t\r\n", ' ' );
 
     // read to_select
-    object.get_value_via_path( key_toselect, key_id_list, {} );
+    object.get_value_via_path( key_toselect, key_select_list, {} );
     // read to_key
     object.get_value_via_path( key_tokeytemplate, key_template_list, {} );
     // read unique_fields
