@@ -59,7 +59,7 @@ public:
     virtual std::string name() const = 0;
 
     /// Field Type or all "typeId"+"type"+"elemTypeId"+"elemTypeId"  - all levels
-    virtual FieldType type( int level=0 ) const = 0;
+    virtual FieldType type( size_t level=0 ) const = 0;
 
     /// A requiredness attribute (FieldRequered)
     virtual FieldRequered required() const = 0;
@@ -117,7 +117,7 @@ public:
     }
 
     /// Get field definition by name
-    const FieldDef* getField( const std::string& fName ) const
+    const  FieldDef* getField( const std::string& fName ) const
     {
         auto it = name2index.find( fName );
         if( it == name2index.end() )
@@ -127,7 +127,7 @@ public:
     }
 
     /// Get field definition by index
-    const FieldDef* getField( int fId ) const
+    const  FieldDef* getField( int fId ) const
     {
         auto it = id2index.find( fId );
         if( it == id2index.end() )
@@ -296,7 +296,7 @@ public:
     }
 
     /// Get description of structure
-    StructDef* getStruct(const std::string& struct_name) const
+    const StructDef* getStruct(const std::string& struct_name) const
     {
         auto it = structs.find( struct_name );
         if( it == structs.end() )
@@ -306,7 +306,7 @@ public:
     }
 
     /// Get description of enum
-    EnumDef* getEnum(const std::string& enum_name) const
+    const EnumDef* getEnum(const std::string& enum_name) const
     {
         auto it = enums.find( enum_name );
         if( it == enums.end() )

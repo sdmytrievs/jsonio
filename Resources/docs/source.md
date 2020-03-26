@@ -145,24 +145,30 @@ class JsonioSettings - storing preferences to JSONIO
 
 11. schema.h
 
+New API working with schemas. We create Interfaces  for working with schema descriptions
 Interfaces FieldDef - Definition of one field in thrift structure;
            StructDef - Structured data definition;
            EnumDef - Enum data definition
 
 Class SchemasData - all json schemas collection
 
+> *source: "+";    test: "+";  example: "-"*
+> d. Functions getVertexList, getEdgesList, getVertexCollection, getEdgeCollection, getVertexName could be moved to database implementation and add functions for set this data. This data could be setted when read thrift scheas or other place.
+> e. Into SchemaJson get links to base StructDef and FieldDef and implement ```c++ template<type T> static SchemaJson::object( const string& schema_name ) ```
+> f. Into  SchemaJson use ```c++ const  StructDef* const;   const  FieldDef* const  ``` for only read data.
+> g. Into  StructDef functions: getName(), testUnion(), getOtherStruct( struct_name ), getField( field_name ).
 
-> *source: "+";    test: "-";  example: "-"*
 
-
-12. schema_thrift.h(cpp)  ( could be add tests, but tested in jsonio )
+12. schema_thrift.h(cpp)
 
 Implementation of FieldDef, StructDef, EnumDef interfaces for Thrift schemas
 
+> *source: "+";    test: "+";  example: "-"*
 
-> *source: "+";    test: "-";  example: "-"*
+13. schema_json.h(cpp)
 
-
+To be done
+In future we can have JsonStructDef and JsonFieldDef implementation [JsonShema](http://json-schema.org/)
 
 To do:
 
@@ -172,12 +178,6 @@ V. New API working with schemas
 
  a. We create Interfaces   StructDef and FieldDef  for working with schema descriptions
  b. Then public classes ThriftStructDef and ThiftFieldDef implementation
- c. In future we can have JsonStructDef and JsonFieldDef implementation [JsonShema](http://json-schema.org/)
- d. Functions getVertexList, getEdgesList, getVertexCollection, getEdgeCollection, getVertexName could be moved to database implementation and add functions for set this data. This data could be setted when read thrift scheas or other place.
- e. Into SchemaJson get links to base StructDef and FieldDef and implement ```c++ template<type T> static SchemaJson::object( const string& schema_name ) ```
- f. Into  SchemaJson use ```c++ const  StructDef* const;   const  FieldDef* const  ``` for only read data.
- g. Into  StructDef functions: getName(), testUnion(), getOtherStruct( struct_name ), getField( field_name ).
- h. Into FieldDef add get functions for all fields.
 
 ## Next steps
 
