@@ -31,7 +31,7 @@ void ReadThriftSchemas()
    SchemasData all_schemas;
 
    all_schemas.addSchemaFormat( schema_thrift, ThriftSchemaRead );
-   all_schemas.addSchemaFile(schema_thrift,"schema_test.json");
+   all_schemas.addSchemaFile(schema_thrift,"Resources/schemas/schema_test.schema.json");
 
    std::cout << "Structs: \n";
    for( auto& astruct: all_schemas.getStructs(false) )

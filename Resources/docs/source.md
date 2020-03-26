@@ -135,7 +135,7 @@ Subset of the Filesystem library provides facilities for performing operations o
 > *source: "+";    test: "+";  example: "-"*
 
 
-10. io_settings.h(cpp)  ( could be new functions in future )
+10. io_settings.h(cpp)
 
 class JsonioSettings - storing preferences to JSONIO
 
@@ -165,26 +165,23 @@ Implementation of FieldDef, StructDef, EnumDef interfaces for Thrift schemas
 
 > *source: "+";    test: "+";  example: "-"*
 
-13. schema_json.h(cpp)
+13. schema_json.h(cpp)   - not implemented
 
 To be done
 In future we can have JsonStructDef and JsonFieldDef implementation [JsonShema](http://json-schema.org/)
 
+> *source: "-";    test: "-";  example: "-"*
+
+14. jsonschema.h(cpp)  under construction
+
+> *source: "-";    test: "-";  example: "-"*
+
+
+## Next steps --------------------------------------------------------------------------------
+
 To do:
 
 - add top level std::shared_ptr
-
-V. New API working with schemas
-
- a. We create Interfaces   StructDef and FieldDef  for working with schema descriptions
- b. Then public classes ThriftStructDef and ThiftFieldDef implementation
-
-## Next steps
-
-Move dbarango API to other github project
-
-9. thrift_schema.h(cpp)
-11. jsonschema.h(cpp)
 
 ## Database
 
