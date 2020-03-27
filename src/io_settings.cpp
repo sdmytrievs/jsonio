@@ -1,6 +1,5 @@
 #include "jsonio14/io_settings.h"
 #include "jsonio14/schema_thrift.h"
-#include "jsonio14/txt2file.h"
 
 namespace jsonio14 {
 

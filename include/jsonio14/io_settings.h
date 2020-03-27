@@ -183,6 +183,12 @@ public:
         return directoryPath( "common.ResourcesDirectory",  std::string("") );
     }
 
+    /// Link to schemas collection
+    const SchemasData&  Schema() const
+    {
+        return schema;
+    }
+
     /// Update/reread schema directory
     bool updateSchemaDir();
 

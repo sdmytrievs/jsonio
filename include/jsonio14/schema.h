@@ -9,12 +9,22 @@
 namespace jsonio14 {
 
 
-/// Definition of one field in thrift structure
+/// Definition of one field in structure
 /// [id:] [requiredness] type FieldName [=default] [,|;]
 class FieldDef
 {
 
+protected:
+
+    static std::shared_ptr<FieldDef> top_field;
+
 public:
+
+    static const FieldDef* topfield()
+    {
+      return  top_field.get();
+    }
+
 
     /// #include <thrift/protocol/TVirtualProtocol.h>
     /// Enumerated definition of the types that the Thrift protocol supports.
@@ -85,6 +95,35 @@ public:
 
     /// Destructor
     virtual ~StructDef() = default;
+
+    /// An iterator for a fields of structure
+    using iterator = std::vector<std::shared_ptr<FieldDef>>::iterator;
+    /// A const iterator for a fields of structure
+    using const_iterator = std::vector<std::shared_ptr<FieldDef>>::const_iterator;
+
+    /* @brief returns an iterator to one past the last field.
+    iterator end()
+    {
+        return fields.end();
+    }
+
+    /// @brief returns an iterator to the first field.
+    iterator begin()
+    {
+        return fields.begin();
+    }*/
+
+    /// @brief returns a const iterator to one past the last field.
+    const_iterator cend() const
+    {
+        return fields.cend();
+    }
+
+    /// @brief returns a const iterator to the first field
+    const_iterator cbegin() const
+    {
+        return fields.cbegin();
+    }
 
     /// Get name of structure
     const std::string& name() const {

@@ -14,14 +14,27 @@ class ThriftFieldDef : public FieldDef
 
 public:
 
-    static void setTypeMap();
+    static void set_type_map();
 
-    /// Constructor - read information from json/bson schema
+    /// Constructor - read information from json schema object
     ThriftFieldDef( const JsonFree& object ):
         FieldDef(), f_type_id()
     {
-        readField( object );
+        read_field( object );
     }
+
+    /// Constructor
+    ThriftFieldDef( int id, const std::string& name, const std::string& doc,
+                    const std::vector<FieldDef::FieldType>& types,
+                    const FieldRequered& arequired = FieldDef::fld_default,
+                    const std::string& default_json="",
+                    const std::string& struct_enum_name="",
+                    double vmin=std::numeric_limits<double>::min(),
+                    double vmax=std::numeric_limits<double>::max()):
+        FieldDef(), f_id(id), f_name(name), f_doc( doc), f_type_id(types),
+        f_required(arequired), f_default(default_json), class_name(struct_enum_name),
+        minval(vmin), maxval(vmax)
+    { }
 
     /// Field id
     virtual int id() const override {
@@ -84,7 +97,7 @@ protected:
     double minval = std::numeric_limits<double>::min();
     double maxval = std::numeric_limits<double>::max();
 
-    void readField( const JsonFree& object );
+    void read_field( const JsonFree& object );
     void read_type_spec( const JsonFree& object, const char* keyspec, const std::string& typeID);
 };
 
@@ -92,14 +105,14 @@ protected:
 class ThriftStructDef: public StructDef
 {
     bool is_exception = false;
-    void readSchema( const JsonFree& object );
+    void read_schema( const JsonFree& object );
 
 public:
 
     /// Constructor - read information from json schema
     ThriftStructDef( const JsonFree& object ): StructDef()
     {
-        readSchema( object );
+        read_schema( object );
     }
 
 };
@@ -108,14 +121,14 @@ public:
 class ThriftEnumDef: public EnumDef
 {
 
-    void readEnum( const JsonFree& object );
+    void read_enum( const JsonFree& object );
 
 public:
 
     /// ThriftEnumDef - read information from json schema
     ThriftEnumDef( const JsonFree& object ): EnumDef()
     {
-        readEnum( object );
+        read_enum( object );
     }
 
 };

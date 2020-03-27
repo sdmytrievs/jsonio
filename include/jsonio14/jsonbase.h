@@ -48,7 +48,7 @@ public:
     { return  type() == Type::Array; }
 
     /// This function returns true if and only if the JSON type is a numeric value.
-    virtual bool isNumber( ) const
+    virtual bool isNumber() const
     { return  type() == Type::Int or type() == Type::Double; }
 
     /// This function returns true if and only if the JSON type is boolean.

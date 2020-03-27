@@ -38,10 +38,14 @@ static const char * key_value ="value";
 static const char * key_structs ="structs";
 static const char * key_enums ="enums";
 
+
+std::shared_ptr<FieldDef> FieldDef::top_field = std::make_shared<ThriftFieldDef>(
+            1, "top", "Default top field", std::vector<FieldDef::FieldType>( { FieldDef::T_STRUCT } ));
+
 std::map<std::string, ThriftFieldDef::FieldType> ThriftFieldDef::name_to_thrift_types;
 int EnumDef::empty_enum = std::numeric_limits<int>::min();
 
-void ThriftFieldDef::setTypeMap()
+void ThriftFieldDef::set_type_map()
 {
     if( !name_to_thrift_types.empty())
         return;
@@ -70,7 +74,7 @@ void ThriftFieldDef::setTypeMap()
 
 
 /// Read json schema for one thrift structure from bsondata
-void ThriftFieldDef::readField( const JsonFree& field_object )
+void ThriftFieldDef::read_field( const JsonFree& field_object )
 {
     field_object.get_value_via_path( key_key, f_id, -1 );
     field_object.get_value_via_path( key_name, f_name, key_undefined );
@@ -147,7 +151,7 @@ void ThriftFieldDef::read_type_spec( const JsonFree& field_object,
 
 
 /// Read json schema for one thrift structure from bsondata
-void ThriftStructDef::readSchema( const JsonFree& object )
+void ThriftStructDef::read_schema( const JsonFree& object )
 {
     // read information about structure
     object.get_value_via_path( key_name, schema_name, key_undefined );
@@ -177,7 +181,7 @@ void ThriftStructDef::readSchema( const JsonFree& object )
 
 
 /// Read json schema for one thrift enum from bsondata
-void ThriftEnumDef::readEnum( const JsonFree& object )
+void ThriftEnumDef::read_enum( const JsonFree& object )
 {
     // read information about enum
     object.get_value_via_path( key_name, enum_name,  key_undefined);  // May be exeption
@@ -207,7 +211,7 @@ void ThriftEnumDef::readEnum( const JsonFree& object )
 void ThriftSchemaRead( const std::string& jsondata, schema_files_t& files,
                        schemas_t& structs,  enums_t& enums )
 {
-    ThriftFieldDef::setTypeMap();
+    ThriftFieldDef::set_type_map();
     auto object =  json::loads( jsondata );
 
     // extract schema to internal structures
