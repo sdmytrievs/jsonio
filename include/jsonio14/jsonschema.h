@@ -138,9 +138,17 @@ public:
 
     // Test methods  --------------------------------------------
 
-    /// Test top object
+    /// This function returns true if and only if the JSON object is top.
     bool isTop() const override
     { return parent_object == nullptr; }
+
+    /// This function returns true if and only if the JSON type is defined structure Object.
+    bool isStruct() const
+    { return( isTop() or  fieldType() == FieldDef::T_STRUCT ); }
+
+    /// This function returns true if and only if the JSON type is free structure Object.
+    bool isMap() const
+    { return( !isTop() and fieldType() == FieldDef::T_MAP );  }
 
     // Get methods  --------------------------
 
@@ -165,7 +173,7 @@ public:
     }
 
     /// Get sizes of complex array ( 2D, 3D ... ).
-    ///??? Important: get only sizes of first children.
+    /// Important: get only sizes of first children.
     std::vector<size_t> array_sizes() const override;
 
 
@@ -174,15 +182,12 @@ public:
     ///??? Clear field and set value to default (empty or 0).
     virtual bool clear() override;
 
-    ///??? Remove current field.
+    /// Remove current field.
     bool remove() override;
 
     /// Resize 1D array.
     ///??? Set up defval values if the JSON type of elements is primitive.
     void array_resize( std::size_t size, const std::string &defval ) override;
-
-    ///??? Return a reference to object[jsonpath] if an object can be create, exception otherwise.
-    virtual JsonSchema &add_object_via_path(const std::string &jsonpath) override;
 
 protected:
 
@@ -212,9 +217,31 @@ protected:
     const JsonBase* getParent() const override
     {  return parent_object;  }
 
-    ///???
+    /// Generate list of non existing fields
+    list_names_t getNoUsedKeys() const;
+    /// Generate list of existing fields
     list_names_t getUsedKeys() const override;
 
+    /// Get object name.
+    virtual std::string getHelpName() const override;
+
+    /// Get object description.
+    virtual std::string getDescription() const override;
+
+    /// Get Description from Node
+    std::string getFullDescription() const;
+
+    /// Get min Value to Node
+    double minValue() const
+    {
+      return field_descrip->minValue();
+    }
+
+    /// Get max Value to Node
+    double maxValue() const
+    {
+      return field_descrip->maxValue();
+    }
 
 private:
 
@@ -242,19 +269,19 @@ private:
     /// Top level constructor
     JsonSchema( const StructDef *aStrDef );
 
-    ///??? Object constructor for fields
+    /// Object constructor for fields
     JsonSchema( const FieldDef *afldDef, JsonSchema *aparent );
 
-    ///??? Object constructor
+    /// Object constructor
     JsonSchema( JsonBase::Type atype, const std::string &akey, const std::string& avalue, JsonSchema *aparent  );
 
     void update_node(  JsonBase::Type atype, const std::string& avalue ) override;
     ///???
     JsonSchema &append_node( const std::string& akey, JsonBase::Type atype, const std::string& avalue ) override;
 
-    ///??? Get field by fieldpath
+    /// Get field by fieldpath
     JsonSchema *field( std::queue<std::string> names ) const override;
-    ///??? Add field by fieldpath
+    /// Add field by fieldpath
     JsonSchema *field_add(std::queue<std::string> names) override;
 
     /// Deep copy children
@@ -268,11 +295,8 @@ private:
     JsonSchema &get_child(const std::string& key);
     JsonSchema &get_parent() const;
 
-    ///???
     bool remove_child(JsonSchema *child);
-    ///???
     bool remove_child(std::size_t idx);
-    ///???
     bool remove_child(const std::string &key);
 
     ///???

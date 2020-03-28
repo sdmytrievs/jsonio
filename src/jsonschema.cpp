@@ -140,6 +140,7 @@ JsonSchema& JsonSchema::append_node(const std::string &akey, JsonBase::Type atyp
     {
     case FieldDef::T_STRUCT: // find field
     {
+       isStruct();
        //???????????????????????????????
     }
         break;
@@ -147,6 +148,7 @@ JsonSchema& JsonSchema::append_node(const std::string &akey, JsonBase::Type atyp
     case FieldDef::T_SET:
     case FieldDef::T_LIST: // add next level
     {
+        isMap() or isArray();
         auto shptr = std::shared_ptr<JsonSchema>( new JsonSchema( atype, akey, avalue, this ) );
         // add only type is possible
         if( test_assign_value( atype, false ) )
@@ -202,40 +204,11 @@ const JsonSchema& JsonSchema::get_child(const std::string &key) const
     return *element->get();
 }
 
-
 JsonSchema &JsonSchema::get_parent() const
 {
     JARANGO_THROW_IF( !parent_object, "JsonSchema", 27, "parent object is undefined" );
     return *parent_object;
 }
-
-
-//----------------------------------------------------------------------
-
-
-list_names_t JsonSchema::getUsedKeys() const
-{
-    list_names_t usekeys;
-    for( const auto& el: children )
-    {
-        usekeys.push_back( el->getKey() );
-    }
-    return usekeys;
-}
-
-bool JsonSchema::clear()
-{
-    children.clear();
-    if( isBool() )
-        field_value = "false";
-    else if( isNumber() )
-        field_value = "0";
-    else
-        field_value = "";
-
-    return true;
-}
-
 
 bool JsonSchema::remove()
 {
@@ -244,10 +217,35 @@ bool JsonSchema::remove()
     return parent_object->remove_child( this );
 }
 
+bool JsonSchema::remove_child( JsonSchema* child )
+{
+    int thisndx = -1;
+    for(std::size_t ii=0; ii< children.size(); ii++ )
+    {
+        if( children[ii].get() == child )
+            thisndx = static_cast<int>(ii);
+        if( thisndx >= 0 )
+            children[ii]->ndx_in_parent--;
+    }
+    if( thisndx >= 0 )
+    {
+        children.erase(children.begin() + thisndx);
+        return true;
+    }
+    return false;
+}
 
+bool JsonSchema::remove_child( std::size_t idx )
+{
+    return remove_child( &get_child( idx ) );
+}
 
+bool JsonSchema::remove_child( const std::string &key )
+{
+    return remove_child( &get_child( key ) );
+}
 
-JsonSchema *JsonSchema::field(std::queue<std::string> names ) const
+JsonSchema *JsonSchema::field( std::queue<std::string> names ) const
 {
     if( names.empty() )
         return const_cast<JsonSchema *>(this);
@@ -264,7 +262,7 @@ JsonSchema *JsonSchema::field(std::queue<std::string> names ) const
     return element->get()->field(names);
 }
 
-JsonSchema *JsonSchema::field_add(std::queue<std::string> names )
+JsonSchema *JsonSchema::field_add( std::queue<std::string> names )
 {
     if( names.empty() )
         return const_cast<JsonSchema *>(this);
@@ -287,46 +285,59 @@ JsonSchema *JsonSchema::field_add(std::queue<std::string> names )
     return element->get()->field_add(names);
 }
 
-JsonSchema &JsonSchema::add_object_via_path(const std::string &jsonpath)
+list_names_t JsonSchema::getUsedKeys() const
 {
-    auto names = split(jsonpath, "./[]\"");
-    auto pobj = field_add( names );
-    if( pobj )
+    list_names_t usekeys;
+    for( const auto& el: children )
     {
-        if( !pobj->isObject())
-            pobj->update_node( JsonBase::Object, "" );
-        return *pobj;
+        usekeys.push_back( el->getKey() );
     }
-    JARANGO_THROW( "JsonBase", 12, "cannot create object with jsonpath " + std::string( jsonpath ) );
+    return usekeys;
 }
 
-
-
-bool JsonSchema::remove_child( std::size_t idx )
+list_names_t JsonSchema::getNoUsedKeys() const
 {
-    return remove_child( &get_child( idx ) );
+  isStruct();
+  // ?????????????????????
 }
 
-bool JsonSchema::remove_child( const std::string &key )
+std::string JsonSchema::getHelpName() const
 {
-    return remove_child( &get_child( key ) );
+    return struct_descrip->name() + "#"+ JsonBase::getHelpName();
 }
 
-bool JsonSchema::remove_child( JsonSchema* child )
+std::string JsonSchema::getDescription() const
 {
-    int thisndx = -1;
-    for(std::size_t ii=0; ii< children.size(); ii++ )
-    {
-        if( children[ii].get() == child )
-            thisndx = static_cast<int>(ii);
-        if( thisndx >= 0 )
-            children[ii]->ndx_in_parent--;
-    }
-    if( thisndx >= 0 )
-    {   children.erase(children.begin() + thisndx);
-        return true;
-    }
-    return false;
+    if( level_type == 0 )
+      return  field_descrip->description();
+    return "";
+}
+
+std::string JsonSchema::getFullDescription() const
+{
+    // get doc from thrift schema
+    if( level_type == 0 )
+      return  getDescription();
+
+    auto desc = parent_object->getFullDescription();
+    desc += " ";
+    desc += getKey();
+    return desc;
+}
+
+//----------------------------------------------------------------------
+
+bool JsonSchema::clear()
+{
+    children.clear();
+    if( isBool() )
+        field_value = "false";
+    else if( isNumber() )
+        field_value = "0";
+    else
+        field_value = "";
+
+    return true;
 }
 
 std::vector<size_t> JsonSchema::array_sizes() const
@@ -344,7 +355,6 @@ std::vector<size_t> JsonSchema::array_sizes() const
     sizes.insert( sizes.begin(), size() );
     return sizes;
 }
-
 
 void JsonSchema::resize_array_level( size_t level, const std::vector<size_t>& sizes, const std::string& defval  )
 {
@@ -396,6 +406,7 @@ void JsonSchema::array_resize( std::size_t  newsize, const std::string& defval  
     }
 }
 
+
 //----------------------------------------------------------------------------------------------
 
 JsonBase::Type JsonSchema::fieldtype2basetype( FieldDef::FieldType field_type ) const
@@ -443,7 +454,7 @@ void JsonSchema::set_children()
     children.clear();
 
     // add levels for objects
-    if( fieldType() == FieldDef::T_STRUCT )
+    if( isStruct() )
     {
         // get structure descriptions
         const  StructDef* strDef2;

@@ -166,7 +166,7 @@ public:
     void array_resize( std::size_t size, const std::string &defval ) override;
 
     /// Return a reference to object[jsonpath] if an object can be create, exception otherwise.
-    virtual JsonFree &add_object_via_path(const std::string &jsonpath) override;
+    JsonFree &add_object_via_path(const std::string &jsonpath);
 
 protected:
 
