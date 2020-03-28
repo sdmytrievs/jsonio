@@ -191,18 +191,15 @@ protected:
     const std::string& getKey() const override
     {   return  field_key;   }
 
-    ///???
     size_t getNdx() const override
     {   return ndx_in_parent;  }
 
     const std::string& getFieldValue() const override
     {   return  field_value;  }
 
-    ///???
     std::size_t getChildrenCount() const override
     {   return children.size();  }
 
-    ///???
     const JsonBase* getChild( std::size_t ndx ) const override
     {
         if( ndx < getChildrenCount() )
@@ -228,8 +225,8 @@ private:
     /// Index into fldDef->fTypeId array
     std::size_t level_type;
 
-    /// Value set up by user
-    bool is_setup;
+    // Value set up by user
+    //bool is_setup;
     /// Object key  ( number for arrays )
     std::string field_key;
     /// Object value ( empty for arrays and objects )
@@ -265,15 +262,10 @@ private:
     /// Move children
     void move( JsonSchema &&obj);
 
-    ///???
     const JsonSchema &get_child(std::size_t idx) const;
-    ///???
     JsonSchema &get_child( std::size_t idx );
-    ///???
     const JsonSchema &get_child(const std::string& key) const;
-    ///???
     JsonSchema &get_child(const std::string& key);
-    ///???
     JsonSchema &get_parent() const;
 
     ///???
@@ -337,12 +329,11 @@ private:
     {
         if( !field_descrip->defaultValue().empty() )
             loads( field_descrip->defaultValue() );
-        // if( field_descrip->className() == "TimeStamp" )
-        //       setCurrentTime();
-
+        if( field_descrip->className() == "TimeStamp" )
+            set_current_time();
     }
 
-    /// Clear set up by user flag
+    /* Clear set up by user flag
     void clear_setup()
     {
        is_setup = field_descrip->required() == FieldDef::fld_required;
@@ -352,8 +343,10 @@ private:
     void add_setup()
     {
        is_setup = ( isTop() ? true: parent_object->is_setup );
-    }
+    }*/
 
+    /// Set up current time field
+    void set_current_time();
 };
 
 
