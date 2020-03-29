@@ -1,7 +1,5 @@
-#include <algorithm>
 #include "jsonio14/jsonfree.h"
 #include "jsonio14/jsonbuilder.h"
-
 
 namespace jsonio14 {
 
@@ -86,8 +84,7 @@ JsonFree *JsonFree::field(std::queue<std::string> names ) const
     auto fname = names.front();
     names.pop();
 
-    auto element = std::find_if( children.begin(), children.end(),
-                                 [=]( const auto& value ) { return value->getKey() == fname; });
+    auto element = find_key(fname);
     if( element == children.end() )
     {
         return nullptr;
@@ -103,8 +100,7 @@ JsonFree *JsonFree::field_add(std::queue<std::string> names )
     auto fname = names.front();
     names.pop();
 
-    auto element = std::find_if( children.begin(), children.end(),
-                                 [=]( const auto& value ) { return value->getKey() == fname; });
+    auto element = find_key(fname);
     if( element == children.end() )
     {
         if( isObject() )
@@ -180,8 +176,7 @@ JsonFree& JsonFree::get_child(std::size_t idx)
 
 JsonFree& JsonFree::get_child(const std::string &key)
 {
-    auto element = std::find_if( children.begin(), children.end(),
-                                 [=]( const auto& value ) { return value->getKey() == key; });
+    auto element = find_key(key);
     if( element == children.end() )
     {
         return append_node( key, JsonBase::Null, "" );
@@ -190,11 +185,9 @@ JsonFree& JsonFree::get_child(const std::string &key)
     return *element->get();
 }
 
-
 const JsonFree& JsonFree::get_child(const std::string &key) const
 {
-    auto element = std::find_if( children.begin(), children.end(),
-                                 [=]( const auto& value ) { return value->getKey() == key; });
+    auto element = find_key(key);
     if( element == children.end() )
     {
         JARANGO_THROW( "JsonFree", 26, "key '" + key + "' not found" );
@@ -275,7 +268,7 @@ void JsonFree::array_resize( std::size_t  newsize, const std::string& defval  )
     if( newsize == children.size() )     // the same size
         ;
     else if( newsize < children.size() ) // delete if smaler
-        children.erase( children.begin()+static_cast<long>(newsize), children.end());
+        children.erase( children.begin()+newsize, children.end());
     else
     {
         if( children.size()>0 )

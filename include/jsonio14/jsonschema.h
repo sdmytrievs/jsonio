@@ -1,6 +1,8 @@
 #pragma once
 
 #include <memory>
+#include <algorithm>
+
 #include "jsonio14/exceptions.h"
 #include "jsonio14/jsonbase.h"
 #include "jsonio14/schema.h"
@@ -179,14 +181,14 @@ public:
 
     // Update methods  --------------------------
 
-    ///??? Clear field and set value to default (empty or 0).
+    /// Clear field and set value to default (empty or 0).
     virtual bool clear() override;
 
     /// Remove current field.
     bool remove() override;
 
     /// Resize 1D array.
-    ///??? Set up defval values if the JSON type of elements is primitive.
+    /// Set up defval values if the JSON type of elements is primitive.
     void array_resize( std::size_t size, const std::string &defval ) override;
 
 protected:
@@ -217,7 +219,7 @@ protected:
     const JsonBase* getParent() const override
     {  return parent_object;  }
 
-    /// Generate list of non existing fields
+    ///???? Generate list of non existing fields
     list_names_t getNoUsedKeys() const;
     /// Generate list of existing fields
     list_names_t getUsedKeys() const override;
@@ -268,10 +270,8 @@ private:
 
     /// Top level constructor
     JsonSchema( const StructDef *aStrDef );
-
     /// Object constructor for fields
     JsonSchema( const FieldDef *afldDef, JsonSchema *aparent );
-
     /// Object constructor
     JsonSchema( JsonBase::Type atype, const std::string &akey, const std::string& avalue, JsonSchema *aparent  );
 
@@ -289,6 +289,12 @@ private:
     /// Move children
     void move( JsonSchema &&obj);
 
+    auto find_key( const std::string &key ) const
+    {
+        return std::find_if( children.begin(), children.end(),
+                             [=]( const auto& value ) { return value->getKey() == key; });
+    }
+
     const JsonSchema &get_child(std::size_t idx) const;
     JsonSchema &get_child( std::size_t idx );
     const JsonSchema &get_child(const std::string& key) const;
@@ -299,7 +305,6 @@ private:
     bool remove_child(std::size_t idx);
     bool remove_child(const std::string &key);
 
-    ///???
     void resize_array_level(size_t level, const std::vector<size_t> &sizes, const std::string &defval) override;
 
     //---------------------------------------------------------------------
@@ -351,7 +356,7 @@ private:
     /// Set default value
     void set_default_value()
     {
-        if( !field_descrip->defaultValue().empty() )
+        if( level_type==0 and !field_descrip->defaultValue().empty() )
             loads( field_descrip->defaultValue() );
         if( field_descrip->className() == "TimeStamp" )
             set_current_time();

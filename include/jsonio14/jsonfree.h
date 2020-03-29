@@ -1,6 +1,8 @@
 #pragma once
 
 #include <memory>
+#include <algorithm>
+
 #include "exceptions.h"
 #include "jsonbase.h"
 
@@ -228,6 +230,12 @@ private:
     void copy(const JsonFree &obj);
     /// Move children
     void move( JsonFree &&obj);
+
+    auto find_key(const std::string &key) const
+    {
+        return std::find_if( children.begin(), children.end(),
+                             [=]( const auto& value ) { return value->getKey() == key; });
+    }
 
     const JsonFree &get_child(std::size_t idx) const;
     JsonFree &get_child( std::size_t idx );

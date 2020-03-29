@@ -43,7 +43,7 @@ JsonSchema::JsonSchema( const  StructDef* aStrDef ):
     ndx_in_parent( 0 ),
     parent_object( nullptr ), children()
 {
-   set_children();
+    set_children();
 }
 
 // Constructor for empty field
@@ -62,10 +62,10 @@ JsonSchema::JsonSchema( const  FieldDef* afldDef, JsonSchema* aparent ):
 JsonSchema::JsonSchema( JsonBase::Type , const std::string &akey, const std::string &avalue, JsonSchema *aparent ):
     struct_descrip( aparent->struct_descrip ), field_descrip( aparent->field_descrip ),
     level_type( 0 ),  //is_setup( false ),
-    field_key( akey ), field_value( avalue ), ndx_in_parent(0), parent_object(aparent), children()
+    field_key( akey ), field_value( avalue ),
+    ndx_in_parent(aparent->children.size()),
+    parent_object(aparent), children()
 {
-    ndx_in_parent = parent_object->children.size();
-
     switch(parent_object->fieldType())
     {
     case FieldDef::T_MAP:
@@ -79,6 +79,7 @@ JsonSchema::JsonSchema( JsonBase::Type , const std::string &akey, const std::str
         break;
         //JARANGO_THROW( "JsonSchema", 13, "illegal parent type " + std::string( parent_object->typeName() )  );
     }
+    set_children();
 }
 
 // key and parent not changed
@@ -127,12 +128,11 @@ void JsonSchema::update_node( JsonBase::Type atype, const std::string &avalue )
 JsonSchema& JsonSchema::append_node(const std::string &akey, JsonBase::Type atype, const std::string &avalue )
 {
     // if exist key => update node, for Free json too
-    auto element = std::find_if( children.begin(), children.end(),
-                                 [=]( const auto& value ) { return value->getKey() == akey; });
+    auto element = find_key(akey);
     if( element != children.end() )
     {
-      element->get()->update_node( atype, avalue );
-      return *element->get();
+        element->get()->update_node( atype, avalue );
+        return *element->get();
     }
 
     // add new
@@ -140,8 +140,8 @@ JsonSchema& JsonSchema::append_node(const std::string &akey, JsonBase::Type atyp
     {
     case FieldDef::T_STRUCT: // find field
     {
-       isStruct();
-       //???????????????????????????????
+        isStruct();
+        //???????????????????????????????
     }
         break;
     case FieldDef::T_MAP:
@@ -182,8 +182,7 @@ JsonSchema& JsonSchema::get_child(std::size_t idx)
 
 JsonSchema& JsonSchema::get_child(const std::string &key)
 {
-    auto element = std::find_if( children.begin(), children.end(),
-                                 [=]( const auto& value ) { return value->getKey() == key; });
+    auto element = find_key(key);
     if( element == children.end() )
     {
         return append_node( key, JsonBase::Null, "" );
@@ -192,11 +191,9 @@ JsonSchema& JsonSchema::get_child(const std::string &key)
     return *element->get();
 }
 
-
 const JsonSchema& JsonSchema::get_child(const std::string &key) const
 {
-    auto element = std::find_if( children.begin(), children.end(),
-                                 [=]( const auto& value ) { return value->getKey() == key; });
+    auto element = find_key(key);
     if( element == children.end() )
     {
         JARANGO_THROW( "JsonSchema", 26, "key '" + key + "' not found" );
@@ -219,6 +216,13 @@ bool JsonSchema::remove()
 
 bool JsonSchema::remove_child( JsonSchema* child )
 {
+    if( level_type==0 and child->field_descrip->required() == FieldDef::fld_required )
+    {
+        // not remove requered field ( only clear )
+        clear();
+        return true;
+    }
+
     int thisndx = -1;
     for(std::size_t ii=0; ii< children.size(); ii++ )
     {
@@ -253,8 +257,7 @@ JsonSchema *JsonSchema::field( std::queue<std::string> names ) const
     auto fname = names.front();
     names.pop();
 
-    auto element = std::find_if( children.begin(), children.end(),
-                                 [=]( const auto& value ) { return value->getKey() == fname; });
+    auto element = find_key(fname);
     if( element == children.end() )
     {
         return nullptr;
@@ -270,8 +273,7 @@ JsonSchema *JsonSchema::field_add( std::queue<std::string> names )
     auto fname = names.front();
     names.pop();
 
-    auto element = std::find_if( children.begin(), children.end(),
-                                 [=]( const auto& value ) { return value->getKey() == fname; });
+    auto element = find_key(fname);
     if( element == children.end() )
     {
         if( isObject() )
@@ -297,8 +299,8 @@ list_names_t JsonSchema::getUsedKeys() const
 
 list_names_t JsonSchema::getNoUsedKeys() const
 {
-  isStruct();
-  // ?????????????????????
+    isStruct();
+    // ?????????????????????
 }
 
 std::string JsonSchema::getHelpName() const
@@ -309,7 +311,7 @@ std::string JsonSchema::getHelpName() const
 std::string JsonSchema::getDescription() const
 {
     if( level_type == 0 )
-      return  field_descrip->description();
+        return  field_descrip->description();
     return "";
 }
 
@@ -317,7 +319,7 @@ std::string JsonSchema::getFullDescription() const
 {
     // get doc from thrift schema
     if( level_type == 0 )
-      return  getDescription();
+        return  getDescription();
 
     auto desc = parent_object->getFullDescription();
     desc += " ";
@@ -325,11 +327,9 @@ std::string JsonSchema::getFullDescription() const
     return desc;
 }
 
-//----------------------------------------------------------------------
-
 bool JsonSchema::clear()
 {
-    children.clear();
+    set_children();
     if( isBool() )
         field_value = "false";
     else if( isNumber() )
@@ -337,6 +337,7 @@ bool JsonSchema::clear()
     else
         field_value = "";
 
+    set_default_value();
     return true;
 }
 
@@ -378,7 +379,7 @@ void JsonSchema::array_resize( std::size_t  newsize, const std::string& defval  
     if( newsize == children.size() )     // the same size
         ;
     else if( newsize < children.size() ) // delete if smaler
-        children.erase( children.begin()+static_cast<long>(newsize), children.end());
+        children.erase( children.begin()+newsize, children.end());
     else
     {
         if( children.size()>0 )
@@ -405,7 +406,6 @@ void JsonSchema::array_resize( std::size_t  newsize, const std::string& defval  
         }
     }
 }
-
 
 //----------------------------------------------------------------------------------------------
 
@@ -448,7 +448,6 @@ JsonBase::Type JsonSchema::fieldtype2basetype( FieldDef::FieldType field_type ) 
     return base_type;
 }
 
-
 void JsonSchema::set_children()
 {
     children.clear();
@@ -456,20 +455,16 @@ void JsonSchema::set_children()
     // add levels for objects
     if( isStruct() )
     {
-        // get structure descriptions
         const  StructDef* strDef2;
         if( isTop() )
             strDef2  = struct_descrip;
         else
             strDef2  = ioSettings().Schema().getStruct( field_descrip->className() );
 
-        if( strDef2 == nullptr )
-            JARANGO_THROW( "JsonSchema", 12, "undefined struct definition " + field_descrip->className()  );
-
+        JARANGO_THROW_IF( strDef2 == nullptr,"JsonSchema", 12, "undefined struct definition " + field_descrip->className()  );
         struct2model( strDef2 );
     }
 }
-
 
 void JsonSchema::struct2model( const  StructDef* strDef )
 {
@@ -489,8 +484,9 @@ void JsonSchema::struct2model( const  StructDef* strDef )
 
 void JsonSchema::set_value( const std::string& value )
 {
-   //add_setup();
-   field_value = value;
+    //add_setup();
+    // ??? check before // auto avalue = checked_value( type(), value );
+    field_value = value;
 }
 
 // Set up current time as default value
@@ -498,7 +494,7 @@ void JsonSchema::set_value( const std::string& value )
 void JsonSchema::set_current_time()
 {
     if(field_descrip->className() != "TimeStamp")
-     return;
+        return;
 
     struct tm *time_now;
     time_t secs_now;
