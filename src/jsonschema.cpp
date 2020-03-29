@@ -114,13 +114,11 @@ void JsonSchema::move(JsonSchema &&obj)
 
 void JsonSchema::update_node( JsonBase::Type atype, const std::string &avalue )
 {
-    // test type is possible
+    // Test if type is possible otherwise exeption
     test_assign_value( atype );
-
-    // ??? null type if undefined
-    // ??? do nothing if illeagal type, not  exeption
-    // set/clear children
+    // set defaults for isStruct
     set_children();
+    set_default_value();
     // set value from (json)string
     set_value( avalue );
 }
@@ -131,35 +129,32 @@ JsonSchema& JsonSchema::append_node(const std::string &akey, JsonBase::Type atyp
     auto element = find_key(akey);
     if( element != children.end() )
     {
-        element->get()->update_node( atype, avalue );
+        if( element->get()->test_assign_value( atype, false ) ) // hide exception
+            element->get()->update_node( atype, avalue );
         return *element->get();
     }
 
-    // add new
-    switch( fieldType())
+    if( isStruct() )
     {
-    case FieldDef::T_STRUCT: // find field
-    {
-        isStruct();
-        //???????????????????????????????
+        // must be defined keys list
+        auto  field_desc = struct_descrip->getField(akey);
+        if( field_desc )
+        {
+            auto shptr = std::shared_ptr<JsonSchema>( new JsonSchema( field_desc, this ) );
+            // add only type is possible
+            if( shptr->test_assign_value( atype, false ) )
+                shptr->update_node( atype, avalue );
+            children.push_back( shptr );
+        }
     }
-        break;
-    case FieldDef::T_MAP:
-    case FieldDef::T_SET:
-    case FieldDef::T_LIST: // add next level
+    else if( isMap() or isArray() )
     {
-        isMap() or isArray();
         auto shptr = std::shared_ptr<JsonSchema>( new JsonSchema( atype, akey, avalue, this ) );
         // add only type is possible
         if( test_assign_value( atype, false ) )
             children.push_back( shptr );
         //else
         //JARANGO_THROW( "JsonSchema", 13, "illegal parent type " + std::string( parent_object->typeName() )  );
-    }
-        break;
-    default:
-        //JARANGO_THROW( "JsonSchema", 13, "illegal parent type " + std::string( parent_object->typeName() )  );
-        break;
     }
     return *children.back();
 }
@@ -299,8 +294,18 @@ list_names_t JsonSchema::getUsedKeys() const
 
 list_names_t JsonSchema::getNoUsedKeys() const
 {
-    isStruct();
-    // ?????????????????????
+    list_names_t lst;
+    if( isStruct() )
+    {
+        auto use_fields = getUsedKeys();
+        auto all_fields = struct_descrip->getFields(false);
+        for( const auto& field: all_fields )
+        {
+            if( std::find( use_fields.begin(), use_fields.end(), field ) == use_fields.end() )
+                lst.push_back( field);
+        }
+    }
+    return lst;
 }
 
 std::string JsonSchema::getHelpName() const

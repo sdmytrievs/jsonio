@@ -152,6 +152,9 @@ public:
     bool isMap() const
     { return( !isTop() and fieldType() == FieldDef::T_MAP );  }
 
+    bool isUnion( ) const
+    {  return ( !isTop() and parent_object->isStruct() && parent_object->struct_descrip->isUnion() );  }
+
     // Get methods  --------------------------
 
     /// Get fields key type for Object
@@ -219,7 +222,7 @@ protected:
     const JsonBase* getParent() const override
     {  return parent_object;  }
 
-    ///???? Generate list of non existing fields
+    /// Generate list of non existing fields
     list_names_t getNoUsedKeys() const;
     /// Generate list of existing fields
     list_names_t getUsedKeys() const override;
