@@ -250,7 +250,7 @@ void JsonBase::dump( std::ostream &os, bool dense ) const
 void JsonBase::loads( const std::string &jsonstr )
 {
     JsonParser parser(jsonstr);
-    parser.parse_to(*this);
+    parser.parse_to(this);
 }
 
 std::string JsonBase::checked_value( JsonBase::Type type, const std::string& newvalue )

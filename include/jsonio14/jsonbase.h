@@ -3,9 +3,9 @@
 #include <iostream>
 #include <vector>
 #include <queue>
-#include "exceptions.h"
-#include "type_test.h"
-#include "jsondetail.h"
+#include "jsonio14/exceptions.h"
+#include "jsonio14/type_test.h"
+#include "jsonio14/jsondetail.h"
 
 namespace jsonio14 {
 
@@ -279,7 +279,9 @@ public:
         update_node(  Array, "" );
         for( const auto& el: values )
         {
-            append_node( std::to_string(ii++), Null, "" ).set_from(el);
+            auto obj = append_node( std::to_string(ii++), Null, "" );
+            if( obj )
+                obj->set_from(el);
         }
     }
 
@@ -291,7 +293,9 @@ public:
         update_node(  Object, "" );
         for( const auto& el: values )
         {
-            append_node( el.first, Null, "" ).set_from(el.second);
+            auto obj = append_node( el.first, Null, "" );
+            if( obj )
+                obj->set_from(el.second);
         }
     }
 
@@ -421,7 +425,7 @@ protected:
 private:
 
     virtual void update_node(  Type atype, const std::string& avalue ) =0;
-    virtual JsonBase& append_node( const std::string& akey, Type atype, const std::string& avalue ) =0;
+    virtual JsonBase *append_node( const std::string& akey, Type atype, const std::string& avalue ) =0;
     void dump2stream(std::ostream &os, int depth, bool dense) const;
     // Get field by fieldpath ("name1.name2.name3")
     //JsonBase *field(  const std::string& fieldpath ) const;

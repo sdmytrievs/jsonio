@@ -123,7 +123,7 @@ void JsonSchema::update_node( JsonBase::Type atype, const std::string &avalue )
     set_value( avalue );
 }
 
-JsonSchema& JsonSchema::append_node(const std::string &akey, JsonBase::Type atype, const std::string &avalue )
+JsonBase *JsonSchema::append_node(const std::string &akey, JsonBase::Type atype, const std::string &avalue )
 {
     // if exist key => update node, for Free json too
     auto element = find_key(akey);
@@ -131,7 +131,7 @@ JsonSchema& JsonSchema::append_node(const std::string &akey, JsonBase::Type atyp
     {
         if( element->get()->test_assign_value( atype, false ) ) // hide exception
             element->get()->update_node( atype, avalue );
-        return *element->get();
+        return element->get();
     }
 
     if( isStruct() )
@@ -144,19 +144,23 @@ JsonSchema& JsonSchema::append_node(const std::string &akey, JsonBase::Type atyp
             // add only type is possible
             if( shptr->test_assign_value( atype, false ) )
                 shptr->update_node( atype, avalue );
+            // add by order ???
             children.push_back( shptr );
+            return children.back().get();
         }
+        return nullptr;
     }
     else if( isMap() or isArray() )
     {
         auto shptr = std::shared_ptr<JsonSchema>( new JsonSchema( atype, akey, avalue, this ) );
         // add only type is possible
         if( test_assign_value( atype, false ) )
+        {
             children.push_back( shptr );
-        //else
-        //JARANGO_THROW( "JsonSchema", 13, "illegal parent type " + std::string( parent_object->typeName() )  );
+            return children.back().get();
+        }
     }
-    return *children.back();
+    return nullptr;
 }
 
 const JsonSchema& JsonSchema::get_child(std::size_t idx) const
@@ -170,7 +174,9 @@ JsonSchema& JsonSchema::get_child(std::size_t idx)
     JARANGO_THROW_IF( idx>getChildrenCount(), "JsonSchema", 25, "array index " + std::to_string(idx) + " is out of range" );
     if( idx==getChildrenCount() ) // next element
     {
-        return append_node( std::to_string(idx), JsonBase::Null, "" );
+        auto obj = dynamic_cast<JsonSchema*>(append_node( std::to_string(idx), JsonBase::Null, "" ));
+        JARANGO_THROW_IF( obj==nullptr, "JsonSchema", 25, "array element " + std::to_string(idx) + " is illegal type" );
+        return *obj;
     }
     return *children[idx];
 }
@@ -180,8 +186,9 @@ JsonSchema& JsonSchema::get_child(const std::string &key)
     auto element = find_key(key);
     if( element == children.end() )
     {
-        return append_node( key, JsonBase::Null, "" );
-        //return children.back();
+        auto obj = dynamic_cast<JsonSchema*>(append_node( key, JsonBase::Null, "" ));
+        JARANGO_THROW_IF( obj==nullptr, "JsonSchema", 25, "object element " + key + " is illegal type" );
+        return *obj;
     }
     return *element->get();
 }
@@ -405,7 +412,7 @@ void JsonSchema::array_resize( std::size_t  newsize, const std::string& defval  
         }
         else
         {
-            JsonArrayBuilder jsBuilder(*this);
+            JsonArrayBuilder jsBuilder(this);
             for( size_t ii=0; ii<newsize; ii++)
                 jsBuilder.addScalar( defval );
         }

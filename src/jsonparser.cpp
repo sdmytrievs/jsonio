@@ -18,7 +18,7 @@ enum {
     jsQuote = '\"'      //0x22
 };
 
-void JsonParser::parse_to( JsonBase &out )
+void JsonParser::parse_to( JsonBase* out )
 {
     cur_pos = 0;
     skip_space_comment();
@@ -35,7 +35,7 @@ void JsonParser::parse_to( JsonBase &out )
     }
     else // update value Scalar
     {
-      set_scalar( out );
+      set_scalar( *out );
     }
     skip_space_comment();
     JARANGO_THROW_IF( cur_pos < end_pos, "JsonParser", 14, "extra value after close: " + err_part() );

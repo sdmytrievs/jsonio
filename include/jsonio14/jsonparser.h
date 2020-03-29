@@ -28,7 +28,7 @@ public:
     }
 
     /// Parse internal string to the JSON object result_object;
-    void parse_to( JsonBase& result_object );
+    void parse_to( JsonBase* result_object );
 
 protected:
 

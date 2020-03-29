@@ -68,11 +68,11 @@ void JsonFree::update_node(JsonBase::Type atype, const std::string &avalue)
     field_value = avalue;
 }
 
-JsonFree& JsonFree::append_node(const std::string &akey, JsonBase::Type atype, const std::string &avalue )
+JsonBase *JsonFree::append_node(const std::string &akey, JsonBase::Type atype, const std::string &avalue )
 {
     auto shptr = new JsonFree(atype, akey, avalue, this);
     children.push_back( std::shared_ptr<JsonFree>(shptr) );
-    return *children.back();
+    return children.back().get();
 }
 
 
@@ -169,7 +169,8 @@ JsonFree& JsonFree::get_child(std::size_t idx)
     JARANGO_THROW_IF( idx>getChildrenCount(), "JsonFree", 25, "array index " + std::to_string(idx) + " is out of range" );
     if( idx==getChildrenCount() ) // next element
     {
-        return append_node( std::to_string(idx), JsonBase::Null, "" );
+        append_node( std::to_string(idx), JsonBase::Null, "" );
+        return *children.back();
     }
     return *children[idx];
 }
@@ -179,8 +180,8 @@ JsonFree& JsonFree::get_child(const std::string &key)
     auto element = find_key(key);
     if( element == children.end() )
     {
-        return append_node( key, JsonBase::Null, "" );
-        //return children.back();
+        append_node( key, JsonBase::Null, "" );
+        return *children.back();
     }
     return *element->get();
 }
@@ -289,7 +290,7 @@ void JsonFree::array_resize( std::size_t  newsize, const std::string& defval  )
         }
         else
         {
-            JsonArrayBuilder jsBuilder(*this);
+            JsonArrayBuilder jsBuilder(this);
             for( size_t ii=0; ii<newsize; ii++)
                 jsBuilder.addScalar( defval );
         }

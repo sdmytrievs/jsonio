@@ -280,7 +280,7 @@ private:
 
     void update_node(  JsonBase::Type atype, const std::string& avalue ) override;
     ///???
-    JsonSchema &append_node( const std::string& akey, JsonBase::Type atype, const std::string& avalue ) override;
+    JsonBase *append_node( const std::string& akey, JsonBase::Type atype, const std::string& avalue ) override;
 
     /// Get field by fieldpath
     JsonSchema *field( std::queue<std::string> names ) const override;

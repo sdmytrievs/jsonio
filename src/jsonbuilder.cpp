@@ -9,28 +9,31 @@ void JsonBuilderBase::append_scalar(const std::string &key, const std::string &v
     long ival = 0;
     double dval=0.;
 
+    if( !current_json )
+        return;
+
     if( value == "~" )
-        current_json.append_node( key, JsonBase::Null, "null" );
+        current_json->append_node( key, JsonBase::Null, "null" );
     else
         if( value == "null" )
-            current_json.append_node( key, JsonBase::Null, "null" );
+            current_json->append_node( key, JsonBase::Null, "null" );
         else
             if( value == "true" )
-                current_json.append_node( key, JsonBase::Bool, "true" );
+                current_json->append_node( key, JsonBase::Bool, "true" );
             else
                 if( value == "false" )
-                    current_json.append_node( key, JsonBase::Bool, "false" );
+                    current_json->append_node( key, JsonBase::Bool, "false" );
                 else
                     if( is<long>( ival, value ) )
-                        current_json.append_node( key, JsonBase::Int, v2string(ival) );
+                        current_json->append_node( key, JsonBase::Int, v2string(ival) );
                     else
                         if( is<double>( dval, value ))
-                            current_json.append_node( key, JsonBase::Double, v2string(dval) );
+                            current_json->append_node( key, JsonBase::Double, v2string(dval) );
                         else
                             if( noString )
                                 JARANGO_THROW(  "JsonArrayBuilder", 4, key + " undefined value type '" + value +"'" );
                             else
-                                current_json.append_node( key, JsonBase::String, v2string(value) );
+                                current_json->append_node( key, JsonBase::String, v2string(value) );
 }
 
 JsonBuilderBase &JsonBuilderBase::testScalar(const std::string &key, const std::string &value)
@@ -42,26 +45,39 @@ JsonBuilderBase &JsonBuilderBase::testScalar(const std::string &key, const std::
 
 JsonObjectBuilder JsonObjectBuilder::addObject(const std::string &akey)
 {
-    decltype(current_json) new_json = current_json.append_node( akey, JsonBase::Object, "" );
+    //decltype(current_json) new_json = current_json.append_node( akey, JsonBase::Object, "" );
+    decltype(current_json) new_json = nullptr;
+    if( current_json )
+        new_json = current_json->append_node( akey, JsonBase::Object, "" );
+
     return JsonObjectBuilder{ new_json };
 }
 
 JsonArrayBuilder JsonObjectBuilder::addArray(const std::string &akey)
 {
-    decltype(current_json) new_json = current_json.append_node( akey, JsonBase::Array, "" );
+    //decltype(current_json) new_json = current_json.append_node( akey, JsonBase::Array, "" );
+    decltype(current_json) new_json = nullptr;
+    if( current_json )
+        new_json = current_json->append_node( akey, JsonBase::Array, "" );
     return JsonArrayBuilder{ new_json };
 }
 
 
 JsonObjectBuilder JsonArrayBuilder::addObject()
 {
-    decltype(current_json) new_json = current_json.append_node( nextKey(), JsonBase::Object, "" );
+//    decltype(current_json) new_json = current_json.append_node( nextKey(), JsonBase::Object, "" );
+    decltype(current_json) new_json = nullptr;
+    if( current_json )
+        new_json = current_json->append_node( nextKey(), JsonBase::Object, "" );
     return JsonObjectBuilder{ new_json };
 }
 
 JsonArrayBuilder JsonArrayBuilder::addArray()
 {
-    decltype(current_json) new_json = current_json.append_node( nextKey(), JsonBase::Array, "" );
+//    decltype(current_json) new_json = current_json.append_node( nextKey(), JsonBase::Array, "" );
+    decltype(current_json) new_json = nullptr;
+    if( current_json )
+        new_json = current_json->append_node( nextKey(), JsonBase::Array, "" );
     return JsonArrayBuilder{ new_json };
 }
 
