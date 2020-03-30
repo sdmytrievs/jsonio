@@ -83,6 +83,7 @@ void ThriftFieldDef::read_field( const JsonFree& field_object )
     field_object.get_value_via_path<std::string>( key_class, class_name,  "");   // "class": enum name
     // default value we get to string for different types
     field_object.get_value_via_path<std::string>( key_default, f_default, "" );
+
     field_object.get_value_via_path( key_minval, minval, std::numeric_limits<double>::min() );
     field_object.get_value_via_path( key_maxval, maxval, std::numeric_limits<double>::max() );
 
@@ -101,6 +102,9 @@ void ThriftFieldDef::read_field( const JsonFree& field_object )
         f_type_id.push_back(T_VOID);
     else
         read_type_spec(field_object, key_type, typeId);
+
+    if( f_type_id[0] == T_STRING and !f_default.empty() )
+       f_default = "\""+f_default+"\"";
 }
 
 /// Read json schema for thrift structure from bsondata

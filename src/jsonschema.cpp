@@ -118,7 +118,6 @@ void JsonSchema::update_node( JsonBase::Type atype, const std::string &avalue )
     test_assign_value( atype );
     // set defaults for isStruct
     set_children();
-    set_default_value();
     // set value from (json)string
     set_value( avalue );
 }
@@ -154,7 +153,7 @@ JsonBase *JsonSchema::append_node(const std::string &akey, JsonBase::Type atype,
     {
         auto shptr = std::shared_ptr<JsonSchema>( new JsonSchema( atype, akey, avalue, this ) );
         // add only type is possible
-        if( test_assign_value( atype, false ) )
+        if( shptr->test_assign_value( atype, false ) )
         {
             children.push_back( shptr );
             return children.back().get();
@@ -486,7 +485,7 @@ void JsonSchema::struct2model( const  StructDef* strDef )
     {
         if( it->get()->required() == FieldDef::fld_required)
         {
-            // add only requred
+            // add only requrled
             auto child = new JsonSchema( it->get(), this );
             children.push_back( std::shared_ptr<JsonSchema>(child) );
         }

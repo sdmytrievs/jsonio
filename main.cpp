@@ -15,9 +15,11 @@ using namespace std;
 // https://doc.qt.io/qtcreator/creator-autotest.html
 
 #include "jsonio14/jsonfree.h"
+#include "jsonio14/jsonschema.h"
 #include "jsonio14/jsondump.h"
 #include "jsonio14/service.h"
 #include "jsonio14/schema_thrift.h"
+#include "jsonio14/io_settings.h"
 
 using namespace jsonio14;
 
@@ -28,19 +30,26 @@ void AccesstoObjectError();
 /// Test read schema
 void ReadThriftSchemas()
 {
-   SchemasData all_schemas;
+   const SchemasData& all_schemas = ioSettings().Schema();
+   std::cout << "Structs: "<< all_schemas.getStructs(false).size() << "\n";
+   //for( auto& astruct: all_schemas.getStructs(false) )
+   //     std::cout << astruct  << "\n";
 
-   all_schemas.addSchemaFormat( schema_thrift, ThriftSchemaRead );
-   all_schemas.addSchemaFile(schema_thrift,"Resources/schemas/schema_test.schema.json");
+   auto object = JsonSchema::object("VertexElement");
+   std::cout <<  object << std::endl;
+   auto json_data = read_ascii_file( "O-old.VertexElement.json" );
+   object.loads(json_data);
+   std::cout <<  object << std::endl;
 
-   std::cout << "Structs: \n";
-   for( auto& astruct: all_schemas.getStructs(false) )
-        std::cout << astruct  << "\n";
+  // test read substance to element (add only existing field other skip)
+   json_data = read_ascii_file( "HO2-old.VertexSubstance.json" );
+  //    object.loads(json_data);
+  //    std::cout <<  object << std::endl;
 
-   auto strct = all_schemas.getStruct("ComplexSchemaTest");
-   std::cout << "Fields: \n";
-   for( auto& astruct: strct->getFields(true) )
-        std::cout << astruct  << "\n";
+   auto object_sub = JsonSchema::object("VertexSubstance");
+   object_sub.loads(json_data);
+         std::cout <<  object_sub << std::endl;
+
 
 }
 
