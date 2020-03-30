@@ -171,6 +171,9 @@ public:
         return field_descrip->type(level_type);
     }
 
+    const std::string& getKey() const override
+    {   return  field_key;   }
+
     /// Get json type from Object
     Type type() const override
     {
@@ -197,9 +200,6 @@ public:
 protected:
 
     // Get methods ( using in Qt GUI model ) --------------------------
-
-    const std::string& getKey() const override
-    {   return  field_key;   }
 
     size_t getNdx() const override
     {   return ndx_in_parent;  }
@@ -257,8 +257,6 @@ private:
     /// Index into fldDef->fTypeId array
     std::size_t level_type;
 
-    // Value set up by user
-    //bool is_setup;
     /// Object key  ( number for arrays )
     std::string field_key;
     /// Object value ( empty for arrays and objects )
@@ -335,6 +333,7 @@ private:
     {
         auto obj_type = type();
         if( !( obj_type == atype or
+               atype == Null or
                ( ( obj_type == Type::Int or obj_type == Type::Double ) and
                  ( atype == Type::Int or atype == Type::Double ) ) ) )
         {
@@ -364,18 +363,6 @@ private:
         if( field_descrip->className() == "TimeStamp" )
             set_current_time();
     }
-
-    /* Clear set up by user flag
-    void clear_setup()
-    {
-       is_setup = field_descrip->required() == FieldDef::fld_required;
-    }
-
-    /// Set set up by user flag
-    void add_setup()
-    {
-       is_setup = ( isTop() ? true: parent_object->is_setup );
-    }*/
 
     /// Set up current time field
     void set_current_time();

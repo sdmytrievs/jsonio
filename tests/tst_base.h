@@ -377,3 +377,44 @@ TEST( JsonioBase, ObjectAssignment)
     EXPECT_EQ( obj["formats"]["obj3"].dump(true), "{\"width\":30,\"precision\":15}\n" );
 
 }
+
+TEST( JsonioBase, get_to_no_exist_free )
+{
+    auto obj = json::loads("{\"vbool\":true,\"vint\":-100,\"vdouble\":5.2,\"vstring\":\"Test string\","
+                           "\"vlist\":[1.7,2.7,3.7,5.7],\"vmap\":{\"key1\":\"val1\",\"key2\":\"val2\"}}");
+
+    bool vbool{true};
+    EXPECT_TRUE( obj["noexist1"].get_to( vbool ) );
+    EXPECT_FALSE( vbool );
+
+    int  vint{5};
+    EXPECT_FALSE( obj["noexist2"].get_to( vint ) );
+    EXPECT_EQ( 5, vint );
+
+    double vdouble{0.1};
+    EXPECT_FALSE( obj["noexist3"].get_to( vdouble ));
+    EXPECT_EQ( 0.1, vdouble );
+
+    std::string vstr{"test"};
+    EXPECT_TRUE( obj["noexist4"].get_to( vstr ));
+    EXPECT_TRUE( vstr.empty() );
+
+    std::list<double> vlist{ 1.7, 5.7 };
+    EXPECT_TRUE( obj["noexist5"].get_to(vlist));
+    EXPECT_TRUE( vlist.empty() );
+
+    EXPECT_TRUE( obj["noexist8"]["list"].get_to(vlist));
+    EXPECT_TRUE( vlist.empty() );
+
+    std::unordered_map<std::string, std::string> vumaps{ {"key1", "val1" }, {"key2", "val2" } };
+    EXPECT_TRUE( obj["noexist6"].get_to(vumaps));
+    EXPECT_TRUE( vumaps.empty() );
+
+    EXPECT_TRUE( obj["noexist9"]["map"].get_to(vumaps));
+    EXPECT_TRUE( vumaps.empty() );
+
+    const auto& constobj = obj;
+    EXPECT_THROW( constobj["noexist7"].get_to( vint ), jarango_exception );
+
+    //std::cout << "Test get_to_no_exist" << obj << std::endl;
+}

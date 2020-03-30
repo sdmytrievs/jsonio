@@ -147,6 +147,9 @@ public:
 
     // Get methods  --------------------------
 
+    const std::string& getKey() const override
+    {   return  field_key;   }
+
     Type type() const override
     {   return  field_type;  }
 
@@ -173,9 +176,6 @@ public:
 protected:
 
     // Get methods ( using in Qt GUI model ) --------------------------
-
-    const std::string& getKey() const override
-    {   return  field_key;   }
 
     size_t getNdx() const override
     {   return ndx_in_parent;  }

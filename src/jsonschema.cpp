@@ -18,7 +18,7 @@ JsonSchema JsonSchema::object( const std::string &schema_name )
 JsonSchema::JsonSchema( const JsonSchema &obj ):
     struct_descrip(obj.struct_descrip),
     field_descrip(obj.field_descrip),
-    level_type(obj.level_type),  //is_setup( obj.is_setup ),
+    level_type(obj.level_type),
     field_key(obj.field_key), field_value(obj.field_value),
     ndx_in_parent(0), parent_object(nullptr), children()
 {
@@ -28,7 +28,7 @@ JsonSchema::JsonSchema( const JsonSchema &obj ):
 JsonSchema::JsonSchema( JsonSchema &&obj ) noexcept:
     struct_descrip(obj.struct_descrip),
     field_descrip(obj.field_descrip),
-    level_type(obj.level_type),  //is_setup( obj.is_setup ),
+    level_type(obj.level_type),
     field_key( obj.field_key ), field_value( "" ),
     ndx_in_parent(obj.ndx_in_parent), parent_object(obj.parent_object), children()
 {
@@ -38,7 +38,7 @@ JsonSchema::JsonSchema( JsonSchema &&obj ) noexcept:
 // Constructor for empty struct (up level )
 JsonSchema::JsonSchema( const  StructDef* aStrDef ):
     struct_descrip( aStrDef ), field_descrip( FieldDef::topfield() ),
-    level_type( 0 ),  //is_setup( true ),
+    level_type( 0 ),
     field_key( aStrDef->name() ), field_value( "" ),
     ndx_in_parent( 0 ),
     parent_object( nullptr ), children()
@@ -49,7 +49,7 @@ JsonSchema::JsonSchema( const  StructDef* aStrDef ):
 // Constructor for empty field
 JsonSchema::JsonSchema( const  FieldDef* afldDef, JsonSchema* aparent ):
     struct_descrip( aparent->struct_descrip ), field_descrip( afldDef ),
-    level_type( 0 ),  //is_setup( false ),
+    level_type( 0 ),
     field_key( afldDef->name() ), field_value( "" ),
     ndx_in_parent( aparent->children.size() ),
     parent_object( aparent ), children()
@@ -61,7 +61,7 @@ JsonSchema::JsonSchema( const  FieldDef* afldDef, JsonSchema* aparent ):
 
 JsonSchema::JsonSchema( JsonBase::Type , const std::string &akey, const std::string &avalue, JsonSchema *aparent ):
     struct_descrip( aparent->struct_descrip ), field_descrip( aparent->field_descrip ),
-    level_type( 0 ),  //is_setup( false ),
+    level_type( 0 ),
     field_key( akey ), field_value( avalue ),
     ndx_in_parent(aparent->children.size()),
     parent_object(aparent), children()
@@ -87,8 +87,6 @@ void JsonSchema::copy(const JsonSchema &obj)
 {
     // field_key =  obj.field_key; // must be the same
     field_value = obj.field_value;
-    //is_setup = obj.is_setup;
-
     children.clear();
     for( auto child: obj.children )
     {
@@ -102,8 +100,6 @@ void JsonSchema::copy(const JsonSchema &obj)
 void JsonSchema::move(JsonSchema &&obj)
 {
     field_value = std::move(obj.field_value);
-    //is_setup = obj.is_setup;
-
     children = std::move(obj.children);
     obj.children.clear();
     for( auto child: children )

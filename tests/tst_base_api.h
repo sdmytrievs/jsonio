@@ -6,6 +6,7 @@
 #include <map>
 #include <unordered_map>
 #include "jsonio14/jsonfree.h"
+#include "jsonio14/jsonschema.h"
 #include "example_schema.h"
 
 using namespace testing;
@@ -40,7 +41,14 @@ template<> void JsonioBaseTest<JsonFree>::SetUp()
     test_object->loads( input_json );
 }
 
-using JsonTypes = ::testing::Types<JsonFree>;
+template<> void JsonioBaseTest<JsonSchema>::SetUp()
+{
+    test_object = new  JsonSchema( JsonSchema::object(schemaName) );
+    test_object->loads( input_json );
+    //std::cout << test_object->dump(false);
+}
+
+using JsonTypes = ::testing::Types<JsonFree, JsonSchema>;
 TYPED_TEST_SUITE(JsonioBaseTest, JsonTypes);
 
 TYPED_TEST( JsonioBaseTest, isTop )
@@ -237,46 +245,6 @@ TYPED_TEST( JsonioBaseTest, set_from )
     EXPECT_EQ( "{\"vbool\":false,\"vint\":15,\"vdouble\":-2.5,\"vstring\":\"New string\",\"vlist\":[17,27],\"vmap\":{\"newkey1\":\"val11\",\"newkey2\":\"val22\"}}\n", obj.toString(true) );
 }
 
-TYPED_TEST( JsonioBaseTest, get_to_no_exist )
-{
-    auto& obj = *this->test_object;
-
-    bool vbool{true};
-    EXPECT_TRUE( obj["noexist1"].get_to( vbool ) );
-    EXPECT_FALSE( vbool );
-
-    int  vint{5};
-    EXPECT_FALSE( obj["noexist2"].get_to( vint ) );
-    EXPECT_EQ( 5, vint );
-
-    double vdouble{0.1};
-    EXPECT_FALSE( obj["noexist3"].get_to( vdouble ));
-    EXPECT_EQ( 0.1, vdouble );
-
-    std::string vstr{"test"};
-    EXPECT_TRUE( obj["noexist4"].get_to( vstr ));
-    EXPECT_TRUE( vstr.empty() );
-
-    std::list<double> vlist{ 1.7, 5.7 };
-    EXPECT_TRUE( obj["noexist5"].get_to(vlist));
-    EXPECT_TRUE( vlist.empty() );
-
-    EXPECT_TRUE( obj["noexist8"]["list"].get_to(vlist));
-    EXPECT_TRUE( vlist.empty() );
-
-    std::unordered_map<std::string, std::string> vumaps{ {"key1", "val1" }, {"key2", "val2" } };
-    EXPECT_TRUE( obj["noexist6"].get_to(vumaps));
-    EXPECT_TRUE( vumaps.empty() );
-
-    EXPECT_TRUE( obj["noexist9"]["map"].get_to(vumaps));
-    EXPECT_TRUE( vumaps.empty() );
-
-    const auto& constobj = *this->test_object;
-    EXPECT_THROW( constobj["noexist7"].get_to( vint ), jarango_exception );
-
-    //std::cout << "Test get_to_no_exist" << obj << std::endl;
-}
-
 TYPED_TEST( JsonioBaseTest, get_to_illegal_value )
 {
     auto& obj = *this->test_object;
@@ -357,9 +325,9 @@ TYPED_TEST( JsonioBaseTest, Iterators )
 
     // iterate the array
     ii=0;
-    for (auto it = obj.begin(); it != obj.end(); ++it)
+    for (auto it = obj.begin(); it != obj.end(); ++it, ++ii)
     {
-        EXPECT_EQ( obj[ii++].toString(), (*it)->toString() );
+        EXPECT_EQ( obj[ (*it)->getKey() ].toString(), (*it)->toString() );
     }
     EXPECT_EQ( ii, obj.size() );
 }

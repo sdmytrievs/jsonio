@@ -42,8 +42,8 @@ template<> void JsonioBaseComplexTest<JsonFree>::SetUp()
     test_object->loads( input_json );
 }
 
-using JsonTypes = ::testing::Types<JsonFree>;
-TYPED_TEST_SUITE(JsonioBaseComplexTest, JsonTypes);
+using JsonTypes2 = ::testing::Types<JsonFree>;
+TYPED_TEST_SUITE(JsonioBaseComplexTest, JsonTypes2);
 
 TYPED_TEST( JsonioBaseComplexTest, GetPath )
 {

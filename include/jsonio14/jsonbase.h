@@ -99,6 +99,9 @@ public:
     /// Returns the object converted to a boolean value.
     virtual bool   toBool() const;
 
+    /// Return field key
+    virtual const std::string& getKey() const = 0;
+
     /// Get object type.
     virtual Type type() const = 0;
 
@@ -398,8 +401,6 @@ public:
 protected:
 
     // Get methods ( using in Qt GUI ) --------------------------
-
-    virtual const std::string& getKey() const = 0;
 
     virtual size_t getNdx() const = 0;
 
