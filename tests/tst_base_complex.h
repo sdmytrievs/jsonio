@@ -6,6 +6,7 @@
 #include <map>
 #include <unordered_map>
 #include "jsonio14/jsonfree.h"
+#include "jsonio14/jsonschema.h"
 
 using namespace testing;
 using namespace jsonio14;
@@ -42,7 +43,14 @@ template<> void JsonioBaseComplexTest<JsonFree>::SetUp()
     test_object->loads( input_json );
 }
 
-using JsonTypes2 = ::testing::Types<JsonFree>;
+template<> void JsonioBaseComplexTest<JsonSchema>::SetUp()
+{
+    test_object = new  JsonSchema( JsonSchema::object(schemaName) );
+    test_object->loads( input_json );
+    //std::cout << test_object->dump(false);
+}
+
+using JsonTypes2 = ::testing::Types<JsonFree, JsonSchema>;
 TYPED_TEST_SUITE(JsonioBaseComplexTest, JsonTypes2);
 
 TYPED_TEST( JsonioBaseComplexTest, GetPath )
@@ -98,13 +106,6 @@ TYPED_TEST( JsonioBaseComplexTest, AddValueViaPath )
 {
     auto& obj = *this->test_object;
 
-    auto new_obj1 = obj.add_object_via_path("formats.add_object1");
-    EXPECT_TRUE( new_obj1.isObject() );
-    EXPECT_TRUE( new_obj1.empty() );
-    EXPECT_TRUE( obj.path_if_exists( "formats.add_object1" ) );
-
-    EXPECT_THROW( obj.add_object_via_path("data[10]"), jarango_exception );
-
     int iwidth = 10;
     EXPECT_TRUE( obj.set_value_via_path( "formats.add_object2.width", iwidth ) );
     EXPECT_TRUE( obj["formats"]["add_object2"].isObject() );
@@ -119,8 +120,8 @@ TYPED_TEST( JsonioBaseComplexTest, ClearRemove )
 {
     auto& obj = *this->test_object;
 
-    EXPECT_TRUE( obj["data"][1]["value"].clear() );
-    EXPECT_EQ( obj["data"][1]["value"].toDouble(), 0 );
+    EXPECT_TRUE( obj["formats"]["float"]["width"].clear() );
+    EXPECT_EQ( obj["formats"]["float"]["width"].toDouble(), 0 );
 
     EXPECT_TRUE( obj["about"]["description"].clear() );
     EXPECT_EQ( obj["about"]["description"].toString(), "" );

@@ -418,3 +418,27 @@ TEST( JsonioBase, get_to_no_exist_free )
 
     //std::cout << "Test get_to_no_exist" << obj << std::endl;
 }
+
+TEST( JsonioBase, AddValueViaPath )
+{
+    auto obj = json::loads("{\"about\":{\"version\":1,\"description\":\"About\"},\"formats\":"
+                           "{\"int\":{\"width\":5,\"precision\":0},\"float\":{\"width\":10,\"precision\":4},"
+                           "\"double\":{\"width\":15,\"precision\":6}},\"data\":[{\"group\":\"float\",\"value\":1.4},"
+                           "{\"group\":\"int\",\"value\":100},{\"group\":\"double\",\"value\":1e-10},{\"group\":\"double\",\"value\":10000000000}],"
+                           "\"values\":[[1,2,3],[11,12,13]]}");
+
+    auto new_obj1 = obj.add_object_via_path("formats.add_object1");
+    EXPECT_TRUE( new_obj1.isObject() );
+    EXPECT_TRUE( new_obj1.empty() );
+    EXPECT_TRUE( obj.path_if_exists( "formats.add_object1" ) );
+
+    EXPECT_THROW( obj.add_object_via_path("data[10]"), jarango_exception );
+
+    int iwidth = 10;
+    EXPECT_TRUE( obj.set_value_via_path( "formats.add_object2.width", iwidth ) );
+    EXPECT_TRUE( obj["formats"]["add_object2"].isObject() );
+    EXPECT_FALSE( obj["formats"]["add_object2"].empty() );
+    EXPECT_EQ( obj["formats"]["add_object2"]["width"].toInt(), iwidth );
+
+    EXPECT_FALSE( obj.set_value_via_path( "data[4].value", 2.5 ) );
+}
