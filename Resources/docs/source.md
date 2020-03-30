@@ -172,9 +172,19 @@ In future we can have JsonStructDef and JsonFieldDef implementation [JsonShema](
 
 > *source: "-";    test: "-";  example: "-"*
 
-14. jsonschema.h(cpp)  under construction
+14. jsonschema.h(cpp)
 
-> *source: "-";    test: "-";  example: "-"*
+
+To be done
+Add description and example
+
+By default add requered fields and defaults with requered fields
+Add field to structure by order, not to back
+Added tests for deefault values and addition functions
+cmake run tests -> copy Resources and config or read schemas from string
+
+> *source: "-";    test: "+";  example: "-"*
+
 
 
 ## Next steps --------------------------------------------------------------------------------
