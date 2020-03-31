@@ -24,11 +24,11 @@ public:
     /// Create object JSON value
     static  JsonSchema object( const std::string& schema_name );
 
-    ///??? Create array JSON value
-    static  JsonSchema array( const std::string& schema_name, const std::string& key = "top" )
-    {
-        return JsonSchema( Array, key, "", nullptr );
-    }
+    // Create array JSON value
+    //static  JsonSchema array( const std::string& schema_name, const std::string& key = "top" )
+    //{
+    //    return JsonSchema( Array, key, "", nullptr );
+    //}
 
     /// Copy constructor
     JsonSchema(const JsonSchema &obj );
@@ -277,7 +277,6 @@ private:
     JsonSchema( JsonBase::Type atype, const std::string &akey, const std::string& avalue, JsonSchema *aparent  );
 
     void update_node(  JsonBase::Type atype, const std::string& avalue ) override;
-    ///???
     JsonBase *append_node( const std::string& akey, JsonBase::Type atype, const std::string& avalue ) override;
 
     /// Get field by fieldpath
