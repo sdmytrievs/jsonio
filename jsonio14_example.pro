@@ -58,10 +58,11 @@ OBJECTS_DIR   = obj
 include($$JSONIO14_DIR/jsonio14.pri)
 
 SOURCES += \
-       main.cpp
-#      examples/create_example.cpp \
-#      examples/exbuilder.cpp
-#      examples/exparser.cpp
+      main.cpp
+#      examples/create_example.cpp
+#      examples/schema_example.cpp
+#      examples/builder_example.cpp
+#      examples/parser_example.cpp
 #      examples/time_parser.cpp
 
 DISTFILES += \

@@ -50,54 +50,15 @@ void ReadThriftSchemas()
    auto object_sub = JsonSchema::object("VertexSubstance");
    object_sub.loads(json_data);
          std::cout <<  object_sub << std::endl;
-
 }
 
-void ReadDefaultSchemas()
-{
-    int  vint{15};
-    std::vector<double> vlist{ 17, 27 };
-    std::map<std::string, std::string> vumap{ {"key1", "val1" }, {"key2", "val2" } };
-    std::string vstr{"New string"};
-    ioSettings().addSchemaFormat(schema_thrift, schema_str);
-
-    auto simple_object = JsonSchema( JsonSchema::object("SimpleSchemaTest") );
-    std::cout <<  simple_object << std::endl;
-
-    simple_object["vstring"] =  vstr;
-    simple_object["vlist"] = vlist;
-    simple_object["vlist"][2] = 11;
-    simple_object["vmap"] = vumap;
-    simple_object["vmap"]["key3"] = "10";
-    simple_object["vbool"] = true;
-    simple_object["vint"] = vint;
-    simple_object["vdouble"] = 2.5;   // order test
-
-    // exception undefined field
-    // exception not next index
-
-    std::cout <<  simple_object << std::endl;
-
-    // complex test
-    auto complex_object = JsonSchema( JsonSchema::object("ComplexSchemaTest") );
-    std::cout <<  complex_object << std::endl;
-
-   auto describe_object = JsonSchema( JsonSchema::object("Describe") );
-   describe_object["description"] = "the description";
-
-   auto spdata_object = JsonSchema( JsonSchema::object("SpecifiersData") );
-   spdata_object["group"] = "the group";
-
-   // std::cout <<  complex_object << std::endl;
-}
 
 int main()
 {
     cout << "Hello World!" << endl;
     try{
 
-        //ReadThriftSchemas();
-        ReadDefaultSchemas();
+        ReadThriftSchemas();
         //AccesstoObjectError();
     }
     catch(jarango_exception& e)

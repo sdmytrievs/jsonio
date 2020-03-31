@@ -120,7 +120,6 @@ for (JsonFree::iterator it = obj.begin(); it != obj.end(); ++it) {
   std::cout << it->get()->toString(true) << '\n';
 }
 
-
 ```
 
 > *source: "+";    test: "+";  example: "+"*
@@ -174,14 +173,33 @@ In future we can have JsonStructDef and JsonFieldDef implementation [JsonShema](
 
 14. jsonschema.h(cpp)
 
+class JsonSchema - a class to store schema based JSON object
 
-To be done
-Add description and example
-Added tests for deefault values and addition functions
+```cpp
+
+int  vint{15};
+std::vector<double> vlist{ 17, 27 };
+std::map<std::string, std::string> vumap{ {"key1", "val1" }, {"key2", "val2" } };
+std::string vstr{"New string"};
+
+auto simple_object = JsonSchema( JsonSchema::object("SimpleSchemaTest") );
+
+simple_object["vbool"] = true;
+simple_object["vint"] = vint;
+simple_object["vdouble"] = 2.5;   // order test
+simple_object["vstring"] =  vstr;
+simple_object["vlist"] = vlist;
+simple_object["vlist"][2] = 11;
+simple_object["vmap"] = vumap;
+simple_object["vmap"]["key3"] = "10";
+
+std::cout <<  simple_object << std::endl;
+
+```
 
 
-> *source: "-";    test: "+";  example: "-"*
 > By default add requered fields and fields with default value
+> *source: "-";    test: "+";  example: "+"*
 
 
 ## Next steps --------------------------------------------------------------------------------

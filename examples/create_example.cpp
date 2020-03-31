@@ -27,9 +27,9 @@ int main(int , char** )
 {
     try{
         CreateanObject();
-        //SerializationDeserialization();
-        //AccesstoObject();
-        //STLcontainers();
+        SerializationDeserialization();
+        AccesstoObject();
+        STLcontainers();
         FieldPathMethods();
     }
     catch(jarango_exception& e)
