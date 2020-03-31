@@ -13,7 +13,7 @@ CONFIG -= qt
 QMAKE_CFLAGS += pedantic -Wall -Wextra -Wwrite-strings -Werror
 QMAKE_CXXFLAGS += -ansi -pedantic -Wall -Wextra -Weffc++
 #QMAKE_CXXFLAGS += -Wall -Wextra -Wformat-nonliteral -Wcast-align -Wpointer-arith \
-# -Wmissing-declarations -Winline -Wundef \
+# -Wmissing-declarations -Winline -Wundef -Weffc++ \
 # -Wcast-qual -Wshadow -Wwrite-strings -Wno-unused-parameter \
 #-Wfloat-equal -pedantic -ansi
 }
@@ -58,11 +58,12 @@ OBJECTS_DIR   = obj
 include($$JSONIO14_DIR/jsonio14.pri)
 
 SOURCES += \
-#       main.cpp
-#      examples/create_example.cpp \
-#      examples/exbuilder.cpp
-#      examples/exparser.cpp
-      examples/time_parser.cpp
+      main.cpp
+#      examples/create_example.cpp
+#      examples/schema_example.cpp
+#      examples/builder_example.cpp
+#      examples/parser_example.cpp
+#      examples/time_parser.cpp
 
 DISTFILES += \
     Resources/docs/source.md \
@@ -70,3 +71,4 @@ DISTFILES += \
 
 
 
+#thrift -r -v --gen json

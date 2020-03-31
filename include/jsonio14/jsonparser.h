@@ -1,12 +1,12 @@
 #pragma once
 
-#include "jsonbuilder.h"
+#include "jsonio14/jsonbuilder.h"
 
 namespace jsonio14 {
 
 
 /// Class for read JsonBase structure from json string.
-class JsonParser
+class JsonParser final
 {
 
     const std::size_t err_block_size{20};
@@ -28,7 +28,7 @@ public:
     }
 
     /// Parse internal string to the JSON object result_object;
-    void parse_to( JsonBase& result_object );
+    void parse_to( JsonBase* result_object );
 
 protected:
 
@@ -40,11 +40,11 @@ protected:
     bool skip_space();
     bool skip_space_comment();
     bool parse_string( std::string& str );
-    void parse_value( const std::string& name, JsonBuilderBase& builder );
+    void parse_value( int depth, const std::string& name, JsonBuilderBase& builder );
     /// Parse internal jsontext string to json structure (with first {)
-    void parse_object( JsonObjectBuilder& builder );
+    void parse_object( int depth, JsonObjectBuilder& builder );
     /// Parse internal jsontext string to json structure (with first [)
-    void parse_array( JsonArrayBuilder& builder );
+    void parse_array( int depth, JsonArrayBuilder& builder );
 
     /// Get substr with error
     std::string err_part() const;

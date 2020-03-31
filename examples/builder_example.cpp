@@ -1,7 +1,6 @@
 #include <iostream>
 #include <unordered_map>
 #include <list>
-
 #include "jsonio14/jsonbuilder.h"
 #include "jsonio14/jsondump.h"
 #include "jsonio14/jsonfree.h"
@@ -11,7 +10,7 @@ using namespace std;
 void buildArray()
 {
     auto jsFree =JsonFree::array();
-    JsonArrayBuilder jsBuilder(jsFree);
+    JsonArrayBuilder jsBuilder(&jsFree);
 
     double val=0.5;
     for( int ii=0; ii<5; ++ii )
@@ -30,7 +29,7 @@ void buildOneObject()
     std::unordered_map<std::string, std::string> vumaps = { {"key1", "val1" }, {"key2", "val2" } };
 
     auto jsFree =JsonFree::object();
-    JsonObjectBuilder jsBuilder(jsFree);
+    JsonObjectBuilder jsBuilder(&jsFree);
 
     jsBuilder.addNull( "vnull").addBool( "vbool", true ).addInt( "vint", vint );
     jsBuilder.addDouble( "vdouble", vdouble ).addString( "vstring", "Test String" );
@@ -44,7 +43,7 @@ void buildOneObject()
 void buildComplexObject()
 {
     auto jsFree =JsonFree::object();
-    JsonObjectBuilder jsBuilder(jsFree);
+    JsonObjectBuilder jsBuilder(&jsFree);
 
     jsBuilder.addString( "name", "ComplexObject" );
 
@@ -63,7 +62,7 @@ void buildComplexObject()
 void buildObjectInfers()
 {
     auto jsFree =JsonFree::object();
-    JsonObjectBuilder jsBuilder(jsFree);
+    JsonObjectBuilder jsBuilder(&jsFree);
 
     jsBuilder.addScalar( "vnull", "null").addScalar( "vbool1", "true" )
             .addScalar( "vbool2", "false" ).addScalar( "vint", "3" )

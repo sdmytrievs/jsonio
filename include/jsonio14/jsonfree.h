@@ -1,7 +1,10 @@
 #pragma once
 
-#include "exceptions.h"
-#include "jsonbase.h"
+#include <memory>
+#include <algorithm>
+
+#include "jsonio14/exceptions.h"
+#include "jsonio14/jsonbase.h"
 
 namespace jsonio14 {
 
@@ -13,20 +16,20 @@ class JsonFree final : public JsonBase
 public:
 
     /// An iterator for a JsonFree container
-    using iterator = std::vector<JsonFree>::iterator;
+    using iterator = std::vector<std::shared_ptr<JsonFree>>::iterator;
     /// A const iterator for a JsonFree container
-    using const_iterator = std::vector<JsonFree>::const_iterator;
+    using const_iterator = std::vector<std::shared_ptr<JsonFree>>::const_iterator;
 
     /// Create object JSON value
     static  JsonFree object( const std::string& key = "top" )
     {
-        return JsonFree( Object, key, "" );
+        return JsonFree( Object, key, "", nullptr );
     }
 
     /// Create array JSON value
     static  JsonFree array( const std::string& key = "top" )
     {
-        return JsonFree( Array, key, "" );
+        return JsonFree( Array, key, "", nullptr );
     }
 
     /// Copy constructor
@@ -61,7 +64,7 @@ public:
     template <class T>
     JsonFree &operator =( const T& value )
     {
-        set_from( value  );
+        this->set_from( value  );
         return *this;
     }
 
@@ -125,7 +128,7 @@ public:
     }
 
     /// @brief returns a const iterator to one past the last element.
-    const_iterator cend()
+    const_iterator cend() const
     {
         return children.cend();
     }
@@ -143,6 +146,9 @@ public:
     { return parent_object == nullptr; }
 
     // Get methods  --------------------------
+
+    const std::string& getKey() const override
+    {   return  field_key;   }
 
     Type type() const override
     {   return  field_type;  }
@@ -165,14 +171,11 @@ public:
     void array_resize( std::size_t size, const std::string &defval ) override;
 
     /// Return a reference to object[jsonpath] if an object can be create, exception otherwise.
-    virtual JsonFree &add_object_via_path(const std::string &jsonpath) override;
+    JsonFree &add_object_via_path(const std::string &jsonpath);
 
 protected:
 
     // Get methods ( using in Qt GUI model ) --------------------------
-
-    const std::string& getKey() const override
-    {   return  field_key;   }
 
     size_t getNdx() const override
     {   return ndx_in_parent;  }
@@ -187,7 +190,7 @@ protected:
     {
         if( ndx < getChildrenCount() )
         {
-            return  &children[ndx];
+            return  children[ndx].get();
         }
         return nullptr;
     }
@@ -195,7 +198,7 @@ protected:
     const JsonBase* getParent() const override
     {  return parent_object;  }
 
-    std::vector<std::string> getUsedKeys() const override;
+    list_names_t getUsedKeys() const override;
 
 private:
 
@@ -211,13 +214,13 @@ private:
     /// Parent object
     JsonFree *parent_object;
     /// Children objects for Object or Array
-    std::vector<JsonFree> children;
+    std::vector<std::shared_ptr<JsonFree>> children;
 
     /// Object constructor
-    JsonFree( JsonBase::Type atype, const std::string &akey, const std::string& avalue, JsonFree *aparent = nullptr );
+    JsonFree( JsonBase::Type atype, const std::string &akey, const std::string& avalue, JsonFree *aparent  );
 
     void update_node(  JsonBase::Type atype, const std::string& avalue ) override;
-    JsonFree &append_node( const std::string& akey, JsonBase::Type atype, const std::string& avalue ) override;
+    JsonBase *append_node( const std::string& akey, JsonBase::Type atype, const std::string& avalue ) override;
     /// Get field by fieldpath
     JsonFree *field( std::queue<std::string> names ) const override;
     /// Add field by fieldpath
@@ -227,6 +230,12 @@ private:
     void copy(const JsonFree &obj);
     /// Move children
     void move( JsonFree &&obj);
+
+    auto find_key(const std::string &key) const
+    {
+        return std::find_if( children.begin(), children.end(),
+                             [=]( const auto& value ) { return value->getKey() == key; });
+    }
 
     const JsonFree &get_child(std::size_t idx) const;
     JsonFree &get_child( std::size_t idx );

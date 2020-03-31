@@ -42,9 +42,8 @@ INCLUDEPATH   += $$JSONIO14_HEADERS_DIR
 INCLUDEPATH   += $$TESTS_DIR
 
 #LIBS +=  -lcurl  -lvelocypack
-#win32:LIBS +=   -lboost_system-mgw73-mt-d-x64-1_70 -lboost_filesystem-mgw73-mt-d-x64-1_70
 #!win32:LIBS +=  -lboost_system -lboost_filesystem -lstdc++fs
-!win32:LIBS +=  -lstdc++fs
+LIBS +=  -lstdc++fs
 
 OBJECTS_DIR   = obj
 
@@ -52,6 +51,7 @@ include($$TESTS_DIR/gtest_dependency.pri)
 include($$JSONIO14_DIR/jsonio14.pri)
 
 HEADERS += \
+        $$TESTS_DIR/example_schema.h \
         $$TESTS_DIR/tst_jsonio.h \
         $$TESTS_DIR/tst_service.h \
         $$TESTS_DIR/tst_detail.h \
@@ -60,7 +60,9 @@ HEADERS += \
         $$TESTS_DIR/tst_base_api.h \
         $$TESTS_DIR/tst_builder.h \
         $$TESTS_DIR/tst_parser.h \
-        $$TESTS_DIR/tst_base_complex.h
+        $$TESTS_DIR/tst_base_complex.h \
+        $$TESTS_DIR/tst_schema.h \
+        $$TESTS_DIR/tst_jsonschema.h
 
 SOURCES += \
         $$TESTS_DIR/main.cpp

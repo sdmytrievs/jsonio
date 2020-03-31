@@ -2,13 +2,16 @@
 
 #include <iostream>
 #include <vector>
-#include <queue>
-#include "exceptions.h"
-#include "type_test.h"
-#include "jsondetail.h"
+#include <set>
+#include "jsonio14/exceptions.h"
+#include "jsonio14/type_test.h"
+#include "jsonio14/jsondetail.h"
 
 namespace jsonio14 {
 
+using list_names_t =  std::vector<std::string>;
+using set_names_t =  std::set<std::string>;
+const std::string field_path_delimiters =  "./[]\"";
 
 /// @brief An interface to store JSON object.
 /// @class JsonBase represents an abstract item in a tree view.
@@ -47,7 +50,7 @@ public:
     { return  type() == Type::Array; }
 
     /// This function returns true if and only if the JSON type is a numeric value.
-    virtual bool isNumber( ) const
+    virtual bool isNumber() const
     { return  type() == Type::Int or type() == Type::Double; }
 
     /// This function returns true if and only if the JSON type is boolean.
@@ -97,6 +100,9 @@ public:
     virtual long   toInt() const;
     /// Returns the object converted to a boolean value.
     virtual bool   toBool() const;
+
+    /// Return field key
+    virtual const std::string& getKey() const = 0;
 
     /// Get object type.
     virtual Type type() const = 0;
@@ -278,7 +284,9 @@ public:
         update_node(  Array, "" );
         for( const auto& el: values )
         {
-            append_node( std::to_string(ii++), Null, "" ).set_from(el);
+            auto obj = append_node( std::to_string(ii++), Null, "" );
+            if( obj )
+                obj->set_from(el);
         }
     }
 
@@ -290,7 +298,9 @@ public:
         update_node(  Object, "" );
         for( const auto& el: values )
         {
-            append_node( el.first, Null, "" ).set_from(el.second);
+            auto obj = append_node( el.first, Null, "" );
+            if( obj )
+                obj->set_from(el.second);
         }
     }
 
@@ -316,6 +326,9 @@ public:
 
 
     // Field path  methods --------------------------
+
+    /// Get field by fieldpath ("name1.name2.name3")
+    const JsonBase *field(  const std::string& fieldpath ) const;
 
     /// Return a string representation of the jsonpath to top field.
     std::string get_path() const;
@@ -384,14 +397,9 @@ public:
         return false;
     }
 
-    /// Return a reference to object[jsonpath] if an object can be create, exception otherwise.
-    virtual JsonBase &add_object_via_path(const std::string &jsonpath) = 0;
-
 protected:
 
     // Get methods ( using in Qt GUI ) --------------------------
-
-    virtual const std::string& getKey() const = 0;
 
     virtual size_t getNdx() const = 0;
 
@@ -403,7 +411,7 @@ protected:
 
     virtual const JsonBase* getParent() const = 0;
 
-    virtual std::vector<std::string> getUsedKeys() const = 0;
+    virtual list_names_t getUsedKeys() const = 0;
 
     /// Get object name.
     virtual std::string getHelpName() const;
@@ -417,10 +425,10 @@ protected:
 private:
 
     virtual void update_node(  Type atype, const std::string& avalue ) =0;
-    virtual JsonBase& append_node( const std::string& akey, Type atype, const std::string& avalue ) =0;
+    virtual JsonBase *append_node( const std::string& akey, Type atype, const std::string& avalue ) =0;
     void dump2stream(std::ostream &os, int depth, bool dense) const;
-    /// Get field by fieldpath ("name1.name2.name3")
-    JsonBase *field(  const std::string& fieldpath ) const;
+    // Get field by fieldpath ("name1.name2.name3")
+    //JsonBase *field(  const std::string& fieldpath ) const;
     virtual JsonBase *field( std::queue<std::string> names ) const = 0;
     /// Get field by fieldpath ("name1.name2.name3")
     JsonBase *field_add(  const std::string& fieldpath );

@@ -1,6 +1,7 @@
 #include <iomanip>
 #include "jsonio14/jsondump.h"
 #include "jsonio14/jsonfree.h"
+#include "jsonio14/jsonschema.h"
 #include "jsonio14/service.h"
 
 
@@ -26,6 +27,14 @@ void loads(const std::string &jsonstr, JsonBase &object)
 JsonFree loads(const std::string &jsonstr)
 {
     auto object = JsonFree::object();
+    object.loads(jsonstr);
+    return object;
+}
+
+
+JsonSchema loads(const std::string& schema_name,const std::string &jsonstr)
+{
+    auto object = JsonSchema::object(schema_name);
     object.loads(jsonstr);
     return object;
 }

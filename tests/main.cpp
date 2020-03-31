@@ -8,9 +8,10 @@
 #include "tst_builder.h"
 #include "tst_parser.h"
 #include "tst_base.h"
-//#include "tst_base_api.h"
-//#include "tst_base_complex.h"
-
+#include "tst_base_api.h"
+#include "tst_base_complex.h"
+#include "tst_schema.h"
+#include "tst_jsonschema.h"
 
 
 // https://doc.qt.io/qtcreator/creator-autotest.html

@@ -372,8 +372,73 @@ TEST( JsonioBase, ObjectAssignment)
     EXPECT_EQ( obj["formats"].size(), 2 );
     EXPECT_EQ( obj["formats"]["obj2"].dump(true), "{\"width\":20,\"precision\":10}\n" );
 
-    obj["formats"]["obj3"] = json::loads("{\"width\":30,\"precision\":15}"); // move assigned !!!! Problem key
+    obj["formats"]["obj3"] = json::loads("{\"width\":30,\"precision\":15}");
     EXPECT_EQ( obj["formats"].size(), 3 );
-    EXPECT_EQ( obj["formats"]["top"].dump(true), "{\"width\":30,\"precision\":15}\n" );
+    EXPECT_EQ( obj["formats"]["obj3"].dump(true), "{\"width\":30,\"precision\":15}\n" );
 
+}
+
+TEST( JsonioBase, get_to_no_exist_free )
+{
+    auto obj = json::loads("{\"vbool\":true,\"vint\":-100,\"vdouble\":5.2,\"vstring\":\"Test string\","
+                           "\"vlist\":[1.7,2.7,3.7,5.7],\"vmap\":{\"key1\":\"val1\",\"key2\":\"val2\"}}");
+
+    bool vbool{true};
+    EXPECT_TRUE( obj["noexist1"].get_to( vbool ) );
+    EXPECT_FALSE( vbool );
+
+    int  vint{5};
+    EXPECT_FALSE( obj["noexist2"].get_to( vint ) );
+    EXPECT_EQ( 5, vint );
+
+    double vdouble{0.1};
+    EXPECT_FALSE( obj["noexist3"].get_to( vdouble ));
+    EXPECT_EQ( 0.1, vdouble );
+
+    std::string vstr{"test"};
+    EXPECT_TRUE( obj["noexist4"].get_to( vstr ));
+    EXPECT_TRUE( vstr.empty() );
+
+    std::list<double> vlist{ 1.7, 5.7 };
+    EXPECT_TRUE( obj["noexist5"].get_to(vlist));
+    EXPECT_TRUE( vlist.empty() );
+
+    EXPECT_TRUE( obj["noexist8"]["list"].get_to(vlist));
+    EXPECT_TRUE( vlist.empty() );
+
+    std::unordered_map<std::string, std::string> vumaps{ {"key1", "val1" }, {"key2", "val2" } };
+    EXPECT_TRUE( obj["noexist6"].get_to(vumaps));
+    EXPECT_TRUE( vumaps.empty() );
+
+    EXPECT_TRUE( obj["noexist9"]["map"].get_to(vumaps));
+    EXPECT_TRUE( vumaps.empty() );
+
+    const auto& constobj = obj;
+    EXPECT_THROW( constobj["noexist7"].get_to( vint ), jarango_exception );
+
+    //std::cout << "Test get_to_no_exist" << obj << std::endl;
+}
+
+TEST( JsonioBase, AddValueViaPath )
+{
+    auto obj = json::loads("{\"about\":{\"version\":1,\"description\":\"About\"},\"formats\":"
+                           "{\"int\":{\"width\":5,\"precision\":0},\"float\":{\"width\":10,\"precision\":4},"
+                           "\"double\":{\"width\":15,\"precision\":6}},\"data\":[{\"group\":\"float\",\"value\":1.4},"
+                           "{\"group\":\"int\",\"value\":100},{\"group\":\"double\",\"value\":1e-10},{\"group\":\"double\",\"value\":10000000000}],"
+                           "\"values\":[[1,2,3],[11,12,13]]}");
+
+    auto new_obj1 = obj.add_object_via_path("formats.add_object1");
+    EXPECT_TRUE( new_obj1.isObject() );
+    EXPECT_TRUE( new_obj1.empty() );
+    EXPECT_TRUE( obj.path_if_exists( "formats.add_object1" ) );
+
+    EXPECT_THROW( obj.add_object_via_path("data[10]"), jarango_exception );
+
+    int iwidth = 10;
+    EXPECT_TRUE( obj.set_value_via_path( "formats.add_object2.width", iwidth ) );
+    EXPECT_TRUE( obj["formats"]["add_object2"].isObject() );
+    EXPECT_FALSE( obj["formats"]["add_object2"].empty() );
+    EXPECT_EQ( obj["formats"]["add_object2"]["width"].toInt(), iwidth );
+
+    EXPECT_FALSE( obj.set_value_via_path( "data[4].value", 2.5 ) );
 }

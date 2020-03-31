@@ -33,7 +33,7 @@ struct SpecifiersData {
     /** Group of specifiers */
     1: string group
     /** Value */
-    2: double value
+    2: double value = 1.0e5
 }
 
 
@@ -48,11 +48,11 @@ struct FormatData {
 /** Complex schema class */
 struct ComplexSchemaTest {
     /** Description of task */
-    1: Describe about
+    1: Describe about = { "version": 1 }
     /** Format data list */
     2: map<string,FormatData> formats
     /** A Format described data */
     3: list<SpecifiersData>  data
     /** 2D list */
-    4: list<list<double>>   values
+    4: list<list<double>>   values = [[ 1 ,2 ],[ 3, 4 ]]
 }

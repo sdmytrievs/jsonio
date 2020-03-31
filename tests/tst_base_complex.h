@@ -6,6 +6,10 @@
 #include <map>
 #include <unordered_map>
 #include "jsonio14/jsonfree.h"
+#include "jsonio14/jsonschema.h"
+#include "jsonio14/io_settings.h"
+#include "jsonio14/schema_thrift.h"
+#include "example_schema.h"
 
 using namespace testing;
 using namespace jsonio14;
@@ -18,11 +22,12 @@ class JsonioBaseComplexTest : public ::testing::Test
 public:
 
     const std::string schemaName = "ComplexSchemaTest";
-    const std::string input_json = "{\"about\":{\"version\":1,\"description\":\"About\"},\"formats\":"
-                                   "{\"int\":{\"width\":5,\"precision\":0},\"float\":{\"width\":10,\"precision\":4},"
-                                   "\"double\":{\"width\":15,\"precision\":6}},\"data\":[{\"group\":\"float\",\"value\":1.4},"
-                                   "{\"group\":\"int\",\"value\":100},{\"group\":\"double\",\"value\":1e-10},{\"group\":\"double\",\"value\":10000000000}],"
-                                   "\"values\":[[1,2,3],[11,12,13]]}";
+    const std::string input_json = complex_schema_value;
+    //    "{\"about\":{\"version\":1,\"description\":\"About\"},\"formats\":"
+    //    "{\"int\":{\"width\":5,\"precision\":0},\"float\":{\"width\":10,\"precision\":4},"
+    //    "\"double\":{\"width\":15,\"precision\":6}},\"data\":[{\"group\":\"float\",\"value\":1.4},"
+    //    "{\"group\":\"int\",\"value\":100},{\"group\":\"double\",\"value\":1e-10},{\"group\":\"double\",\"value\":10000000000}],"
+    //    "\"values\":[[1,2,3],[11,12,13]]}";
 
     virtual void SetUp()
     { }
@@ -42,8 +47,16 @@ template<> void JsonioBaseComplexTest<JsonFree>::SetUp()
     test_object->loads( input_json );
 }
 
-using JsonTypes = ::testing::Types<JsonFree>;
-TYPED_TEST_SUITE(JsonioBaseComplexTest, JsonTypes);
+template<> void JsonioBaseComplexTest<JsonSchema>::SetUp()
+{
+    ioSettings().addSchemaFormat(schema_thrift, schema_str);
+    test_object = new  JsonSchema( JsonSchema::object(schemaName) );
+    test_object->loads( input_json );
+    //std::cout << test_object->dump(false);
+}
+
+using JsonTypes2 = ::testing::Types<JsonFree, JsonSchema>;
+TYPED_TEST_SUITE(JsonioBaseComplexTest, JsonTypes2);
 
 TYPED_TEST( JsonioBaseComplexTest, GetPath )
 {
@@ -84,7 +97,12 @@ TYPED_TEST( JsonioBaseComplexTest, ValueViaPath )
 
     std::string sval;
     EXPECT_TRUE( obj.get_value_via_path( "data[2]", sval, std::string("undefined") ) );
+#ifdef _WIN32
+    EXPECT_EQ( sval, "{\"group\":\"double\",\"value\":1e-010}\n");
+#else
     EXPECT_EQ( sval, "{\"group\":\"double\",\"value\":1e-10}\n");
+#endif
+
     EXPECT_TRUE( obj.get_key_via_path( "data[2]", sval ) );
     EXPECT_EQ( sval, "");
 }
@@ -92,13 +110,6 @@ TYPED_TEST( JsonioBaseComplexTest, ValueViaPath )
 TYPED_TEST( JsonioBaseComplexTest, AddValueViaPath )
 {
     auto& obj = *this->test_object;
-
-    auto new_obj1 = obj.add_object_via_path("formats.add_object1");
-    EXPECT_TRUE( new_obj1.isObject() );
-    EXPECT_TRUE( new_obj1.empty() );
-    EXPECT_TRUE( obj.path_if_exists( "formats.add_object1" ) );
-
-    EXPECT_THROW( obj.add_object_via_path("data[10]"), jarango_exception );
 
     int iwidth = 10;
     EXPECT_TRUE( obj.set_value_via_path( "formats.add_object2.width", iwidth ) );
@@ -114,8 +125,8 @@ TYPED_TEST( JsonioBaseComplexTest, ClearRemove )
 {
     auto& obj = *this->test_object;
 
-    EXPECT_TRUE( obj["data"][1]["value"].clear() );
-    EXPECT_EQ( obj["data"][1]["value"].toDouble(), 0 );
+    EXPECT_TRUE( obj["formats"]["float"]["width"].clear() );
+    EXPECT_EQ( obj["formats"]["float"]["width"].toDouble(), 0 );
 
     EXPECT_TRUE( obj["about"]["description"].clear() );
     EXPECT_EQ( obj["about"]["description"].toString(), "" );
@@ -134,9 +145,13 @@ TYPED_TEST( JsonioBaseComplexTest, ClearRemove )
     EXPECT_EQ( obj["data"].size(), 4 );
     EXPECT_TRUE( obj["data"][1].remove() );
     EXPECT_EQ( obj["data"].size(), 3 );
+#ifdef _WIN32
+    EXPECT_EQ( obj["data"].toString(true),
+            "[{\"group\":\"float\",\"value\":1.4},{\"group\":\"double\",\"value\":1e-010},{\"group\":\"double\",\"value\":10000000000}]\n" );
+#else
     EXPECT_EQ( obj["data"].toString(true),
             "[{\"group\":\"float\",\"value\":1.4},{\"group\":\"double\",\"value\":1e-10},{\"group\":\"double\",\"value\":10000000000}]\n" );
-
+#endif
 }
 
 TYPED_TEST( JsonioBaseComplexTest, ArrayResize )

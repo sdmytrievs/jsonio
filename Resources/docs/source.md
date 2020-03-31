@@ -117,15 +117,12 @@ obj["vmap"]["key3"] = 10;
 
 
 for (JsonFree::iterator it = obj.begin(); it != obj.end(); ++it) {
-  std::cout << it->toString(true) << '\n';
+  std::cout << it->get()->toString(true) << '\n';
 }
-
 
 ```
 
 > *source: "+";    test: "+";  example: "+"*
-> Error when move assignment: object["key"]= std::move(anotherobject);
-> key would be overwritten by anotherobject key
 
 9. txt2file.h(cpp)
 
@@ -137,7 +134,7 @@ Subset of the Filesystem library provides facilities for performing operations o
 > *source: "+";    test: "+";  example: "-"*
 
 
-10. io_settings.h(cpp)  ( could be new functions in future )
+10. io_settings.h(cpp)
 
 class JsonioSettings - storing preferences to JSONIO
 
@@ -145,27 +142,71 @@ class JsonioSettings - storing preferences to JSONIO
 > *source: "+-";    test: "+";  example: "-"*
 
 
+11. schema.h
+
+New API working with schemas. We create Interfaces  for working with schema descriptions
+Interfaces FieldDef - Definition of one field in thrift structure;
+           StructDef - Structured data definition;
+           EnumDef - Enum data definition
+
+Class SchemasData - all json schemas collection
+
+> *source: "+";    test: "+";  example: "-"*
+> d. Functions getVertexList, getEdgesList, getVertexCollection, getEdgeCollection, getVertexName could be moved to database implementation and add functions for set this data. This data could be setted when read thrift scheas or other place.
+> e. Into SchemaJson get links to base StructDef and FieldDef and implement ```c++ template<type T> static SchemaJson::object( const string& schema_name ) ```
+> f. Into  SchemaJson use ```c++ const  StructDef* const;   const  FieldDef* const  ``` for only read data.
+> g. Into  StructDef functions: getName(), testUnion(), getOtherStruct( struct_name ), getField( field_name ).
+
+
+12. schema_thrift.h(cpp)
+
+Implementation of FieldDef, StructDef, EnumDef interfaces for Thrift schemas
+
+> *source: "+";    test: "+";  example: "-"*
+
+13. schema_json.h(cpp)   - not implemented
+
+To be done
+In future we can have JsonStructDef and JsonFieldDef implementation [JsonShema](http://json-schema.org/)
+
+> *source: "-";    test: "-";  example: "-"*
+
+14. jsonschema.h(cpp)
+
+class JsonSchema - a class to store schema based JSON object
+
+```cpp
+
+int  vint{15};
+std::vector<double> vlist{ 17, 27 };
+std::map<std::string, std::string> vumap{ {"key1", "val1" }, {"key2", "val2" } };
+std::string vstr{"New string"};
+
+auto simple_object = JsonSchema( JsonSchema::object("SimpleSchemaTest") );
+
+simple_object["vbool"] = true;
+simple_object["vint"] = vint;
+simple_object["vdouble"] = 2.5;   // order test
+simple_object["vstring"] =  vstr;
+simple_object["vlist"] = vlist;
+simple_object["vlist"][2] = 11;
+simple_object["vmap"] = vumap;
+simple_object["vmap"]["key3"] = "10";
+
+std::cout <<  simple_object << std::endl;
+
+```
+
+
+> By default add requered fields and fields with default value
+> *source: "-";    test: "+";  example: "+"*
+
+
+## Next steps --------------------------------------------------------------------------------
+
 To do:
 
-- add time compare tests json parsers
-
-V. New API working with schemas
-
- a. We create Interfaces   StructDef and FieldDef  for working with schema descriptions
- b. Then public classes ThriftStructDef and ThiftFieldDef implementation
- c. In future we can have JsonStructDef and JsonFieldDef implementation [JsonShema](http://json-schema.org/)
- d. Functions getVertexList, getEdgesList, getVertexCollection, getEdgeCollection, getVertexName could be moved to database implementation and add functions for set this data. This data could be setted when read thrift scheas or other place.
- e. Into SchemaJson get links to base StructDef and FieldDef and implement ```c++ template<type T> static SchemaJson::object( const string& schema_name ) ```
- f. Into  SchemaJson use ```c++ const  StructDef* const;   const  FieldDef* const  ``` for only read data.
- g. Into  StructDef functions: getName(), testUnion(), getOtherStruct( struct_name ), getField( field_name ).
- h. Into FieldDef add get functions for all fields.
-
-## Next steps
-
-Move dbarango API to other github project
-
-9. thrift_schema.h(cpp)
-11. jsonschema.h(cpp)
+- add top level std::shared_ptr
 
 ## Database
 
@@ -191,4 +232,5 @@ Work about jsonui
 // https://stackoverflow.com/questions/1008019/c-singleton-design-pattern
 // If you need global access to an object, make it a global, like std::cout. But don't constrain the number of instances that can be created.
 
-
+// http://www.vishalchovatiya.com/21-new-features-of-modern-cpp-to-use-in-your-project/
+// 21 new features of Modern C++ to use in your project

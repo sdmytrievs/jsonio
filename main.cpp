@@ -11,12 +11,73 @@ using namespace std;
 // https://github.com/dropbox/json11
 // https://github.com/nlohmann/json
 // https://cristianadam.eu/20151213/qtcreator-and-google-test/
-//https://qtcreator.gres.biz/page/gtest/#%D1%81%D0%BA%D0%B0%D1%87%D0%B0%D1%82%D1%8C
+// https://qtcreator.gres.biz/page/gtest/#%D1%81%D0%BA%D0%B0%D1%87%D0%B0%D1%82%D1%8C
 // https://doc.qt.io/qtcreator/creator-autotest.html
 
-#include "jsonfree.h"
-#include "jsondump.h"
+#include "jsonio14/jsonfree.h"
+#include "jsonio14/jsonschema.h"
+#include "jsonio14/jsondump.h"
+#include "jsonio14/service.h"
+#include "jsonio14/schema_thrift.h"
+#include "jsonio14/io_settings.h"
+#include "tests/example_schema.h"
+
 using namespace jsonio14;
+
+/// STL-like access
+void AccesstoObjectError();
+
+
+/// Test read schema
+void ReadThriftSchemas()
+{
+   const SchemasData& all_schemas = ioSettings().Schema();
+   std::cout << "Structs: "<< all_schemas.getStructs(false).size() << "\n";
+   //for( auto& astruct: all_schemas.getStructs(false) )
+   //     std::cout << astruct  << "\n";
+
+   auto object = JsonSchema::object("VertexElement");
+   std::cout <<  object << std::endl;
+   auto json_data = read_ascii_file( "O-old.VertexElement.json" );
+   object.loads(json_data);
+   std::cout <<  object << std::endl;
+
+  // test read substance to element (add only existing field other skip)
+   json_data = read_ascii_file( "HO2-old.VertexSubstance.json" );
+  //    object.loads(json_data);
+  //    std::cout <<  object << std::endl;
+
+   auto object_sub = JsonSchema::object("VertexSubstance");
+   object_sub.loads(json_data);
+         std::cout <<  object_sub << std::endl;
+}
+
+
+int main()
+{
+    cout << "Hello World!" << endl;
+    try{
+
+        ReadThriftSchemas();
+        //AccesstoObjectError();
+    }
+    catch(jarango_exception& e)
+    {
+        std::cout <<   e.what() <<  std::endl;
+    }
+    catch(std::exception& e)
+    {
+        std::cout <<   "std::exception: " << e.what() <<  std::endl;
+    }
+    catch(...)
+    {
+        std::cout <<  "unknown exception" <<  std::endl;
+    }
+
+    return 0;
+
+}
+
 
 /// STL-like access
 void AccesstoObjectError()
@@ -56,31 +117,3 @@ void AccesstoObjectError()
     //std::map<std::string, int> vmap1 = {{std::string("key") , 12}};
     //auto vmap2 = {{std::string("key") , 12}};
 }
-
-int main()
-{
-    cout << "Hello World!" << endl;
-    try{
-        AccesstoObjectError();
-    }
-    catch(jarango_exception& e)
-    {
-        std::cout <<   e.what() <<  std::endl;
-    }
-    catch(std::exception& e)
-    {
-        std::cout <<   "std::exception: " << e.what() <<  std::endl;
-    }
-    catch(...)
-    {
-        std::cout <<  "unknown exception" <<  std::endl;
-    }
-
-    return 0;
-
-
-
-
-}
-
-

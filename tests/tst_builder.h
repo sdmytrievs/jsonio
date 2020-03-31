@@ -19,7 +19,7 @@ using namespace jsonio14;
 TEST( JsonioBuilder, addScalar )
 {
     auto jsFree = JsonFree::object();
-    JsonObjectBuilder jsBuilder(jsFree);
+    JsonObjectBuilder jsBuilder(&jsFree);
 
     jsBuilder.addScalar( "vnull", "null").addScalar( "vbool1", "true" )
             .addScalar( "vbool2", "false" ).addScalar( "vint", "3" )
@@ -46,7 +46,7 @@ TEST( JsonioBuilder, addScalar )
 TEST( JsonioBuilder, JsonObjectBuilder )
 {
     auto jsFree = JsonFree::object();
-    JsonObjectBuilder jsBuilder(jsFree);
+    JsonObjectBuilder jsBuilder(&jsFree);
 
     jsBuilder.addNull( "vnull").addBool( "vbool1", true )
             .addBool( "vbool2", false ).addInt( "vint", 3 )
@@ -80,7 +80,7 @@ TEST( JsonioBuilder, JsonValueObjectBuilder )
     std::map<std::string, std::string> vumaps = { {"key1", "val1" }, {"key2", "val2" } };
 
     auto jsFree =JsonFree::object();
-    JsonObjectBuilder jsBuilder(jsFree);
+    JsonObjectBuilder jsBuilder(&jsFree);
 
     jsBuilder.addValue( "vint", vint );
     jsBuilder.addValue( "vdouble", vdouble );
@@ -114,7 +114,7 @@ TEST( JsonioBuilder, JsonValueObjectBuilder )
 TEST( JsonioBuilder, JsonComplexObjectBuilder )
 {
     auto jsFree = JsonFree::object();
-    JsonObjectBuilder jsBuilder(jsFree);
+    JsonObjectBuilder jsBuilder(&jsFree);
 
     jsBuilder.addString( "name", "ComplexObject" );
 
@@ -152,7 +152,7 @@ TEST( JsonioBuilder, JsonComplexObjectBuilder )
 TEST( JsonioBuilder, JsonArrayBuilder )
 {
     auto jsFree = JsonFree::array();
-    JsonArrayBuilder jsBuilder(jsFree);
+    JsonArrayBuilder jsBuilder(&jsFree);
 
     jsBuilder.addNull( ).addBool( true )
             .addBool( false ).addInt( 3 )
@@ -182,7 +182,7 @@ TEST( JsonioBuilder, JsonArrayBuilder )
 TEST( JsonioBuilder, JsonIntArrayBuilder )
 {
     auto jsFree = JsonFree::array();
-    JsonArrayBuilder jsBuilder(jsFree);
+    JsonArrayBuilder jsBuilder(&jsFree);
 
     for( size_t ii=0; ii<5; ++ii )
         jsBuilder.addValue( ii );
@@ -200,7 +200,7 @@ TEST( JsonioBuilder, JsonIntArrayBuilder )
 TEST( JsonioBuilder, JsonComplexArrayBuilder )
 {
     auto jsFree = JsonFree::array();
-    JsonArrayBuilder jsBuilder(jsFree);
+    JsonArrayBuilder jsBuilder(&jsFree);
 
     jsBuilder.addString( "ComplexObject" );
 
@@ -241,7 +241,7 @@ TEST( JsonioBuilder, JsonValueArrayBuilder )
     std::map<std::string, std::string> vumaps = { {"key1", "val1" }, {"key2", "val2" } };
 
     auto jsFree =JsonFree::array();
-    JsonArrayBuilder jsBuilder(jsFree);
+    JsonArrayBuilder jsBuilder(&jsFree);
 
     jsBuilder.addValue( vint );
     jsBuilder.addValue( vdouble );

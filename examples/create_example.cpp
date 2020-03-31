@@ -27,9 +27,9 @@ int main(int , char** )
 {
     try{
         CreateanObject();
-        //SerializationDeserialization();
-        //AccesstoObject();
-        //STLcontainers();
+        SerializationDeserialization();
+        AccesstoObject();
+        STLcontainers();
         FieldPathMethods();
     }
     catch(jarango_exception& e)
@@ -70,17 +70,17 @@ void CreateanObject()
 
     // iterate the array
     for (JsonFree::iterator it = obj.begin(); it != obj.end(); ++it) {
-      std::cout << it->toString(true) << '\n';
+      std::cout << it->get()->toString(true) << '\n';
     }
 
     // range-based for
     for (const auto& element : obj["vlist"]) {
-      std::cout << element << '\n';
+      std::cout << *element.get() << '\n';
     }
 
     // range-based for (empty)
     for (const auto& element : obj["vdouble"]) {
-      std::cout << element << '\n';
+      std::cout << *element.get() << '\n';
     }
 }
 

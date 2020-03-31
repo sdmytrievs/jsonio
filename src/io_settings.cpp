@@ -1,4 +1,5 @@
 #include "jsonio14/io_settings.h"
+#include "jsonio14/schema_thrift.h"
 
 namespace jsonio14 {
 
@@ -31,6 +32,9 @@ JsonioSettings::JsonioSettings( const std::string& config_file_path ):
     top_section( SectionSettings( *this, &all_settings ) ),
     jsonio_section( SectionSettings( *this, &all_settings ) )
 {
+    // register thrift schemas
+    schema.addSchemaMethod( schema_thrift, ThriftSchemaRead );
+
     getDataFromPreferences();
 }
 
@@ -49,21 +53,54 @@ void JsonioSettings::getDataFromPreferences()
     HomeDir = value( "common.UserHomeDirectoryPath", std::string("") );
     HomeDir = expand_home_dir( HomeDir, "" ); // "~" or empty generally refers to the user's home directory
     UserDir = directoryPath( "common.WorkDirectoryPath", std::string(".") );
+    SchemDir =  "";
+    updateSchemaDir();
 }
 
-void JsonioSettings::setUserDir( const std::string& dirPath)
+// Connect localDB to new path
+bool JsonioSettings::updateSchemaDir()
 {
-    if( dirPath.empty() )
+  std::string newSchema = directoryPath("common.SchemasDirectory", std::string(""));
+  if( newSchema != SchemDir )
+  {
+    SchemDir  = newSchema;
+    readSchemaDir( SchemDir );
+    return true;
+  }
+  return false;
+}
+
+void JsonioSettings::setUserDir( const std::string& dir_path)
+{
+    if( dir_path.empty() )
         return;
-    setValue( "common.WorkDirectoryPath", dirPath );
+    setValue( "common.WorkDirectoryPath", dir_path );
     UserDir = directoryPath( "common.WorkDirectoryPath", std::string(".") );
 }
 
-void JsonioSettings::setHomeDir( const std::string& dirPath )
+void JsonioSettings::setHomeDir( const std::string& dir_path )
 {
-    setValue( "common.UserHomeDirectoryPath", dirPath );
+    setValue( "common.UserHomeDirectoryPath", dir_path );
     HomeDir = value( "common.UserHomeDirectoryPath", std::string("") );
     HomeDir = expand_home_dir( HomeDir, "" ); // "~" or empty generally refers to the user's home directory
+}
+
+void JsonioSettings::addSchemaFormat(const std::string &format_type, const std::string &json_string)
+{
+    schema.addSchemaFormat(format_type, json_string);
+}
+
+void JsonioSettings::readSchemaDir(const std::string &dir_path)
+{
+    // Get all regular file names from the directory.
+    auto file_names = files_into_directory( dir_path, ".schema.json" );
+
+    if( !file_names.empty() )
+    {
+        schema.clear_all();
+        for (auto file: file_names)
+            schema.addSchemaFile( schema_thrift, file );
+    }
 }
 
 

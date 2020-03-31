@@ -201,15 +201,15 @@ void JsonBase::dump2stream( std::ostream& os, int depth, bool dense ) const
         os << "\n";
 }
 
-JsonBase *JsonBase::field(const std::string &fieldpath ) const
+const JsonBase *JsonBase::field(const std::string &fieldpath ) const
 {
-    auto names = split(fieldpath, "./[]\"");
+    auto names = split(fieldpath, field_path_delimiters);
     return field(names);
 }
 
 JsonBase *JsonBase::field_add(const std::string &fieldpath )
 {
-    auto names = split(fieldpath, "./[]\"");
+    auto names = split(fieldpath, field_path_delimiters);
     return field_add(names);
 }
 
@@ -250,7 +250,7 @@ void JsonBase::dump( std::ostream &os, bool dense ) const
 void JsonBase::loads( const std::string &jsonstr )
 {
     JsonParser parser(jsonstr);
-    parser.parse_to(*this);
+    parser.parse_to(this);
 }
 
 std::string JsonBase::checked_value( JsonBase::Type type, const std::string& newvalue )

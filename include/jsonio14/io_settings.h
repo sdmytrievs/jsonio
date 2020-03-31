@@ -2,7 +2,8 @@
 
 #include <iostream>
 #include <vector>
-#include "txt2file.h"
+#include "jsonio14/txt2file.h"
+#include "jsonio14/schema.h"
 
 namespace jsonio14 {
 
@@ -182,6 +183,18 @@ public:
         return directoryPath( "common.ResourcesDirectory",  std::string("") );
     }
 
+    /// Link to schemas collection
+    const SchemasData&  Schema() const
+    {
+        return schema;
+    }
+
+    /// Read schema description from json string
+    void addSchemaFormat( const std::string& format_type, const std::string& json_string );
+
+    /// Update/reread schema directory
+    bool updateSchemaDir();
+
 private:
 
     /// Internal Data File
@@ -207,8 +220,16 @@ private:
     /// Would be used to update directory path containing "~"
     std::string HomeDir = ".";
 
+    /// Path to schemas directory
+    std::string SchemDir ="";
+    /// Current schema structure
+    SchemasData schema;
+
     /// Read data from settings
     virtual void getDataFromPreferences();
+
+    /// Read all schemas from Directory
+    void readSchemaDir( const std::string& dir_path );
 
 };
 

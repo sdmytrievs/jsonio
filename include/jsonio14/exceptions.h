@@ -6,7 +6,6 @@
 
 namespace jsonio14 {
 
-
 /// @brief General exception structure into project.
 class jarango_exception: public std::exception
 {

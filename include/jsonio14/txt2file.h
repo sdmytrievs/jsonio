@@ -1,12 +1,12 @@
 #pragma once
 
-#include "jsonfree.h"
+#include "jsonio14/jsonfree.h"
 
 namespace jsonio14 {
 
 
 /// Get all regular file names from the directory.
-std::vector<std::string> files_into_directory( const std::string& directory_path, const std::string& sample = "");
+list_names_t files_into_directory( const std::string& directory_path, const std::string& sample = "");
 
 /// Read whole ASCII file into string.
 std::string read_ascii_file( const std::string& file_path );
@@ -18,7 +18,7 @@ bool path_exist( const std::string& path );
 std::string  home_dir();
 ///  Link path to home directory
 ///  "~" generally refers to the user's home directory.
-std::string expand_home_dir( const std::string& inPath, const std::string& homeDir = "" );
+std::string expand_home_dir( const std::string& path, const std::string& home_dir = "" );
 
 
 ///  Base interface for working with text files.
@@ -42,13 +42,22 @@ public:
     };
 
     /// Constructor
-    TxtFile(const std::string& fname, const std::string& fext, const std::string& fdir="" );
+    TxtFile(const std::string& name, const std::string& ext, const std::string& dir="" );
     /// Constructor from path
     TxtFile(const std::string& fpath);
 
     /// Destructor
     virtual ~TxtFile()
     {}
+
+    /// Copy constructor
+    TxtFile(const TxtFile &obj ) = default;
+    /// Move constructor
+    TxtFile( TxtFile &&obj ) = default;
+    /// Copy assignment
+    TxtFile &operator =( const TxtFile &other) = default;
+    /// Move assignment
+    TxtFile &operator =( TxtFile &&other) = default;
 
     /// Checks if the given path corresponds to an existing file.
     bool exist() const;
@@ -93,8 +102,8 @@ class JsonFile : public TxtFile
 public:
 
     /// Constructor
-    JsonFile( const std::string& fName, const std::string& fExt, const std::string& fDir=""):
-        TxtFile( fName, fExt, fDir )
+    JsonFile( const std::string& name, const std::string& ext, const std::string& dir=""):
+        TxtFile( name, ext, dir )
     {
         file_type =  Json;
     }
@@ -132,8 +141,8 @@ class JsonArrayFile : public JsonFile
 public:
 
     /// Constructor
-    JsonArrayFile( const std::string& fName, const std::string& fExt, const std::string& fDir=""):
-       JsonFile( fName, fExt, fDir ), arr_object( JsonFree::array() )
+    JsonArrayFile( const std::string& name, const std::string& ext, const std::string& dir=""):
+        JsonFile( name, ext, dir ), arr_object( JsonFree::array() )
     { }
     /// Constructor from path
     JsonArrayFile( const std::string& path):
@@ -145,6 +154,15 @@ public:
         if( is_opened )
             Close();
     }
+
+    /// Copy constructor
+    JsonArrayFile(const JsonArrayFile &obj ) = default;
+    /// Move constructor
+    JsonArrayFile( JsonArrayFile &&obj ) = default;
+    /// Copy assignment
+    JsonArrayFile &operator =( const JsonArrayFile &other) = default;
+    /// Move assignment
+    JsonArrayFile &operator =( JsonArrayFile &&other) = default;
 
     /// Load next object data from file to dom object
     bool loadNext( JsonBase&  object );
@@ -163,8 +181,8 @@ public:
 
 protected:
 
-   std::size_t loaded_ndx = 0;   ///< Current loaded
-   JsonFree arr_object;
+    std::size_t loaded_ndx = 0;   ///< Current loaded
+    JsonFree arr_object;
 
 };
 

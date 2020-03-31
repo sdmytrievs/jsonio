@@ -109,7 +109,8 @@
           "name": "value",
           "typeId": "double",
           "doc": "Value\n",
-          "required": "req_out"
+          "required": "req_out",
+          "default": 100000
         }
       ]
     },
@@ -150,7 +151,10 @@
             "class": "Describe"
           },
           "doc": "Description of task\n",
-          "required": "req_out"
+          "required": "req_out",
+          "default": {
+            "version": 1
+          }
         },
         {
           "key": 2,
@@ -196,7 +200,17 @@
             }
           },
           "doc": "2D list\n",
-          "required": "req_out"
+          "required": "req_out",
+          "default": [
+            [
+              1,
+              2
+            ],
+            [
+              3,
+              4
+            ]
+          ]
         }
       ]
     }
