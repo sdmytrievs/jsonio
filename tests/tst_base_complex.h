@@ -7,6 +7,9 @@
 #include <unordered_map>
 #include "jsonio14/jsonfree.h"
 #include "jsonio14/jsonschema.h"
+#include "jsonio14/io_settings.h"
+#include "jsonio14/schema_thrift.h"
+#include "example_schema.h"
 
 using namespace testing;
 using namespace jsonio14;
@@ -19,11 +22,12 @@ class JsonioBaseComplexTest : public ::testing::Test
 public:
 
     const std::string schemaName = "ComplexSchemaTest";
-    const std::string input_json = "{\"about\":{\"version\":1,\"description\":\"About\"},\"formats\":"
-                                   "{\"int\":{\"width\":5,\"precision\":0},\"float\":{\"width\":10,\"precision\":4},"
-                                   "\"double\":{\"width\":15,\"precision\":6}},\"data\":[{\"group\":\"float\",\"value\":1.4},"
-                                   "{\"group\":\"int\",\"value\":100},{\"group\":\"double\",\"value\":1e-10},{\"group\":\"double\",\"value\":10000000000}],"
-                                   "\"values\":[[1,2,3],[11,12,13]]}";
+    const std::string input_json = complex_schema_value;
+    //    "{\"about\":{\"version\":1,\"description\":\"About\"},\"formats\":"
+    //    "{\"int\":{\"width\":5,\"precision\":0},\"float\":{\"width\":10,\"precision\":4},"
+    //    "\"double\":{\"width\":15,\"precision\":6}},\"data\":[{\"group\":\"float\",\"value\":1.4},"
+    //    "{\"group\":\"int\",\"value\":100},{\"group\":\"double\",\"value\":1e-10},{\"group\":\"double\",\"value\":10000000000}],"
+    //    "\"values\":[[1,2,3],[11,12,13]]}";
 
     virtual void SetUp()
     { }
@@ -45,6 +49,7 @@ template<> void JsonioBaseComplexTest<JsonFree>::SetUp()
 
 template<> void JsonioBaseComplexTest<JsonSchema>::SetUp()
 {
+    ioSettings().addSchemaFormat(schema_thrift, schema_str);
     test_object = new  JsonSchema( JsonSchema::object(schemaName) );
     test_object->loads( input_json );
     //std::cout << test_object->dump(false);

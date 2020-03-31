@@ -7,6 +7,8 @@
 #include <unordered_map>
 #include "jsonio14/jsonfree.h"
 #include "jsonio14/jsonschema.h"
+#include "jsonio14/io_settings.h"
+#include "jsonio14/schema_thrift.h"
 #include "example_schema.h"
 
 using namespace testing;
@@ -20,8 +22,9 @@ class JsonioBaseTest : public ::testing::Test
 public:
 
     const std::string schemaName = "SimpleSchemaTest";
-    const std::string input_json = "{\"vbool\":true,\"vint\":-100,\"vdouble\":5.2,\"vstring\":\"Test string\","
-                                   "\"vlist\":[1.7,2.7,3.7,5.7],\"vmap\":{\"key1\":\"val1\",\"key2\":\"val2\"}}";
+    const std::string input_json = simple_schema_value;
+    //"{\"vbool\":true,\"vint\":-100,\"vdouble\":5.2,\"vstring\":\"Test string\","
+    //"\"vlist\":[1.7,2.7,3.7,5.7],\"vmap\":{\"key1\":\"val1\",\"key2\":\"val2\"}}";
 
     virtual void SetUp()
     { }
@@ -43,6 +46,7 @@ template<> void JsonioBaseTest<JsonFree>::SetUp()
 
 template<> void JsonioBaseTest<JsonSchema>::SetUp()
 {
+    ioSettings().addSchemaFormat(schema_thrift, schema_str);
     test_object = new  JsonSchema( JsonSchema::object(schemaName) );
     test_object->loads( input_json );
     //std::cout << test_object->dump(false);

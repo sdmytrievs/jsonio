@@ -189,6 +189,9 @@ public:
         return schema;
     }
 
+    /// Read schema description from json string
+    void addSchemaFormat( const std::string& format_type, const std::string& json_string );
+
     /// Update/reread schema directory
     bool updateSchemaDir();
 

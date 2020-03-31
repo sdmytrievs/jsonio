@@ -203,13 +203,13 @@ void JsonBase::dump2stream( std::ostream& os, int depth, bool dense ) const
 
 const JsonBase *JsonBase::field(const std::string &fieldpath ) const
 {
-    auto names = split(fieldpath, "./[]\"");
+    auto names = split(fieldpath, field_path_delimiters);
     return field(names);
 }
 
 JsonBase *JsonBase::field_add(const std::string &fieldpath )
 {
-    auto names = split(fieldpath, "./[]\"");
+    auto names = split(fieldpath, field_path_delimiters);
     return field_add(names);
 }
 

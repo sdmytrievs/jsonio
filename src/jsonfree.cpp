@@ -116,7 +116,7 @@ JsonFree *JsonFree::field_add(std::queue<std::string> names )
 
 JsonFree &JsonFree::add_object_via_path(const std::string &jsonpath)
 {
-    auto names = split(jsonpath, "./[]\"");
+    auto names = split(jsonpath, field_path_delimiters);
     auto pobj = field_add( names );
     if( pobj )
     {

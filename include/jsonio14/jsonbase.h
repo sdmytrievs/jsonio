@@ -2,7 +2,7 @@
 
 #include <iostream>
 #include <vector>
-#include <queue>
+#include <set>
 #include "jsonio14/exceptions.h"
 #include "jsonio14/type_test.h"
 #include "jsonio14/jsondetail.h"
@@ -10,6 +10,8 @@
 namespace jsonio14 {
 
 using list_names_t =  std::vector<std::string>;
+using set_names_t =  std::set<std::string>;
+const std::string field_path_delimiters =  "./[]\"";
 
 /// @brief An interface to store JSON object.
 /// @class JsonBase represents an abstract item in a tree view.
@@ -394,9 +396,6 @@ public:
 
         return false;
     }
-
-    // Return a reference to object[jsonpath] if an object can be create, exception otherwise.
-    // virtual JsonBase &add_object_via_path(const std::string &jsonpath) = 0;
 
 protected:
 

@@ -139,9 +139,15 @@ JsonBase *JsonSchema::append_node(const std::string &akey, JsonBase::Type atype,
             // add only type is possible
             if( shptr->test_assign_value( atype, false ) )
                 shptr->update_node( atype, avalue );
-            // add by order ???
-            children.push_back( shptr );
-            return children.back().get();
+
+            auto flds_before =struct_descrip->getFieldsBefore(akey);
+            auto fld_insert_after = children.begin();
+            while( fld_insert_after != children.end() and
+                   flds_before.find( fld_insert_after->get()->getKey() ) != flds_before.end() )
+                fld_insert_after++;
+
+            // add by order
+            return children.insert( fld_insert_after, shptr )->get();
         }
         return nullptr;
     }
@@ -479,7 +485,8 @@ void JsonSchema::struct2model( const  StructDef* strDef )
     auto it = struct_descrip->cbegin();
     while( it != struct_descrip->cend() )
     {
-        if( it->get()->required() == FieldDef::fld_required)
+        if( it->get()->required() == FieldDef::fld_required or
+            !it->get()->defaultValue().empty()    )
         {
             // add only requrled
             auto child = new JsonSchema( it->get(), this );

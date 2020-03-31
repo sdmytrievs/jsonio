@@ -16,7 +16,7 @@ TEST( JsonioSchema, Struct )
 {
     SchemasData all_schemas;
 
-    all_schemas.addSchemaFormat( schema_thrift, ThriftSchemaRead );
+    all_schemas.addSchemaMethod( schema_thrift, ThriftSchemaRead );
     all_schemas.addSchemaFormat(schema_thrift, schema_str);
 
     auto all_structs =  all_schemas.getStructs(false);
@@ -40,7 +40,7 @@ TEST( JsonioSchema, Field )
 {
     SchemasData all_schemas;
 
-    all_schemas.addSchemaFormat( schema_thrift, ThriftSchemaRead );
+    all_schemas.addSchemaMethod( schema_thrift, ThriftSchemaRead );
     all_schemas.addSchemaFormat(schema_thrift, schema_str);
 
     auto schem_simpl = all_schemas.getStruct("SimpleSchemaTest");
@@ -66,7 +66,7 @@ TEST( JsonioSchema, DefaultField )
 {
     SchemasData all_schemas;
 
-    all_schemas.addSchemaFormat( schema_thrift, ThriftSchemaRead );
+    all_schemas.addSchemaMethod( schema_thrift, ThriftSchemaRead );
     all_schemas.addSchemaFormat(schema_thrift, schema_str);
 
     auto schem_spec = all_schemas.getStruct("SpecifiersData");
@@ -92,7 +92,7 @@ TEST( JsonioSchema, ComplexField )
 {
     SchemasData all_schemas;
 
-    all_schemas.addSchemaFormat( schema_thrift, ThriftSchemaRead );
+    all_schemas.addSchemaMethod( schema_thrift, ThriftSchemaRead );
     all_schemas.addSchemaFormat(schema_thrift, schema_str);
 
     auto schem_spec = all_schemas.getStruct("ComplexSchemaTest");
@@ -204,7 +204,7 @@ TEST( JsonioSchema, StructList )
      )";
 
 SchemasData all_schemas;
-all_schemas.addSchemaFormat( schema_thrift, ThriftSchemaRead );
+all_schemas.addSchemaMethod( schema_thrift, ThriftSchemaRead );
 all_schemas.addSchemaFormat(schema_thrift, schema_lst_str);
 
 auto schem_simpl = all_schemas.getStruct("SimpleSchemaTest");
@@ -476,7 +476,7 @@ TEST( JsonioSchema, Enum )
 
     SchemasData all_schemas;
 
-    all_schemas.addSchemaFormat( schema_thrift, ThriftSchemaRead );
+    all_schemas.addSchemaMethod( schema_thrift, ThriftSchemaRead );
     all_schemas.addSchemaFormat(schema_thrift, schema_enum_str);
 
     auto all_enums =  all_schemas.getEnums();

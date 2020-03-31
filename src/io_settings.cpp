@@ -33,7 +33,7 @@ JsonioSettings::JsonioSettings( const std::string& config_file_path ):
     jsonio_section( SectionSettings( *this, &all_settings ) )
 {
     // register thrift schemas
-    schema.addSchemaFormat( schema_thrift, ThriftSchemaRead );
+    schema.addSchemaMethod( schema_thrift, ThriftSchemaRead );
 
     getDataFromPreferences();
 }
@@ -83,6 +83,11 @@ void JsonioSettings::setHomeDir( const std::string& dir_path )
     setValue( "common.UserHomeDirectoryPath", dir_path );
     HomeDir = value( "common.UserHomeDirectoryPath", std::string("") );
     HomeDir = expand_home_dir( HomeDir, "" ); // "~" or empty generally refers to the user's home directory
+}
+
+void JsonioSettings::addSchemaFormat(const std::string &format_type, const std::string &json_string)
+{
+    schema.addSchemaFormat(format_type, json_string);
 }
 
 void JsonioSettings::readSchemaDir(const std::string &dir_path)

@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #include <map>
 #include <memory>
@@ -96,22 +96,8 @@ public:
     /// Destructor
     virtual ~StructDef() = default;
 
-    /// An iterator for a fields of structure
-    using iterator = std::vector<std::shared_ptr<FieldDef>>::iterator;
     /// A const iterator for a fields of structure
     using const_iterator = std::vector<std::shared_ptr<FieldDef>>::const_iterator;
-
-    /* @brief returns an iterator to one past the last field.
-    iterator end()
-    {
-        return fields.end();
-    }
-
-    /// @brief returns an iterator to the first field.
-    iterator begin()
-    {
-        return fields.begin();
-    }*/
 
     /// @brief returns a const iterator to one past the last field.
     const_iterator cend() const
@@ -189,6 +175,24 @@ public:
                 vasl+= it->get()->description();
             }
             members.push_back(vasl);
+            it++;
+        }
+        return members;
+    }
+
+    /// Get fields names set before fname in structure
+    set_names_t getFieldsBefore( const std::string& fname ) const
+    {
+        set_names_t members;
+        auto it = fields.begin();
+        while( it != fields.end() )
+        {
+            auto vasl = it->get()->name();
+            if( vasl == fname  )
+            {
+                break;
+            }
+            members.insert(vasl);
             it++;
         }
         return members;
@@ -312,7 +316,7 @@ class SchemasData final
 public:
 
     /// Registering new schemas format and Factory Method where instances are actually created
-    void addSchemaFormat( const std::string& schema_type, SchemaReadFactory method )
+    void addSchemaMethod( const std::string& schema_type, SchemaReadFactory method )
     {
         methods[schema_type] = method;
     }

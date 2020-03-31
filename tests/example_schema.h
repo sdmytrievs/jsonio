@@ -228,4 +228,70 @@ const char* const schema_str = R"({
 
 )" ;
 
+const char* const simple_schema_value = R"({
+                                        "vbool" :   true,
+                                        "vint" :   -100,
+                                        "vdouble" :   5.2,
+                                        "vstring" :   "Test string",
+                                        "vlist" :   [
+                                             1.7,
+                                             2.7,
+                                             3.7,
+                                             5.7
+                                        ],
+                                        "vmap" :   {
+                                             "key1" :   "val1",
+                                             "key2" :   "val2"
+                                        }
+                                   })";
 
+const char* const complex_schema_value = R"({
+                                         "about" :   {
+                                              "version" :   1,
+                                              "description" :   "About"
+                                         },
+                                         "formats" :   {
+                                              "int" :   {
+                                                   "width" :   5,
+                                                   "precision" :   0
+                                              },
+                                              "float" :   {
+                                                   "width" :   10,
+                                                   "precision" :   4
+                                              },
+                                              "double" :   {
+                                                   "width" :   15,
+                                                   "precision" :   6
+                                              }
+                                         },
+                                         "data" :   [
+                                              {
+                                                   "group" :   "float",
+                                                   "value" :   1.4
+                                              },
+                                              {
+                                                   "group" :   "int",
+                                                   "value" :   100
+                                              },
+                                              {
+                                                   "group" :   "double",
+                                                   "value" :   1e-10
+                                              },
+                                              {
+                                                   "group" :   "double",
+                                                   "value" :   10000000000
+                                              }
+                                         ],
+                                         "values" :   [
+                                              [
+                                                   1,
+                                                   2,
+                                                   3
+                                              ],
+                                              [
+                                                   11,
+                                                   12,
+                                                   13
+                                              ]
+                                         ]
+                                    })";
