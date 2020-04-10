@@ -224,6 +224,12 @@ To do:
 Work about jsonimpex
 Work about jsonui
 
+https://gist.github.com/Cartexius/4c437c084d6e388288201aadf9c8cdd5
+
+sudo apt-get update -y
+sudo apt-get install -y googletest
+
+
 ## Best practices
 
 // Top 25 C++ API design mistakes and how to avoid them

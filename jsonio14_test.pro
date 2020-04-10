@@ -41,11 +41,11 @@ INCLUDEPATH   += $$JSONIO14_DIR
 INCLUDEPATH   += $$JSONIO14_HEADERS_DIR
 INCLUDEPATH   += $$TESTS_DIR
 
-LIBS +=  -lstdc++fs -lgtest
+LIBS +=  -lstdc++fs
 
 OBJECTS_DIR   = obj
 
-#include($$TESTS_DIR/gtest_dependency.pri)
+include($$TESTS_DIR/gtest_dependency.pri)
 include($$JSONIO14_DIR/jsonio14.pri)
 
 HEADERS += \

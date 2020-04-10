@@ -1,5 +1,5 @@
 TEMPLATE = app
-CONFIG += thread console c++14
+CONFIG += thread console c++17
 CONFIG -= app_bundle
 CONFIG -= qt
 # https://resources.qt.io/qt-world-summit-2018/qtws18-kdabs-opensource-tools-for-qt-milian-wolff-kdab
