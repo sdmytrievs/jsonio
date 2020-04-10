@@ -186,7 +186,7 @@ auto simple_object = JsonSchema( JsonSchema::object("SimpleSchemaTest") );
 
 simple_object["vbool"] = true;
 simple_object["vint"] = vint;
-simple_object["vdouble"] = 2.5;   // order test
+simple_object["vdouble"] = 2.5;
 simple_object["vstring"] =  vstr;
 simple_object["vlist"] = vlist;
 simple_object["vlist"][2] = 11;

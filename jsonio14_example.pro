@@ -48,10 +48,10 @@ DEPENDPATH   += $$JSONIO14_HEADERS_DIR
 INCLUDEPATH   += $$JSONIO14_DIR
 INCLUDEPATH   += $$JSONIO14_HEADERS_DIR
 
-#LIBS +=  -lcurl  -lvelocypack
 win32:LIBS +=   -lboost_system-mgw73-mt-d-x64-1_70 -lboost_filesystem-mgw73-mt-d-x64-1_70
-!win32:LIBS +=  -lboost_system -lboost_filesystem -lstdc++fs
-LIBS +=   -lvelocypack
+#!win32:LIBS +=  -lboost_system -lboost_filesystem -lstdc++fs
+!win32:LIBS +=  -lstdc++fs
+#LIBS +=   -lvelocypack
 
 OBJECTS_DIR   = obj
 

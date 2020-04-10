@@ -41,13 +41,11 @@ INCLUDEPATH   += $$JSONIO14_DIR
 INCLUDEPATH   += $$JSONIO14_HEADERS_DIR
 INCLUDEPATH   += $$TESTS_DIR
 
-#LIBS +=  -lcurl  -lvelocypack
-#!win32:LIBS +=  -lboost_system -lboost_filesystem -lstdc++fs
-LIBS +=  -lstdc++fs
+LIBS +=  -lstdc++fs -lgtest
 
 OBJECTS_DIR   = obj
 
-include($$TESTS_DIR/gtest_dependency.pri)
+#include($$TESTS_DIR/gtest_dependency.pri)
 include($$JSONIO14_DIR/jsonio14.pri)
 
 HEADERS += \

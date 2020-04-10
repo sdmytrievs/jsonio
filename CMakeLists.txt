@@ -1,5 +1,5 @@
 # Require a certain version of cmake
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.7)
 
 # Set the name of the project
 project(jsonio14 CXX C)
