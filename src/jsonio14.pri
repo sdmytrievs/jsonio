@@ -13,7 +13,12 @@ HEADERS += \
     $$JSONIO14_HEADERS_DIR/jsonio14/io_settings.h \
     $$JSONIO14_HEADERS_DIR/jsonio14/schema.h \
     $$JSONIO14_HEADERS_DIR/jsonio14/schema_thrift.h \
-    $$JSONIO14_HEADERS_DIR/jsonio14/jsonschema.h
+    $$JSONIO14_HEADERS_DIR/jsonio14/jsonschema.h \
+    $$JSONIO14_HEADERS_DIR/jsonio14/dbdriverbase.h \
+    $$JSONIO14_HEADERS_DIR/jsonio14/dbdriverarango.h \
+    $$JSONIO14_HEADERS_DIR/jsonio14/dbquerybase.h \
+    $$JSONIO14_HEADERS_DIR/jsonio14/dbconnect.h \
+    $$JSONIO14_HEADERS_DIR/jsonio14/dbcollection.h
 
 
 SOURCES += \
@@ -28,7 +33,11 @@ SOURCES += \
     $$JSONIO14_DIR/txt2file.cpp \
     $$JSONIO14_DIR/io_settings.cpp \
     $$JSONIO14_DIR/schema_thrift.cpp \
-    $$JSONIO14_DIR/jsonschema.cpp
+    $$JSONIO14_DIR/jsonschema.cpp \
+    $$JSONIO14_DIR/dbquerybase.cpp \
+    $$JSONIO14_DIR/dbdriverarango.cpp \
+    $$JSONIO14_DIR/dbconnect.cpp \
+ \#    $$JSONIO14_DIR/dbcollection.cpp
 
 
 

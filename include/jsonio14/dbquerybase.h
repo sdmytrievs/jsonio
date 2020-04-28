@@ -1,0 +1,261 @@
+#pragma once
+
+#include <functional>
+#include <memory>
+#include <map>
+#include <set>
+#include "jsonio14/service.h"
+
+namespace jsonio14 {
+
+class JsonBase;
+class JsonFree;
+
+/// Map of query fields  <field name>-><field into json record>
+/// Used to generate return values for AQL
+using fields2query_t = std::map<std::string, std::string >;
+
+/// Record values type
+using values_t = std::vector<std::string>;
+
+/// Table of results <key>-><extracted values>
+using key_values_table_t = std::map<std::string, values_t >;
+
+/// Map of fields values  <field path>-><value from into record>
+using field_value_map_t = std::map<std::string, std::string >;
+
+/// Function for testing the matching of the record key to the template
+using MatchKeyTemplate_f = std::function<bool( const std::string& keypat, const std::string& akey )>;
+
+
+/// \interface DBQueryBase is used to retrieve data that are stored in DataBase
+class DBQueryBase
+{
+
+public:
+
+    enum QType
+    {
+        qUndef = -1,
+        qTemplate = 0 /* most of old queries*/,
+        qAll = 1,
+        qEdgesFrom = 2,
+        qEdgesTo = 3,
+        qEdgesAll = 4,
+        qAQL = 6,
+        qEJDB = 7
+    };
+
+
+    /// Constructor
+    DBQueryBase()
+    {}
+
+    ///  Destructor
+    virtual ~DBQueryBase()
+    {}
+
+    virtual void toJson( JsonFree& object ) const = 0;
+    virtual void fromJson( const JsonBase& object ) =0;
+
+    /// Test for empty query.
+    virtual bool empty() const = 0;
+
+    /// Get query type.
+    virtual QType type() const = 0;
+
+    /// Get string with query ( an AQL query text or json template  ).
+    virtual const std::string& queryString() const = 0;
+
+    /// Set json string with the bind parameter values need to be passed
+    /// along with the query when it is executed.
+    virtual void  setBindVars( const std::string& jsonBindObject ) = 0;
+
+    /// Set json string with the bind parameter values need to be passed
+    /// along with the query when it is executed.
+    void  setBindVars( const JsonBase& bindObject );
+
+    /// Get the json string with bind values used in the query
+    virtual const std::string& bindVars() const = 0;
+
+    /// Set json string with the  key/value object with extra options for the query
+    ///  need to be passed along with the query when it is executed.
+    virtual void  setOptions( const std::string& jsonOptionsObject ) = 0;
+
+    /// Get the json string with  key/value object with extra options for the query.
+    virtual const std::string& options() const = 0;
+
+    /// Set the fixed set of attributes from the collection is queried,
+    /// then the query result values will have a homogeneous structure.
+    virtual void  setQueryFields( const fields2query_t& mapFields ) = 0;
+
+    /// Get the fixed set of attributes from the collection is queried.
+    virtual const fields2query_t& queryFields() const = 0;
+
+    template <typename Container>
+    void  setQueryFields( const Container& listFields )
+    {
+        fields2query_t mapFields;
+
+        typename Container::const_iterator itr = listFields.begin();
+        typename Container::const_iterator end = listFields.end();
+        for (; itr != end; ++itr)
+        {
+            std::string fld = *itr;
+            replace_all( fld, ".", '_');
+            mapFields[fld] = *itr;
+        }
+        setQueryFields( mapFields );
+    }
+
+};
+
+/// \class DBQueryDef description query into Database
+class DBQueryDef final
+{
+
+public:
+
+
+    /// New constructor
+    DBQueryDef( const std::shared_ptr<DBQueryBase>& condition, const std::vector<std::string>& fields = {} ):
+        fields_collect(fields), query_condition(condition)
+    { }
+
+    void toJson( JsonFree& object ) const;
+    void fromJson( const JsonBase& object );
+
+    void setName( const std::string& name )
+    {
+        key_name = name;
+    }
+    const std::string& name() const
+    {
+        return key_name;
+    }
+
+    void setComment( const std::string& comm )
+    {
+        rec_comment = comm;
+    }
+    const std::string& comment() const
+    {
+        return rec_comment;
+    }
+
+    void setSchema( const std::string& shname )
+    {
+        toschema = shname;
+    }
+    const std::string& schema() const
+    {
+        return toschema;
+    }
+
+    void setCondition( const std::shared_ptr<DBQueryBase>& condition )
+    {
+        query_condition= condition;
+    }
+    const DBQueryBase* condition() const
+    {
+        return query_condition.get();
+    }
+
+    void setFields(const std::vector<std::string>& fields )
+    {
+        fields_collect = fields;
+    }
+    template <typename Container>
+    void  addFields( const Container& listFields )
+    {
+        fields_collect.insert(fields_collect.end(), listFields.begin(), listFields.end());
+    }
+    const std::vector<std::string>& fields() const
+    {
+        return fields_collect;
+    }
+
+protected:
+
+    /// Short name of query (used as key field)
+    std::string key_name;
+    /// Description of query
+    std::string rec_comment;
+    /// Schema for query about
+    std::string toschema;
+    /// List of fieldpaths to collect
+    std::vector<std::string> fields_collect;
+
+    /// Query is used to retrieve data that are stored in DataBase
+    std::shared_ptr<DBQueryBase> query_condition;
+};
+
+/// \class  DBQueryResult used to store query definition and result
+class DBQueryResult final
+{
+
+public:
+
+    DBQueryResult( const DBQueryDef& aquery ):
+        query_data(aquery)
+    { }
+    ~DBQueryResult() {}
+
+
+    const DBQueryDef& query() const
+    {
+        return query_data;
+    }
+
+    void setQuery( const DBQueryDef& qrdef)
+    {
+        query_data = qrdef;
+        query_result.clear();
+    }
+
+    /// Add line to view table
+    void addLine( const std::string& key_str,  const JsonBase* nodedata, bool isupdate );
+    /// Update line into view table
+    void updateLine( const std::string& keyStr,  const JsonBase* nodedata );
+    /// Delete line from view table
+    void deleteLine( const std::string& keyStr );
+
+    /// Get query result table
+    const key_values_table_t& queryResult() const
+    {
+        return query_result;
+    }
+
+    ///  Get all keys list for current query
+    std::size_t getKeysValues( std::vector<std::string>& aKeyList,
+                               std::vector<values_t>& aValList ) const;
+
+    /// Get keys list for current query and defined condition function
+    std::size_t getKeysValues( std::vector<std::string>& aKeyList, std::vector<values_t>& aValList,
+                               const char* keypart, MatchKeyTemplate_f compareTemplate ) const;
+
+    /// Get keys list for current query and defined field values
+    std::size_t getKeysValues( std::vector<std::string>& aKeyList, std::vector<values_t>& aValList,
+                               const std::vector<std::string>& fieldnames, const std::vector<std::string>& fieldvalues ) const;
+
+    /// Extract key from data
+    std::string getKeyFromValue( const JsonBase* node ) const;
+
+    /// Extract first key from data
+    std::string getFirstKey() const;
+
+
+protected:
+
+    /// Description query
+    DBQueryDef      query_data;
+    /// Table of values were gotten from query
+    key_values_table_t  query_result;
+
+    /// Make line to view table
+    void node_to_values(  const JsonBase* node, values_t& values ) const;
+
+};
+
+} // namespace jsonio14
+

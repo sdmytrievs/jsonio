@@ -305,7 +305,7 @@ using schema_files_t = std::map<std::string, std::string>;
 using schemas_t = std::map<std::string, std::shared_ptr<StructDef>>;
 using enums_t = std::map<std::string, std::shared_ptr<EnumDef>>;
 /// Factory method fetching schema definition from a json format strin
-using  SchemaReadFactory = std::function<void( const std::string& jsondata,
+using  SchemaReadFactory_f = std::function<void( const std::string& jsondata,
                          schema_files_t& files, schemas_t& schemas,  enums_t& enums )>;
 
 
@@ -316,7 +316,7 @@ class SchemasData final
 public:
 
     /// Registering new schemas format and Factory Method where instances are actually created
-    void addSchemaMethod( const std::string& schema_type, SchemaReadFactory method )
+    void addSchemaMethod( const std::string& schema_type, SchemaReadFactory_f method )
     {
         methods[schema_type] = method;
     }
@@ -406,7 +406,7 @@ protected:
     enums_t enums;
 
     /// Dictionary of implemented schemas  for Factory Method
-    std::map<std::string, SchemaReadFactory> methods;
+    std::map<std::string, SchemaReadFactory_f> methods;
 };
 
 } // namespace jsonio14

@@ -170,6 +170,8 @@ public:
     /// Set up defval values if the JSON type of elements is primitive.
     void array_resize( std::size_t size, const std::string &defval ) override;
 
+    using JsonBase::field;
+
     /// Return a reference to object[jsonpath] if an object can be create, exception otherwise.
     JsonFree &add_object_via_path(const std::string &jsonpath);
 
