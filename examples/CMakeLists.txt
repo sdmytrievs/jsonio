@@ -1,10 +1,13 @@
 # options
 message(STATUS "Building jsonio14 examples: ${BUILD_EXAMPLES}")
 
+include_directories(${CMAKE_SOURCE_DIR})
+
 set(Examples
         create_example
-        exbuilder
-        exparser
+        builder_example
+        parser_example
+        schema_example
 )
 
 foreach (exampleName ${Examples})

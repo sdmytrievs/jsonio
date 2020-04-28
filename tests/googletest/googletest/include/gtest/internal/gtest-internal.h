@@ -53,6 +53,7 @@
 #include <ctype.h>
 #include <float.h>
 #include <string.h>
+#include <cstdint>
 #include <iomanip>
 #include <limits>
 #include <map>
@@ -78,9 +79,20 @@
 #define GTEST_CONCAT_TOKEN_IMPL_(foo, bar) foo ## bar
 
 // Stringifies its argument.
-#define GTEST_STRINGIFY_(name) #name
+// Work around a bug in visual studio which doesn't accept code like this:
+//
+//   #define GTEST_STRINGIFY_(name) #name
+//   #define MACRO(a, b, c) ... GTEST_STRINGIFY_(a) ...
+//   MACRO(, x, y)
+//
+// Complaining about the argument to GTEST_STRINGIFY_ being empty.
+// This is allowed by the spec.
+#define GTEST_STRINGIFY_HELPER_(name, ...) #name
+#define GTEST_STRINGIFY_(...) GTEST_STRINGIFY_HELPER_(__VA_ARGS__, )
 
-namespace proto2 { class Message; }
+namespace proto2 {
+class MessageLite;
+}
 
 namespace testing {
 
@@ -607,8 +619,9 @@ class GTEST_API_ TypedTestSuitePState {
   // Verifies that registered_tests match the test names in
   // defined_test_names_; returns registered_tests if successful, or
   // aborts the program otherwise.
-  const char* VerifyRegisteredTestNames(
-      const char* file, int line, const char* registered_tests);
+  const char* VerifyRegisteredTestNames(const char* test_suite_name,
+                                        const char* file, int line,
+                                        const char* registered_tests);
 
  private:
   typedef ::std::map<std::string, CodeLocation> RegisteredTestsMap;
@@ -740,6 +753,11 @@ class TypeParameterizedTest<Fixture, TestSel, internal::None> {
   }
 };
 
+GTEST_API_ void RegisterTypeParameterizedTestSuite(const char* test_suite_name,
+                                                   CodeLocation code_location);
+GTEST_API_ void RegisterTypeParameterizedTestSuiteInstantiation(
+    const char* case_name);
+
 // TypeParameterizedTestSuite<Fixture, Tests, Types>::Register()
 // registers *all combinations* of 'Tests' and 'Types' with Google
 // Test.  The return value is insignificant - we just need to return
@@ -752,6 +770,7 @@ class TypeParameterizedTestSuite {
                        const char* test_names,
                        const std::vector<std::string>& type_names =
                            GenerateNames<DefaultNameGenerator, Types>()) {
+    RegisterTypeParameterizedTestSuiteInstantiation(case_name);
     std::string test_name = StripTrailingSpaces(
         GetPrefixUntilComma(test_names));
     if (!state->TestExists(test_name)) {
@@ -825,6 +844,16 @@ struct GTEST_API_ ConstCharPtr {
   const char* value;
 };
 
+// Helper for declaring std::string within 'if' statement
+// in pre C++17 build environment.
+struct TrueWithString {
+  TrueWithString() = default;
+  explicit TrueWithString(const char* str) : value(str) {}
+  explicit TrueWithString(const std::string& str) : value(str) {}
+  explicit operator bool() const { return true; }
+  std::string value;
+};
+
 // A simple Linear Congruential Generator for generating random
 // numbers with a uniform distribution.  Unlike rand() and srand(), it
 // doesn't use global state (and therefore can't interfere with user
@@ -832,18 +861,18 @@ struct GTEST_API_ ConstCharPtr {
 // but it's good enough for our purposes.
 class GTEST_API_ Random {
  public:
-  static const UInt32 kMaxRange = 1u << 31;
+  static const uint32_t kMaxRange = 1u << 31;
 
-  explicit Random(UInt32 seed) : state_(seed) {}
+  explicit Random(uint32_t seed) : state_(seed) {}
 
-  void Reseed(UInt32 seed) { state_ = seed; }
+  void Reseed(uint32_t seed) { state_ = seed; }
 
   // Generates a random number from [0, range).  Crashes if 'range' is
   // 0 or greater than kMaxRange.
-  UInt32 Generate(UInt32 range);
+  uint32_t Generate(uint32_t range);
 
  private:
-  UInt32 state_;
+  uint32_t state_;
   GTEST_DISALLOW_COPY_AND_ASSIGN_(Random);
 };
 
@@ -852,10 +881,10 @@ class GTEST_API_ Random {
   typename std::remove_const<typename std::remove_reference<T>::type>::type
 
 // IsAProtocolMessage<T>::value is a compile-time bool constant that's
-// true if and only if T is type proto2::Message or a subclass of it.
+// true if and only if T is type proto2::MessageLite or a subclass of it.
 template <typename T>
 struct IsAProtocolMessage
-    : public std::is_convertible<const T*, const ::proto2::Message*> {};
+    : public std::is_convertible<const T*, const ::proto2::MessageLite*> {};
 
 // When the compiler sees expression IsContainerTest<C>(0), if C is an
 // STL-style container class, the first overload of IsContainerTest
@@ -1175,7 +1204,7 @@ struct FlatTupleBase<FlatTuple<T...>, IndexSequence<Idx...>>
 
 // Analog to std::tuple but with different tradeoffs.
 // This class minimizes the template instantiation depth, thus allowing more
-// elements that std::tuple would. std::tuple has been seen to require an
+// elements than std::tuple would. std::tuple has been seen to require an
 // instantiation depth of more than 10x the number of elements in some
 // implementations.
 // FlatTuple and ElemFromList are not recursive and have a fixed depth
@@ -1186,7 +1215,8 @@ template <typename... T>
 class FlatTuple
     : private FlatTupleBase<FlatTuple<T...>,
                             typename MakeIndexSequence<sizeof...(T)>::type> {
-  using Indices = typename FlatTuple::FlatTupleBase::Indices;
+  using Indices = typename FlatTupleBase<
+      FlatTuple<T...>, typename MakeIndexSequence<sizeof...(T)>::type>::Indices;
 
  public:
   FlatTuple() = default;
@@ -1284,19 +1314,39 @@ constexpr bool InstantiateTypedTestCase_P_IsDeprecated() { return true; }
     GTEST_CONCAT_TOKEN_(gtest_label_testthrow_, __LINE__): \
       fail(gtest_msg.value)
 
+#if GTEST_HAS_EXCEPTIONS
+
+#define GTEST_TEST_NO_THROW_CATCH_STD_EXCEPTION_() \
+  catch (std::exception const& e) { \
+    gtest_msg.value = ( \
+      "it throws std::exception-derived exception with description: \"" \
+    ); \
+    gtest_msg.value += e.what(); \
+    gtest_msg.value += "\"."; \
+    goto GTEST_CONCAT_TOKEN_(gtest_label_testnothrow_, __LINE__); \
+  }
+
+#else  // GTEST_HAS_EXCEPTIONS
+
+#define GTEST_TEST_NO_THROW_CATCH_STD_EXCEPTION_()
+
+#endif  // GTEST_HAS_EXCEPTIONS
+
 #define GTEST_TEST_NO_THROW_(statement, fail) \
   GTEST_AMBIGUOUS_ELSE_BLOCKER_ \
-  if (::testing::internal::AlwaysTrue()) { \
+  if (::testing::internal::TrueWithString gtest_msg{}) { \
     try { \
       GTEST_SUPPRESS_UNREACHABLE_CODE_WARNING_BELOW_(statement); \
     } \
+    GTEST_TEST_NO_THROW_CATCH_STD_EXCEPTION_() \
     catch (...) { \
+      gtest_msg.value = "it throws."; \
       goto GTEST_CONCAT_TOKEN_(gtest_label_testnothrow_, __LINE__); \
     } \
   } else \
     GTEST_CONCAT_TOKEN_(gtest_label_testnothrow_, __LINE__): \
-      fail("Expected: " #statement " doesn't throw an exception.\n" \
-           "  Actual: it throws.")
+      fail(("Expected: " #statement " doesn't throw an exception.\n" \
+            "  Actual: " + gtest_msg.value).c_str())
 
 #define GTEST_TEST_ANY_THROW_(statement, fail) \
   GTEST_AMBIGUOUS_ELSE_BLOCKER_ \
@@ -1357,12 +1407,15 @@ constexpr bool InstantiateTypedTestCase_P_IsDeprecated() { return true; }
       : public parent_class {                                                 \
    public:                                                                    \
     GTEST_TEST_CLASS_NAME_(test_suite_name, test_name)() {}                   \
+    ~GTEST_TEST_CLASS_NAME_(test_suite_name, test_name)() override = default; \
+    GTEST_DISALLOW_COPY_AND_ASSIGN_(GTEST_TEST_CLASS_NAME_(test_suite_name,   \
+                                                           test_name));       \
+    GTEST_DISALLOW_MOVE_AND_ASSIGN_(GTEST_TEST_CLASS_NAME_(test_suite_name,   \
+                                                           test_name));       \
                                                                               \
    private:                                                                   \
     void TestBody() override;                                                 \
     static ::testing::TestInfo* const test_info_ GTEST_ATTRIBUTE_UNUSED_;     \
-    GTEST_DISALLOW_COPY_AND_ASSIGN_(GTEST_TEST_CLASS_NAME_(test_suite_name,   \
-                                                           test_name));       \
   };                                                                          \
                                                                               \
   ::testing::TestInfo* const GTEST_TEST_CLASS_NAME_(test_suite_name,          \

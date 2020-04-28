@@ -186,7 +186,7 @@ auto simple_object = JsonSchema( JsonSchema::object("SimpleSchemaTest") );
 
 simple_object["vbool"] = true;
 simple_object["vint"] = vint;
-simple_object["vdouble"] = 2.5;   // order test
+simple_object["vdouble"] = 2.5;
 simple_object["vstring"] =  vstr;
 simple_object["vlist"] = vlist;
 simple_object["vlist"][2] = 11;
@@ -223,6 +223,12 @@ To do:
 
 Work about jsonimpex
 Work about jsonui
+
+https://gist.github.com/Cartexius/4c437c084d6e388288201aadf9c8cdd5
+
+sudo apt-get update -y
+sudo apt-get install -y googletest
+
 
 ## Best practices
 

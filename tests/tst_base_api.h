@@ -53,6 +53,7 @@ template<> void JsonioBaseTest<JsonSchema>::SetUp()
 }
 
 using JsonTypes = ::testing::Types<JsonFree, JsonSchema>;
+
 TYPED_TEST_SUITE(JsonioBaseTest, JsonTypes);
 
 TYPED_TEST( JsonioBaseTest, isTop )
