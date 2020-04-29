@@ -329,7 +329,6 @@ std::string DBQueryResult::getFirstKey() const
     if( it != query_result.end() )
        return it->first;
     return "";  // empty table
-
 }
 
 

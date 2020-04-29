@@ -37,7 +37,7 @@ SOURCES += \
     $$JSONIO14_DIR/dbquerybase.cpp \
     $$JSONIO14_DIR/dbdriverarango.cpp \
     $$JSONIO14_DIR/dbconnect.cpp \
- \#    $$JSONIO14_DIR/dbcollection.cpp
+    $$JSONIO14_DIR/dbcollection.cpp
 
 
 
