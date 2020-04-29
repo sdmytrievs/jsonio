@@ -2,27 +2,27 @@
 #include <iostream>
 
 #include "jsonio14/dbdriverarango.h"
-#include "jsonio14/dbqueryarango.h"
+#include "jsonio14/dbquerybase.h"
 #include "jsonio14/io_settings.h"
 
 #include "jsonarango/arangocollection.h"
-#include "jsonarango/arangocollection.h"
+#include "jsonarango/arangoconnect.h"
 
 namespace jsonio14 {
 
 
 // Default Constructor
-ArangoDBClient::ArangoDBClient()
+ArangoDBClient::ArangoDBClient():AbstractDBDriver()
 {
-    arangocpp::ArangoDBConnection connectData;
-    /// ???? connectData.getFromSettings(ioSettings().defaultArangoDB());
-    reset_db_connection( connectData );
+    arangocpp::ArangoDBConnection aconnect_data;
+    /// ???? aconnect_data.getFromSettings(ioSettings().defaultArangoDB());
+    reset_db_connection( aconnect_data );
 }
 
-void ArangoDBClient::reset_db_connection( const arangocpp::ArangoDBConnection& aconnectData )
+void ArangoDBClient::reset_db_connection( const arangocpp::ArangoDBConnection& aconnect_data )
 {
-    arando_connect = std::make_shared<arangocpp::ArangoDBConnection>(aconnectData);
-    arando_db = std::make_shared<arangocpp::ArangoDBCollectionAPI>(aconnectData);
+    arando_connect = std::make_shared<arangocpp::ArangoDBConnection>(aconnect_data);
+    arando_db = std::make_shared<arangocpp::ArangoDBCollectionAPI>(aconnect_data);
 }
 
 // Create collection if no exist
@@ -78,25 +78,24 @@ std::string ArangoDBClient::save_record( const std::string& collname, keysmap_t:
 }
 
 
-// Run query
-//  \param collname - collection name
-//  \param query -  query  condition (where)
-//  \param setfnc - function for set up readed data
 void ArangoDBClient::select_query( const std::string& collname, const DBQueryBase& query,  SetReaded_f setfnc )
 {
-///????    if( query.getType() == DBQueryData::qEdgesFrom ||
-//            query.getType() == DBQueryData::qEdgesTo  ||
-//            query.getType() == DBQueryData::qEdgesAll    )
-//        pdata->SearchEdgesToFrom( collname,  query, setfnc );
-//    else
-//        pdata->SelectQuery( collname,  query, setfnc );
+    auto arango_query = query.arando_query;
+    arando_db->selectQuery( collname,  *arango_query, setfnc );
 }
 
 
-void ArangoDBClient::all_query( const std::string& collname, const std::set<std::string>& queryFields,
+void ArangoDBClient::all_query( const std::string& collname, const std::set<std::string>& query_fields,
                                 SetReadedKey_f setfnc )
 {
- ///????   arando_db->AllQueryFields( isComlexFields(queryFields), collname, queryFields, setfnc );
+    fields2query_t  arango_query_fields;
+    if( !is_comlex_fields(query_fields) )
+    {
+        // select only query_fields
+        for ( const auto& it : query_fields)
+            arango_query_fields[it] = it;
+    }
+    arando_db->selectAll( collname, arango_query_fields, setfnc );
 }
 
 
@@ -135,7 +134,6 @@ void jsonio14::ArangoDBClient::set_server_key(const std::string& key, keysmap_t:
     itr->second = std::unique_ptr<char>(bytes);
 }
 
-// list collection names
 arangocpp::CollectionTypes ArangoDBClient::to_arrango_types( CollTypes ctype ) const
 {
     arangocpp::CollectionTypes arango_type = arangocpp::CollectionTypes::Vertex;

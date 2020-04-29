@@ -95,10 +95,10 @@ public:
 
     /// Fetches all documents from a collection.
     ///  \param collname -    collection name
-    ///  \param queryFields - list of fields to selection
+    ///  \param query_fields - list of fields to selection
     ///  \param setfnc -     callback function fetching document data
     virtual void all_query( const std::string& collname,
-                            const std::set<std::string>& queryFields,  SetReadedKey_f setfnc ) = 0;
+                            const std::set<std::string>& query_fields,  SetReadedKey_f setfnc ) = 0;
 
     ///  Provides 'distinct' operation over collection
     ///  \param collname - collection name
@@ -116,7 +116,6 @@ public:
     ///  \param collname - collection name
     ///  \param ids -      array of keys
     virtual void remove_by_ids( const std::string& collname,  const std::vector<std::string>& ids  ) = 0;
-
 
 };
 

@@ -8,16 +8,16 @@ namespace jsonio14 {
 DataBase::DataBase()
 {
     // Default Constructor - extract data from settings
-    std::shared_ptr<AbstractDBDriver> dbDriver( new ArangoDBClient() );
-    updateDriver( dbDriver );
+    std::shared_ptr<AbstractDBDriver> db_driver( new ArangoDBClient() );
+    updateDriver( db_driver );
 }
 
 DataBase::~DataBase()
 { }
 
-void DataBase::updateDriver( std::shared_ptr<AbstractDBDriver> dbDriver )
+void DataBase::updateDriver( std::shared_ptr<AbstractDBDriver> db_driver )
 {
-    current_driver = dbDriver;
+    current_driver = db_driver;
 
     for( auto coll:  collections_list )
         coll.second->changeDriver( current_driver.get() );

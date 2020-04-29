@@ -12,9 +12,9 @@ class DataBase
 public:
 
     /// Constructor use specific database vendor.
-    DataBase( std::shared_ptr<AbstractDBDriver> dbDriver )
+    DataBase( std::shared_ptr<AbstractDBDriver> db_driver )
     {
-        updateDriver( dbDriver );
+        updateDriver( db_driver );
     }
     ///  Constructor used internal ArangoDBClient
     DataBase();
@@ -24,7 +24,7 @@ public:
 
     ///  Switch to the specified database driver (provided it exists and the user can connect to it).
     ///  From this point on, any following action in the same shell or connection will use the specified database.
-    void updateDriver( std::shared_ptr<AbstractDBDriver> dbDriver );
+    void updateDriver( std::shared_ptr<AbstractDBDriver> db_driver );
 
     /// Get current database driver
     const AbstractDBDriver* theDriver() const

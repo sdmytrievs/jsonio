@@ -6,6 +6,10 @@
 #include <set>
 #include "jsonio14/service.h"
 
+namespace arangocpp {
+class ArangoDBQuery;
+}
+
 namespace jsonio14 {
 
 class JsonBase;
@@ -46,68 +50,72 @@ public:
         qEJDB = 7
     };
 
-
     /// Constructor
-    DBQueryBase()
-    {}
+    DBQueryBase();
 
     ///  Destructor
     virtual ~DBQueryBase()
     {}
 
-    virtual void toJson( JsonFree& object ) const = 0;
-    virtual void fromJson( const JsonBase& object ) =0;
+    virtual void toJson( JsonBase& object ) const;
+    virtual void fromJson( const JsonBase& object );
 
     /// Test for empty query.
-    virtual bool empty() const = 0;
+    virtual bool empty() const;
 
     /// Get query type.
-    virtual QType type() const = 0;
+    virtual QType type() const;
 
     /// Get string with query ( an AQL query text or json template  ).
-    virtual const std::string& queryString() const = 0;
+    virtual const std::string& queryString() const;
 
     /// Set json string with the bind parameter values need to be passed
     /// along with the query when it is executed.
-    virtual void  setBindVars( const std::string& jsonBindObject ) = 0;
+    virtual void  setBindVars( const std::string& json_bind );
 
     /// Set json string with the bind parameter values need to be passed
     /// along with the query when it is executed.
-    void  setBindVars( const JsonBase& bindObject );
+    void  setBindVars( const JsonBase& bind_object );
 
     /// Get the json string with bind values used in the query
-    virtual const std::string& bindVars() const = 0;
+    virtual const std::string& bindVars() const;
 
     /// Set json string with the  key/value object with extra options for the query
     ///  need to be passed along with the query when it is executed.
-    virtual void  setOptions( const std::string& jsonOptionsObject ) = 0;
+    virtual void  setOptions( const std::string& json_options );
 
     /// Get the json string with  key/value object with extra options for the query.
-    virtual const std::string& options() const = 0;
+    virtual const std::string& options() const;
 
     /// Set the fixed set of attributes from the collection is queried,
     /// then the query result values will have a homogeneous structure.
-    virtual void  setQueryFields( const fields2query_t& mapFields ) = 0;
+    virtual void  setQueryFields( const fields2query_t& map_fields );
 
     /// Get the fixed set of attributes from the collection is queried.
-    virtual const fields2query_t& queryFields() const = 0;
+    virtual const fields2query_t& queryFields() const;
 
     template <typename Container>
-    void  setQueryFields( const Container& listFields )
+    void  setQueryFields( const Container& list_fields )
     {
-        fields2query_t mapFields;
+        fields2query_t map_fields;
 
-        typename Container::const_iterator itr = listFields.begin();
-        typename Container::const_iterator end = listFields.end();
+        typename Container::const_iterator itr = list_fields.begin();
+        typename Container::const_iterator end = list_fields.end();
         for (; itr != end; ++itr)
         {
             std::string fld = *itr;
             replace_all( fld, ".", '_');
-            mapFields[fld] = *itr;
+            map_fields[fld] = *itr;
         }
-        setQueryFields( mapFields );
+        setQueryFields( map_fields );
     }
 
+protected:
+
+    /// ArangoDB query data
+    std::shared_ptr<arangocpp::ArangoDBQuery> arando_query = nullptr;
+
+    friend class ArangoDBClient;
 };
 
 /// \class DBQueryDef description query into Database
@@ -207,7 +215,7 @@ public:
         return query_data;
     }
 
-    void setQuery( const DBQueryDef& qrdef)
+    void setQuery( const DBQueryDef& qrdef )
     {
         query_data = qrdef;
         query_result.clear();
@@ -216,9 +224,9 @@ public:
     /// Add line to view table
     void addLine( const std::string& key_str,  const JsonBase* nodedata, bool isupdate );
     /// Update line into view table
-    void updateLine( const std::string& keyStr,  const JsonBase* nodedata );
+    void updateLine( const std::string& key_str,  const JsonBase* nodedata );
     /// Delete line from view table
-    void deleteLine( const std::string& keyStr );
+    void deleteLine( const std::string& key_str );
 
     /// Get query result table
     const key_values_table_t& queryResult() const
