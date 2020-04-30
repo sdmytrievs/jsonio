@@ -93,31 +93,87 @@ void DBCollection::reload()
         doc->updateQuery(); // Run current query, rebuild internal table of values
 }
 
-std::string DBCollection::extract_key_from(const JsonBase *object)
+std::string DBCollection::extract_key_from(const JsonBase& object)
 {
     std::string key_str, kbuf;
     for( const auto& keyfld: keyFields())
     {
-        object->get_key_via_path( keyfld, kbuf, "undef" );
+        object.get_key_via_path( keyfld, kbuf, "undef" );
         key_str += kbuf;
     }
     return key_str;
 }
 
-std::string DBCollection::generate_id(const std::string& key_template)
+std::string DBCollection::id_from_template( const std::string& key_template ) const
 {
     //temporaly
     if( key_template.empty())
         return "";
-    return coll_name+"/"+get_id_from_template(key_template);
+    return coll_name+"/"+key_from_template(key_template);
     //return db_driver->genOid( name(), genKeyFromTemplate(_keytemplate) );
 }
 
-bool DBCollection::exist_key(const std::string &key)
+bool DBCollection::existsDocument(const std::string &key) const
 {
-   key_record_itr = key_record_map.find(key) ;
-   return  key_record_itr != key_record_map.end();
+    return  key_record_map.find(key)  != key_record_map.end();
 }
+
+std::string DBCollection::createDocument( const JsonBase &data_object )
+{
+    auto new_key = extract_key_from( data_object );
+
+    if( is_pattern( new_key ) )
+        jsonioErr("TEJDB0010", "Cannot save under record key template" );
+
+    pair<KeysSet::iterator,bool> ret;
+    ret = _recList.insert( pair<string,unique_ptr<char>>( __key, nullptr ) );
+    _itrL = ret.first;
+    // Test unique keys name before add the record(s)
+    if( ret.second == false)
+    {
+        string erstr = "Cannot insert record:\n";
+        erstr += __key;
+        erstr += ".\nTwo records with the same key!";
+        jsonioErr("TEJDB0004", erstr );
+    }
+
+    try{
+        // save record to data base
+        string jsondata;
+        printNodeToJson( jsondata, domnode, true );
+        string retId = _dbdriver->saveRecord( name(), _itrL, jsondata );
+        if( retId.empty() )
+            jsonioErr( "TEJDB0021",  string("Error saving record ") );
+        document->setOid( retId );
+    }
+    catch(...)
+    {
+        _recList.erase(_itrL);
+        _itrL = _recList.end();
+        throw;
+    }
+
+    // Set up internal data - only delete all, not add to selection
+    string keyStr = getKeyFromDom( domnode );
+
+    if(keyStr != __key )
+    {
+        // Swap value from oldKey to newKey, note that a default constructed value
+        // is created by operator[] if 'm' does not contain newKey.
+        std::swap(_recList[keyStr], _itrL->second);
+        // Erase old key-value from map
+        _recList.erase(_itrL);
+        __key = keyStr;
+    }
+
+}
+
+bool DBCollection::readDocument(JsonBase &data_object, const std::string &key)
+{
+
+}
+
+
 
 std::string DBCollection::create_new_record_in_db(DBDocumentBase *document)
 {
@@ -285,7 +341,7 @@ void DBCollection::loadCollectionFile(  const std::set<std::string>& query_field
 
 
 // Gen new oid from key template
-std::string DBCollection::get_id_from_template( const std::string& key_template ) const
+std::string DBCollection::key_from_template( const std::string& key_template ) const
 {
     std::string idkey = name();
     idkey +="/"+key_template+"*";

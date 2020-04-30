@@ -18,7 +18,8 @@ HEADERS += \
     $$JSONIO14_HEADERS_DIR/jsonio14/dbdriverarango.h \
     $$JSONIO14_HEADERS_DIR/jsonio14/dbquerybase.h \
     $$JSONIO14_HEADERS_DIR/jsonio14/dbconnect.h \
-    $$JSONIO14_HEADERS_DIR/jsonio14/dbcollection.h
+    $$JSONIO14_HEADERS_DIR/jsonio14/dbcollection.h \
+    $$PWD/../include/jsonio14/dbdocument.h
 
 
 SOURCES += \

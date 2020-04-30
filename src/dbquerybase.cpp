@@ -68,9 +68,14 @@ DBQueryBase::QType to_base_query_types( arangocpp::ArangoDBQuery::QueryType aran
 }
 
 
-DBQueryBase::DBQueryBase()
+DBQueryBase::DBQueryBase(DBQueryBase::QType atype)
 {
-    arando_query = std::make_shared<arangocpp::ArangoDBQuery>(); // All
+    arando_query = std::make_shared<arangocpp::ArangoDBQuery>( to_arrango_query_type(atype) );
+}
+
+DBQueryBase::DBQueryBase(const std::string &condition, QType atype)
+{
+    arando_query = std::make_shared<arangocpp::ArangoDBQuery>( condition, to_arrango_query_type(atype) );
 }
 
 void DBQueryBase::toJson(JsonBase &object) const
@@ -301,7 +306,7 @@ std::size_t DBQueryResult::getKeysValues( std::vector<std::string> &aKeyList, st
     return aKeyList.size();
 }
 
-std::string DBQueryResult::getKeyFromValue( const JsonBase *node ) const
+std::string DBQueryResult::getKeyFromValue( const JsonBase& node ) const
 {
     std::size_t ii;
     values_t values;

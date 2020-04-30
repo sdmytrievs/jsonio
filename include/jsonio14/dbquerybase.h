@@ -50,6 +50,25 @@ public:
         qEJDB = 7
     };
 
+
+    /// Empty or All  query constructor.
+    explicit DBQueryBase( QType atype = qAll  );
+
+    /// An AQL query text or json template constructor.
+    DBQueryBase( const std::string& condition, QType atype );
+
+    virtual ~DBQueryBase()
+    {}
+
+    /// Copy constructor
+    DBQueryBase( const DBQueryBase& data) = default;
+    /// Move constructor
+    DBQueryBase( DBQueryBase&& data) = default;
+    /// Copy assignment
+    DBQueryBase &operator =( const DBQueryBase &other) = default;
+    /// Move assignment
+    DBQueryBase &operator =( DBQueryBase &&other)= default;
+
     /// Constructor
     DBQueryBase();
 
@@ -247,7 +266,7 @@ public:
                                const std::vector<std::string>& fieldnames, const std::vector<std::string>& fieldvalues ) const;
 
     /// Extract key from data
-    std::string getKeyFromValue( const JsonBase* node ) const;
+    std::string getKeyFromValue( const JsonBase& node ) const;
 
     /// Extract first key from data
     std::string getFirstKey() const;
