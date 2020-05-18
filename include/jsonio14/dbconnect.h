@@ -5,7 +5,7 @@
 
 namespace jsonio14 {
 
-/// Class DataBase to managing database connection
+/// \class DataBase to managing database connection.
 class DataBase
 {
 

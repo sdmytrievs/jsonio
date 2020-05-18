@@ -10,7 +10,7 @@ class ArangoDBCollectionAPI;
 
 namespace jsonio14 {
 
-/// Definition of Collection Client used Low Level C++ Driver for ArangoDB
+/// Implementation of Database Driver using Low-Level C++ Driver for ArangoDB.
 class ArangoDBClient: public AbstractDBDriver
 {
 

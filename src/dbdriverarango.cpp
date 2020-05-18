@@ -51,6 +51,7 @@ bool ArangoDBClient::load_record( const std::string& collname, keysmap_t::iterat
 bool ArangoDBClient::remove_record( const std::string& collname, keysmap_t::iterator& itr  )
 {
     JARANGO_THROW_IF( arando_connect->readonlyDBAccess(), "ArangoDBClient", 1, " try to remove document into read only mode." );
+
     std::string rid = get_server_key( itr->second.get() );
     return arando_db->deleteDocument( collname, rid );
 }

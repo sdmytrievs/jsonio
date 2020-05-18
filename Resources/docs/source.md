@@ -1,5 +1,7 @@
 ## Files descriptions
 
+### Json and schema json parsing ###
+
 1. exeptions.h
 
 General exception structure into project.
@@ -199,7 +201,48 @@ std::cout <<  simple_object << std::endl;
 
 
 > By default add requered fields and fields with default value
-> *source: "-";    test: "+";  example: "+"*
+> *source: "+";    test: "+";  example: "+"*
+
+### Working with database ###
+
+
+15. dbquerybase.h(cpp)
+
+class DBQueryBase describing the query and query parameters. Used to retrieve data that are stored in the DataBase.
+class DBQueryDef is a query description into a Database record.
+class DBQueryResult used to store query definition and result.
+
+> *source: "+";  test: "-";  example: "-"*
+> object.add_object_via_path("condition") ? to JsonBase (JsonFree->JsonBase)
+> ? tests
+
+16. dbdriverbase.h
+
+Interface for Abstract Database Driver
+The driver works like an adaptor which connects a generic interface to a specific database vendor implementation.
+
+> *source: "+";  test: "-";  example: "-"*
+
+17. dbdriverarango.h(cpp)
+
+Implementation of Database Driver using Low-Level C++ Driver for ArangoDB.
+
+> *source: "+";  test: "-";  example: "-"*
+> Not implemented:  aconnect_data.getFromSettings(ioSettings().defaultArangoDB());
+
+
+18. dbconnect.h(cpp)
+
+class DataBase to managing database connection.
+
+> *source: "+";  test: "-";  example: "-"*
+
+
+19. dbcollection.h(cpp)
+
+class  TDBCollection  the definition collections API.  A collection contains zero or more documents.
+
+> *source: "+-";  test: "-";  example: "-"*
 
 
 ## Next steps --------------------------------------------------------------------------------

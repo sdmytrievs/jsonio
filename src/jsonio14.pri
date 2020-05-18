@@ -14,9 +14,9 @@ HEADERS += \
     $$JSONIO14_HEADERS_DIR/jsonio14/schema.h \
     $$JSONIO14_HEADERS_DIR/jsonio14/schema_thrift.h \
     $$JSONIO14_HEADERS_DIR/jsonio14/jsonschema.h \
+    $$JSONIO14_HEADERS_DIR/jsonio14/dbquerybase.h \
     $$JSONIO14_HEADERS_DIR/jsonio14/dbdriverbase.h \
     $$JSONIO14_HEADERS_DIR/jsonio14/dbdriverarango.h \
-    $$JSONIO14_HEADERS_DIR/jsonio14/dbquerybase.h \
     $$JSONIO14_HEADERS_DIR/jsonio14/dbconnect.h \
     $$JSONIO14_HEADERS_DIR/jsonio14/dbcollection.h \
     $$PWD/../include/jsonio14/dbdocument.h

@@ -31,8 +31,11 @@ using field_value_map_t = std::map<std::string, std::string >;
 /// Function for testing the matching of the record key to the template
 using MatchKeyTemplate_f = std::function<bool( const std::string& keypat, const std::string& akey )>;
 
-
-/// \interface DBQueryBase is used to retrieve data that are stored in DataBase
+/// \class DBQueryBase describing the query and query parameters.
+/// Used to retrieve data that are stored in the DataBase.
+/// Query: the query which you want explained;
+/// If the query references any bind variables, these must also be passed in the attribute bindVars.
+/// Additional options for the query can be passed in the options attribute.
 class DBQueryBase
 {
 
@@ -57,9 +60,6 @@ public:
     /// An AQL query text or json template constructor.
     DBQueryBase( const std::string& condition, QType atype );
 
-    virtual ~DBQueryBase()
-    {}
-
     /// Copy constructor
     DBQueryBase( const DBQueryBase& data) = default;
     /// Move constructor
@@ -68,9 +68,6 @@ public:
     DBQueryBase &operator =( const DBQueryBase &other) = default;
     /// Move assignment
     DBQueryBase &operator =( DBQueryBase &&other)= default;
-
-    /// Constructor
-    DBQueryBase();
 
     ///  Destructor
     virtual ~DBQueryBase()
@@ -137,14 +134,13 @@ protected:
     friend class ArangoDBClient;
 };
 
-/// \class DBQueryDef description query into Database
+/// \class DBQueryDef is a query description into a Database record.
 class DBQueryDef final
 {
 
 public:
 
-
-    /// New constructor
+    /// Constructor
     DBQueryDef( const std::shared_ptr<DBQueryBase>& condition, const std::vector<std::string>& fields = {} ):
         fields_collect(fields), query_condition(condition)
     { }
@@ -217,7 +213,7 @@ protected:
     std::shared_ptr<DBQueryBase> query_condition;
 };
 
-/// \class  DBQueryResult used to store query definition and result
+/// \class  DBQueryResult used to store query definition and result.
 class DBQueryResult final
 {
 
@@ -240,13 +236,6 @@ public:
         query_result.clear();
     }
 
-    /// Add line to view table
-    void addLine( const std::string& key_str,  const JsonBase* nodedata, bool isupdate );
-    /// Update line into view table
-    void updateLine( const std::string& key_str,  const JsonBase* nodedata );
-    /// Delete line from view table
-    void deleteLine( const std::string& key_str );
-
     /// Get query result table
     const key_values_table_t& queryResult() const
     {
@@ -266,11 +255,10 @@ public:
                                const std::vector<std::string>& fieldnames, const std::vector<std::string>& fieldvalues ) const;
 
     /// Extract key from data
-    std::string getKeyFromValue( const JsonBase& node ) const;
+    std::string getKeyFromValue( const JsonBase* node ) const;
 
     /// Extract first key from data
     std::string getFirstKey() const;
-
 
 protected:
 
@@ -281,6 +269,13 @@ protected:
 
     /// Make line to view table
     void node_to_values(  const JsonBase* node, values_t& values ) const;
+
+    /// Add line to view table
+    void add_line( const std::string& key_str,  const JsonBase* nodedata, bool isupdate );
+    /// Update line into view table
+    void update_line( const std::string& key_str,  const JsonBase* nodedata );
+    /// Delete line from view table
+    void delete_line( const std::string& key_str );
 
 };
 

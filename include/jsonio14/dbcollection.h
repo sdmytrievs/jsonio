@@ -14,7 +14,7 @@ class DBDocumentBase;
 std::string makeTemplateKey( const JsonBase *object, const std::vector<std::string>&  key_template_fields );
 
 
-/// Class  TDBCollection - definition collections API
+/// \class  TDBCollection  the definition collections API.
 /// Documents are grouped into collections.
 /// A collection contains zero or more documents.
 class DBCollection

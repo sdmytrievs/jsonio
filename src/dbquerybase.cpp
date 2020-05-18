@@ -96,7 +96,8 @@ void DBQueryBase::fromJson(const JsonBase &object)
 
     object.get_value_via_path(  "style", atype, -1 );
     object.get_value_via_path(  "find", data, std::string("") );
-    arando_query = std::make_shared<arangocpp::ArangoDBQuery>( data, static_cast<arangocpp::ArangoDBQuery::QueryType>(atype) );
+    arando_query = std::make_shared<arangocpp::ArangoDBQuery>(
+                data, static_cast<arangocpp::ArangoDBQuery::QueryType>(atype) );
     object.get_value_via_path(  "bind", data, std::string("") );
     arando_query->setBindVars(data);
     object.get_value_via_path(  "options", data, std::string("") );
@@ -171,15 +172,15 @@ void DBQueryDef::toJson(JsonFree& object) const
 
 void DBQueryDef::fromJson(const JsonBase& object)
 {
-    object.get_value_via_path(  "name", key_name, std::string("undefined") );
-    object.get_value_via_path(  "comment", rec_comment, std::string("") );
-    object.get_value_via_path(  "qschema", toschema, std::string("") );
+    object.get_value_via_path( "name", key_name, std::string("undefined") );
+    object.get_value_via_path( "comment", rec_comment, std::string("") );
+    object.get_value_via_path( "qschema", toschema, std::string("") );
 
     auto condq = (object.field("condition"));
     if( condq != nullptr )
         query_condition->fromJson( *condq );
 
-    object.get_value_via_path(  "collect", fields_collect, {} );
+    object.get_value_via_path( "collect", fields_collect, {} );
 }
 
 //---------------------------------------------------------------
@@ -197,7 +198,7 @@ void DBQueryResult::node_to_values( const JsonBase* node, values_t& values ) con
     }
 }
 
-void DBQueryResult::addLine( const std::string &key_str, const JsonBase *nodedata, bool isupdate )
+void DBQueryResult::add_line( const std::string &key_str, const JsonBase *nodedata, bool isupdate )
 {
     values_t values;
     node_to_values( nodedata, values );
@@ -213,7 +214,7 @@ void DBQueryResult::addLine( const std::string &key_str, const JsonBase *nodedat
     query_result.insert(std::pair<std::string,values_t>( key_str, values ));
 }
 
-void DBQueryResult::updateLine(const std::string &key_str, const JsonBase *nodedata)
+void DBQueryResult::update_line(const std::string &key_str, const JsonBase *nodedata)
 {
     values_t values;
     node_to_values( nodedata, values );
@@ -223,7 +224,7 @@ void DBQueryResult::updateLine(const std::string &key_str, const JsonBase *noded
         it->second = values;
 }
 
-void DBQueryResult::deleteLine( const std::string& key_str )
+void DBQueryResult::delete_line( const std::string& key_str )
 {
     auto it =  query_result.find(key_str);
     if( it != query_result.end() )
@@ -306,7 +307,7 @@ std::size_t DBQueryResult::getKeysValues( std::vector<std::string> &aKeyList, st
     return aKeyList.size();
 }
 
-std::string DBQueryResult::getKeyFromValue( const JsonBase& node ) const
+std::string DBQueryResult::getKeyFromValue( const JsonBase* node ) const
 {
     std::size_t ii;
     values_t values;
