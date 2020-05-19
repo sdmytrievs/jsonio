@@ -26,7 +26,7 @@ void DataBase::updateDriver( std::shared_ptr<AbstractDBDriver> db_driver )
 
 DBCollection *DataBase::addCollection( const std::string& type, const std::string& colname  ) const
 {
-    auto col_ptr = std::make_shared<DBCollection>( this, colname );
+    auto col_ptr = std::make_shared<DBCollection>( *this, colname );
     col_ptr->coll_type = type;
     col_ptr->load();
     collections_list[colname] = col_ptr;

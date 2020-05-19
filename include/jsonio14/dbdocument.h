@@ -20,7 +20,7 @@ namespace jsonio14 {
 /// Furthermore, each document is uniquely identified by its document handle across all collections in the same database.
 class DBDocumentBase
 {
-    friend class TDBCollection;
+    friend class DBCollection;
 
     /// Do it after read document from database
     virtual void after_load( const std::string&  ) {}
@@ -59,38 +59,6 @@ public:
 //        return collection_from->database();
 //    }
 
-    /// Generate new _id or other pointer of location
-    virtual std::string genOid( const std::string& key_template  )
-    {
-        return collection_from->generateOid( key_template );
-    }
-    /// Set _id to document
-    virtual void setOid( const std::string&  newid ) = 0;
-
-    /// Extract _id from current document
-    virtual std::string getOid() const = 0;
-
-    /// Test document before read
-    virtual void testUpdateSchema( const std::string&  /*pkey*/ )
-    { }
-
-    /// Return curent document as json string
-    virtual std::string getJson( bool dense = false ) const = 0;
-    /// Load document from json string
-    virtual void setJson( const std::string& json_document ) = 0;
-
-    /// Extract key from current document
-    virtual std::string getKeyFromCurrent() const = 0;
-    /// Get document key from dom object
-    virtual std::string getKeyFromDom( const JsonBase& object  ) const
-    {
-        return collection_from->extract_key_from(object);
-    }
-
-    /// Load document from json string
-    /// \return current document key
-    virtual std::string recFromJson( const std::string& jsondata ) = 0;
-
 
     //--- Manipulation documents
 
@@ -106,13 +74,12 @@ public:
         return collection_from->existsDocument( key );
     }
 
-    /// Creates a new document in the collection from the given data.
+    /// Creates a new document in the collection from the current data.
     /// \param key      - key of document
     /// \return new key of document ( generate from template if key undefined )
     std::string createDocument( const std::string& key = "" )
     {
-        // add key _id to structure
-        setOid( key );
+        setOid( key ); // add key _id to structure
         before_save_update( key );
         auto rid = collection_from->createDocument( this );
         after_save_update( key );
@@ -132,16 +99,14 @@ public:
     ///  \param key      - key of document
     std::string updateDocument( const std::string& key  )
     {
-        // add key _id to structure
-        setOid( key );
+        setOid( key ); // add key _id to structure
         before_save_update( key);
-        auto rid = collection_from->updateDocument( this, key );
+        auto rid = collection_from->saveDocument( this, key );
         after_save_update( key);
         return rid;
     }
 
     /// Removes current document from the collection
-    /// \param key      - key of document
     void deleteDocument()
     {
         auto key = getKeyFromCurrent();
@@ -158,6 +123,41 @@ public:
         collection_from->deleteDocument(key);
         after_remove( key );
     }
+
+    // The document-handle API
+
+    /// Generate new document-handle (_id) or other pointer of location
+    virtual std::string genOid( const std::string& key_template  )
+    {
+        return collection_from->generateOid( key_template );
+    }
+    /// Set document-handle(_id) to document
+    virtual void setOid( const std::string&  newid ) = 0;
+    /// Extract document-handle(_id) from current document
+    virtual std::string getOid() const = 0;
+
+
+    /// Test document before read
+    virtual void testUpdateSchema( const std::string&  /*pkey*/ )
+    { }
+
+    /// Return curent document as json string
+    virtual std::string getJson( bool dense = false ) const = 0;
+    /// Load document from json string
+    virtual void setJson( const std::string& json_document ) = 0;
+
+    /// Extract key from current document
+    virtual std::string getKeyFromCurrent() const = 0;
+    /// Get document key from dom object
+    virtual std::string getKeyFromDom( const JsonBase* object  ) const
+    {
+        return collection_from->getKeyFrom(object);
+    }
+
+    /// Load document from json string
+    /// \return current document key
+    virtual std::string recFromJson( const std::string& jsondata ) = 0;
+
 
     //--- Selection/query functions
 
@@ -305,27 +305,27 @@ protected:
 
     /// Prepare data to save to database
     virtual const JsonBase& current_data( time_t crtt, char* oid ) const = 0;
-    virtual const JsonBase& current_data() const = 0;
+    virtual JsonBase* current_data() const = 0;
 
     /// Add line to view table
     void add_line( const std::string& key_str, const JsonBase* nodedata, bool isupdate )
     {
         if( query_result.get() != nullptr )
-            query_result->addLine( key_str, nodedata, isupdate );
+            query_result->add_line( key_str, nodedata, isupdate );
     }
 
     /// Update line into view table
     void update_line( const std::string& key_str, const JsonBase* nodedata )
     {
         if( query_result.get() != nullptr )
-            query_result->updateLine( key_str, nodedata );
+            query_result->update_line( key_str, nodedata );
     }
 
     /// Delete line from view table
     void delete_line( const std::string& key_str )
     {
         if( query_result.get() != nullptr )
-            query_result->deleteLine( key_str );
+            query_result->delete_line( key_str );
     }
 
     /// Build default query for collection ( by default all documents )

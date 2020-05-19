@@ -20,13 +20,14 @@ public:
     ArangoDBClient();
 
     /// Constructor
-    ArangoDBClient( const arangocpp::ArangoDBConnection& aconnect_data ):AbstractDBDriver()
+    explicit ArangoDBClient( const arangocpp::ArangoDBConnection& aconnect_data ):AbstractDBDriver()
     {
         reset_db_connection( aconnect_data );
     }
 
     ///  Destructor
-    virtual ~ArangoDBClient();
+    ~ArangoDBClient()
+    {}
 
     // Collections API
 
@@ -39,30 +40,38 @@ public:
     /// \param ctype - types of collection to select.
     std::set<std::string> get_collections_names( CollTypes ctype ) override;
 
-    std::string get_server_key( char* pars ) override
+    std::string get_server_key( const std::unique_ptr<char>& second ) const override
     {
-        return std::string(pars);
+        return std::string(second.get());
     }
 
+    void set_server_key( std::unique_ptr<char>& second, const std::string& key ) override;
+
     // CRUD API
+
+    /// Creates a new document in the collection from the given data or
+    /// replaces an existing document described by the selector.
+    /// \param collname - collection name
+    /// \param jsonrec - json object with data
+    /// \return the document-handle.
+    std::string create_record( const std::string& collname, std::unique_ptr<char>& second, const JsonBase* recdata ) override;
 
     /// Returns the document described by the selector.
     /// \param collname - collection name
     /// \param it -  pair: key -> selector
     /// \param jsonrec - object to receive data
-    bool load_record( const std::string& collname, keysmap_t::iterator& it, JsonBase* recdata ) override;
+    bool read_record( const std::string& collname, keysmap_t::iterator& it, JsonBase* recdata ) override;
+
+    /// Update an existing document described by the selector.
+    /// \param collname - collection name
+    /// \param it -  pair: key -> selector
+    /// \param jsonrec - json object with data
+    std::string update_record( const std::string& collname, keysmap_t::iterator& it, const JsonBase* recdata ) override;
 
     /// Removes a document described by the selector.
     /// \param collname - collection name
     /// \param it -  pair: key -> selector
-    bool remove_record(const std::string& collname, keysmap_t::iterator& it ) override;
-
-    /// Creates a new document in the collection from the given data or
-    /// replaces an existing document described by the selector.
-    /// \param collname - collection name
-    /// \param it -  pair: key -> selector
-    /// \param jsonrec - json object with data
-    std::string save_record( const std::string& collname, keysmap_t::iterator& it, const JsonBase* recdata ) override;
+    bool delete_record(const std::string& collname, keysmap_t::iterator& it ) override;
 
     // Query API
 
@@ -100,6 +109,11 @@ public:
     ///  \param ids -      array of keys
     void remove_by_ids( const std::string& collname,  const std::vector<std::string>& ids  ) override;
 
+    /// Check the document-handle example in to contain only
+    /// characters officially allowed by ArangoDB.
+    /// \return  a document-handle that contain only only allowed characters.
+    std::string sanitization( const std::string& documentHandle ) override;
+
 protected:
 
     /// ArangoDB connection data
@@ -110,8 +124,6 @@ protected:
 
     /// Reset connections to ArangoDB server
     void reset_db_connection( const arangocpp::ArangoDBConnection& connect_data );
-
-    void set_server_key( const std::string& key, keysmap_t::iterator& itr );
 
     bool is_comlex_fields( const std::set<std::string>& query_fields);
 

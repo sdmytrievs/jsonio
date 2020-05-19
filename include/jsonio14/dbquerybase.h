@@ -216,6 +216,7 @@ protected:
 /// \class  DBQueryResult used to store query definition and result.
 class DBQueryResult final
 {
+    friend class DBDocumentBase;
 
 public:
 

@@ -12,7 +12,8 @@ class DataBase
 public:
 
     /// Constructor use specific database vendor.
-    DataBase( std::shared_ptr<AbstractDBDriver> db_driver )
+    DataBase( std::shared_ptr<AbstractDBDriver> db_driver ):
+        current_driver(nullptr), collections_list()
     {
         updateDriver( db_driver );
     }
@@ -27,7 +28,7 @@ public:
     void updateDriver( std::shared_ptr<AbstractDBDriver> db_driver );
 
     /// Get current database driver
-    const AbstractDBDriver* theDriver() const
+    AbstractDBDriver* theDriver() const
     {
         return current_driver.get();
     }

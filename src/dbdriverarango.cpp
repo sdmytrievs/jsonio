@@ -25,7 +25,6 @@ void ArangoDBClient::reset_db_connection( const arangocpp::ArangoDBConnection& a
     arando_db = std::make_shared<arangocpp::ArangoDBCollectionAPI>(aconnect_data);
 }
 
-// Create collection if no exist
 void ArangoDBClient::create_collection(const std::string& collname, const std::string& ctype)
 {
     arando_db->createCollection( collname, ctype );
@@ -37,45 +36,52 @@ std::set<std::string> ArangoDBClient::get_collections_names( CollTypes ctype )
     return arando_db->collectionNames( to_arrango_types( ctype ) );
 }
 
+void ArangoDBClient::set_server_key(std::unique_ptr<char> &second, const std::string& id_key )
+{
+    char *bytes = new char[id_key.length()+1];
+    strncpy( bytes, id_key.c_str(), id_key.length() );
+    bytes[id_key.length()] = '\0';
+    second.reset(bytes);
+}
+
+std::string ArangoDBClient::create_record(const std::string &collname, std::unique_ptr<char>& second, const JsonBase *recdata)
+{
+    JARANGO_THROW_IF( arando_connect->readonlyDBAccess(), "ArangoDBClient", 2, " try to create document into read only mode." );
+
+    auto  jsonrec = recdata->dump();
+    auto new_id =  arando_db->createDocument( collname, jsonrec);
+    set_server_key( second, new_id );
+    return new_id;
+}
+
 // Retrive one record from the collection
-bool ArangoDBClient::load_record( const std::string& collname, keysmap_t::iterator&it, JsonBase* recdata )
+bool ArangoDBClient::read_record( const std::string& collname, keysmap_t::iterator&it, JsonBase* recdata )
 {
     std::string jsonrec;
-    std::string rid = get_server_key( it->second.get() );
+    std::string rid = get_server_key( it->second );
     auto ret =  arando_db->readDocument( collname, rid, jsonrec );
     recdata->loads(jsonrec);
     return ret;
 }
 
 // Removes record from the collection
-bool ArangoDBClient::remove_record( const std::string& collname, keysmap_t::iterator& itr  )
+bool ArangoDBClient::delete_record( const std::string& collname, keysmap_t::iterator& itr  )
 {
     JARANGO_THROW_IF( arando_connect->readonlyDBAccess(), "ArangoDBClient", 1, " try to remove document into read only mode." );
 
-    std::string rid = get_server_key( itr->second.get() );
+    std::string rid = get_server_key( itr->second );
     return arando_db->deleteDocument( collname, rid );
 }
 
 // Save/update record in the collection
-std::string ArangoDBClient::save_record( const std::string& collname, keysmap_t::iterator& it, const JsonBase* recdata )
+std::string ArangoDBClient::update_record( const std::string& collname, keysmap_t::iterator& it, const JsonBase* recdata )
 {
     JARANGO_THROW_IF( arando_connect->readonlyDBAccess(), "ArangoDBClient", 2, " try to create/update document into read only mode." );
 
     auto  jsonrec = recdata->dump();
-    std::string newrid;
-    if( it->second.get() == nullptr ) // new record
-    {
-        newrid = arando_db->createDocument( collname, jsonrec);
-        if( !newrid.empty() )
-            set_server_key( newrid, it );
-    }
-    else
-    {
-        std::string rid = get_server_key( it->second.get() );
-        newrid = arando_db->updateDocument( collname, rid, jsonrec );
-    }
-
-    return (newrid);
+    std::string rid = get_server_key( it->second );
+    rid = arando_db->updateDocument( collname, rid, jsonrec );
+    return rid;
 }
 
 
@@ -125,15 +131,12 @@ void ArangoDBClient::remove_by_ids( const std::string& collname,  const std::vec
     arando_db->removeByKeys( collname, ids );
 }
 
-//-----------------------------------------------------------------------------------------
-
-void jsonio14::ArangoDBClient::set_server_key(const std::string& key, keysmap_t::iterator& itr)
+std::string ArangoDBClient::sanitization(const std::string &documentHandle)
 {
-    char *bytes = new char[key.length()+1];
-    strncpy( bytes, key.c_str(), key.length() );
-    bytes[key.length()] = '\0';
-    itr->second = std::unique_ptr<char>(bytes);
+    return  arando_db->sanitization(documentHandle);
 }
+
+//-----------------------------------------------------------------------------------------
 
 arangocpp::CollectionTypes ArangoDBClient::to_arrango_types( CollTypes ctype ) const
 {

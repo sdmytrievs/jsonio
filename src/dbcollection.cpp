@@ -2,36 +2,10 @@
 #include "jsonio14/dbdocument.h"
 #include "jsonio14/dbconnect.h"
 #include "jsonio14/jsonfree.h"
+#include "jsonio14/jsondump.h"
 
 namespace jsonio14 {
 
-bool compare_to_template(  const std::string& kelm, const std::string& kpart );
-std::string fix_template_key( const std::string& genkey );
-
-/*
- * The key must be a string value.
- * Numeric keys are not allowed, but any numeric value can be put into a string and
- *  can then be used as document key.
- * The key must be at least 1 byte and at most 254 bytes long.
- * Empty keys are disallowed when specified (though it may be valid to completely
- *  omit the _key attribute from a document)
- * It must consist of the letters a-z (lower or upper case), the digits 0-9 or
- *  any of the following punctuation characters: "_-:.@()+,=;$!*'%"
- * Any other characters, especially multi-byte UTF-8 sequences, whitespace or punctuation characters cannot be used inside key values
- */
-
-const std::string  KeyPunctuationCharacters = "_-:.@()+,=;$!*'";
-
-std::string fix_template_key( const std::string& genkey )
-{
-    std::string legal_key;
-    for( const auto c:genkey )
-    {
-        if( isalnum(c) || ( KeyPunctuationCharacters.find(c) != std::string::npos ) )
-            legal_key +=c;
-    }
-    return legal_key;
-}
 
 //std::string makeTemplateKey( const JsonDom *object, const std::vector<std::string>&  keyTemplateFields )
 //{
@@ -61,9 +35,10 @@ std::string fix_template_key( const std::string& genkey )
 
 
 // Default configuration of the Data Base
-DBCollection::DBCollection(  const DataBase* adbconnect,
-                               const std::string& name  ):
-    coll_name( name ), db_connect(adbconnect), db_driver( adbconnect->theDriver() )
+DBCollection::DBCollection(  const DataBase& adbconnect,
+                             const std::string& name  ):
+    coll_name( name ), db_connect(adbconnect), db_driver( adbconnect.theDriver() ),
+    documents_list(), key_record_map()
 { }
 
 
@@ -71,7 +46,6 @@ DBCollection::DBCollection(  const DataBase* adbconnect,
 void DBCollection::load()
 {
     key_record_map.clear();
-    key_record_itr= key_record_map.end();
     loadCollection();
 }
 
@@ -80,7 +54,6 @@ void DBCollection::close()
 {
     closeCollection();
     key_record_map.clear();
-    key_record_itr= key_record_map.end();
 }
 
 
@@ -90,238 +63,144 @@ void DBCollection::reload()
     close();
     load();
     for( auto doc: documents_list )
-        doc->updateQuery(); // Run current query, rebuild internal table of values
+        doc->updateQuery(); // Rebuild internal table of values
 }
 
-std::string DBCollection::extract_key_from(const JsonBase& object)
+std::string DBCollection::getKeyFrom( const JsonBase* object )
 {
     std::string key_str, kbuf;
     for( const auto& keyfld: keyFields())
     {
-        object.get_key_via_path( keyfld, kbuf, "undef" );
+        object->get_key_via_path( keyfld, kbuf, "undef" );
         key_str += kbuf;
     }
     return key_str;
 }
 
-std::string DBCollection::id_from_template( const std::string& key_template ) const
+std::string DBCollection::generateOid( const std::string& key_template )
 {
-    //temporaly
     if( key_template.empty())
         return "";
-    return coll_name+"/"+key_from_template(key_template);
-    //return db_driver->genOid( name(), genKeyFromTemplate(_keytemplate) );
+    auto sanitized_handle = db_driver->sanitization(key_template);
+    return coll_name+"/"+key_from_template(sanitized_handle);
 }
 
-bool DBCollection::existsDocument(const std::string &key) const
+
+bool DBCollection::existsDocument( const std::string &key ) const
 {
     return  key_record_map.find(key)  != key_record_map.end();
 }
 
-std::string DBCollection::createDocument( const JsonBase &data_object )
+std::string DBCollection::createDocument( JsonBase *data_object )
 {
-    auto new_key = extract_key_from( data_object );
+    auto new_key = getKeyFrom( data_object );
 
-    if( is_pattern( new_key ) )
-        jsonioErr("TEJDB0010", "Cannot save under record key template" );
+    JARANGO_THROW_IF( !is_allowed( new_key ), "DBCollection", 11,
+                      " some of characters cannot be used inside _key values '" + new_key +"'." );
 
-    pair<KeysSet::iterator,bool> ret;
-    ret = _recList.insert( pair<string,unique_ptr<char>>( __key, nullptr ) );
-    _itrL = ret.first;
-    // Test unique keys name before add the record(s)
-    if( ret.second == false)
-    {
-        string erstr = "Cannot insert record:\n";
-        erstr += __key;
-        erstr += ".\nTwo records with the same key!";
-        jsonioErr("TEJDB0004", erstr );
-    }
+    JARANGO_THROW_IF( existsDocument( new_key ), "DBCollection", 12,
+                      " two records with the same key '" + new_key +"'." );
 
-    try{
-        // save record to data base
-        string jsondata;
-        printNodeToJson( jsondata, domnode, true );
-        string retId = _dbdriver->saveRecord( name(), _itrL, jsondata );
-        if( retId.empty() )
-            jsonioErr( "TEJDB0021",  string("Error saving record ") );
-        document->setOid( retId );
-    }
-    catch(...)
-    {
-        _recList.erase(_itrL);
-        _itrL = _recList.end();
-        throw;
-    }
-
-    // Set up internal data - only delete all, not add to selection
-    string keyStr = getKeyFromDom( domnode );
-
-    if(keyStr != __key )
-    {
-        // Swap value from oldKey to newKey, note that a default constructed value
-        // is created by operator[] if 'm' does not contain newKey.
-        std::swap(_recList[keyStr], _itrL->second);
-        // Erase old key-value from map
-        _recList.erase(_itrL);
-        __key = keyStr;
-    }
-
+    std::unique_ptr<char> second = nullptr;
+    // save record to data base
+    std::string ret_id = db_driver->create_record( name(), second, data_object );
+    JARANGO_THROW_IF( ret_id.empty(), "DBCollection", 13," error saving record '" + new_key +"'." );
+    data_object->set_oid( ret_id );
+    new_key = getKeyFrom( data_object );
+    key_record_map[new_key] = std::move(second);
+    return new_key;
 }
 
-bool DBCollection::readDocument(JsonBase &data_object, const std::string &key)
+std::string DBCollection::createDocument( DBDocumentBase *document )
 {
+    auto obj = document->current_data();
+    auto new_key = createDocument( obj );
+    document->add_line( new_key, obj, false );
+    return new_key;
+}
 
+bool DBCollection::readDocument( JsonBase* data_object, const std::string &key )
+{
+    auto itr = key_record_map.find(key);
+    JARANGO_THROW_IF( itr==key_record_map.end(), "DBCollection", 14,
+                      " record to retrive does not exist '" + key +"'." );
+    return db_driver->read_record( name(), itr, data_object);
 }
 
 
-
-std::string DBCollection::create_new_record_in_db(DBDocumentBase *document)
+void DBCollection::readDocument(DBDocumentBase *document, const std::string &key)
 {
-    // Get bson structure from internal data
-    auto domnode = document->recToSave( time(nullptr), nullptr );
-
-    //if( !pkey ) protect different data into bsrec and key
-    string __key = getKeyFromDom( domnode );
-    if( __key.empty() )
-        __key = "undef";
-    if( isPattern( __key ) )
-        jsonioErr("TEJDB0010", "Cannot save under record key template" );
-
-    pair<KeysSet::iterator,bool> ret;
-    ret = _recList.insert( pair<string,unique_ptr<char>>( __key, nullptr ) );
-    _itrL = ret.first;
-    // Test unique keys name before add the record(s)
-    if( ret.second == false)
-    {
-        string erstr = "Cannot insert record:\n";
-        erstr += __key;
-        erstr += ".\nTwo records with the same key!";
-        jsonioErr("TEJDB0004", erstr );
-    }
-
-    try{
-        // save record to data base
-        string jsondata;
-        printNodeToJson( jsondata, domnode, true );
-        string retId = _dbdriver->saveRecord( name(), _itrL, jsondata );
-        if( retId.empty() )
-            jsonioErr( "TEJDB0021",  string("Error saving record ") );
-        document->setOid( retId );
-    }
-    catch(...)
-    {
-        _recList.erase(_itrL);
-        _itrL = _recList.end();
-        throw;
-    }
-
-    // Set up internal data - only delete all, not add to selection
-    string keyStr = getKeyFromDom( domnode );
-
-    if(keyStr != __key )
-    {
-        // Swap value from oldKey to newKey, note that a default constructed value
-        // is created by operator[] if 'm' does not contain newKey.
-        std::swap(_recList[keyStr], _itrL->second);
-        // Erase old key-value from map
-        _recList.erase(_itrL);
-        __key = keyStr;
-    }
-    // for( auto itDoc:  _documents)
-    document->addLine( keyStr, domnode, false );
-    return keyStr;
+    auto obj = document->current_data();
+    if( !readDocument( obj, key ) )
+        JARANGO_THROW( "DBCollection", 15, " error loading record '" + key +"'." );
 }
 
-void DBCollection::read_record_from_db(DBDocumentBase *document, const std::string &key)
+std::string DBCollection::updateDocument( const JsonBase *data_object, const std::string &key)
 {
-    if( isPattern( pkey ) )
-        jsonioErr("TEJDB0010", "Cannot get under record key template" );
+    auto itr = key_record_map.find(key);
+    JARANGO_THROW_IF( itr==key_record_map.end(), "DBCollection", 16,
+                      " record to update does not exist '" + key +"'." );
 
-    _itrL = _recList.find( pkey );
-    if( _itrL == _recList.end() )
-    {
-        string erstr = pkey;
-        erstr += "\nrecord to retrive does not exist!";
-        jsonioErr("TEJDB0001", erstr );
-    }
+    auto rec_id = db_driver->update_record( name(), itr, data_object );
 
-    // Read record from DB to bson
-    string jsondata;
-    if( !_dbdriver->loadRecord( name(), _itrL, jsondata ))
-        jsonioErr( "TEJDB0025",  string("Error Loading record ") + pkey );
-
-    // Save json structure to internal arrays
-    document->recFromJson( jsondata );
+    for( auto itdoc:  documents_list)
+        itdoc->update_line( rec_id, data_object );
+    return rec_id;
 }
 
-std::string DBCollection::save_record_to_db(DBDocumentBase *document, const std::string &key)
+std::string DBCollection::saveDocument( JsonBase *data_object, const std::string &key)
 {
-    // Try to insert new record to list
-    if( isPattern( pkey ) )
-        jsonioErr("TEJDB0011", "Cannot save under record key template" );
-
-    pair<KeysSet::iterator,bool> ret;
-    ret = _recList.insert( pair<string,unique_ptr<char>>( pkey, nullptr ) );
-    _itrL = ret.first;
-
-    // Get bson structure from internal data
-    auto domnode = document->recToSave( time(nullptr), _itrL->second.get() );
-    try{
-        // save record to data base
-        string jsondata;
-        printNodeToJson( jsondata, domnode, true );
-        string retId = _dbdriver->saveRecord( name(), _itrL, jsondata );
-        if( retId.empty() )
-            jsonioErr( "TEJDB0022",  string("Error saving record ") );
-        document->setOid( retId );
-    }
-    catch(...)
+    if( existsDocument(key) )
     {
-        if( ret.second == true )
-        {
-            _recList.erase(_itrL);
-            _itrL = _recList.end();
-        }
-        throw;
+        data_object->set_oid( key );
+        return createDocument( data_object );
     }
-    // Set up internal data ( only for current document )
-    string keyStr = getKeyFromDom( domnode );
-    for( auto itDoc:  _documents)
-        if( itDoc != document )
-            itDoc->updateLine( keyStr, domnode );
-    document->addLine( keyStr, domnode, true );
-    return keyStr;
-
+    else
+    {
+        return updateDocument(data_object, key);
+    }
 }
 
-void DBCollection::delete_record_from_db(const std::string &key)
+std::string DBCollection::saveDocument( DBDocumentBase *document, const std::string &key)
 {
-    if( isPattern( pkey ) )
-        jsonioErr("TEJDB0010", "Cannot delete under record key template" );
-
-    _itrL = _recList.find( pkey );
-    if( _itrL == _recList.end() )
-    {
-        string erstr = pkey;
-        erstr+= "\nrecord to delete does not exist!";
-        jsonioErr("TEJDB0002", erstr );
-    }
-
-    // Remove BSON object from collection.
-    if( !_dbdriver->removeRecord(name(), _itrL ) )
-        jsonioErr( "TEJDB0024", string("Error deleting of record ") + pkey );
-    // Set up internal data
-    _recList.erase(_itrL);
-    _itrL = _recList.end();
-    for( auto itDoc:  _documents)
-        itDoc->deleteLine( pkey );
+    auto obj = document->current_data();
+    auto rec_id = saveDocument(obj, key);
+    JARANGO_THROW_IF( rec_id.empty(), "DBCollection", 17,
+                      " error saving record '" + key +"'." );
+    document->add_line( rec_id, obj, true );
+    return rec_id;
 }
 
+
+bool DBCollection::deleteDocument(const std::string &key)
+{
+    auto itr = key_record_map.find(key);
+    JARANGO_THROW_IF( itr==key_record_map.end(), "DBCollection", 18,
+                      " record to delete does not exist '" + key +"'." );
+
+    if( db_driver->delete_record( name(), itr) )
+    {
+        for( auto itdoc:  documents_list)
+            itdoc->delete_line( key );
+        key_record_map.erase(itr);
+
+        return true;
+    }
+    return false;
+}
+
+void DBCollection::deleteDocument(DBDocumentBase *document)
+{
+    auto key = document->getKeyFromCurrent();
+    if( !deleteDocument( key ) )
+        JARANGO_THROW( "DBCollection", 19, " deleting of record '" + key +"'." );
+    document->delete_line( key );
+}
 
 //-----------------------------------------------------------------
 
 // Reconnect DataBase (collection)
-void DBCollection::change_driver( AbstractDBDriver* const adriver )
+void DBCollection::change_driver( AbstractDBDriver*  adriver )
 {
     close();
     db_driver = adriver;
@@ -330,6 +209,7 @@ void DBCollection::change_driver( AbstractDBDriver* const adriver )
         doc->updateQuery(); // Run current query, rebuild internal table of values
 }
 
+// ?? other thread
 void DBCollection::loadCollectionFile(  const std::set<std::string>& query_fields )
 {
     SetReadedKey_f setfnc = [=]( const std::string& jsondata, const std::string& keydata )
@@ -343,53 +223,32 @@ void DBCollection::loadCollectionFile(  const std::set<std::string>& query_field
 // Gen new oid from key template
 std::string DBCollection::key_from_template( const std::string& key_template ) const
 {
-    std::string idkey = name();
-    idkey +="/"+key_template+"*";
+    std::string id_head = name() + "/" + key_template;
 
-    auto ids_list = get_ids_as_template( idkey );
+    auto ids_list = get_ids_as_template( id_head  );
     if( ids_list.empty() )
         return key_template;
 
     int ii=0;
-    auto keydata = name()+"/"+key_template+"_";
-    while( ids_list.find( keydata+std::to_string(ii) ) != ids_list.end() )
+    while( ids_list.find( id_head + "_" + std::to_string(ii) ) != ids_list.end() )
         ii++;
-    return key_template+"_"+std::to_string(ii);
+    return key_template + "_" + std::to_string(ii);
 }
 
 
 void DBCollection::add_record_to_map( const std::string& jsondata, const std::string& keydata )
 {
-    // Get key of record
-    shared_ptr<JsonDomFree> domdata(JsonDomFree::newObject());
-    parseJsonToNode( jsondata, domdata.get());
-    string keyStr = getKeyFromDom( domdata.get() );
-    if( isPattern( keyStr ) )
-        jsonioErr("TGRDB0005", "Cannot save under record key template" );
+    std::unique_ptr<char> second = nullptr;
+    db_driver->set_server_key(second, keydata);
 
-    // Try add key to list
-    char *oidhex = new char[keydata.length()+1];
-    strcpy(oidhex, keydata.c_str() );
-    pair<KeysSet::iterator,bool> ret;
-    ret = _recList.insert( pair<string,unique_ptr<char> >( keyStr, unique_ptr<char>(oidhex) ) );
-    _itrL = ret.first;
+    auto jsFree = json::loads( jsondata );
+    auto id_key = getKeyFrom( &jsFree );
+
+    auto it_new =  key_record_map.insert( std::pair<std::string,std::unique_ptr<char> >(
+                                              id_key, std::move(second) ) );
     // Test unique keys name before add the record(s)
-    if( ret.second == false)
-    {
-        string erstr = "Cannot add new record:\n";
-        erstr += keyStr;
-        erstr += ".\nTwo records with the same key!";
-        jsonioErr("TGRDB0006", erstr );
-    }
-}
-
-
-// Check if pattern/undefined in record key
-bool DBCollection::is_pattern( const std::string& akey ) const
-{
-    if( akey.empty() || akey.find_first_of("*?") != std::string::npos )
-        return true;
-    return false;
+    if( it_new.second == false)
+        JARANGO_THROW( "DBCollection", 20, " two records with the same key '" + id_key +"'." );
 }
 
 std::vector<std::string> DBCollection::ids_from_keys(const std::vector<std::string> &rkeys) const
@@ -398,61 +257,29 @@ std::vector<std::string> DBCollection::ids_from_keys(const std::vector<std::stri
 
     for( auto rkey: rkeys )
     {
-        if( is_pattern( rkey ) )
-            continue;
-        auto  itrL = key_record_map.find( rkey );
-        if( itrL != key_record_map.end() )
-            ids.push_back( db_driver->get_server_key( itrL->second.get() ) );
+        const auto itrl = key_record_map.find( rkey );
+        if( itrl != key_record_map.end() )
+            ids.push_back( db_driver->get_server_key( itrl->second ) );
     }
     return ids;
 }
 
 
-std::set<std::string> DBCollection::get_ids_as_template( const std::string& idpart ) const
+std::set<std::string> DBCollection::get_ids_as_template( const std::string& id_head ) const
 {
     std::set<std::string> ids_list;
     for( const auto& it: key_record_map )
     {
         if( it.second.get() != nullptr )
-            if( compare_to_template(  it.second.get(), idpart ) )
+            if( std::string(it.second.get()).substr(0, id_head.length()) == id_head  )
                 ids_list.insert( it.second.get() );
     }
     return ids_list;
 }
 
-//-------------------------------------------------------------------------
-
-bool compare_to_template(  const std::string& kelm, const std::string& kpart )
+bool DBCollection::is_allowed( const std::string &akey ) const
 {
-    if( kpart == "*" )
-        return true;
-
-    auto rklen = kpart.length();
-    if( kpart[rklen-1]=='*' )
-        rklen--;
-    if(  rklen > kelm.length() )
-        return false;
-
-    rklen = kpart.length();
-    size_t i;
-    for(i=0; i<rklen; i++ )
-    {
-        if( kpart[i] == '*' ) // next field
-            break;
-        switch( kpart[i] )
-        {
-        case '?': // no ' '
-            if( kelm[i] == ' ' )
-                return false;
-            break;
-        default:
-            if( kpart[i] != kelm[i] )
-                return false;
-        }
-    }
-    if( kpart[i] != '*' && i < kelm.length())
-        return false;
-    return true;
+    return akey == db_driver->sanitization(akey);
 }
 
 

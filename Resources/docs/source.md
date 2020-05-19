@@ -240,9 +240,10 @@ class DataBase to managing database connection.
 
 19. dbcollection.h(cpp)
 
-class  TDBCollection  the definition collections API.  A collection contains zero or more documents.
+class  DBCollection  the definition collections API.  A collection contains zero or more documents.
 
-> *source: "+-";  test: "-";  example: "-"*
+> *source: "+";  test: "-";  example: "-"*
+> Could be ```loadCollectionFile(  const std::set<std::string>& query_fields )``` in other thread
 
 
 ## Next steps --------------------------------------------------------------------------------
@@ -253,10 +254,6 @@ To do:
 
 ## Database
 
-12. dbquerydef.h(cpp)
-13. dbconnect.h(cpp)
-14. dbarango.h(cpp)
-15. dbcollection.h(cpp)
 16. dbdocument.h(cpp)
 17. dbjsondoc.h(cpp)
 18. dbschemadoc.h(cpp)

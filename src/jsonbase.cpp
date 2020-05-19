@@ -91,6 +91,24 @@ std::string JsonBase::get_path() const
     }
 }
 
+void JsonBase::set_oid(const std::string &oid )
+{
+    JARANGO_THROW_IF( !isTop(), "JsonBase", 14, "cannot add _id on level." );
+
+    if( !oid.empty() )
+    {
+        auto  parts = split( oid, "/");
+        set_value_via_path( "_key", parts.back() );
+        set_value_via_path( "_id", oid );
+    }
+    else
+    {
+        // only clear
+        set_value_via_path( "_key", oid );
+        set_value_via_path( "_id", oid );
+    }
+}
+
 const char *JsonBase::typeName(JsonBase::Type type)
 {
     switch( type )

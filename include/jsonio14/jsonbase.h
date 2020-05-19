@@ -399,6 +399,9 @@ public:
         return false;
     }
 
+    /// Set _id to object
+    virtual void set_oid( const std::string& oid  );
+
 protected:
 
     // Get methods ( using in Qt GUI ) --------------------------

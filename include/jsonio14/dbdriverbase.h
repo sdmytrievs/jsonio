@@ -54,30 +54,35 @@ public:
     /// \param ctype - types of collection to select.
     virtual std::set<std::string> get_collections_names( CollTypes ctype ) = 0;
 
-    virtual std::string get_server_key( char* pars ) = 0;
+    virtual std::string get_server_key( const std::unique_ptr<char>& second ) const = 0;
 
-    // Gen new oid or other pointer of location
-    //virtual string genOid(const std::string& collname, const std::string& _keytemplate ) = 0 ;
+    virtual void set_server_key( std::unique_ptr<char>& second, const std::string& key ) = 0;
 
     // CRUD API
+
+    /// Creates a new document in the collection from the given data or
+    /// replaces an existing document described by the selector.
+    /// \param collname - collection name
+    /// \param jsonrec - json object with data
+    /// \return the document-handle.
+    virtual std::string create_record( const std::string& collname, std::unique_ptr<char>& second, const JsonBase* recdata ) = 0;
 
     /// Returns the document described by the selector.
     /// \param collname - collection name
     /// \param it -  pair: key -> selector
     /// \param jsonrec - object to receive data
-    virtual bool load_record( const std::string& collname, keysmap_t::iterator& it, JsonBase* recdata ) = 0;
+    virtual bool read_record( const std::string& collname, keysmap_t::iterator& it, JsonBase* recdata ) = 0;
+
+    /// Update an existing document described by the selector.
+    /// \param collname - collection name
+    /// \param it -  pair: key -> selector
+    /// \param jsonrec - json object with data
+    virtual std::string update_record( const std::string& collname, keysmap_t::iterator& it, const JsonBase* recdata ) = 0;
 
     /// Removes a document described by the selector.
     /// \param collname - collection name
     /// \param it -  pair: key -> selector
-    virtual bool remove_record(const std::string& collname, keysmap_t::iterator& it ) = 0;
-
-    /// Creates a new document in the collection from the given data or
-    /// replaces an existing document described by the selector.
-    /// \param collname - collection name
-    /// \param it -  pair: key -> selector
-    /// \param jsonrec - json object with data
-    virtual std::string save_record( const std::string& collname, keysmap_t::iterator& it, const JsonBase* recdata ) = 0;
+    virtual bool delete_record(const std::string& collname, keysmap_t::iterator& it ) = 0;
 
     // Query API
 
@@ -117,6 +122,10 @@ public:
     ///  \param ids -      array of keys
     virtual void remove_by_ids( const std::string& collname,  const std::vector<std::string>& ids  ) = 0;
 
+    /// Check the document-handle example in to contain only
+    /// characters officially allowed by driver.
+    /// \return  a document-handle that contain only only allowed characters.
+    virtual std::string sanitization( const std::string& documentHandle ) = 0;
 };
 
 

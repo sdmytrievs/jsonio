@@ -11,10 +11,10 @@ class DBDocumentBase;
 
 
 /// Internal function to generate key template
-std::string makeTemplateKey( const JsonBase *object, const std::vector<std::string>&  key_template_fields );
+//std::string makeTemplateKey( const JsonBase *object, const std::vector<std::string>&  key_template_fields );
 
 
-/// \class  TDBCollection  the definition collections API.
+/// \class  DBCollection  the definition collections API.
 /// Documents are grouped into collections.
 /// A collection contains zero or more documents.
 class DBCollection
@@ -25,7 +25,7 @@ class DBCollection
 public:
 
     ///  Constructor
-    DBCollection( const DataBase* adbconnect, const std::string& name );
+    DBCollection( const DataBase& adbconnect, const std::string& name );
     ///  Destructor
     virtual ~DBCollection()
     {}
@@ -72,7 +72,7 @@ public:
     }
 
     /// Extract documents key from json object
-    virtual std::string extract_key_from( const JsonBase& object );
+    virtual std::string getKeyFrom( const JsonBase* object );
 
     /// Generate new oid or other pointer of location
     virtual std::string generateOid( const std::string& key_template );
@@ -82,18 +82,24 @@ public:
 
     /// Creates a new document in the collection from the given data.
     /// \param data_object - object with data
-    std::string createDocument( const JsonBase& data_object );
+    std::string createDocument( JsonBase* data_object );
 
     /// Retrive one document from the collection
     ///  \param data_object - object with data
     ///  \param key      - key of document
-    bool readDocument( JsonBase& data_object, const std::string& key );
+    bool readDocument( JsonBase* data_object, const std::string& key );
+
+    /// Updates an existing document described by the key,
+    /// which must be an object containing the _id or _key attribute.
+    ///  \param data_object - object with data
+    ///  \param key      - key of document
+    std::string updateDocument( const JsonBase* data_object, const std::string& key );
 
     /// Updates an existing document or creates a new document described by the key,
     /// which must be an object containing the _id or _key attribute.
     ///  \param data_object - object with data
     ///  \param key      - key of document
-    std::string updateDocument( const JsonBase& data_object, const std::string& key );
+    std::string saveDocument( JsonBase* data_object, const std::string& key );
 
     /// Removes document from the collection
     /// \param key      - key of document
@@ -170,25 +176,19 @@ protected:
     std::string coll_name;
 
     /// Operations started in one database
-    const DataBase* db_connect;
+    const DataBase& db_connect;
 
     /// Access to a specific database vendor implementation
-    AbstractDBDriver* const db_driver;
+    AbstractDBDriver* db_driver = nullptr;
 
     /// Documents are linked to collection
-    std::set<const DBDocumentBase*> documents_list;
+    std::set<DBDocumentBase*> documents_list;
 
-    // Definition of record key list - internal loaded data
-
-    /// List all documents keys into collection
+    /// List all documents keys into collection (internal loaded data)
     keysmap_t key_record_map;
-    /// Current item in key_record_map
-    keysmap_t::iterator key_record_itr;
 
     /// Reconnect DataBase ( switch to the new database driver)
     void change_driver( AbstractDBDriver* adriver );
-
-    // internal functions
 
     /// Load all keys from one collection
     virtual void loadCollectionFile( const std::set<std::string>& query_fields );
@@ -221,18 +221,19 @@ protected:
     /// Get ids list for a wildcard search
     std::set<std::string> get_ids_as_template( const std::string& id_part ) const;
 
-    /// Check if pattern/undefined in record key
-    bool is_pattern( const std::string& akey ) const;
+    /// Check the document-handle example in to contain only
+    /// characters officially allowed by database driver.
+    bool is_allowed( const std::string& akey ) const;
 
     //--- Manipulation documents
 
     /// Add new opened document from collection
-    void addDocument( const DBDocumentBase* doc )
+    void addDocument( DBDocumentBase* doc )
     {
         documents_list.insert(doc);
     }
     /// Erase document from collection
-    void eraseDocument( const DBDocumentBase* doc )
+    void eraseDocument( DBDocumentBase* doc )
     {
         auto itr =  documents_list.find(doc);
         if( itr != documents_list.end() )
@@ -252,7 +253,7 @@ protected:
     /// which must be an object containing the _id or _key attribute.
     ///  \param document - object with data
     ///  \param key      - key of document
-    std::string updateDocument( DBDocumentBase* document, const std::string& key );
+    std::string saveDocument( DBDocumentBase* document, const std::string& key );
 
     /// Removes document from the collection
     /// \param document - object with data
