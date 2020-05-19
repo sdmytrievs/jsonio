@@ -245,6 +245,14 @@ class  DBCollection  the definition collections API.  A collection contains zero
 > *source: "+";  test: "-";  example: "-"*
 > Could be ```loadCollectionFile(  const std::set<std::string>& query_fields )``` in other thread
 
+20. dbdocument.h(cpp)
+
+Implementation interface DBDocumentBase for working with documents. Documents are JSON like objects.
+These objects can be nested (to any depth) and may contain lists.  Each document has a unique primary key that identifies it within its collection.
+Furthermore, each document is uniquely identified by its document handle across all collections in the same database.
+
+> *source: "+";  test: "-";  example: "-"*
+> Implement some addition functions
 
 ## Next steps --------------------------------------------------------------------------------
 

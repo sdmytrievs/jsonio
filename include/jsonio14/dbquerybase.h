@@ -22,6 +22,9 @@ using fields2query_t = std::map<std::string, std::string >;
 /// Record values type
 using values_t = std::vector<std::string>;
 
+/// Lines of colums values table
+using values_table_t = std::vector< values_t >;
+
 /// Table of results <key>-><extracted values>
 using key_values_table_t = std::map<std::string, values_t >;
 

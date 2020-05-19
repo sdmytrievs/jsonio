@@ -15,7 +15,7 @@ namespace jsonio14 {
 
 
 /// Interface for working with documents.
-/// Documents are JSON objects. These objects can be nested (to any depth) and may contain lists.
+/// Documents are JSON like objects. These objects can be nested (to any depth) and may contain lists.
 /// Each document has a unique primary key which identifies it within its collection.
 /// Furthermore, each document is uniquely identified by its document handle across all collections in the same database.
 class DBDocumentBase
@@ -33,11 +33,10 @@ class DBDocumentBase
     /// Do it after write document to database
     virtual void after_save_update( const std::string&  ) {}
 
-
 public:
 
     ///  Constructor when create/load collection
-    DBDocumentBase( const DataBase* dbconnect, const std::string& coltype, const std::string& colname  );
+    DBDocumentBase( const DataBase& dbconnect, const std::string& coltype, const std::string& colname  );
     ///  Constructor used loaded collection
     DBDocumentBase( DBCollection* collection  );
 
@@ -53,11 +52,11 @@ public:
         return collection_from->type();
     }
 
-//    /// Access to the database
-//    const DataBase* database() const
-//    {
-//        return collection_from->database();
-//    }
+    //    /// Access to the database
+    //    const DataBase* database() const
+    //    {
+    //        return collection_from->database();
+    //    }
 
 
     //--- Manipulation documents
@@ -111,7 +110,7 @@ public:
     {
         auto key = getKeyFromCurrent();
         before_remove( key );
-        collection_from->deleteDocument(key);
+        collection_from->deleteDocument(this);
         after_remove( key );
     }
 
@@ -131,6 +130,7 @@ public:
     {
         return collection_from->generateOid( key_template );
     }
+
     /// Set document-handle(_id) to document
     virtual void setOid( const std::string&  newid ) = 0;
     /// Extract document-handle(_id) from current document
@@ -147,38 +147,45 @@ public:
     virtual void setJson( const std::string& json_document ) = 0;
 
     /// Extract key from current document
-    virtual std::string getKeyFromCurrent() const = 0;
-    /// Get document key from dom object
-    virtual std::string getKeyFromDom( const JsonBase* object  ) const
+    virtual std::string getKeyFromCurrent() const
     {
-        return collection_from->getKeyFrom(object);
+        return collection_from->getKeyFrom( current_data() );
     }
 
     /// Load document from json string
     /// \return current document key
-    virtual std::string recFromJson( const std::string& jsondata ) = 0;
-
+    virtual std::string recFromJson( const std::string& jsondata )
+    {
+        setJson( jsondata );
+        return getKeyFromCurrent( );
+    }
 
     //--- Selection/query functions
 
-//    virtual FieldSetMap extractFields( const std::vector<std::string> queryFields, const JsonDom* domobj ) const =  0;
-//    virtual FieldSetMap extractFields( const std::vector<std::string> queryFields, const std::string& jsondata ) const = 0;
+    /// Build table of fields values by query
+    ///  \param query - query condition
+    ///  \param  queryFields - list of fields (columns) in result table
+    ///  \return table of field values
+    values_table_t downloadDocuments( const DBQueryBase&  query, const std::vector<std::string>& queryFields ) const;
 
-    /// Execute query
+    /// Build table of fields values by their keys
+    ///  \param rkeys - list of top level record keys
+    ///  \param  queryFields - list of fields (columns) in result table
+    ///  \return table of field values
+    values_table_t downloadDocuments( const std::vector<std::string>& keys, const std::vector<std::string>& queryFields ) const;
+
     /// Fetches all documents from a collection that match the specified condition.
     ///  \param query -    selection condition
     ///  \param setfnc -   callback function fetching document data
     void selectQuery( const DBQueryBase& query,  SetReaded_f setfnc ) const
     {
-        // fields deprecated (EJDB)
         collection_from->selectQuery( query, setfnc );
     }
 
-//    /// Execute query
-//    /// Fetches all documents from a collection that match the specified condition.
-//    ///  \param query -    selection condition
-//    ///  \return list of json strings with query result
-//    std::vector<std::string> runQuery( const DBQueryBase& query ) const;
+    /// Fetches all documents from a collection that match the specified condition.
+    ///  \param query -    selection condition
+    ///  \return list of json strings with query result
+    values_t selectQuery( const DBQueryBase& query ) const;
 
     /// Looks up the documents in the specified collection using the array of keys provided.
     ///  \param rkeys -      array of keys
@@ -188,37 +195,26 @@ public:
         collection_from->lookupByKeys( rkeys, setfnc );
     }
 
-//    /// Looks up the documents in the specified collection using the array of keys provided.
-//    ///  \param rkeys -      array of keys
-//    ///  \return list of json strings with query result
-//    std::vector<std::string> runByKeys( const std::vector<std::string>& rkeys ) const;
+    /// Looks up the documents in the specified collection using the array of keys provided.
+    ///  \param rkeys -      array of keys
+    ///  \return list of json strings with query result
+    values_t lookupByKeys( const std::vector<std::string>& rkeys ) const;
 
-//    /// Test existence documents by query
-//    ///  \param query -    selection condition
-//    bool existKeysByQuery( DBQueryData& query ) const;
+    /// Test existence documents by query
+    ///  \param query -    selection condition
+    bool existDocumentsByQuery( DBQueryBase&& query ) const;
 
-//    /// Fetches all documents keys (_id) from a collection that match the specified condition.
-//    ///  \param query -    selection condition
-//    std::vector<std::string> getKeysByQuery( DBQueryData& query ) const;
+    /// Fetches all documents keys (_id) from a collection that match the specified condition.
+    ///  \param query -    selection condition
+    std::vector<std::string> getKeysByQuery( DBQueryBase&& query ) const;
 
-//    /// Build table of fields values by query
-//    ///  \param query - query condition
-//    ///  \param  queryFields - list of fields (columns) in result table
-//    ///  \return table of field values
-//    ValuesTable downloadDocuments( const DBQueryData&  query, const std::vector<std::string>& queryFields ) const;
-
-//    /// Build table of fields values by their keys
-//    ///  \param rkeys - list of top level record keys
-//    ///  \param  queryFields - list of fields (columns) in result table
-//    ///  \return table of field values
-//    ValuesTable downloadDocuments( const std::vector<std::string>& keys, const std::vector<std::string>& queryFields ) const;
 
     ///  Provides 'distinct' operation over collection
     ///  \param fpath Field path to collect distinct values from.
     ///  \return Unique values by specified fpath and collection
-    std::vector<std::string> fieldValues( const std::string& fpath ) const
+    values_t fieldValues( const std::string& fpath ) const
     {
-        std::vector<std::string> values;
+        values_t values;
         collection_from->fpathCollect( fpath, values );
         return values;
     }
@@ -237,32 +233,32 @@ public:
     /// \param  testValues - If testValues is true, we compare the current data with the internally loaded values,
     /// and if all the values are the same, then we update the selected record instead of creating new ones.
     /// \return new key of document ( generate from template if key undefined into the given data )
-    std::string CreateWithTestValues( bool testValues = false );
+    std::string createWithTestValues( bool testValues = false );
 
     /// Updates an existing document or creates a new document described by the given data (key must present in data).
     /// \param  testValues - If testValues is true, we compare the current data with the internally loaded values,
     /// and if all the values are the same, then we update the selected record instead of creating new ones.
-    void UpdateWithTestValues(  bool testValues = false );
+    void updateWithTestValues(  bool testValues = false );
 
     /// Creates a new document in the collection from the given json data.
     /// \param jsondata - data to save
     /// \param  testValues - If testValues is true, we compare the current data with the internally loaded values,
     /// and if all the values are the same, then we update the selected record instead of creating new ones.
     /// \return new key of document ( generate from template if key undefined )
-    std::string CreateFromJson(  const std::string& jsondata, bool testValues = false )
+    std::string createFromJson(  const std::string& jsondata, bool testValues = false )
     {
-        recFromJson( jsondata );
-        return CreateWithTestValues( testValues );
+        setJson( jsondata );
+        return createWithTestValues( testValues );
     }
 
     /// Updates an existing document.
     /// \param  jsondata - data to save ( must contain the key )
     /// \param  testValues - If testValues is true, we compare the current data with the internally loaded values,
     /// and if all the values are the same, then we update the selected record instead of creating new ones.
-    void UpdateFromJson( const std::string& jsondata, bool testValues = false )
+    void updateFromJson( const std::string& jsondata, bool testValues = false )
     {
-        recFromJson( jsondata );
-        UpdateWithTestValues( testValues );
+        setJson( jsondata );
+        updateWithTestValues( testValues );
     }
 
     /*
@@ -287,8 +283,9 @@ public:
 
     const DBQueryResult* currentQueryResult() const
     {
-     JARANGO_THROW_IF( query_result.get() == nullptr, "DBDocument", 1, "'currentQueryResult' could be execute only into selection mode." );
-      return query_result.get();
+        JARANGO_THROW_IF( query_result.get() == nullptr, "DBDocument", 1,
+                          "'currentQueryResult' could be execute only into selection mode." );
+        return query_result.get();
     }
 
 protected:
@@ -296,15 +293,11 @@ protected:
     /// Documents are grouped into collection
     DBCollection* collection_from;
 
-    /// Internal type of collection ( "document", "schema", "vertex", "edge" )
-    /// There are two types of collections: document collection as well as edge collections.
-    std::string coll_type = "document";
-
     /// Last query result if exists
     std::shared_ptr<DBQueryResult>  query_result;
 
+
     /// Prepare data to save to database
-    virtual const JsonBase& current_data( time_t crtt, char* oid ) const = 0;
     virtual JsonBase* current_data() const = 0;
 
     /// Add line to view table
@@ -331,22 +324,26 @@ protected:
     /// Build default query for collection ( by default all documents )
     virtual DBQueryBase make_default_query_template() const
     {
-      return DBQueryBase(DBQueryBase::qAll);
+        return DBQueryBase(DBQueryBase::qAll);
     }
 
     /// Build default query fields ( by default internal )
     virtual std::vector<std::string>  make_default_query_fields() const
     {
-       return  { "_id", "_key","_rev"};
+        return  { "_id", "_key","_rev"};
     }
 
     /// Find key from current data
     /// Compare to data into query table
     virtual std::string get_key_from_query_result() const
     {
-      JARANGO_THROW_IF( query_result.get() == nullptr, "DBDocument", 1, "'get_key_from_query_result' could be execute only into selection mode." );
-      return  query_result->getKeyFromValue( current_data() );
+        JARANGO_THROW_IF( query_result.get() == nullptr, "DBDocument", 10,
+                          "'get_key_from_query_result' could be execute only into selection mode." );
+        return  query_result->getKeyFromValue( current_data() );
     }
+
+    virtual field_value_map_t extract_fields( const std::vector<std::string> queryFields, const JsonBase& domobj ) const;
+    virtual field_value_map_t extract_fields( const std::vector<std::string> queryFields, const std::string& jsondata ) const;
 
 };
 

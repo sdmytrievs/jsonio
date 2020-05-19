@@ -72,6 +72,7 @@ std::string DBCollection::getKeyFrom( const JsonBase* object )
     for( const auto& keyfld: keyFields())
     {
         object->get_key_via_path( keyfld, kbuf, "undef" );
+        trim(kbuf);
         key_str += kbuf;
     }
     return key_str;
