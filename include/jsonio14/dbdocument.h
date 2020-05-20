@@ -38,7 +38,7 @@ class DBDocumentBase
 public:
 
     ///  Constructor when create/load collection
-    DBDocumentBase( const DataBase& dbconnect, const std::string& coltype, const std::string& colname  );
+    DBDocumentBase( const DataBase& dbconnect, const std::string& collection_type, const std::string& collection_name );
     ///  Constructor used loaded collection
     DBDocumentBase( DBCollection* collection  );
 

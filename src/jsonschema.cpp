@@ -268,6 +268,36 @@ JsonSchema *JsonSchema::field( std::queue<std::string> names ) const
     return element->get()->field(names);
 }
 
+JsonSchema *JsonSchema::field( std::queue<int> ids ) const
+{
+    if( ids.empty() )
+        return  const_cast<JsonSchema *>(this);
+
+    int aid = ids.front();
+    ids.pop();
+
+    for(size_t ii=0; ii< children.size(); ii++ )
+        if( children[ii]->field_descrip->id() == aid )
+            return children[ii]->field( ids );
+
+    return nullptr;  // not found
+}
+
+const JsonBase *JsonSchema::field(const std::string &fieldpath) const
+{
+    auto pos = fieldpath.find_first_not_of("0123456789.");
+    if( pos != std::string::npos || isArray() )
+    {
+        auto names = split( fieldpath, field_path_delimiters );
+        return field(names);
+    }
+    else
+    {
+        auto ids = split_int( fieldpath, ".");
+        return field(ids);
+    }
+}
+
 JsonSchema *JsonSchema::field_add( std::queue<std::string> names )
 {
     if( names.empty() )
@@ -419,6 +449,7 @@ void JsonSchema::array_resize( std::size_t  newsize, const std::string& defval  
         }
     }
 }
+
 
 //----------------------------------------------------------------------------------------------
 

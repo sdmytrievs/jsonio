@@ -7,10 +7,10 @@ namespace jsonio14 {
 
 
 // Default configuration of the Data Base
-DBDocumentBase::DBDocumentBase( const DataBase& dbconnect, const std::string& coltype, const std::string& colname  ):
+DBDocumentBase::DBDocumentBase( const DataBase& dbconnect, const std::string& collection_type, const std::string& collection_name  ):
     collection_from(nullptr), query_result(nullptr)
 {
-    collection_from = dbconnect.getCollection( coltype, colname  );
+    collection_from = dbconnect.getCollection( collection_type, collection_name  );
     collection_from->addDocument(this);
 }
 
@@ -42,7 +42,7 @@ void DBDocumentBase::setQuery( DBQueryBase &&query, std::vector<std::string> fie
     if( fields_list.empty()  )
         fields_list = make_default_query_fields();
 
-    setQuery( DBQueryDef(  std::make_shared<DBQueryBase>(query), fields_list )  );
+    setQuery( DBQueryDef( std::make_shared<DBQueryBase>(query), fields_list )  );
 }
 
 

@@ -8,136 +8,106 @@ namespace jsonio14 {
 
 
 /// Definition of schema based database document
-class DBSchemaDocument : public  dvf  DBDocumentBase
+class DBSchemaDocument : public  DBDocumentBase
 {
     friend class GraphTraversal;
+    /// Do it before write document to database
+    void before_save_update( std::string& key ) override;
 
 public:
 
-    static DBSchemaDocument* newSchemaDocumentQuery( const TDataBase* dbconnect, const std::string& schemaName,
-                         const std::string& collcName, const DBQueryData& query = emptyQuery  );
+    static DBSchemaDocument *newSchemaDocumentQuery( const DataBase& dbconnect, const std::string& aschema_name,
+                         const std::string& collection_name,  DBQueryBase&& query  );
 
-    static DBSchemaDocument* newSchemaDocument( const TDataBase* dbconnect,
-              const std::string& schemaName, const std::string& collcName  );
-
-    ///  Constructor
-    TDBSchemaDocument( const std::string& aschemaName,
-                       const TDataBase* dbconnect, const std::string& colname ):
-        TDBSchemaDocument( aschemaName, dbconnect, "schema", colname )
-    {
-        resetSchema( aschemaName, true );
-    }
+    static DBSchemaDocument* newSchemaDocument( const DataBase& dbconnect,
+              const std::string& aschema_name, const std::string& collection_name  );
 
     ///  Constructor
-    TDBSchemaDocument( const std::string& schemaName, TDBCollection* collection  );
+    DBSchemaDocument( const std::string& aschema_name,
+                      const DataBase& dbconnect, const std::string& collection_name ):
+        DBSchemaDocument( aschema_name, dbconnect, "schema", collection_name )
+    {}
 
-    /// Constructor from configuration data
-    TDBSchemaDocument( TDBCollection* collection, const JsonDom *object );
-    virtual void toJsonNode( JsonDom *object ) const;
-    virtual void fromJsonNode( const JsonDom *object );
+    ///  Constructor
+    DBSchemaDocument( const std::string& aschema_name, DBCollection* collection  ):
+        DBDocumentBase( collection ),
+        schema_name(aschema_name), current_schema_object(JsonSchema::object(schema_name))
+    {}
 
     ///  Destructor
-    virtual ~TDBSchemaDocument(){}
+    virtual ~DBSchemaDocument(){}
 
     /// Change current schema
-    virtual void resetSchema( const std::string& aschemaName, bool change_queries );
+    virtual void reset_schema( const std::string& aschema_name, bool change_queries );
 
     /// Get the name of thrift schema
     const std::string& getSchemaName() const
     {
-        return _schemaName;
+        return schema_name;
     }
 
-    /// Link to internal dom data
-    virtual const JsonDomSchema* getDom() const
-    {
-        return _currentData.get();
-    }
-
-    /// Set _id to document
-    void setOid( const std::string& _oid  )
-    {
-        _currentData->setOid_( _oid );
-    }
-    /// Extract _id from current document
-    std::string getOid() const
-    {
-        std::string stroid;
-        getValue( "_id", stroid );
-        return stroid;
-    }
+    /// Generate new document-handle (_id) or other pointer of location
+    std::string genOid( const std::string& key_template ) override;
 
     /// Return curent document as json string
-    std::string GetJson( bool dense = false ) const;
-    /// Load document from json string
-    void SetJson( const std::string& sjson );
-
-
-    /// Extract key from current document
-    std::string getKeyFromCurrent() const;
-    /// Load document from json string
-    /// \return current document key
-    std::string recFromJson( const std::string& jsondata );
-
-
-    /// Get field value from document
-    /// If field is not type T, the false will be returned.
-    template <class T>
-    bool getValue( const std::string& fldpath, T& value  ) const
+    std::string getJson( bool dense = false ) const override
     {
-        return  _currentData->findValue( fldpath, value );
+        return current_schema_object.dump(dense);
+    }
+    /// Load document from json string
+    void setJson( const std::string& json_document ) override
+    {
+        current_schema_object.loads(json_document);
     }
 
-    /// Update field value to document
-    template <class T>
-    bool setValue( const std::string& fldpath, const T& value  )
+    using DBDocumentBase::setQuery;
+    /// Set&execute query for document
+    void setQuery( const DBQueryDef& querydef ) override
     {
-        return _currentData->setFieldValue( fldpath, value );
+       DBDocumentBase::setQuery( querydef );
+       query_result->updateSchema( schema_name );
     }
-
-    FieldSetMap extractFields( const std::vector<std::string> queryFields, const JsonDom* domobj ) const;
-    FieldSetMap extractFields( const std::vector<std::string> queryFields, const std::string& jsondata ) const;
-
-    /// Set&execute query for document
-    void SetQuery( const DBQueryDef& querydef );
-
-    /// Set&execute query for document
-    void SetQuery( DBQueryData query, std::vector<std::string>  fieldsList = {} );
 
     /// Run current query, rebuild internal table of values
-    void updateQuery();
+    void updateQuery() override;
 
 protected:
 
-    /// Link to current schema definition
-    const ThriftSchema *_schema;
+    /// Link to the current schema description
+    //const StructDef *schema_description;
 
     /// Current schema name
-    std::string _schemaName = "";
+    std::string schema_name = "";
 
     /// Current document object
-    std::shared_ptr<JsonDomSchema> _currentData;
+    JsonSchema current_schema_object;
 
     /// Constructor
-    TDBSchemaDocument( const std::string& schemaName, const TDataBase* dbconnect,
-                       const std::string& coltype, const std::string& colname );
+    DBSchemaDocument( const std::string& aschema_name, const DataBase& dbconnect,
+                      const std::string& collection_type, const std::string& collection_name ):
+        DBDocumentBase( dbconnect, collection_type, collection_name ),
+        schema_name(aschema_name), current_schema_object(JsonSchema::object(schema_name))
+    {}
 
-    /// Prepare data to save to database
-    JsonDomSchema* recToSave( time_t crtt, char* oid );
 
-    /// Build default query fields ( by default internal )
-    std::vector<std::string>  makeDefaultQueryFields() const;
-
-    /// Find key from current data
-    /// Compare to data into query table
-    std::string getKeyFromValueNode() const
+    /// Link to internal data
+    JsonBase* current_data() const override
     {
-      jsonioErrIf( _queryResult.get() == nullptr, "testValues", "Could be execute only into selection mode.");
-      return  _queryResult->getKeyFromValue(_currentData.get());
+        return  const_cast<JsonBase*>( dynamic_cast<const JsonBase*>(&current_schema_object) );
     }
 
+    /// Build default query for collection ( by default all documents )
+    DBQueryBase make_default_query_template() const override
+    {
+        return DBQueryBase(DBQueryBase::qAll);
+    }
+
+    /// Build default query fields ( by default internal )
+    std::vector<std::string>  make_default_query_fields() const override;
+
+    using DBDocumentBase::extract_fields;
+    field_value_map_t extract_fields( const std::vector<std::string> queryFields, const std::string& jsondata ) const override;
 };
 
-} // namespace jsonio
+} // namespace jsonio14
 
-#endif // TDBSCHEMADOC_H

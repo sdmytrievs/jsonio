@@ -197,6 +197,9 @@ public:
     /// Set up defval values if the JSON type of elements is primitive.
     void array_resize( std::size_t size, const std::string &defval ) override;
 
+    /// Get field by fieldpath ("name1.name2.name3")
+    const JsonBase *field(  const std::string& fieldpath ) const override;
+
 protected:
 
     // Get methods ( using in Qt GUI model ) --------------------------
@@ -281,6 +284,8 @@ private:
 
     /// Get field by fieldpath
     JsonSchema *field( std::queue<std::string> names ) const override;
+    /// Get field by idspath
+    JsonSchema *field( std::queue<int> ids ) const;
     /// Add field by fieldpath
     JsonSchema *field_add(std::queue<std::string> names) override;
 

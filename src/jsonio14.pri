@@ -21,7 +21,7 @@ HEADERS += \
     $$JSONIO14_HEADERS_DIR/jsonio14/dbcollection.h \
     $$JSONIO14_HEADERS_DIR/jsonio14/dbdocument.h \
     $$JSONIO14_HEADERS_DIR/jsonio14/dbjsondoc.h \
-    $$PWD/../include/jsonio14/dbschemadoc.h
+    $$JSONIO14_HEADERS_DIR/jsonio14/dbschemadoc.h
 
 
 SOURCES += \
@@ -43,8 +43,8 @@ SOURCES += \
     $$JSONIO14_DIR/dbcollection.cpp \
     $$JSONIO14_DIR/dbdocument.cpp \
     $$JSONIO14_DIR/dbjsondoc.cpp \
-    $$PWD/dbschemadoc.cpp \
-    $$PWD/dbvertexdoc.cpp
+    $$JSONIO14_DIR/dbschemadoc.cpp \
+    #$$PWD/dbvertexdoc.cpp
 
 
 

@@ -221,6 +221,7 @@ class DBQueryResult final
 {
     friend class DBDocumentBase;
     friend class DBJsonDocument;
+    friend class DBSchemaDocument;
 
 public:
 
@@ -244,6 +245,10 @@ public:
     {
         query_data = qrdef;
         query_result.clear();
+    }
+    void updateSchema( const std::string& shname )
+    {
+        query_data.setSchema(shname);
     }
 
     void clear()
