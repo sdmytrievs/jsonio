@@ -220,6 +220,7 @@ protected:
 class DBQueryResult final
 {
     friend class DBDocumentBase;
+    friend class DBJsonDocument;
 
 public:
 
@@ -234,9 +235,19 @@ public:
         return query_data;
     }
 
+    const DBQueryBase& condition() const
+    {
+        return *query_data.condition();
+    }
+
     void setQuery( const DBQueryDef& qrdef )
     {
         query_data = qrdef;
+        query_result.clear();
+    }
+
+    void clear()
+    {
         query_result.clear();
     }
 

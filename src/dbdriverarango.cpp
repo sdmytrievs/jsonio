@@ -44,9 +44,11 @@ void ArangoDBClient::set_server_key(std::unique_ptr<char> &second, const std::st
     second.reset(bytes);
 }
 
-std::string ArangoDBClient::create_record(const std::string &collname, std::unique_ptr<char>& second, const JsonBase *recdata)
+std::string ArangoDBClient::create_record(const std::string &collname,
+                                          std::unique_ptr<char>& second, const JsonBase *recdata)
 {
-    JARANGO_THROW_IF( arando_connect->readonlyDBAccess(), "ArangoDBClient", 2, " try to create document into read only mode." );
+    JARANGO_THROW_IF( arando_connect->readonlyDBAccess(), "ArangoDBClient", 2,
+                      " try to create document into read only mode." );
 
     auto  jsonrec = recdata->dump();
     auto new_id =  arando_db->createDocument( collname, jsonrec);
@@ -67,7 +69,8 @@ bool ArangoDBClient::read_record( const std::string& collname, keysmap_t::iterat
 // Removes record from the collection
 bool ArangoDBClient::delete_record( const std::string& collname, keysmap_t::iterator& itr  )
 {
-    JARANGO_THROW_IF( arando_connect->readonlyDBAccess(), "ArangoDBClient", 1, " try to remove document into read only mode." );
+    JARANGO_THROW_IF( arando_connect->readonlyDBAccess(), "ArangoDBClient", 1,
+                      " try to remove document into read only mode." );
 
     std::string rid = get_server_key( itr->second );
     return arando_db->deleteDocument( collname, rid );
@@ -76,7 +79,8 @@ bool ArangoDBClient::delete_record( const std::string& collname, keysmap_t::iter
 // Save/update record in the collection
 std::string ArangoDBClient::update_record( const std::string& collname, keysmap_t::iterator& it, const JsonBase* recdata )
 {
-    JARANGO_THROW_IF( arando_connect->readonlyDBAccess(), "ArangoDBClient", 2, " try to create/update document into read only mode." );
+    JARANGO_THROW_IF( arando_connect->readonlyDBAccess(), "ArangoDBClient", 3,
+                      " try to create/update document into read only mode." );
 
     auto  jsonrec = recdata->dump();
     std::string rid = get_server_key( it->second );
@@ -108,7 +112,8 @@ void ArangoDBClient::all_query( const std::string& collname, const std::set<std:
 
 void ArangoDBClient::delete_edges(const std::string& collname, const std::string& vertexid )
 {
-    JARANGO_THROW_IF( arando_connect->readonlyDBAccess(), "ArangoDBClient", 3, " try to remove edge into read only mode." );
+    JARANGO_THROW_IF( arando_connect->readonlyDBAccess(), "ArangoDBClient", 4,
+                      " try to remove edge into read only mode." );
     arando_db->removeEdges( collname, vertexid );
 }
 
@@ -127,7 +132,8 @@ void ArangoDBClient::lookup_by_ids( const std::string& collname,  const std::vec
 
 void ArangoDBClient::remove_by_ids( const std::string& collname,  const std::vector<std::string>& ids )
 {
-    JARANGO_THROW_IF( arando_connect->readonlyDBAccess(), "ArangoDBClient", 4, " to remove documents into read only mode." );
+    JARANGO_THROW_IF( arando_connect->readonlyDBAccess(), "ArangoDBClient", 5,
+                      " to remove documents into read only mode." );
     arando_db->removeByKeys( collname, ids );
 }
 

@@ -7,27 +7,24 @@
 namespace jsonio14 {
 
 
-//std::string makeTemplateKey( const JsonDom *object, const std::vector<std::string>&  keyTemplateFields )
-//{
-//  std::string keyTemlpate = "";
-//  jsonioErrIf( !object->isTop(), "makeTemplateKey", "Illegal function on level");
 
-//  for(auto const &keyfld : keyTemplateFields)
-//  {
-//    auto fld = object->field(keyfld);
-//    if(fld!= nullptr )
-//    {
-//        if( !keyTemlpate.empty() )
-//          keyTemlpate +=";"; // delimiter for generated key
-//        auto flddata = fld->toString();
-//        keyTemlpate += fixTemplateKey(flddata);
-//    }
-//  }
-//  if( keyTemlpate.length() > 240 )
-//     keyTemlpate.resize( 240 );    // other symbols to number
-//  return keyTemlpate;
-//}
+std::string make_template_key( const JsonBase *object, const std::vector<std::string>&  key_template_fields )
+{
+    std::string kpart, key_temlpate = "";
+    JARANGO_THROW_IF( !object->isTop(), "DBCollection", 20,
+                      " illegal function on level 'make_template_key'." );
 
+    for( auto const &keyfld : key_template_fields )
+    {
+        object->get_value_via_path( keyfld, kpart, std::string() );
+        trim(kpart);
+        if( !key_temlpate.empty() )
+            key_temlpate +=";";   // delimiter for generated key
+        key_temlpate += kpart;
+    }
+
+    return key_temlpate;
+}
 
 //-------------------------------------------------------------
 // TDBCollection - This class contains the structure of Data Base Collection
@@ -71,7 +68,7 @@ std::string DBCollection::getKeyFrom( const JsonBase* object )
     std::string key_str, kbuf;
     for( const auto& keyfld: keyFields())
     {
-        object->get_key_via_path( keyfld, kbuf, "undef" );
+        object->get_key_via_path( keyfld, kbuf, std::string("undef") );
         trim(kbuf);
         key_str += kbuf;
     }
@@ -136,8 +133,10 @@ void DBCollection::readDocument(DBDocumentBase *document, const std::string &key
         JARANGO_THROW( "DBCollection", 15, " error loading record '" + key +"'." );
 }
 
-std::string DBCollection::updateDocument( const JsonBase *data_object, const std::string &key)
+std::string DBCollection::updateDocument( const JsonBase *data_object )
 {
+    auto key = getKeyFrom( data_object );
+
     auto itr = key_record_map.find(key);
     JARANGO_THROW_IF( itr==key_record_map.end(), "DBCollection", 16,
                       " record to update does not exist '" + key +"'." );
@@ -158,7 +157,7 @@ std::string DBCollection::saveDocument( JsonBase *data_object, const std::string
     }
     else
     {
-        return updateDocument(data_object, key);
+        return updateDocument( data_object );
     }
 }
 
@@ -173,7 +172,7 @@ std::string DBCollection::saveDocument( DBDocumentBase *document, const std::str
 }
 
 
-bool DBCollection::deleteDocument(const std::string &key)
+bool DBCollection::deleteDocument( const std::string &key )
 {
     auto itr = key_record_map.find(key);
     JARANGO_THROW_IF( itr==key_record_map.end(), "DBCollection", 18,

@@ -4,6 +4,8 @@
 #include "jsonio14/exceptions.h"
 #include "jsonio14/dbcollection.h"
 #include "jsonio14/dbquerybase.h"
+#include "jsonio14/jsonbase.h"
+
 
 namespace jsonio14 {
 
@@ -29,7 +31,7 @@ class DBDocumentBase
     /// Do it after remove document with key from collection.
     virtual void after_remove( const std::string&  ) {}
     /// Do it before write document to database
-    virtual void before_save_update( const std::string&  ) {}
+    virtual void before_save_update( std::string&  ) {}
     /// Do it after write document to database
     virtual void after_save_update( const std::string&  ) {}
 
@@ -52,12 +54,34 @@ public:
         return collection_from->type();
     }
 
-    //    /// Access to the database
-    //    const DataBase* database() const
-    //    {
-    //        return collection_from->database();
-    //    }
+    /// Explicit type conversion between the JSON path value and a compatible primitive value.
+    /// The following jsonpath expression could be used
+    ///     "name1.name2.3.name3"
+    ///     "name1.name2[3].name3"
+    ///     "/name1/name2/3/name3"
+    ///     "/name1/name2[3]/name3"
+    ///     "[\"name1\"][\"name2\"][3][\"name3\"]"
+    /// The value is filled into the input parameter.
+    /// @return true if JSON value exist and can be converted to value type.
+    template <typename T>
+    bool getValueViaPath( const std::string& jsonpath, T& val, const T& defval   ) const
+    {
+        return current_data()->get_value_via_path( jsonpath, val, defval );
+    }
 
+    /// Use jsonpath to modify any value in a JSON object.
+    /// The following jsonpath expression could be used
+    ///     "name1.name2.3.name3"
+    ///     "name1.name2[3].name3"
+    ///     "/name1/name2/3/name3"
+    ///     "/name1/name2[3]/name3"
+    ///     "[\"name1\"][\"name2\"][3][\"name3\"]"
+    /// @return true if jsonpath present in a JSON object.
+    template <typename T>
+    bool setValueViaPath( const std::string& jsonpath, const T& val  )
+    {
+        return current_data()->set_value_via_path( jsonpath, val );
+    }
 
     //--- Manipulation documents
 
@@ -78,10 +102,11 @@ public:
     /// \return new key of document ( generate from template if key undefined )
     std::string createDocument( const std::string& key = "" )
     {
-        setOid( key ); // add key _id to structure
-        before_save_update( key );
-        auto rid = collection_from->createDocument( this );
-        after_save_update( key );
+        std::string rid = key;
+        setOid( rid ); // add key _id to structure
+        before_save_update( rid );
+        rid = collection_from->createDocument( this );
+        after_save_update( rid );
         return rid;
     }
 
@@ -98,10 +123,11 @@ public:
     ///  \param key      - key of document
     std::string updateDocument( const std::string& key  )
     {
-        setOid( key ); // add key _id to structure
-        before_save_update( key);
-        auto rid = collection_from->saveDocument( this, key );
-        after_save_update( key);
+        std::string rid = key;
+        setOid( rid ); // add key _id to structure
+        before_save_update( rid );
+        rid = collection_from->saveDocument( this, rid );
+        after_save_update( rid );
         return rid;
     }
 
@@ -132,14 +158,21 @@ public:
     }
 
     /// Set document-handle(_id) to document
-    virtual void setOid( const std::string&  newid ) = 0;
+    virtual void setOid( const std::string&  newid )
+    {
+      current_data()->set_oid(newid);
+    }
     /// Extract document-handle(_id) from current document
-    virtual std::string getOid() const = 0;
-
+    virtual std::string getOid() const
+    {
+      std::string oid;
+      current_data()->get_value_via_path( "_id", oid, std::string("") );
+      return oid;
+    }
 
     /// Test document before read
     virtual void testUpdateSchema( const std::string&  /*pkey*/ )
-    { }
+    {}
 
     /// Return curent document as json string
     virtual std::string getJson( bool dense = false ) const = 0;

@@ -1,4 +1,3 @@
-#include "jsonio14/jsonbase.h"
 #include "jsonio14/dbdocument.h"
 #include "jsonio14/dbconnect.h"
 #include "jsonio14/jsonfree.h"
@@ -73,7 +72,8 @@ void DBDocumentBase::updateWithTestValues( bool testValues )
        updateDocument( key );
 }
 
-field_value_map_t DBDocumentBase::extract_fields(const std::vector<std::string> queryFields, const JsonBase& domobj) const
+field_value_map_t DBDocumentBase::extract_fields(const std::vector<std::string> queryFields,
+                                                 const JsonBase& domobj) const
 {
     std::string valbuf;
     field_value_map_t res;
@@ -85,13 +85,15 @@ field_value_map_t DBDocumentBase::extract_fields(const std::vector<std::string> 
     return res;
 }
 
-field_value_map_t DBDocumentBase::extract_fields(const std::vector<std::string> queryFields, const std::string &jsondata) const
+field_value_map_t DBDocumentBase::extract_fields(const std::vector<std::string> queryFields,
+                                                 const std::string &jsondata) const
 {
-    auto jsFree = json::loads( jsondata );
-    return extract_fields( queryFields, jsFree );
+    auto jsonFree = json::loads( jsondata );
+    return extract_fields( queryFields, jsonFree );
 }
 
-values_table_t DBDocumentBase::downloadDocuments(const DBQueryBase &query, const std::vector<std::string> &queryFields) const
+values_table_t DBDocumentBase::downloadDocuments(const DBQueryBase &query,
+                                                 const std::vector<std::string> &queryFields) const
 {
     values_table_t records_values;
 
@@ -108,7 +110,8 @@ values_table_t DBDocumentBase::downloadDocuments(const DBQueryBase &query, const
     return records_values;
 }
 
-values_table_t DBDocumentBase::downloadDocuments(const std::vector<std::string> &keys, const std::vector<std::string> &queryFields) const
+values_table_t DBDocumentBase::downloadDocuments(const std::vector<std::string> &keys,
+                                                 const std::vector<std::string> &queryFields) const
 {
     values_table_t records_values;
 

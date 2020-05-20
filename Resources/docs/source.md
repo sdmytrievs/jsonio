@@ -215,6 +215,7 @@ class DBQueryResult used to store query definition and result.
 > *source: "+";  test: "-";  example: "-"*
 > object.add_object_via_path("condition") ? to JsonBase (JsonFree->JsonBase)
 > ? tests
+> Need catch errors from jsonarango
 
 16. dbdriverbase.h
 
@@ -229,6 +230,8 @@ Implementation of Database Driver using Low-Level C++ Driver for ArangoDB.
 
 > *source: "+";  test: "-";  example: "-"*
 > Not implemented:  aconnect_data.getFromSettings(ioSettings().defaultArangoDB());
+> ? tests
+> Need catch errors from jsonarango
 
 
 18. dbconnect.h(cpp)
@@ -236,6 +239,7 @@ Implementation of Database Driver using Low-Level C++ Driver for ArangoDB.
 class DataBase to managing database connection.
 
 > *source: "+";  test: "-";  example: "-"*
+> ? tests
 
 
 19. dbcollection.h(cpp)
@@ -244,6 +248,7 @@ class  DBCollection  the definition collections API.  A collection contains zero
 
 > *source: "+";  test: "-";  example: "-"*
 > Could be ```loadCollectionFile(  const std::set<std::string>& query_fields )``` in other thread
+> ? tests
 
 20. dbdocument.h(cpp)
 
@@ -253,6 +258,17 @@ Furthermore, each document is uniquely identified by its document handle across 
 
 > *source: "+";  test: "-";  example: "-"*
 > Implement some addition functions
+> ? tests
+
+
+21. dbjsondoc.h(cpp)
+
+class DBJsonDocument - implementation of the database document  as free structure JSON
+
+> *source: "+";  test: "-";  example: "-"*
+> ? tests
+
+
 
 ## Next steps --------------------------------------------------------------------------------
 
@@ -262,7 +278,6 @@ To do:
 
 ## Database
 
-16. dbdocument.h(cpp)
 17. dbjsondoc.h(cpp)
 18. dbschemadoc.h(cpp)
 19. dbvertexdoc.h(cpp)

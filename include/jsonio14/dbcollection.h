@@ -11,7 +11,7 @@ class DBDocumentBase;
 
 
 /// Internal function to generate key template
-//std::string makeTemplateKey( const JsonBase *object, const std::vector<std::string>&  key_template_fields );
+std::string make_template_key( const JsonBase *object, const std::vector<std::string>&  key_template_fields );
 
 
 /// \class  DBCollection  the definition collections API.
@@ -93,7 +93,7 @@ public:
     /// which must be an object containing the _id or _key attribute.
     ///  \param data_object - object with data
     ///  \param key      - key of document
-    std::string updateDocument( const JsonBase* data_object, const std::string& key );
+    std::string updateDocument( const JsonBase* data_object );
 
     /// Updates an existing document or creates a new document described by the key,
     /// which must be an object containing the _id or _key attribute.
