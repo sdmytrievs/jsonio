@@ -51,7 +51,7 @@ public:
     {
         auto thetemplate = key_template;
         if( thetemplate.empty() )
-            thetemplate = make_template_key( &current_object, to_key_template_fields );
+            thetemplate = make_template_key( current_object, to_key_template_fields );
         return collection_from->generateOid( thetemplate );
     }
 
@@ -78,9 +78,9 @@ protected:
     JsonFree current_object;
 
     /// Link to internal data
-    JsonBase* current_data() const override
+    JsonFree& current_data() const override
     {
-        return  const_cast<JsonBase*>( dynamic_cast<const JsonBase*>(&current_object) );
+        return  const_cast<JsonFree&>( current_object );
     }
 
     /// Build default query for collection ( by default all documents )

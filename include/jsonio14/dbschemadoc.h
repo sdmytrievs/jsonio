@@ -6,8 +6,7 @@
 
 namespace jsonio14 {
 
-
-/// Definition of schema based database document
+/// \class DBSchemaDocument - implementation of the database document as schema-based JSON.
 class DBSchemaDocument : public  DBDocumentBase
 {
     friend class GraphTraversal;
@@ -38,7 +37,7 @@ public:
     virtual ~DBSchemaDocument(){}
 
     /// Change current schema
-    virtual void reset_schema( const std::string& aschema_name, bool change_queries );
+    virtual void resetSchema( const std::string& aschema_name, bool change_queries );
 
     /// Get the name of thrift schema
     const std::string& getSchemaName() const
@@ -73,9 +72,6 @@ public:
 
 protected:
 
-    /// Link to the current schema description
-    //const StructDef *schema_description;
-
     /// Current schema name
     std::string schema_name = "";
 
@@ -89,11 +85,10 @@ protected:
         schema_name(aschema_name), current_schema_object(JsonSchema::object(schema_name))
     {}
 
-
     /// Link to internal data
-    JsonBase* current_data() const override
+    JsonSchema& current_data() const override
     {
-        return  const_cast<JsonBase*>( dynamic_cast<const JsonBase*>(&current_schema_object) );
+        return  const_cast<JsonSchema&>( current_schema_object );
     }
 
     /// Build default query for collection ( by default all documents )

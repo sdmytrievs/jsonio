@@ -275,7 +275,7 @@ public:
                                const std::vector<std::string>& fieldnames, const std::vector<std::string>& fieldvalues ) const;
 
     /// Extract key from data
-    std::string getKeyFromValue( const JsonBase* node ) const;
+    std::string getKeyFromValue( const JsonBase& node ) const;
 
     /// Extract first key from data
     std::string getFirstKey() const;
@@ -288,12 +288,12 @@ protected:
     key_values_table_t  query_result;
 
     /// Make line to view table
-    void node_to_values(  const JsonBase* node, values_t& values ) const;
+    void node_to_values(  const JsonBase& node, values_t& values ) const;
 
     /// Add line to view table
-    void add_line( const std::string& key_str,  const JsonBase* nodedata, bool isupdate );
+    void add_line( const std::string& key_str,  const JsonBase& nodedata, bool isupdate );
     /// Update line into view table
-    void update_line( const std::string& key_str,  const JsonBase* nodedata );
+    void update_line( const std::string& key_str,  const JsonBase& nodedata );
     /// Delete line from view table
     void delete_line( const std::string& key_str );
 

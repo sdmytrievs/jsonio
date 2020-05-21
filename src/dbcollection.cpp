@@ -8,15 +8,15 @@ namespace jsonio14 {
 
 
 
-std::string make_template_key( const JsonBase *object, const std::vector<std::string>&  key_template_fields )
+std::string make_template_key( const JsonBase& object, const std::vector<std::string>&  key_template_fields )
 {
     std::string kpart, key_temlpate = "";
-    JARANGO_THROW_IF( !object->isTop(), "DBCollection", 20,
+    JARANGO_THROW_IF( !object.isTop(), "DBCollection", 20,
                       " illegal function on level 'make_template_key'." );
 
     for( auto const &keyfld : key_template_fields )
     {
-        object->get_value_via_path( keyfld, kpart, std::string() );
+        object.get_value_via_path( keyfld, kpart, std::string() );
         trim(kpart);
         if( !key_temlpate.empty() )
             key_temlpate +=";";   // delimiter for generated key
@@ -63,12 +63,12 @@ void DBCollection::reload()
         doc->updateQuery(); // Rebuild internal table of values
 }
 
-std::string DBCollection::getKeyFrom( const JsonBase* object )
+std::string DBCollection::getKeyFrom( const JsonBase& object )
 {
     std::string key_str, kbuf;
     for( const auto& keyfld: keyFields())
     {
-        object->get_key_via_path( keyfld, kbuf, std::string("undef") );
+        object.get_key_via_path( keyfld, kbuf, std::string("undef") );
         trim(kbuf);
         key_str += kbuf;
     }
@@ -89,7 +89,7 @@ bool DBCollection::existsDocument( const std::string &key ) const
     return  key_record_map.find(key)  != key_record_map.end();
 }
 
-std::string DBCollection::createDocument( JsonBase *data_object )
+std::string DBCollection::createDocument( JsonBase& data_object )
 {
     auto new_key = getKeyFrom( data_object );
 
@@ -103,7 +103,7 @@ std::string DBCollection::createDocument( JsonBase *data_object )
     // save record to data base
     std::string ret_id = db_driver->create_record( name(), second, data_object );
     JARANGO_THROW_IF( ret_id.empty(), "DBCollection", 13," error saving record '" + new_key +"'." );
-    data_object->set_oid( ret_id );
+    data_object.set_oid( ret_id );
     new_key = getKeyFrom( data_object );
     key_record_map[new_key] = std::move(second);
     return new_key;
@@ -111,13 +111,12 @@ std::string DBCollection::createDocument( JsonBase *data_object )
 
 std::string DBCollection::createDocument( DBDocumentBase *document )
 {
-    auto obj = document->current_data();
-    auto new_key = createDocument( obj );
-    document->add_line( new_key, obj, false );
+    auto new_key = createDocument( document->current_data() );
+    document->add_line( new_key, document->current_data(), false );
     return new_key;
 }
 
-bool DBCollection::readDocument( JsonBase* data_object, const std::string &key )
+bool DBCollection::readDocument( JsonBase& data_object, const std::string &key )
 {
     auto itr = key_record_map.find(key);
     JARANGO_THROW_IF( itr==key_record_map.end(), "DBCollection", 14,
@@ -128,12 +127,11 @@ bool DBCollection::readDocument( JsonBase* data_object, const std::string &key )
 
 void DBCollection::readDocument(DBDocumentBase *document, const std::string &key)
 {
-    auto obj = document->current_data();
-    if( !readDocument( obj, key ) )
+    if( !readDocument( document->current_data(), key ) )
         JARANGO_THROW( "DBCollection", 15, " error loading record '" + key +"'." );
 }
 
-std::string DBCollection::updateDocument( const JsonBase *data_object )
+std::string DBCollection::updateDocument( const JsonBase& data_object )
 {
     auto key = getKeyFrom( data_object );
 
@@ -148,11 +146,11 @@ std::string DBCollection::updateDocument( const JsonBase *data_object )
     return rec_id;
 }
 
-std::string DBCollection::saveDocument( JsonBase *data_object, const std::string &key)
+std::string DBCollection::saveDocument( JsonBase& data_object, const std::string &key)
 {
     if( existsDocument(key) )
     {
-        data_object->set_oid( key );
+        data_object.set_oid( key );
         return createDocument( data_object );
     }
     else
@@ -163,11 +161,10 @@ std::string DBCollection::saveDocument( JsonBase *data_object, const std::string
 
 std::string DBCollection::saveDocument( DBDocumentBase *document, const std::string &key)
 {
-    auto obj = document->current_data();
-    auto rec_id = saveDocument(obj, key);
+    auto rec_id = saveDocument( document->current_data(), key );
     JARANGO_THROW_IF( rec_id.empty(), "DBCollection", 17,
                       " error saving record '" + key +"'." );
-    document->add_line( rec_id, obj, true );
+    document->add_line( rec_id, document->current_data(), true );
     return rec_id;
 }
 
@@ -242,7 +239,7 @@ void DBCollection::add_record_to_map( const std::string& jsondata, const std::st
     db_driver->set_server_key(second, keydata);
 
     auto jsFree = json::loads( jsondata );
-    auto id_key = getKeyFrom( &jsFree );
+    auto id_key = getKeyFrom( jsFree );
 
     auto it_new =  key_record_map.insert( std::pair<std::string,std::unique_ptr<char> >(
                                               id_key, std::move(second) ) );

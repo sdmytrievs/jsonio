@@ -4,7 +4,48 @@
 
 namespace jsonio14 {
 
+
+datamap_t DataBase::vertexes ={};
+datamap_t DataBase::edges = {};
+datamap_t DataBase::vertex_collections ={};
+datamap_t DataBase::edge_collections= {};
+std::vector<std::string> DataBase::all_edges_traverse ={};
+//"inherits, takes, defines, master, product, prodreac, basis, pulls, involves, adds, yields";
+
+
 //  Constructor used internal ArangoDB driver
+void DataBase::update_from_schema( const schemas_t &schema_data )
+{
+    vertexes.clear();
+    edges.clear();
+    vertex_collections.clear();
+    edge_collections.clear();
+    all_edges_traverse.clear();
+
+    for( const auto& structdata:  schema_data )
+    {
+        const  FieldDef* type_fld = structdata.second->getField( "_type" );
+        const  FieldDef* label_fld = structdata.second->getField( "_label" );
+        std::string label, name;
+        if( type_fld != nullptr && label_fld != nullptr )
+        {
+            name = structdata.second->name();
+            label = label_fld->defaultValue();
+            if( type_fld->defaultValue() == "vertex")
+            {
+                vertexes[label ] = name;
+                vertex_collections[ name ] = label+"s";
+            }
+            else if( type_fld->defaultValue() == "edge")
+            {
+                edges[ label ] = name;
+                edge_collections[ name ] = label;
+                all_edges_traverse.push_back(label);
+            }
+        }
+    }
+}
+
 DataBase::DataBase():
     current_driver(nullptr), collections_list()
 {

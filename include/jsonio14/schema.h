@@ -396,6 +396,11 @@ public:
         enums.clear();
     }
 
+    const schemas_t& allStructs() const
+    {
+        return structs;
+    }
+
 protected:
 
     /// Dictionary of readed files (name, doc)

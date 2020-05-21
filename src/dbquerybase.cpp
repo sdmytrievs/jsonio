@@ -186,19 +186,19 @@ void DBQueryDef::fromJson(const JsonBase& object)
 //---------------------------------------------------------------
 
 // Make line to view table
-void DBQueryResult::node_to_values( const JsonBase* node, values_t& values ) const
+void DBQueryResult::node_to_values( const JsonBase& node, values_t& values ) const
 {
     values.clear();
     std::string kbuf;
     for( const auto& afield: query_data.fields() )
     {
-        node->get_value_via_path( afield, kbuf, std::string("---") );
+        node.get_value_via_path( afield, kbuf, std::string("---") );
         trim( kbuf );
         values.push_back(kbuf);
     }
 }
 
-void DBQueryResult::add_line( const std::string &key_str, const JsonBase *nodedata, bool isupdate )
+void DBQueryResult::add_line( const std::string &key_str, const JsonBase& nodedata, bool isupdate )
 {
     values_t values;
     node_to_values( nodedata, values );
@@ -214,7 +214,7 @@ void DBQueryResult::add_line( const std::string &key_str, const JsonBase *nodeda
     query_result.insert(std::pair<std::string,values_t>( key_str, values ));
 }
 
-void DBQueryResult::update_line(const std::string &key_str, const JsonBase *nodedata)
+void DBQueryResult::update_line(const std::string &key_str, const JsonBase& nodedata)
 {
     values_t values;
     node_to_values( nodedata, values );
@@ -307,7 +307,7 @@ std::size_t DBQueryResult::getKeysValues( std::vector<std::string> &aKeyList, st
     return aKeyList.size();
 }
 
-std::string DBQueryResult::getKeyFromValue( const JsonBase* node ) const
+std::string DBQueryResult::getKeyFromValue( const JsonBase& node ) const
 {
     std::size_t ii;
     values_t values;

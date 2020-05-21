@@ -66,7 +66,7 @@ public:
     template <typename T>
     bool getValueViaPath( const std::string& jsonpath, T& val, const T& defval   ) const
     {
-        return current_data()->get_value_via_path( jsonpath, val, defval );
+        return current_data().get_value_via_path( jsonpath, val, defval );
     }
 
     /// Use jsonpath to modify any value in a JSON object.
@@ -80,7 +80,7 @@ public:
     template <typename T>
     bool setValueViaPath( const std::string& jsonpath, const T& val  )
     {
-        return current_data()->set_value_via_path( jsonpath, val );
+        return current_data().set_value_via_path( jsonpath, val );
     }
 
     //--- Manipulation documents
@@ -160,13 +160,13 @@ public:
     /// Set document-handle(_id) to document
     virtual void setOid( const std::string&  newid )
     {
-      current_data()->set_oid(newid);
+      current_data().set_oid(newid);
     }
     /// Extract document-handle(_id) from current document
     virtual std::string getOid() const
     {
       std::string oid;
-      current_data()->get_value_via_path( "_id", oid, std::string("") );
+      current_data().get_value_via_path( "_id", oid, std::string("") );
       return oid;
     }
 
@@ -331,17 +331,17 @@ protected:
 
 
     /// Prepare data to save to database
-    virtual JsonBase* current_data() const = 0;
+    virtual JsonBase& current_data() const = 0;
 
     /// Add line to view table
-    void add_line( const std::string& key_str, const JsonBase* nodedata, bool isupdate )
+    void add_line( const std::string& key_str, const JsonBase& nodedata, bool isupdate )
     {
         if( query_result.get() != nullptr )
             query_result->add_line( key_str, nodedata, isupdate );
     }
 
     /// Update line into view table
-    void update_line( const std::string& key_str, const JsonBase* nodedata )
+    void update_line( const std::string& key_str, const JsonBase& nodedata )
     {
         if( query_result.get() != nullptr )
             query_result->update_line( key_str, nodedata );

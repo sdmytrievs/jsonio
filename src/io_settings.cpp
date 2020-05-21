@@ -1,5 +1,6 @@
 #include "jsonio14/io_settings.h"
 #include "jsonio14/schema_thrift.h"
+#include "jsonio14/dbconnect.h"
 
 namespace jsonio14 {
 
@@ -101,6 +102,8 @@ void JsonioSettings::readSchemaDir(const std::string &dir_path)
         for (auto file: file_names)
             schema.addSchemaFile( schema_thrift, file );
     }
+    // init vertex&edge lists from schema data
+    DataBase::update_from_schema( schema.allStructs() );
 }
 
 

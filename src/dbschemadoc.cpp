@@ -24,9 +24,9 @@ DBSchemaDocument *DBSchemaDocument::newSchemaDocument( const DataBase &dbconnect
 }
 
 
-void DBSchemaDocument::reset_schema( const std::string &aschema_name, bool change_queries )
+void DBSchemaDocument::resetSchema( const std::string &aschema_name, bool change_queries )
 {
-    /// We use the same collection for different schemas
+    // We use the same collection for different schemas?
     if( schema_name != aschema_name  )
     {
         schema_name = aschema_name;
@@ -34,8 +34,8 @@ void DBSchemaDocument::reset_schema( const std::string &aschema_name, bool chang
     }
     if( change_queries && query_result.get() != nullptr  )
     {
-      // query_result->setFieldsCollect(makeDefaultQueryFields());
-       query_result->updateSchema(schema_name);
+      // for new schema need new query
+       query_result.reset();
     }
 }
 
@@ -58,7 +58,7 @@ std::string DBSchemaDocument::genOid( const std::string &key_template )
         auto schema_struct = ioSettings().Schema().getStruct( schema_name );
         if( schema_struct != nullptr )
         {
-           thetemplate = make_template_key( &current_schema_object,
+           thetemplate = make_template_key( current_schema_object,
                                             schema_struct->getKeyTemplateList() );
         }
     }
@@ -74,8 +74,8 @@ void DBSchemaDocument::updateQuery()
     SetReaded_f setfnc = [&]( const std::string& jsondata )
     {
         auto json_schema = json::loads( schema_name, jsondata );
-        auto key = collection_from->getKeyFrom( &json_schema );
-        query_result->add_line( key,  &json_schema, false );
+        auto key = collection_from->getKeyFrom( json_schema );
+        query_result->add_line( key,  json_schema, false );
     };
 
     collection_from->selectQuery( query_result->condition(), setfnc );
@@ -89,18 +89,18 @@ std::vector<std::string> DBSchemaDocument::make_default_query_fields() const
 {
     const StructDef* schema_struct  = ioSettings().Schema().getStruct( schema_name );
     if( schema_struct == nullptr )
-      return DBDocumentBase::make_default_query_fields();
+        return DBDocumentBase::make_default_query_fields();
 
     std::vector<std::string> key_fields = schema_struct->getSelectedList();
 
     if( key_fields.empty() )
     {
-//     const StructDef& container = *schema_struct;
-//     for( const auto& fld : std::as_const(*schema_struct) )
-//     {
-//       if( fld->required() == FieldDef::fld_required )
-//         key_fields.push_back(fld->name());
-//     }
+        auto field_it = schema_struct->cbegin();
+        while( field_it != schema_struct->cend() )
+        {
+            if( field_it->get()->required() == FieldDef::fld_required )
+                key_fields.push_back(field_it->get()->name());
+        }
     }
 
     return key_fields;

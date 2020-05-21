@@ -54,19 +54,19 @@ public:
     /// \param collname - collection name
     /// \param jsonrec - json object with data
     /// \return the document-handle.
-    std::string create_record( const std::string& collname, std::unique_ptr<char>& second, const JsonBase* recdata ) override;
+    std::string create_record( const std::string& collname, std::unique_ptr<char>& second, const JsonBase& recdata ) override;
 
     /// Returns the document described by the selector.
     /// \param collname - collection name
     /// \param it -  pair: key -> selector
     /// \param jsonrec - object to receive data
-    bool read_record( const std::string& collname, keysmap_t::iterator& it, JsonBase* recdata ) override;
+    bool read_record( const std::string& collname, keysmap_t::iterator& it, JsonBase& recdata ) override;
 
     /// Update an existing document described by the selector.
     /// \param collname - collection name
     /// \param it -  pair: key -> selector
     /// \param jsonrec - json object with data
-    std::string update_record( const std::string& collname, keysmap_t::iterator& it, const JsonBase* recdata ) override;
+    std::string update_record( const std::string& collname, keysmap_t::iterator& it, const JsonBase& recdata ) override;
 
     /// Removes a document described by the selector.
     /// \param collname - collection name

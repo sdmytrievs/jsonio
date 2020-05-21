@@ -268,6 +268,15 @@ class DBJsonDocument - implementation of the database document  as free structur
 > *source: "+";  test: "-";  example: "-"*
 > ? tests
 
+22. dbschemadoc.h(cpp)
+
+class DBSchemaDocument - implementation of the database document as schema-based JSON
+
+> *source: "+";  test: "-";  example: "-"*
+> ? tests
+
+
+23.
 
 
 ## Next steps --------------------------------------------------------------------------------

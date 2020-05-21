@@ -11,7 +11,7 @@ class DBDocumentBase;
 
 
 /// Internal function to generate key template
-std::string make_template_key( const JsonBase *object, const std::vector<std::string>&  key_template_fields );
+std::string make_template_key( const JsonBase& object, const std::vector<std::string>&  key_template_fields );
 
 
 /// \class  DBCollection  the definition collections API.
@@ -21,6 +21,7 @@ class DBCollection
 {
     friend class DataBase;
     friend class DBDocumentBase;
+    friend class DBVertexDocument;
 
 public:
 
@@ -38,12 +39,6 @@ public:
     void reload();
 
     //--- Selectors
-
-    //    /// Access to the database
-    //    const DataBase* database() const
-    //    {
-    //        return db_connect;
-    //    }
 
     /// Get the unique name of collection
     const std::string& name() const
@@ -72,7 +67,7 @@ public:
     }
 
     /// Extract documents key from json object
-    virtual std::string getKeyFrom( const JsonBase* object );
+    virtual std::string getKeyFrom( const JsonBase& object );
 
     /// Generate new oid or other pointer of location
     virtual std::string generateOid( const std::string& key_template );
@@ -82,24 +77,24 @@ public:
 
     /// Creates a new document in the collection from the given data.
     /// \param data_object - object with data
-    std::string createDocument( JsonBase* data_object );
+    std::string createDocument( JsonBase& data_object );
 
     /// Retrive one document from the collection
     ///  \param data_object - object with data
     ///  \param key      - key of document
-    bool readDocument( JsonBase* data_object, const std::string& key );
+    bool readDocument( JsonBase& data_object, const std::string& key );
 
     /// Updates an existing document described by the key,
     /// which must be an object containing the _id or _key attribute.
     ///  \param data_object - object with data
     ///  \param key      - key of document
-    std::string updateDocument( const JsonBase* data_object );
+    std::string updateDocument( const JsonBase& data_object );
 
     /// Updates an existing document or creates a new document described by the key,
     /// which must be an object containing the _id or _key attribute.
     ///  \param data_object - object with data
     ///  \param key      - key of document
-    std::string saveDocument( JsonBase* data_object, const std::string& key );
+    std::string saveDocument( JsonBase& data_object, const std::string& key );
 
     /// Removes document from the collection
     /// \param key      - key of document

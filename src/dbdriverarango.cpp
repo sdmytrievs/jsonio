@@ -45,24 +45,24 @@ void ArangoDBClient::set_server_key(std::unique_ptr<char> &second, const std::st
 }
 
 std::string ArangoDBClient::create_record(const std::string &collname,
-                                          std::unique_ptr<char>& second, const JsonBase *recdata)
+                                          std::unique_ptr<char>& second, const JsonBase& recdata)
 {
     JARANGO_THROW_IF( arando_connect->readonlyDBAccess(), "ArangoDBClient", 2,
                       " try to create document into read only mode." );
 
-    auto  jsonrec = recdata->dump();
+    auto  jsonrec = recdata.dump();
     auto new_id =  arando_db->createDocument( collname, jsonrec);
     set_server_key( second, new_id );
     return new_id;
 }
 
 // Retrive one record from the collection
-bool ArangoDBClient::read_record( const std::string& collname, keysmap_t::iterator&it, JsonBase* recdata )
+bool ArangoDBClient::read_record( const std::string& collname, keysmap_t::iterator&it, JsonBase& recdata )
 {
     std::string jsonrec;
     std::string rid = get_server_key( it->second );
     auto ret =  arando_db->readDocument( collname, rid, jsonrec );
-    recdata->loads(jsonrec);
+    recdata.loads(jsonrec);
     return ret;
 }
 
@@ -77,12 +77,12 @@ bool ArangoDBClient::delete_record( const std::string& collname, keysmap_t::iter
 }
 
 // Save/update record in the collection
-std::string ArangoDBClient::update_record( const std::string& collname, keysmap_t::iterator& it, const JsonBase* recdata )
+std::string ArangoDBClient::update_record( const std::string& collname, keysmap_t::iterator& it, const JsonBase& recdata )
 {
     JARANGO_THROW_IF( arando_connect->readonlyDBAccess(), "ArangoDBClient", 3,
                       " try to create/update document into read only mode." );
 
-    auto  jsonrec = recdata->dump();
+    auto  jsonrec = recdata.dump();
     std::string rid = get_server_key( it->second );
     rid = arando_db->updateDocument( collname, rid, jsonrec );
     return rid;

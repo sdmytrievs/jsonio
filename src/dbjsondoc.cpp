@@ -34,8 +34,8 @@ void DBJsonDocument::updateQuery()
     SetReaded_f setfnc = [&]( const std::string& jsondata )
     {
         auto jsonFree = json::loads( jsondata );
-        auto key = collection_from->getKeyFrom( &jsonFree );
-        query_result->add_line( key,  &jsonFree, false );
+        auto key = collection_from->getKeyFrom( jsonFree );
+        query_result->add_line( key,  jsonFree, false );
     };
 
     collection_from->selectQuery( query_result->condition(), setfnc );
