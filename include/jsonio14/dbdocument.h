@@ -24,6 +24,8 @@ class DBDocumentBase
 {
     friend class DBCollection;
 
+    /// Do it before read document from database ( check schema )
+    virtual void before_load( const std::string&  ) {}
     /// Do it after read document from database
     virtual void after_load( const std::string&  ) {}
     /// Do it before remove document with key from collection.
@@ -114,7 +116,7 @@ public:
     ///  \param key      - key of document
     void readDocument( const std::string& key )
     {
-        testUpdateSchema( key );
+        before_load( key );
         collection_from->readDocument( this, key );
         after_load( key );
     }
@@ -169,10 +171,6 @@ public:
       current_data().get_value_via_path( "_id", oid, std::string("") );
       return oid;
     }
-
-    /// Test document before read
-    virtual void testUpdateSchema( const std::string&  /*pkey*/ )
-    {}
 
     /// Return curent document as json string
     virtual std::string getJson( bool dense = false ) const = 0;

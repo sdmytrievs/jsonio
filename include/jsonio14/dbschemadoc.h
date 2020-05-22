@@ -10,6 +10,9 @@ namespace jsonio14 {
 class DBSchemaDocument : public  DBDocumentBase
 {
     friend class GraphTraversal;
+
+protected:
+
     /// Do it before write document to database
     void before_save_update( std::string& key ) override;
 

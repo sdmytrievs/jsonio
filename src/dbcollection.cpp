@@ -61,6 +61,7 @@ void DBCollection::reload()
     load();
     for( auto doc: documents_list )
         doc->updateQuery(); // Rebuild internal table of values
+    // doc->load_unique_fields();?
 }
 
 std::string DBCollection::getKeyFrom( const JsonBase& object )
@@ -204,6 +205,8 @@ void DBCollection::change_driver( AbstractDBDriver*  adriver )
     load();
     for( auto doc: documents_list )
         doc->updateQuery(); // Run current query, rebuild internal table of values
+        // doc->load_unique_fields();? vertex&edges
+        // Add virtual refresh lists
 }
 
 // ?? other thread

@@ -12,10 +12,13 @@ std::string collectionNameFromSchema( const std::string& schema_name );
 /// Definition of graph databases chain
 class DBVertexDocument : public DBSchemaDocument
 {
-
+    /// Test&change schema
+    void before_load( const std::string&  ) override;
     /// Do it before remove document with key from collection.
+    /// Remove all edges connected to vertex.
     void before_remove( const std::string&  ) override;
     /// Do it after remove document with key from collection.
+    /// Delete from unique map.
     void after_remove( const std::string&  ) override;
     /// Do it before write document to database
     void before_save_update( std::string&  ) override;
@@ -79,11 +82,8 @@ public:
         change_schema_mode = mode;
     }
 
-    /// Test&change schema
-    void testUpdateSchema( const std::string&  pkey ) override;
-
     /// Change current schema
-    void resetSchema( const std::string& aschemaName, bool change_queries ) override;
+    void resetSchema( const std::string& aschema_name, bool change_queries ) override;
 
     /// Load document from json string
     /// \return current document key
@@ -122,50 +122,40 @@ public:
 
 
     /// Define new Vertex document
-    void setVertexObject( const std::string& aschemaName, const FieldSetMap& fldvalues );
+    void setVertexObject( const std::string& aschema_name, const field_value_map_t& fldvalues );
     /// Change current schema document data
-    void updateVertexObject( const std::string& aschemaName, const FieldSetMap& fldvalues );
+    void updateVertexObject( const std::string& aschema_name, const field_value_map_t& fldvalues );
 
     /// Creates a new vertex document in the collection from the given fldvalues data.
     /// \param  fldvalues - data to save
     /// \param  testValues - If testValues is true, we compare the current data with the internally loaded values,
     /// and if all the values are the same, then we update the selected record instead of creating new ones.
     /// \return new key of document
-    std::string CreateVertex( const std::string& aschemaName, const FieldSetMap& fldvalues, bool testValues = false )
+    std::string createVertex( const std::string& aschema_name, const field_value_map_t& fldvalues, bool testValues = false )
     {
-        setVertexObject( aschemaName, fldvalues );
-        return CreateWithTestValues( testValues );
+        setVertexObject( aschema_name, fldvalues );
+        return createWithTestValues( testValues );
     }
 
     /// Update/create a vertex document.
     /// \param  fldvalues - values to update
     /// \param  testValues - If testValues is true, we compare the current data with the internally loaded values,
     /// and if all the values are the same, then we update the selected record instead of creating new ones.
-    void UpdateVertex( const std::string& aschemaName, const FieldSetMap& fldvalues, bool testValues = false )
+    void updateVertex( const std::string& aschema_name, const field_value_map_t& fldvalues, bool testValues = false )
     {
-        updateVertexObject( aschemaName, fldvalues );
-        UpdateWithTestValues( testValues );
+        updateVertexObject( aschema_name, fldvalues );
+        updateWithTestValues( testValues );
     }
 
     /// Build map of fields-value pairs
-    FieldSetMap loadRecordFields( const std::string& id, const std::vector<std::string>& queryFields );
-
-    // service functions
-
-    /// Extract label by id  ( old  using query - observed )
-    std::string extractLabelById( const std::string& id );
-
-    /// Extract label from id  ( no query )
-    std::string extractLabelFromId( const std::string& id );
-
-    /// Extract schema by id  ( no query )
-    virtual std::string  extractSchemaFromId( const std::string& id  )
+    field_value_map_t loadRecordFields( const std::string& key, const std::vector<std::string>& query_fields )
     {
-        std::string label = extractLabelFromId( id );
-        label.pop_back(); // delete last "s"
-        return _schema->getVertexName( label );
+        readDocument( key );
+        return extract_fields( query_fields, current_schema_object );
     }
 
+    /// Extract schema from the document-handle ( no query ).
+    virtual std::string  extractSchemaFromId( const std::string& id  );
 
 protected:
 
@@ -179,7 +169,7 @@ protected:
     /// Names of fields group to be unique.
     std::vector<std::string>  unique_fields_names;
     /// Table to save unique fields values
-    unique_fields_map_t unique_fields_values;              ///< map to save unique fields values
+    unique_fields_map_t unique_fields_values;
 
     /// Type constructor
     DBVertexDocument( const std::string& aschema_name, const DataBase& dbconnect,
@@ -195,8 +185,6 @@ protected:
         return DBQueryBase(std::string("{ \"_label\" : \"")+ object_label + "\" }", DBQueryBase::qTemplate);
     }
 
-    unique_fields_map_t::iterator unique_line_by_id( const std::string& idschem );
-
     /// Test true type and label for schema
     void test_schema( const std::string& jsondata );
 
@@ -205,6 +193,8 @@ protected:
 
     /// Init uniqueFields when load collection
     void load_unique_fields();
+    unique_fields_map_t::iterator unique_line_by_id( const std::string& idschem );
+
 };
 
 } // namespace jsonio14

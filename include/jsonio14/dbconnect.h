@@ -48,7 +48,7 @@ public:
     }
 
     /// Get vertex collection from Schema name
-    std::string getVertexCollection(const std::string& schema_name) const
+    static std::string getVertexCollection(const std::string& schema_name)
     {
         auto it = vertex_collections.find( schema_name );
         if( it == vertex_collections.end() )

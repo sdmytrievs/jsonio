@@ -1,25 +1,26 @@
 
 #include <chrono>
-#include "jsonio14/dbvertexdoc.h"
+#include <jsonio14/dbvertexdoc.h>
+#include "jsonio14/dbconnect.h"
 #include "jsonio14/io_settings.h"
 #include "jsonio14/service.h"
+#include "jsonio14/jsondump.h"
 
 namespace jsonio14 {
 
-// TGraphAbstract ---------------------------------------------
 
+std::string collectionNameFromSchema( const std::string& schema_name )
+{
+    std::string labelVertex = DataBase::getVertexCollection( schema_name );
+    if(!labelVertex.empty())
+        return labelVertex;
 
-//string collectionNameFromSchema( const string& schemaName )
-//{
-//    string labelVertex = ioSettings().Schema()->getVertexCollection( schemaName );
-//    if(!labelVertex.empty())
-//        return labelVertex;
+    labelVertex = DataBase::getEdgeCollection( schema_name );
+    if(!labelVertex.empty())
+        return labelVertex;
+    return "collection";
+}
 
-//    labelVertex = ioSettings().Schema()->getEdgeCollection( schemaName );
-//    if(!labelVertex.empty())
-//        return labelVertex;
-//    return ioSettings().collection();
-//}
 
 DBQueryBase DBVertexDocument::edgesQuery(const std::string& id_document, DBQueryBase::QType query_type, const std::string& edge_collections)
 {
@@ -60,179 +61,99 @@ DBVertexDocument *DBVertexDocument::newVertexDocument(const DataBase &dbconnect,
 }
 
 
-
-
-
-
-
-
-
-//--------------------------------------------------------------------------------
-
-
-
-// Change base collections
-void DBVertexDocument::update_collection( const std::string& aschemaName )
+void DBVertexDocument::resetSchema( const std::string &aschema_name, bool change_queries )
 {
-    auto oldName = collection_from->name();
-    auto newName = collectionNameFromSchema( aschemaName );
-    if( newName != oldName )
+    if( schema_name != aschema_name || change_queries  )
     {
-        collection_from->eraseDocument(this);
-        collection_from = database()->getCollection( type(), newName  );
-        collection_from->addDocument(this);
-    }
-}
+        schema_name = aschema_name;
+        current_schema_object = JsonSchema::object(schema_name);
+        current_schema_object.get_value_via_path("_label", object_label, std::string("") );
+        current_schema_object.get_value_via_path("_type", object_type, std::string("") );
 
-// Test true type and label for schema
-void DBVertexDocument::test_schema(const std::string &jsondata)
-{
-    string newtype = extractStringField( "_type", jsondata );
-    string newlabel = extractStringField( "_label", jsondata );
-
-    if( newtype.empty() || newlabel.empty() )
-        return;
-
-    if( _changeSchemaMode )
-    {
-        string newSchema;
-        if( newtype == "edge")
-            newSchema = _schema->getEdgeName(newlabel);
-        else
-            if( newtype == "vertex")
-                newSchema = _schema->getVertexName(newlabel);
-        jsonioErrIf(newSchema.empty(),  "TGRDB0007",
-                    "Undefined record: " + newtype + " type " + newlabel + " label" );
-        resetSchema( newSchema, false );
-    } else
-    {
-        if( newtype != _type || newlabel != _label )
-            jsonioErr("TGRDB0004", "Illegal record type: " + newtype + " or label: " + newlabel );
-    }
-}
-
-
-
-void TDBVertexDocument::resetSchema( const string& aschemaName, bool change_queries )
-{
-    if( _schemaName != aschemaName || change_queries  )
-    {
-        _schemaName = aschemaName;
-
-        _currentData.reset( JsonDomSchema::newSchemaObject( _schemaName ) );
-        auto type_node = _currentData->field("_type");
-        _type = "";
-        if( type_node != nullptr )
-            type_node->getValue(_type);
-        jsonioErrIf( _type != type(), "TGRDB0004", "Illegal record type: " + _type );
-
-        type_node = _currentData->field("_label");
-        _label = "";
-        if( type_node != nullptr )
-            type_node->getValue(_label);
-
+        JARANGO_THROW_IF( object_type != type(), "DBVertexDocument", 11,
+                          " illegal record type:" + object_type );
         // update collection
-        updateCollection(  aschemaName );
+        update_collection(  aschema_name );
+        load_unique_fields();
     }
-    if( change_queries && _queryResult.get() != nullptr  )
+    if( change_queries && query_result.get() != nullptr  )
     {
-       // new one
-       //SetQuery( makeDefaultQueryTemplate(), makeDefaultQueryFields());
-       // old one
-       _queryResult->setFieldsCollect(makeDefaultQueryFields());
-       _queryResult->setQueryCondition(makeDefaultQueryTemplate());
-       _queryResult->setToSchema(_schemaName);
+       // set query and reload  query_result
+       setQuery(  make_default_query_template(), make_default_query_fields() );
     }
+}
 
-    // load unique map
-    loadUniqueFields();
+void DBVertexDocument::setVertexObject(const std::string &aschema_name, const field_value_map_t &fldvalues)
+{
+    if( schema_name != aschema_name )
+    {
+        if( change_schema_mode )
+            resetSchema( aschema_name, false );
+        else
+            JARANGO_THROW( "DBVertexDocument", 12,
+                           " illegal record schame: " + aschema_name + " current schema: " + schema_name );
+    }
+    current_schema_object.clear(); // set default values
+
+    for(auto const &ent : fldvalues)
+        current_schema_object.set_value_via_path( ent.first, ent.second  );
+}
+
+void DBVertexDocument::updateVertexObject(const std::string &aschema_name, const field_value_map_t &fldvalues)
+{
+    // check schema
+    if( schema_name != aschema_name )
+        JARANGO_THROW( "DBVertexDocument", 13,
+                       " illegal record schame when update: " + aschema_name + " current schema: " + schema_name );
+    for(auto const &ent : fldvalues)
+        current_schema_object.set_value_via_path( ent.first, ent.second  );
+}
+
+std::string DBVertexDocument::extractSchemaFromId( const std::string& oid )
+{
+    auto names = split( oid, "/" );
+    if( names.size()>1 )
+    {
+       auto  label = names.front();
+       label.pop_back();   // delete last "s"
+       return DataBase::getVertexName( label );
+    }
+    return "";
 }
 
 
-void TDBVertexDocument::testUpdateSchema( const std::string&  pkey )
+void DBVertexDocument::before_load(const std::string & key)
 {
-    string _id = pkey;
-    // _id.pop_back(); // delete ":"
-    string schemaName = extractSchemaFromId( _id  );
+    auto schemaName = extractSchemaFromId( key  );
     if( !schemaName.empty() && schemaName != getSchemaName() )
         resetSchema(schemaName, false );
 }
 
-void TDBVertexDocument::loadUniqueFields()
+void DBVertexDocument::before_remove(const std::string & vertex_id )
 {
-    uniqueFieldsNames.clear();
-    uniqueFieldsValues.clear();
-
-    ThriftStructDef* strDef = _schema->getStruct(_schemaName);
-    if( strDef == nullptr )
-        return;
-
-    /// temporaly block unique test
-    //uniqueFieldsNames = strDef->getUniqueList();
-    if( uniqueFieldsNames.empty() )
-        return;
-
-    uniqueFieldsNames.push_back("_id");
-    ValuesTable uniqueVal = downloadDocuments( makeDefaultQueryTemplate(), uniqueFieldsNames);
-
-    for( auto row: uniqueVal)
-    {
-        auto idkey = row.back();
-        row.pop_back();
-
-        if( !uniqueFieldsValues.insert( std::pair< vector<string>, string>(row, idkey)).second )
-        {
-            cout << "Not unique values: " << string_from_vector( row ) << endl;
-        }
-    }
-}
-
-
-
-/// Delete all edges by vertex id
-void TDBVertexDocument::beforeRm( const std::string& key )
-{
-    string  _vertexid = key;
-
     /*string bsonquery = "{  \"_type\": \"edge\",  \"$or\": [ { \"_to\":  \"";
            bsonquery += _vertexid + "\" }, { \"_from\": \"";
            bsonquery += _vertexid + "\" } ], \"$dropall\": true }";
     DBQueryData  query( bsonquery, DBQueryData::qEJDB );*/
 
-    shared_ptr<TDBEdgeDocument> edges( documentAllEdges( this->database() ));
-    auto query = edges->allEdgesQuery( _vertexid );
-    auto edgekeys =  edges->getKeysByQuery( query );
-
+    //std::shared_ptr<DBEdgeDocument> edges( documentAllEdges( this->database() ));
+    std::shared_ptr<DBVertexDocument> edges;  // ???? temporally
+    auto edgekeys =  getKeysByQuery( allEdgesQuery( vertex_id ) );
     for( auto idedge: edgekeys )
     {
-      //cout << idedge << endl;
-      edges->testUpdateSchema( idedge );
-      edges->Delete(idedge);
+        //cout << idedge << endl;
+        edges->resetSchema( edges->extractSchemaFromId(idedge), false );
+        edges->deleteDocument(idedge);
     }
 
-   // very slow
-   // _collection->deleteEdges( _vertexid );
+    // very slow
+    // collection_from->deleteEdges( vertex_id );
 }
 
-void TDBVertexDocument::afterRm( const std::string& key )
+unique_fields_map_t::iterator DBVertexDocument::unique_line_by_id( const std::string& idschem )
 {
-
-    // delete from unique map
-    if( !uniqueFieldsNames.empty() )
-    {
-        string  _vertexid = key;
-        //strip_all( _vertexid, ":" ); // get id from key
-        //_vertexid =_vertexid.substr(0, _vertexid.size()-1); // delete ":"
-        auto itrow = uniqueLinebyId( _vertexid );
-        if( itrow != uniqueFieldsValues.end() )
-            uniqueFieldsValues.erase(itrow);
-    }
-}
-
-UniqueFieldsMap::iterator TDBVertexDocument::uniqueLinebyId( const string& idschem )
-{
-    UniqueFieldsMap::iterator itrow = uniqueFieldsValues.begin();
-    while( itrow != uniqueFieldsValues.end() )
+    unique_fields_map_t::iterator itrow = unique_fields_values.begin();
+    while( itrow != unique_fields_values.end() )
     {
         if( itrow->second == idschem )
             break;
@@ -241,141 +162,130 @@ UniqueFieldsMap::iterator TDBVertexDocument::uniqueLinebyId( const string& idsch
     return itrow;
 }
 
-void TDBVertexDocument::beforeSaveUpdate( const std::string&  )
+void DBVertexDocument::after_remove(const std::string & vertex_id)
 {
-    if( !uniqueFieldsNames.empty() )
+    // delete from unique map
+    if( !unique_fields_names.empty() )
     {
-        FieldSetMap uniqfields = extractFields( uniqueFieldsNames, _currentData.get() );
+        auto itr = unique_line_by_id( vertex_id );
+        if( itr != unique_fields_values.end() )
+            unique_fields_values.erase(itr);
+    }
+}
 
-        vector<string> uniqValues;
-        for( uint ii=0; ii<uniqueFieldsNames.size()-1; ii++ )
-            uniqValues.push_back( uniqfields[uniqueFieldsNames[ii]] );
+void DBVertexDocument::before_save_update(std::string & key)
+{
+    // generate key if empty
+    DBSchemaDocument::before_save_update(key);
 
-        auto itfind = uniqueFieldsValues.find(uniqValues);
-        if( itfind != uniqueFieldsValues.end() )
+    if( !unique_fields_names.empty() )
+    {
+        auto uniq_fields = extract_fields( unique_fields_names, current_schema_object );
+
+        values_t uniq_values;
+        for( size_t ii=0; ii<unique_fields_names.size()-1; ii++ )
+            uniq_values.push_back( uniq_fields[unique_fields_names[ii]] );
+
+        auto itfind = unique_fields_values.find( uniq_values );
+        if( itfind != unique_fields_values.end() )
         {
-            if( itfind->second != uniqfields["_id"] )
-                jsonioErr("TGRDB0009", "Not unique values: " + string_from_vector( uniqValues ) );
+            if( itfind->second != uniq_fields["_id"] )
+                JARANGO_THROW( "DBVertexDocument", 14, " not unique values: " + json::dump( uniq_values ) );
         }
     }
 }
 
-void TDBVertexDocument::afterSaveUpdate( const std::string&  )
+void DBVertexDocument::after_save_update(const std::string &)
 {
-    if( !uniqueFieldsNames.empty() )
+    if( !unique_fields_names.empty() )
     {
-        FieldSetMap uniqfields = extractFields( uniqueFieldsNames, _currentData.get() );
+        auto uniq_fields = extract_fields( unique_fields_names, current_schema_object );
 
         // delete old
-        auto itrow = uniqueLinebyId( uniqfields["_id"] );
-        if( itrow != uniqueFieldsValues.end() )
-            uniqueFieldsValues.erase(itrow);
+        auto itrow = unique_line_by_id( uniq_fields["_id"] );
+        if( itrow != unique_fields_values.end() )
+            unique_fields_values.erase(itrow);
 
-        // insert new
-        vector<string> uniqValues;
-        for( uint ii=0; ii<uniqueFieldsNames.size()-1; ii++ )
-            uniqValues.push_back( uniqfields[uniqueFieldsNames[ii]] );
-        if( !uniqueFieldsValues.insert( std::pair< vector<string>, string>(uniqValues, uniqfields["_id"])).second )
+        values_t uniq_values;
+        for( size_t ii=0; ii<unique_fields_names.size()-1; ii++ )
+            uniq_values.push_back( uniq_fields[unique_fields_names[ii]] );
+
+        if( !unique_fields_values.insert( std::pair< values_t, std::string>(uniq_values, uniq_fields["_id"])).second )
         {
-            cout << "Not unique values: " << string_from_vector( uniqValues ) << endl;
+            std::cout << "Not unique values: " << json::dump( uniq_values ) << std::endl;
         }
     }
 }
 
 
-// Extract label by id (old function )
-string TDBVertexDocument::extractLabelById( const string& id )
+void DBVertexDocument::load_unique_fields()
 {
-    string token;
+    unique_fields_names.clear();
+    unique_fields_values.clear();
 
-    auto query =  idQuery( id );
-    vector<string> queryFields = { "_label"};
-    query.setQueryFields( queryFields );
-    vector<string> resultData = runQuery( query );
-    if( resultData.size()>0  )
-        token = extractStringField( "_label", resultData[0] );
+    auto schema_struct = ioSettings().Schema().getStruct( schema_name );
+    if( schema_struct == nullptr )
+        return;
+    /// temporaly block unique test
+    //unique_fields_names = schema_struct->getUniqueList();
+    if( unique_fields_names.empty() )
+        return;
 
-    return token;
-}
+    unique_fields_names.push_back("_id");
+    auto uniqueVal = downloadDocuments( make_default_query_template(), unique_fields_names);
 
-// Extract label from id
-string TDBVertexDocument::extractLabelFromId( const string& id )
-{
-    string token;
-    queue<string> names = split(id, "/");
-    if(names.size()>1)
-        token = names.front();
-    return token;
-}
-
-
-// build functions ------------------------------------------------------------
-
-// Define new Vertex
-void TDBVertexDocument::setVertexObject( const string& aschemaName, const FieldSetMap& fldvalues )
-{
-    // check schema
-    if( _schemaName != aschemaName )
+    for( auto row: uniqueVal)
     {
-        if( _changeSchemaMode )
-            resetSchema( aschemaName, false );
-        else
-            jsonioErr("TGRDB0007", "Illegal record schame: " + aschemaName + " current schema: " + _schemaName );
+        auto idkey = row.back();
+        row.pop_back();
+
+        if( !unique_fields_values.insert( std::pair< values_t, std::string>(row, idkey)).second )
+        {
+            std::cout << "Not unique values: " << json::dump( row ) << std::endl;
+        }
     }
-    _currentData->clearField(); // set default values
-
-    for(auto const &ent : fldvalues)
-        setValue( ent.first, ent.second  );
-}
-
-// Update current schema data
-void TDBVertexDocument::updateVertexObject( const string& aschemaName, const FieldSetMap& fldvalues )
-{
-    // check schema
-    if( _schemaName != aschemaName )
-        jsonioErr("TGRDB0008", "Illegal record schame: " + aschemaName + " current schema: " + _schemaName );
-    for(auto const &ent : fldvalues)
-        setValue( ent.first, ent.second  );
 }
 
 
 
-FieldSetMap TDBVertexDocument::loadRecordFields( const string& id, const vector<string>& queryFields )
+// Change base collections
+void DBVertexDocument::update_collection( const std::string& aschema_name )
 {
-    Read( id/*+":"*/ );
-    FieldSetMap fldsValues = extractFields( queryFields, _currentData.get() );
-    return fldsValues;
-}
-
-
-
-
-void DBVertexDocument::testUpdateSchema(const std::string &pkey)
-{
-
-}
-
-void DBVertexDocument::resetSchema(const std::string &aschemaName, bool change_queries)
-{
-
-}
-
-//// Extract the string value by key from query
-std::string extractStringField( const std::string& key, const std::string& jsondata )
-{
-    std::string token = "";
-    std::string query2 =  replace_all( jsondata, "\'", '\"');
-    std::string regstr =  string(".*\"")+key+"\"\\s*:\\s*\"([^\"]*)\".*";
-    std::regex re( regstr );
-    std::smatch match;
-
-    if( std::regex_search( query2, match, re ))
+    auto oldName = collection_from->name();
+    auto newName = collectionNameFromSchema( aschema_name );
+    if( newName != oldName )
     {
-        if (match.ready())
-            token = match[1];
+        collection_from->eraseDocument(this);
+        collection_from = collection_from->db_connect.getCollection( type(), newName );
+        collection_from->addDocument(this);
     }
-    //cout << key << "  token " << token  << endl;
-    return token;
+}
+
+// Test true type and label for schema
+void DBVertexDocument::test_schema( const std::string &jsondata )
+{
+    auto newtype = extract_string_json( "_type", jsondata );
+    auto newlabel = extract_string_json( "_label", jsondata );
+    if( newtype.empty() || newlabel.empty() )
+        return;
+
+    if( change_schema_mode )
+    {
+        std::string newschema;
+        if( newtype == "edge")
+            newschema = DataBase::getEdgeName(newlabel);
+        else if( newtype == "vertex")
+            newschema = DataBase::getVertexName(newlabel);
+
+        JARANGO_THROW_IF( newschema.empty(), "DBVertexDocument", 15,
+                          " undefined record type: " + newtype + " or label: " + newlabel );
+        resetSchema( newschema, false );
+    }
+    else
+    {
+        if( newtype != object_type || newlabel != object_label )
+            JARANGO_THROW( "DBVertexDocument", 16, " illegal record type: " + newtype + " or label: " + newlabel );
+    }
 }
 
 } // namespace jsonio14

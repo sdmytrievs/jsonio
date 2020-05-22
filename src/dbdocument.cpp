@@ -170,13 +170,12 @@ std::vector<std::string> DBDocumentBase::getKeysByQuery(DBQueryBase &&query) con
     query.setQueryFields( query_fields );
     values_t result_data = selectQuery( query );
 
-    //--std::regex re("\\{\\s*\"_id\"\\s*:\\s*\"([^\"]*)\"\\s*\\}");
-    std::string replacement = "$1";
     std::vector<std::string> keys;
     for( const auto& data: result_data )
     {
-        auto akey = regexp_replace( data, ".*\"_id\"\\s*:\\s*\"([^\"]*)\".*", replacement);
-        //cout << result_data[ii] << "      " << akey << endl;
+        auto akey = extract_string_json("_id", data);
+        //regexp_replace( data, ".*\"_id\"\\s*:\\s*\"([^\"]*)\".*", "$1");
+        //cout << data << "      " << akey << endl;
         keys.push_back(akey);
     }
     return keys;
@@ -185,43 +184,6 @@ std::vector<std::string> DBDocumentBase::getKeysByQuery(DBQueryBase &&query) con
 
 // extern functions ---------------------------------------
 
-//// Extract the string value by key from query
-//int extractIntField( const string& key, const string& jsondata )
-//{
-//    string token;
-//    string query2 =  replace_all( jsondata, "\'", "\"");
-//    string regstr =  string(".*\"")+key+"\"\\s*:\\s*([+-]?[1-9]\\d*|0).*";
-//    std::regex re( regstr );
-//    std::smatch match;
-
-//    if( std::regex_search( query2, match, re ))
-//    {
-//        if (match.ready())
-//            token = match[1];
-//    }
-//    //cout << key << "  token " << token  << endl;
-//    if( token.empty() )  // fix bug for null or noexist fields
-//        return 0;
-//    return stoi(token);
-//}
-
-//// Extract the string value by key from query
-//string extractStringField( const string& key, const string& jsondata )
-//{
-//    string token = "";
-//    string query2 =  replace_all( jsondata, "\'", "\"");
-//    string regstr =  string(".*\"")+key+"\"\\s*:\\s*\"([^\"]*)\".*";
-//    std::regex re( regstr );
-//    std::smatch match;
-
-//    if( std::regex_search( query2, match, re ))
-//    {
-//        if (match.ready())
-//            token = match[1];
-//    }
-//    //cout << key << "  token " << token  << endl;
-//    return token;
-//}
 
 //// Into ArangoDB Query by example ( must be { "a.b" : value } , no { "a": { "b" : value } }
 //// https://docs.arangodb.com/3.3/Manual/DataModeling/Documents/DocumentMethods.html
