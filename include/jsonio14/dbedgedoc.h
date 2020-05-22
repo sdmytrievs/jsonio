@@ -5,7 +5,9 @@
 namespace jsonio14 {
 
 
-/// Definition of graph databases chain
+/// Definition of graph databases chain: Handling Edges
+/// \class DBEdgeDocument - implementation of the database edge as schema-based JSON.
+/// A Graph consists of vertices and edges. Edges are stored as documents in edge collections.
 class DBEdgeDocument : public DBVertexDocument
 {
     void before_remove( const std::string&  ) override {}

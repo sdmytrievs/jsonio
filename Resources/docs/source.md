@@ -283,13 +283,23 @@ class DBVertexDocument - implementation of the database vertex as schema-based J
 
 > *source: "+";  test: "-";  example: "-"*
 > Handling  unique fields values are blocked
-> ? delete edges not implemented
 > ? tests
 
 24.  dbedgedoc.h(cpp)
 
+Definition of graph databases chain: Handling Edges
+class DBEdgeDocument - implementation of the database edge as schema-based JSON.
 
-25.
+> *source: "+";  test: "-";  example: "-"*
+> ? tests
+
+
+25. traversal.h(cpp)
+
+class GraphTraversal implementation traversal of graph  for Database
+
+> *source: "+";  test: "-";  example: "-"*
+> ? tests
 
 
 ## Next steps --------------------------------------------------------------------------------
@@ -297,14 +307,10 @@ class DBVertexDocument - implementation of the database vertex as schema-based J
 To do:
 
 - add top level std::shared_ptr
+- implement examples and tests for database part
 
 ## Database
 
-17. dbjsondoc.h(cpp)
-18. dbschemadoc.h(cpp)
-19. dbvertexdoc.h(cpp)
-20. dbedgedoc.h(cpp)
-21. traversal.h(cpp)
 
 Work about jsonimpex
 Work about jsonui
