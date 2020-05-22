@@ -1,6 +1,6 @@
 
 #include <chrono>
-#include <jsonio14/dbvertexdoc.h>
+#include <jsonio14/dbedgedoc.h>
 #include "jsonio14/dbconnect.h"
 #include "jsonio14/io_settings.h"
 #include "jsonio14/service.h"
@@ -136,8 +136,7 @@ void DBVertexDocument::before_remove(const std::string & vertex_id )
            bsonquery += _vertexid + "\" } ], \"$dropall\": true }";
     DBQueryData  query( bsonquery, DBQueryData::qEJDB );*/
 
-    //std::shared_ptr<DBEdgeDocument> edges( documentAllEdges( this->database() ));
-    std::shared_ptr<DBVertexDocument> edges;  // ???? temporally
+    std::shared_ptr<DBEdgeDocument> edges( documentAllEdges( collection_from->db_connect ));
     auto edgekeys =  getKeysByQuery( allEdgesQuery( vertex_id ) );
     for( auto idedge: edgekeys )
     {
@@ -245,7 +244,6 @@ void DBVertexDocument::load_unique_fields()
         }
     }
 }
-
 
 
 // Change base collections

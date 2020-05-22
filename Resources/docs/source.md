@@ -276,7 +276,20 @@ class DBSchemaDocument - implementation of the database document as schema-based
 > ? tests
 
 
-23.
+23.  dbvertexdoc.h(cpp)
+
+Definition of graph databases chain: Handling Vertices
+class DBVertexDocument - implementation of the database vertex as schema-based JSON.
+
+> *source: "+";  test: "-";  example: "-"*
+> Handling  unique fields values are blocked
+> ? delete edges not implemented
+> ? tests
+
+24.  dbedgedoc.h(cpp)
+
+
+25.
 
 
 ## Next steps --------------------------------------------------------------------------------

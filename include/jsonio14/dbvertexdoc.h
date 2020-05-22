@@ -9,7 +9,10 @@ using unique_fields_map_t = std::map<std::vector<std::string>, std::string >;
 
 std::string collectionNameFromSchema( const std::string& schema_name );
 
-/// Definition of graph databases chain
+/// Definition of graph databases chain: Handling Vertices
+/// \class DBVertexDocument - implementation of the database vertex as schema-based JSON.
+/// A Graph consists of vertices and edges. Edges are stored as documents in edge collections.
+/// A vertex can be a document of a document collection or of an edge collection (so edges can be used as vertices).
 class DBVertexDocument : public DBSchemaDocument
 {
     /// Test&change schema
