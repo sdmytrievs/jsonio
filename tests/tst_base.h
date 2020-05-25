@@ -414,7 +414,7 @@ TEST( JsonioBase, get_to_no_exist_free )
     EXPECT_TRUE( vumaps.empty() );
 
     const auto& constobj = obj;
-    EXPECT_THROW( constobj["noexist7"].get_to( vint ), jarango_exception );
+    EXPECT_THROW( constobj["noexist7"].get_to( vint ), jsonio_exception );
 
     //std::cout << "Test get_to_no_exist" << obj << std::endl;
 }
@@ -432,7 +432,7 @@ TEST( JsonioBase, AddValueViaPath )
     EXPECT_TRUE( new_obj1.empty() );
     EXPECT_TRUE( obj.path_if_exists( "formats.add_object1" ) );
 
-    EXPECT_THROW( obj.add_object_via_path("data[10]"), jarango_exception );
+    EXPECT_THROW( obj.add_object_via_path("data[10]"), jsonio_exception );
 
     int iwidth = 10;
     EXPECT_TRUE( obj.set_value_via_path( "formats.add_object2.width", iwidth ) );

@@ -184,7 +184,7 @@ public:
         values.clear();
         if( isNull() )
             return true;
-        //JARANGO_THROW_IF( !isStructured(), "JsonBase", 11, "cannot use getArray with " + std::string( typeName() ) );
+        //JSONIO_THROW_IF( !isStructured(), "JsonBase", 11, "cannot use getArray with " + std::string( typeName() ) );
         if( !isStructured() )
             return false;
         typename T::value_type val;
@@ -206,7 +206,7 @@ public:
         values.clear();
         if( isNull() )
             return true;
-        //JARANGO_THROW_IF( !isStructured(), "JsonBase", 12, "cannot use getMapKey with " + std::string( typeName() ) );
+        //JSONIO_THROW_IF( !isStructured(), "JsonBase", 12, "cannot use getMapKey with " + std::string( typeName() ) );
         if( !isStructured() )
             return false;
         using Tkey = std::remove_const_t<typename Map::value_type::first_type>;
@@ -316,7 +316,7 @@ public:
     /// Set up defval values if the JSON type of elements is primitive
     virtual void array_resize_xD( const std::vector<size_t> &sizes, const std::string& defval )
     {
-        JARANGO_THROW_IF( !isArray(), "JsonBase", 11, "cannot resize not array data " + std::string( typeName() ) );
+        JSONIO_THROW_IF( !isArray(), "JsonBase", 11, "cannot resize not array data " + std::string( typeName() ) );
         resize_array_level( 0, sizes, defval  );
     }
 

@@ -70,7 +70,7 @@ void DBVertexDocument::resetSchema( const std::string &aschema_name, bool change
         current_schema_object.get_value_via_path("_label", object_label, std::string("") );
         current_schema_object.get_value_via_path("_type", object_type, std::string("") );
 
-        JARANGO_THROW_IF( object_type != type(), "DBVertexDocument", 11,
+        JSONIO_THROW_IF( object_type != type(), "DBVertexDocument", 11,
                           " illegal record type:" + object_type );
         // update collection
         update_collection(  aschema_name );
@@ -90,7 +90,7 @@ void DBVertexDocument::setVertexObject(const std::string &aschema_name, const fi
         if( change_schema_mode )
             resetSchema( aschema_name, false );
         else
-            JARANGO_THROW( "DBVertexDocument", 12,
+            JSONIO_THROW( "DBVertexDocument", 12,
                            " illegal record schame: " + aschema_name + " current schema: " + schema_name );
     }
     current_schema_object.clear(); // set default values
@@ -103,7 +103,7 @@ void DBVertexDocument::updateVertexObject(const std::string &aschema_name, const
 {
     // check schema
     if( schema_name != aschema_name )
-        JARANGO_THROW( "DBVertexDocument", 13,
+        JSONIO_THROW( "DBVertexDocument", 13,
                        " illegal record schame when update: " + aschema_name + " current schema: " + schema_name );
     for(auto const &ent : fldvalues)
         current_schema_object.set_value_via_path( ent.first, ent.second  );
@@ -189,7 +189,7 @@ void DBVertexDocument::before_save_update(std::string & key)
         if( itfind != unique_fields_values.end() )
         {
             if( itfind->second != uniq_fields["_id"] )
-                JARANGO_THROW( "DBVertexDocument", 14, " not unique values: " + json::dump( uniq_values ) );
+                JSONIO_THROW( "DBVertexDocument", 14, " not unique values: " + json::dump( uniq_values ) );
         }
     }
 }
@@ -275,14 +275,14 @@ void DBVertexDocument::test_schema( const std::string &jsondata )
         else if( newtype == "vertex")
             newschema = DataBase::getVertexName(newlabel);
 
-        JARANGO_THROW_IF( newschema.empty(), "DBVertexDocument", 15,
+        JSONIO_THROW_IF( newschema.empty(), "DBVertexDocument", 15,
                           " undefined record type: " + newtype + " or label: " + newlabel );
         resetSchema( newschema, false );
     }
     else
     {
         if( newtype != object_type || newlabel != object_label )
-            JARANGO_THROW( "DBVertexDocument", 16, " illegal record type: " + newtype + " or label: " + newlabel );
+            JSONIO_THROW( "DBVertexDocument", 16, " illegal record type: " + newtype + " or label: " + newlabel );
     }
 }
 

@@ -46,7 +46,7 @@ public:
     }
     /// Field Type or all "typeId"+"type"+"elemTypeId"+"elemTypeId"  - all levels
     virtual FieldType type( size_t level=0 ) const override {
-        JARANGO_THROW_IF( level >= f_type_id.size(), "ThriftSchema", 2, "undefined field level " );
+        JSONIO_THROW_IF( level >= f_type_id.size(), "ThriftSchema", 2, "undefined field level " );
         return f_type_id[level];
     }
     /// A requiredness attribute (FieldRequered)

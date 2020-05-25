@@ -314,7 +314,7 @@ public:
 
     const DBQueryResult* currentQueryResult() const
     {
-        JARANGO_THROW_IF( query_result.get() == nullptr, "DBDocument", 1,
+        JSONIO_THROW_IF( query_result.get() == nullptr, "DBDocument", 1,
                           "'currentQueryResult' could be execute only into selection mode." );
         return query_result.get();
     }
@@ -368,7 +368,7 @@ protected:
     /// Compare to data into query table
     virtual std::string get_key_from_query_result() const
     {
-        JARANGO_THROW_IF( query_result.get() == nullptr, "DBDocument", 10,
+        JSONIO_THROW_IF( query_result.get() == nullptr, "DBDocument", 10,
                           "'get_key_from_query_result' could be execute only into selection mode." );
         return  query_result->getKeyFromValue( current_data() );
     }

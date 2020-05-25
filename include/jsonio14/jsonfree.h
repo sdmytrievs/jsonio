@@ -76,7 +76,7 @@ public:
         {
             return get_child( idx );
         }
-        JARANGO_THROW( "JsonFree", 21, "cannot use operator[] with a numeric argument with " + std::string( typeName() ) );
+        JSONIO_THROW( "JsonFree", 21, "cannot use operator[] with a numeric argument with " + std::string( typeName() ) );
     }
 
     /// Return a reference to arr[i] if this is an array, exception otherwise.
@@ -87,7 +87,7 @@ public:
         {
             return get_child( idx );
         }
-        JARANGO_THROW( "JsonFree", 22, "cannot use operator[] with a numeric argument with " + std::string( typeName() ) );
+        JSONIO_THROW( "JsonFree", 22, "cannot use operator[] with a numeric argument with " + std::string( typeName() ) );
     }
 
 
@@ -99,7 +99,7 @@ public:
         {
             return get_child( key );
         }
-        JARANGO_THROW( "JsonFree", 23, "cannot use operator[] with a string argument with " + std::string( typeName() ) );
+        JSONIO_THROW( "JsonFree", 23, "cannot use operator[] with a string argument with " + std::string( typeName() ) );
     }
 
     /// Return a reference to object[key] if this is an object, exception otherwise.
@@ -112,7 +112,7 @@ public:
         {
             return get_child( key );
         }
-        JARANGO_THROW( "JsonFree", 24, "cannot use operator[] with a string argument with " + std::string( typeName() ) );
+        JSONIO_THROW( "JsonFree", 24, "cannot use operator[] with a string argument with " + std::string( typeName() ) );
     }
 
     /// @brief returns an iterator to one past the last element.

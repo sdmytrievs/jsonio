@@ -54,7 +54,7 @@ void DBEdgeDocument::setEdgeObject( const std::string &aschema_name, const std::
         if( change_schema_mode )
             resetSchema( aschema_name, false );
         else
-            JARANGO_THROW( "DBEdgeDocument", 10,
+            JSONIO_THROW( "DBEdgeDocument", 10,
                            " illegal record schame: " + aschema_name + " current schema: " + schema_name );
     }
     current_schema_object.clear(); // set default values

@@ -78,6 +78,15 @@ TEST( JsonioService, extractStringJson )
 
     EXPECT_EQ( extract_string_json("notexist", test_data), "" );
     EXPECT_EQ( extract_int_json("task", test_data), 0 );
+
+    test_data = R"({
+                "_rev" :   "",
+                "_type" :   "vertex",
+                "_label" :   "element"
+           })";
+    EXPECT_EQ( extract_string_json("_type", test_data), "vertex" );
+    EXPECT_EQ( extract_string_json("_label", test_data), "element" );
+
 }
 
 TEST( JsonioService, extractIntJson )

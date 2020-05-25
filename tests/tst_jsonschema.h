@@ -56,9 +56,9 @@ TEST( JsonioSchemaJson, ObjectSimple)
                                          "\"vlist\":[17,27,11],\"vmap\":{\"key1\":\"val1\",\"key2\":\"val2\",\"key3\":\"10\"}}\n" );
 
     // exception undefined field
-    EXPECT_THROW( simple_object["no_exist"], jarango_exception );
+    EXPECT_THROW( simple_object["no_exist"], jsonio_exception );
     // exception not next index
-    EXPECT_THROW( simple_object["vlist"][10], jarango_exception );
+    EXPECT_THROW( simple_object["vlist"][10], jsonio_exception );
 }
 
 

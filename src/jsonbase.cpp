@@ -93,7 +93,7 @@ std::string JsonBase::get_path() const
 
 void JsonBase::set_oid(const std::string &oid )
 {
-    JARANGO_THROW_IF( !isTop(), "JsonBase", 14, "cannot add _id on level." );
+    JSONIO_THROW_IF( !isTop(), "JsonBase", 14, "cannot add _id on level." );
 
     if( !oid.empty() )
     {

@@ -156,9 +156,9 @@ void undumpString( std::string& strvalue )
                     // Explicitly check length of the substring. The following loop
                     // relies on std::string returning the terminating NUL when
                     // accessing str[length]. Checking here reduces brittleness.
-                    JARANGO_THROW_IF( esc.length() < 4, "JsonParser", 10, "bad \\u escape: " + esc );
+                    JSONIO_THROW_IF( esc.length() < 4, "JsonParser", 10, "bad \\u escape: " + esc );
                     for (size_t j = 0; j < 4; j++) {
-                        JARANGO_THROW_IF( !in_range(esc[j], 'a', 'f') and !in_range(esc[j], 'A', 'F') and !in_range(esc[j], '0', '9'),
+                        JSONIO_THROW_IF( !in_range(esc[j], 'a', 'f') and !in_range(esc[j], 'A', 'F') and !in_range(esc[j], '0', '9'),
                                           "JsonParser", 11, "bad \\u escape: " + esc );
                     }
                     long codepoint = strtol(esc.data(), nullptr, 16);
@@ -198,7 +198,7 @@ void undumpString( std::string& strvalue )
                 case 'b':  resstr += '\b'; break;
                 case 'f':  resstr += '\f'; break;
                 default:
-                    JARANGO_THROW( "JsonParser", 13, "invalid escape character " + esc(ch) );
+                    JSONIO_THROW( "JsonParser", 13, "invalid escape character " + esc(ch) );
                 }
             }
             else
@@ -206,7 +206,7 @@ void undumpString( std::string& strvalue )
                 encode_utf8(last_escaped_codepoint, resstr);
                 last_escaped_codepoint = -1;
                 auto ch = strvalue[ii++];
-                JARANGO_THROW_IF( in_range<long>(ch, 0, 0x1f),
+                JSONIO_THROW_IF( in_range<long>(ch, 0, 0x1f),
                                   "JsonParser", 12, "unescaped in string" );
                 resstr += ch;
             }

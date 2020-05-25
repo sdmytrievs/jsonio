@@ -31,7 +31,7 @@ void JsonBuilderBase::append_scalar(const std::string &key, const std::string &v
                             current_json->append_node( key, JsonBase::Double, v2string(dval) );
                         else
                             if( noString )
-                                JARANGO_THROW(  "JsonArrayBuilder", 4, key + " undefined value type '" + value +"'" );
+                                JSONIO_THROW(  "JsonArrayBuilder", 4, key + " undefined value type '" + value +"'" );
                             else
                                 current_json->append_node( key, JsonBase::String, v2string(value) );
 }
@@ -83,19 +83,19 @@ JsonArrayBuilder JsonArrayBuilder::addArray()
 
 JsonObjectBuilder JsonArrayBuilder::addObject(const std::string &akey)
 {
-    JARANGO_THROW_IF( akey != nextKey(), "JsonArrayBuilder", 1, "cannot use array with key " + akey );
+    JSONIO_THROW_IF( akey != nextKey(), "JsonArrayBuilder", 1, "cannot use array with key " + akey );
     return addObject();
 }
 
 JsonArrayBuilder JsonArrayBuilder::addArray(const std::string &akey)
 {
-    JARANGO_THROW_IF( akey != nextKey(), "JsonArrayBuilder", 1, "cannot use array with key " + akey );
+    JSONIO_THROW_IF( akey != nextKey(), "JsonArrayBuilder", 1, "cannot use array with key " + akey );
     return addArray();
 }
 
 JsonBuilderBase &JsonArrayBuilder::addString(const std::string &akey, const std::string &value)
 {
-    JARANGO_THROW_IF( akey != nextKey(), "JsonArrayBuilder", 1, "cannot use array with key " + akey );
+    JSONIO_THROW_IF( akey != nextKey(), "JsonArrayBuilder", 1, "cannot use array with key " + akey );
     return addString(value);
 }
 

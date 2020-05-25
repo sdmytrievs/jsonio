@@ -11,7 +11,7 @@ namespace jsonio14 {
 std::string make_template_key( const JsonBase& object, const std::vector<std::string>&  key_template_fields )
 {
     std::string kpart, key_temlpate = "";
-    JARANGO_THROW_IF( !object.isTop(), "DBCollection", 20,
+    JSONIO_THROW_IF( !object.isTop(), "DBCollection", 20,
                       " illegal function on level 'make_template_key'." );
 
     for( auto const &keyfld : key_template_fields )
@@ -94,16 +94,16 @@ std::string DBCollection::createDocument( JsonBase& data_object )
 {
     auto new_key = getKeyFrom( data_object );
 
-    JARANGO_THROW_IF( !is_allowed( new_key ), "DBCollection", 11,
+    JSONIO_THROW_IF( !is_allowed( new_key ), "DBCollection", 11,
                       " some of characters cannot be used inside _key values '" + new_key +"'." );
 
-    JARANGO_THROW_IF( existsDocument( new_key ), "DBCollection", 12,
+    JSONIO_THROW_IF( existsDocument( new_key ), "DBCollection", 12,
                       " two records with the same key '" + new_key +"'." );
 
     std::unique_ptr<char> second = nullptr;
     // save record to data base
     std::string ret_id = db_driver->create_record( name(), second, data_object );
-    JARANGO_THROW_IF( ret_id.empty(), "DBCollection", 13," error saving record '" + new_key +"'." );
+    JSONIO_THROW_IF( ret_id.empty(), "DBCollection", 13," error saving record '" + new_key +"'." );
     data_object.set_oid( ret_id );
     new_key = getKeyFrom( data_object );
     key_record_map[new_key] = std::move(second);
@@ -120,7 +120,7 @@ std::string DBCollection::createDocument( DBDocumentBase *document )
 bool DBCollection::readDocument( JsonBase& data_object, const std::string &key )
 {
     auto itr = key_record_map.find(key);
-    JARANGO_THROW_IF( itr==key_record_map.end(), "DBCollection", 14,
+    JSONIO_THROW_IF( itr==key_record_map.end(), "DBCollection", 14,
                       " record to retrive does not exist '" + key +"'." );
     return db_driver->read_record( name(), itr, data_object);
 }
@@ -129,7 +129,7 @@ bool DBCollection::readDocument( JsonBase& data_object, const std::string &key )
 void DBCollection::readDocument(DBDocumentBase *document, const std::string &key)
 {
     if( !readDocument( document->current_data(), key ) )
-        JARANGO_THROW( "DBCollection", 15, " error loading record '" + key +"'." );
+        JSONIO_THROW( "DBCollection", 15, " error loading record '" + key +"'." );
 }
 
 std::string DBCollection::updateDocument( const JsonBase& data_object )
@@ -137,7 +137,7 @@ std::string DBCollection::updateDocument( const JsonBase& data_object )
     auto key = getKeyFrom( data_object );
 
     auto itr = key_record_map.find(key);
-    JARANGO_THROW_IF( itr==key_record_map.end(), "DBCollection", 16,
+    JSONIO_THROW_IF( itr==key_record_map.end(), "DBCollection", 16,
                       " record to update does not exist '" + key +"'." );
 
     auto rec_id = db_driver->update_record( name(), itr, data_object );
@@ -163,7 +163,7 @@ std::string DBCollection::saveDocument( JsonBase& data_object, const std::string
 std::string DBCollection::saveDocument( DBDocumentBase *document, const std::string &key)
 {
     auto rec_id = saveDocument( document->current_data(), key );
-    JARANGO_THROW_IF( rec_id.empty(), "DBCollection", 17,
+    JSONIO_THROW_IF( rec_id.empty(), "DBCollection", 17,
                       " error saving record '" + key +"'." );
     document->add_line( rec_id, document->current_data(), true );
     return rec_id;
@@ -173,7 +173,7 @@ std::string DBCollection::saveDocument( DBDocumentBase *document, const std::str
 bool DBCollection::deleteDocument( const std::string &key )
 {
     auto itr = key_record_map.find(key);
-    JARANGO_THROW_IF( itr==key_record_map.end(), "DBCollection", 18,
+    JSONIO_THROW_IF( itr==key_record_map.end(), "DBCollection", 18,
                       " record to delete does not exist '" + key +"'." );
 
     if( db_driver->delete_record( name(), itr) )
@@ -191,7 +191,7 @@ void DBCollection::deleteDocument(DBDocumentBase *document)
 {
     auto key = document->getKeyFromCurrent();
     if( !deleteDocument( key ) )
-        JARANGO_THROW( "DBCollection", 19, " deleting of record '" + key +"'." );
+        JSONIO_THROW( "DBCollection", 19, " deleting of record '" + key +"'." );
     document->delete_line( key );
 }
 
@@ -248,7 +248,7 @@ void DBCollection::add_record_to_map( const std::string& jsondata, const std::st
                                               id_key, std::move(second) ) );
     // Test unique keys name before add the record(s)
     if( it_new.second == false)
-        JARANGO_THROW( "DBCollection", 20, " two records with the same key '" + id_key +"'." );
+        JSONIO_THROW( "DBCollection", 20, " two records with the same key '" + id_key +"'." );
 }
 
 std::vector<std::string> DBCollection::ids_from_keys(const std::vector<std::string> &rkeys) const

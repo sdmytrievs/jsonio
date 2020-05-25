@@ -124,7 +124,7 @@ JsonFree &JsonFree::add_object_via_path(const std::string &jsonpath)
             pobj->update_node( JsonBase::Object, "" );
         return *pobj;
     }
-    JARANGO_THROW( "JsonBase", 12, "cannot create object with jsonpath " + std::string( jsonpath ) );
+    JSONIO_THROW( "JsonBase", 12, "cannot create object with jsonpath " + std::string( jsonpath ) );
 }
 
 // key and parent not changed
@@ -160,13 +160,13 @@ void JsonFree::move(JsonFree &&obj)
 
 const JsonFree& JsonFree::get_child(std::size_t idx) const
 {
-    JARANGO_THROW_IF( idx>=getChildrenCount(), "JsonFree", 25,  "array index " + std::to_string(idx) + " is out of range" );
+    JSONIO_THROW_IF( idx>=getChildrenCount(), "JsonFree", 25,  "array index " + std::to_string(idx) + " is out of range" );
     return *children[idx];
 }
 
 JsonFree& JsonFree::get_child(std::size_t idx)
 {
-    JARANGO_THROW_IF( idx>getChildrenCount(), "JsonFree", 25, "array index " + std::to_string(idx) + " is out of range" );
+    JSONIO_THROW_IF( idx>getChildrenCount(), "JsonFree", 25, "array index " + std::to_string(idx) + " is out of range" );
     if( idx==getChildrenCount() ) // next element
     {
         append_node( std::to_string(idx), JsonBase::Null, "" );
@@ -191,7 +191,7 @@ const JsonFree& JsonFree::get_child(const std::string &key) const
     auto element = find_key(key);
     if( element == children.end() )
     {
-        JARANGO_THROW( "JsonFree", 26, "key '" + key + "' not found" );
+        JSONIO_THROW( "JsonFree", 26, "key '" + key + "' not found" );
     }
     return *element->get();
 }
@@ -199,7 +199,7 @@ const JsonFree& JsonFree::get_child(const std::string &key) const
 
 JsonFree &JsonFree::get_parent() const
 {
-    JARANGO_THROW_IF( !parent_object, "JsonFree", 27, "parent Object is undefined" );
+    JSONIO_THROW_IF( !parent_object, "JsonFree", 27, "parent Object is undefined" );
     return *parent_object;
 }
 
@@ -264,7 +264,7 @@ void JsonFree::resize_array_level( size_t level, const std::vector<size_t>& size
 
 void JsonFree::array_resize( std::size_t  newsize, const std::string& defval  )
 {
-    JARANGO_THROW_IF( !isArray(), "JsonFree", 11, "cannot resize not array data " + std::string( typeName() ) );
+    JSONIO_THROW_IF( !isArray(), "JsonFree", 11, "cannot resize not array data " + std::string( typeName() ) );
 
     if( newsize == children.size() )     // the same size
         ;

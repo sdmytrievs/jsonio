@@ -149,8 +149,8 @@ TEST( JsonioDetail, Split )
  intquery.pop();
  EXPECT_EQ( 3, intquery.front() );
 
- EXPECT_THROW( split_int( "1;;3", ";" ), jarango_exception );
- EXPECT_THROW( split_int( ";1e;3;", ";" ), jarango_exception );
+ EXPECT_THROW( split_int( "1;;3", ";" ), jsonio_exception );
+ EXPECT_THROW( split_int( ";1e;3;", ";" ), jsonio_exception );
 
  auto strquery = split("a:bb:ccc", ":" );
  EXPECT_EQ( 3, strquery.size() );

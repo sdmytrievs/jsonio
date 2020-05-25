@@ -164,7 +164,7 @@ TEST( JsonioParser, TestFail )
   for( auto file: fail_json_files)
   {
      auto json_data = read_ascii_file( file );
-     EXPECT_THROW( json::loads( json_data ) , jarango_exception );
+     EXPECT_THROW( json::loads( json_data ) , jsonio_exception );
   }
 }
 
