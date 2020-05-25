@@ -54,7 +54,7 @@ std::string regexp_replace(const std::string& instr, const std::string& rgx_str,
    return output_str;
 }
 
-// Extract the string value from query
+// Extract the string value from string
 std::string regexp_extract_string( const std::string& regstr, const std::string& data )
 {
     std::string token = "";

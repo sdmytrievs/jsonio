@@ -93,3 +93,29 @@ TEST( JsonioSchemaJson, ObjectComplex)
                                             "\"values\":[[1,2],[3,4]]}\n" );
 }
 
+
+TEST( JsonioSchemaJson, fieldOidPath )
+{
+    ioSettings().addSchemaFormat(schema_thrift, schema_str);
+    auto obj = json::loads( "ComplexSchemaTest", complex_schema_value );
+
+    std::string sval;
+    EXPECT_TRUE( obj.get_value_via_path( "about.description", sval, std::string("undef") ) );
+    EXPECT_EQ( sval, "About");
+    EXPECT_TRUE( obj.get_value_via_path( "1.4", sval, std::string("undef") ) );
+    EXPECT_EQ( sval, "About");
+    double dval;
+    EXPECT_TRUE( obj.get_value_via_path( "formats.float.width", dval, 1.5 ) );
+    EXPECT_EQ( dval, 10);
+    EXPECT_TRUE( obj.get_value_via_path( "2.1.1", dval, 1.5 ) );
+    EXPECT_EQ( dval, 10);
+    EXPECT_TRUE( obj.get_value_via_path( "data.1.value", dval, 1.5 ) );
+    EXPECT_EQ( dval, 100);
+    EXPECT_TRUE( obj.get_value_via_path( "3.1.2", dval, 1.5 ) );
+    EXPECT_EQ( dval, 100);
+    EXPECT_FALSE( obj.get_value_via_path( "data.4.value", dval, 1.5 ) );
+    EXPECT_EQ( dval, 1.5);
+    EXPECT_FALSE( obj.get_value_via_path( "3.4.2", dval, 1.5 ) );
+    EXPECT_EQ( dval, 1.5);
+}
+

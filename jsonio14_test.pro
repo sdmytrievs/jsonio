@@ -42,6 +42,7 @@ INCLUDEPATH   += $$JSONIO14_HEADERS_DIR
 INCLUDEPATH   += $$TESTS_DIR
 
 LIBS +=  -lstdc++fs
+LIBS +=  -ljsonarango -lcurl  -lvelocypack
 
 OBJECTS_DIR   = obj
 

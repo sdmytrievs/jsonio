@@ -55,6 +55,44 @@ TEST( JsonioService, regexprTest )
     EXPECT_FALSE( regexp_test("2zoidberg", "^[a-z].*") );
 }
 
+
+TEST( JsonioService, regexprExtractString )
+{
+    std::string test_data = R"({\n "_key"  : "eCRUD"    ,"properties":{"level": "insert record"},"task":
+                            "exampleCRUD"})";
+
+    EXPECT_EQ( regexp_extract_string(".*\"_key\"\\s*:\\s*\"([^\"]*)\".*", test_data), "eCRUD" );
+    EXPECT_EQ( regexp_extract_string(".*\"level\"\\s*:\\s*\"([^\"]*)\".*", test_data), "insert record" );
+    EXPECT_EQ( regexp_extract_string(".*\"task\"\\s*:\\s*\"([^\"]*)\".*", test_data), "exampleCRUD" );
+}
+
+
+TEST( JsonioService, extractStringJson )
+{
+    std::string test_data = R"({"_id":"test/eCRUD",  "_key":
+                                "eCRUD" ,"properties":{"level":"insert record"},"task":"exampleCRUD"})";
+    EXPECT_EQ( extract_string_json("_id", test_data), "test/eCRUD" );
+    EXPECT_EQ( extract_string_json("_key", test_data), "eCRUD" );
+    EXPECT_EQ( extract_string_json("level", test_data), "insert record" );
+    EXPECT_EQ( extract_string_json("task", test_data), "exampleCRUD" );
+
+    EXPECT_EQ( extract_string_json("notexist", test_data), "" );
+    EXPECT_EQ( extract_int_json("task", test_data), 0 );
+}
+
+TEST( JsonioService, extractIntJson )
+{
+    std::string test_data = "{ \"i1\": +5,  \"i2\":-8\t,\"properties\":{\t\"level\"\n: 15},\"task\":\n\r\f\v 10 \t}";
+    EXPECT_EQ( extract_int_json("i1", test_data), 5 );
+    EXPECT_EQ( extract_int_json("i2", test_data), -8 );
+    EXPECT_EQ( extract_int_json("level", test_data), 15 );
+    EXPECT_EQ( extract_int_json("task", test_data), 10 );
+
+    EXPECT_EQ( extract_string_json("task", test_data), "" );
+    EXPECT_EQ( extract_int_json("notexist", test_data), 0 );
+}
+
+
 TEST( JsonioService, Trim )
 {
     std::string str{" \t\rTest \n "};

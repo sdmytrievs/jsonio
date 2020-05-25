@@ -442,3 +442,19 @@ TEST( JsonioBase, AddValueViaPath )
 
     EXPECT_FALSE( obj.set_value_via_path( "data[4].value", 2.5 ) );
 }
+
+TEST( JsonioBase, SetOid )
+{
+    auto obj = json::loads("{ \"task\" : \"exampleCRUD\", "
+                           "  \"properties\" : { \"level\": \"insert record\" } }");
+
+    obj.set_oid("test/eCRUD");
+    EXPECT_EQ( obj["_id"].toString(), "test/eCRUD" );
+    EXPECT_EQ( obj["_key"].toString(), "eCRUD" );
+    EXPECT_EQ( obj.dump(true), "{\"task\":\"exampleCRUD\",\"properties\":{\"level\":\"insert record\"},\"_key\":\"eCRUD\",\"_id\":\"test/eCRUD\"}\n" );
+
+    obj.set_oid("");
+    EXPECT_EQ( obj["_id"].toString(), "" );
+    EXPECT_EQ( obj["_key"].toString(), "" );
+    EXPECT_EQ( obj.dump(true), "{\"task\":\"exampleCRUD\",\"properties\":{\"level\":\"insert record\"}}\n" );
+}

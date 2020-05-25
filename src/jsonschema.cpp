@@ -277,7 +277,8 @@ JsonSchema *JsonSchema::field( std::queue<int> ids ) const
     ids.pop();
 
     for(size_t ii=0; ii< children.size(); ii++ )
-        if( children[ii]->field_descrip->id() == aid )
+        if( ( !isArray() && !isMap() && children[ii]->field_descrip->id() == aid ) ||
+            ( (isArray() || isMap()) && static_cast<int>(ii) == aid )    )
             return children[ii]->field( ids );
 
     return nullptr;  // not found

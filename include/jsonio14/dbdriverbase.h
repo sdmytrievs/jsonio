@@ -3,6 +3,7 @@
 #include <functional>
 #include <memory>
 #include <map>
+#include <vector>
 #include <set>
 
 namespace jsonio14 {
