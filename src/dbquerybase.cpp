@@ -3,6 +3,7 @@
 #include "jsonio14/jsonfree.h"
 #include "jsonarango/arangoquery.h"
 
+
 namespace jsonio14 {
 
 arangocpp::ArangoDBQuery::QueryType to_arrango_query_type( DBQueryBase::QType qtype )
@@ -96,8 +97,14 @@ void DBQueryBase::fromJson(const JsonBase &object)
 
     object.get_value_via_path(  "style", atype, -1 );
     object.get_value_via_path(  "find", data, std::string("") );
-    arando_query = std::make_shared<arangocpp::ArangoDBQuery>(
-                data, static_cast<arangocpp::ArangoDBQuery::QueryType>(atype) );
+
+    DBQueryBase::QType top_type= static_cast<DBQueryBase::QType>(atype);
+    if( top_type == DBQueryBase::qUndef )
+        arando_query = std::make_shared<arangocpp::ArangoDBQuery>(
+                    to_arrango_query_type(top_type) );
+    else
+        arando_query = std::make_shared<arangocpp::ArangoDBQuery>(
+                    data, to_arrango_query_type(top_type) );
     object.get_value_via_path(  "bind", data, std::string("") );
     arando_query->setBindVars(data);
     object.get_value_via_path(  "options", data, std::string("") );
@@ -156,9 +163,19 @@ const fields2query_t &DBQueryBase::queryFields() const
     return arando_query->queryFields();
 }
 
+bool operator!=(const DBQueryBase & left, const DBQueryBase &right)
+{
+    return (*left.arando_query != *right.arando_query);
+}
+
+bool operator==(const DBQueryBase & left, const DBQueryBase &right)
+{
+    return !(left != right);
+}
+
 //----------------------------------------------------------------------------------------------
 
-void DBQueryDef::toJson(JsonFree& object) const
+void DBQueryDef::toJson(JsonBase& object) const
 {
     object.clear();
     object.set_value_via_path( "name" ,  key_name);

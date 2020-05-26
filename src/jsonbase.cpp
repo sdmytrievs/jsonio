@@ -91,6 +91,7 @@ std::string JsonBase::get_path() const
     }
 }
 
+
 void JsonBase::set_oid(const std::string &oid )
 {
     JSONIO_THROW_IF( !isTop(), "JsonBase", 14, "cannot add _id on level." );

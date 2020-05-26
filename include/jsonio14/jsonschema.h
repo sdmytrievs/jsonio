@@ -200,6 +200,9 @@ public:
     /// Get field by fieldpath ("name1.name2.name3")
     const JsonBase *field(  const std::string& fieldpath ) const override;
 
+    /// Return a reference to object[jsonpath] if an object can be create, exception otherwise.
+    JsonSchema &add_object_via_path(const std::string &jsonpath) override;
+
 protected:
 
     // Get methods ( using in Qt GUI model ) --------------------------
@@ -280,7 +283,7 @@ private:
     JsonSchema( JsonBase::Type atype, const std::string &akey, const std::string& avalue, JsonSchema *aparent  );
 
     void update_node(  JsonBase::Type atype, const std::string& avalue ) override;
-    JsonBase *append_node( const std::string& akey, JsonBase::Type atype, const std::string& avalue ) override;
+    JsonSchema *append_node( const std::string& akey, JsonBase::Type atype, const std::string& avalue ) override;
 
     /// Get field by fieldpath
     JsonSchema *field( std::queue<std::string> names ) const override;

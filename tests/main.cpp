@@ -12,6 +12,7 @@
 #include "tst_base_complex.h"
 #include "tst_schema.h"
 #include "tst_jsonschema.h"
+#include "tst_dbquery.h"
 
 
 // https://doc.qt.io/qtcreator/creator-autotest.html

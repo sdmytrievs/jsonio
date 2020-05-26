@@ -173,7 +173,7 @@ public:
     using JsonBase::field;
 
     /// Return a reference to object[jsonpath] if an object can be create, exception otherwise.
-    JsonFree &add_object_via_path(const std::string &jsonpath);
+    JsonFree &add_object_via_path(const std::string &jsonpath) override;
 
 protected:
 
@@ -222,7 +222,7 @@ private:
     JsonFree( JsonBase::Type atype, const std::string &akey, const std::string& avalue, JsonFree *aparent  );
 
     void update_node(  JsonBase::Type atype, const std::string& avalue ) override;
-    JsonBase *append_node( const std::string& akey, JsonBase::Type atype, const std::string& avalue ) override;
+    JsonFree *append_node( const std::string& akey, JsonBase::Type atype, const std::string& avalue ) override;
     /// Get field by fieldpath
     JsonFree *field( std::queue<std::string> names ) const override;
     /// Add field by fieldpath

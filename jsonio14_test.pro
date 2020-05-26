@@ -61,7 +61,8 @@ HEADERS += \
         $$TESTS_DIR/tst_parser.h \
         $$TESTS_DIR/tst_base_complex.h \
         $$TESTS_DIR/tst_schema.h \
-        $$TESTS_DIR/tst_jsonschema.h
+        $$TESTS_DIR/tst_jsonschema.h \
+        $$TESTS_DIR/tst_dbquery.h
 
 SOURCES += \
         $$TESTS_DIR/main.cpp

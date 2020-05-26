@@ -212,10 +212,8 @@ class DBQueryBase describing the query and query parameters. Used to retrieve da
 class DBQueryDef is a query description into a Database record.
 class DBQueryResult used to store query definition and result.
 
-> *source: "+";  test: "-";  example: "-"*
-> object.add_object_via_path("condition") ? to JsonBase (JsonFree->JsonBase)
-> ? tests
-> Need catch errors from jsonarango
+> *source: "+";  test: "+-";  example: "-"*
+> No tests for DBQueryResult
 
 16. dbdriverbase.h
 
@@ -230,9 +228,7 @@ Implementation of Database Driver using Low-Level C++ Driver for ArangoDB.
 
 > *source: "+";  test: "-";  example: "-"*
 > Not implemented:  aconnect_data.getFromSettings(ioSettings().defaultArangoDB());
-> ? tests
-> Need catch errors from jsonarango
-
+> All test into jsonArango
 
 18. dbconnect.h(cpp)
 

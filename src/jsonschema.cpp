@@ -118,7 +118,7 @@ void JsonSchema::update_node( JsonBase::Type atype, const std::string &avalue )
     set_value( avalue );
 }
 
-JsonBase *JsonSchema::append_node(const std::string &akey, JsonBase::Type atype, const std::string &avalue )
+JsonSchema *JsonSchema::append_node(const std::string &akey, JsonBase::Type atype, const std::string &avalue )
 {
     // if exist key => update node, for Free json too
     auto element = find_key(akey);
@@ -299,6 +299,20 @@ const JsonBase *JsonSchema::field(const std::string &fieldpath) const
     }
 }
 
+JsonSchema &JsonSchema::add_object_via_path(const std::string &jsonpath)
+{
+    auto names = split(jsonpath, field_path_delimiters);
+    auto pobj = field_add( names );
+    if( pobj )
+    {
+        if( !pobj->isObject())
+            pobj->update_node( JsonBase::Object, "" );
+        return *pobj;
+    }
+    JSONIO_THROW( "JsonBase", 12, "cannot create object with jsonpath " + std::string( jsonpath ) );
+
+}
+
 JsonSchema *JsonSchema::field_add( std::queue<std::string> names )
 {
     if( names.empty() )
@@ -312,8 +326,8 @@ JsonSchema *JsonSchema::field_add( std::queue<std::string> names )
     {
         if( isObject() )
         {
-            append_node( fname, JsonBase::Object, "" );
-            return children.back()->field_add(names);
+            auto new_obj = append_node( fname, JsonBase::Null, "" );
+            return /*children.back()*/ new_obj->field_add(names);
         }
         else
             return nullptr;

@@ -68,7 +68,7 @@ void JsonFree::update_node(JsonBase::Type atype, const std::string &avalue)
     field_value = avalue;
 }
 
-JsonBase *JsonFree::append_node(const std::string &akey, JsonBase::Type atype, const std::string &avalue )
+JsonFree *JsonFree::append_node(const std::string &akey, JsonBase::Type atype, const std::string &avalue )
 {
     auto shptr = new JsonFree(atype, akey, avalue, this);
     children.push_back( std::shared_ptr<JsonFree>(shptr) );

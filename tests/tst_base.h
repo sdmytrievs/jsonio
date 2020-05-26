@@ -427,7 +427,7 @@ TEST( JsonioBase, AddValueViaPath )
                            "{\"group\":\"int\",\"value\":100},{\"group\":\"double\",\"value\":1e-10},{\"group\":\"double\",\"value\":10000000000}],"
                            "\"values\":[[1,2,3],[11,12,13]]}");
 
-    auto new_obj1 = obj.add_object_via_path("formats.add_object1");
+    JsonFree& new_obj1 = obj.add_object_via_path("formats.add_object1");
     EXPECT_TRUE( new_obj1.isObject() );
     EXPECT_TRUE( new_obj1.empty() );
     EXPECT_TRUE( obj.path_if_exists( "formats.add_object1" ) );

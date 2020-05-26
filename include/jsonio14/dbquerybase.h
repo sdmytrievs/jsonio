@@ -129,6 +129,8 @@ public:
         setQueryFields( map_fields );
     }
 
+    friend bool operator!=( const DBQueryBase&,  const DBQueryBase& );
+
 protected:
 
     /// ArangoDB query data
@@ -136,6 +138,9 @@ protected:
 
     friend class ArangoDBClient;
 };
+
+bool operator==(const DBQueryBase & left, const DBQueryBase &right);
+
 
 /// \class DBQueryDef is a query description into a Database record.
 class DBQueryDef final
@@ -148,7 +153,7 @@ public:
         fields_collect(fields), query_condition(condition)
     { }
 
-    void toJson( JsonFree& object ) const;
+    void toJson( JsonBase& object ) const;
     void fromJson( const JsonBase& object );
 
     void setName( const std::string& name )
@@ -211,6 +216,8 @@ protected:
     std::string toschema;
     /// List of fieldpaths to collect
     std::vector<std::string> fields_collect;
+//    /// Internal query generator state
+//    std::string filter_generator;
 
     /// Query is used to retrieve data that are stored in DataBase
     std::shared_ptr<DBQueryBase> query_condition;
