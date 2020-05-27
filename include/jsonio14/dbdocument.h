@@ -322,7 +322,7 @@ public:
 protected:
 
     /// Documents are grouped into collection
-    DBCollection* collection_from;
+    std::shared_ptr<DBCollection> collection_from;
 
     /// Last query result if exists
     std::shared_ptr<DBQueryResult>  query_result;

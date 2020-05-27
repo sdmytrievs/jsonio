@@ -35,7 +35,8 @@ void printTime( const std::string&  title, const time_point_t& start, const time
 void printTimeSec( const std::string&  title, const time_point_t& start, const time_point_t& end )
 {
     std::cout <<  title << "\nElapsed time in seconds: ";
-    std::cout <<  std::chrono::duration_cast<std::chrono::seconds>(end-start).count() << "s" << std::endl;
+//    std::cout <<  std::chrono::duration_cast<std::chrono::seconds>(end-start).count() << "s" << std::endl;
+    std::cout <<  std::chrono::duration_cast<std::chrono::milliseconds>(end-start).count() << "ms" << std::endl;
 }
 
 /// Test different query types
@@ -84,7 +85,7 @@ int different_query_types( DataBase& connect )
 
     auto start = std::chrono::high_resolution_clock::now();
 
-    DBCollection coll( connect, collectionName );
+    auto coll= connect.getCollection( "document", collectionName );
 
     // Open collection, if document collection collectionName not exist it would be created
     auto end1 = std::chrono::high_resolution_clock::now();
@@ -98,7 +99,7 @@ int different_query_types( DataBase& connect )
         jsFree["index"] = ii;
         jsFree["task"] = "exampleQuery";
         jsFree["properties"]["value"] = 10.01*ii;
-        auto rkey = coll.createDocument( jsFree );
+        auto rkey = coll->createDocument( jsFree );
         recKeys.push_back(rkey);
     }
 
@@ -107,7 +108,7 @@ int different_query_types( DataBase& connect )
 
     // Select all records
     recjsonValues.clear();
-    coll.selectQuery( DBQueryBase(DBQueryBase::qAll), setfnc );
+    coll->selectQuery( DBQueryBase(DBQueryBase::qAll), setfnc );
     //printData( "Select all records", recjsonValues );
     auto end3 = std::chrono::high_resolution_clock::now();
     printTime( "Select all records", end2, end3 );
@@ -115,7 +116,7 @@ int different_query_types( DataBase& connect )
     // Select records by template
     recjsonValues.clear();
     DBQueryBase    templatequery( "{ \"name\" : \"a\" }", DBQueryBase::qTemplate );
-    coll.selectQuery( templatequery, setfnc );
+    coll->selectQuery( templatequery, setfnc );
     //printData( "Select records by template", recjsonValues );
     auto end4 = std::chrono::high_resolution_clock::now();
     printTime( "Select records by template", end3, end4 );
@@ -126,13 +127,13 @@ int different_query_types( DataBase& connect )
             "\nFILTER u.properties.value > 50 \n"
             "RETURN { \"_id\": u._id, \"name\":u.name, \"index\":u.index }";
     DBQueryBase    aqlquery( aql, DBQueryBase::qAQL );
-    coll.selectQuery( aqlquery, setfnc );
+    coll->selectQuery( aqlquery, setfnc );
     //printData( "Select records by AQL query", recjsonValues );
     auto end5 = std::chrono::high_resolution_clock::now();
     printTime( "Select records by AQL query", end4, end5 );
 
     // delete all
-    coll.removeByKeys( recKeys );
+    coll->removeByKeys( recKeys );
     auto end6 = std::chrono::high_resolution_clock::now();
     printTime( "Delete by keys", end5, end6 );
 
@@ -163,21 +164,21 @@ int substances_query_types( DataBase& connect )
     auto start = std::chrono::high_resolution_clock::now();
 
     // If document collection collectionName not exist it would be created
-    DBCollection coll( connect, collectionName );
+    auto coll= connect.getCollection( "document", collectionName );
 
     auto end1 = std::chrono::high_resolution_clock::now();
     printTimeSec( "Create collection", start, end1 );
 
     // Select all records
     recjsonValues.clear();
-    coll.allQuery( {}, setfnc_key );
+    coll->allQuery( {}, setfnc_key );
     //printData( "Select all records 1 ", recjsonValues );
     auto end2 = std::chrono::high_resolution_clock::now();
     printTimeSec( "Select all records ( " + std::to_string(recjsonValues.size()) + " )", end1, end2 );
 
     recjsonValues.clear();
     std::set<std::string> fields = { "_id", "_label" };
-    coll.allQuery( fields, setfnc_key );
+    coll->allQuery( fields, setfnc_key );
     //printData( "Select all records 2 ", recjsonValues );
     auto end3 = std::chrono::high_resolution_clock::now();
     printTimeSec( "Select all records with fields ( " + std::to_string(recjsonValues.size()) + " )", end2, end3 );
@@ -185,7 +186,7 @@ int substances_query_types( DataBase& connect )
     // Select records by template
     recjsonValues.clear();
     DBQueryBase    templatequery( "{ \"_label\" : \"substance\" }", DBQueryBase::qTemplate );
-    coll.selectQuery( templatequery, setfnc );
+    coll->selectQuery( templatequery, setfnc );
     //printData( "Select records by template", recjsonValues );
     auto end4 = std::chrono::high_resolution_clock::now();
     printTimeSec( "Select records by template ( " + std::to_string(recjsonValues.size()) + " )", end3, end4 );
@@ -196,7 +197,7 @@ int substances_query_types( DataBase& connect )
             // "\nFILTER u.properties.value > 50 \n"
             "\nRETURN { \"_id\": u._id, \"name\":u.properties.name }";
     DBQueryBase    aqlquery( aql, DBQueryBase::qAQL );
-    coll.selectQuery( aqlquery, setfnc );
+    coll->selectQuery( aqlquery, setfnc );
     //printData( "Select records by AQL query", recjsonValues );
     auto end5 = std::chrono::high_resolution_clock::now();
     printTimeSec( "Select records by AQL query ( " + std::to_string(recjsonValues.size()) + " )", end4, end5 );

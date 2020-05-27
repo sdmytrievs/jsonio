@@ -65,13 +65,13 @@ void DataBase::updateDriver( std::shared_ptr<AbstractDBDriver> db_driver )
         coll.second->change_driver( current_driver.get() );
 }
 
-DBCollection *DataBase::addCollection( const std::string& type, const std::string& colname  ) const
+std::shared_ptr<DBCollection> DataBase::addCollection( const std::string& type, const std::string& colname  ) const
 {
-    auto col_ptr = std::make_shared<DBCollection>( *this, colname );
+    auto col_ptr = std::shared_ptr<DBCollection>( new DBCollection( *this, colname) );
     col_ptr->coll_type = type;
     col_ptr->load();
     collections_list[colname] = col_ptr;
-    return col_ptr.get();
+    return col_ptr;
 }
 
 

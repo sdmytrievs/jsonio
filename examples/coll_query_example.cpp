@@ -35,7 +35,7 @@ int main(int, char* [])
         // Connect to Arangodb ( load settings from "jsonio14-config.json" config file )
         DataBase db;
         // Open collection, if document collection collectionName not exist it would be created
-        DBCollection coll( db, collectionName );
+        auto coll= db.getCollection( "document", collectionName );
 
         // Insert documents to database
         for( int ii=0; ii<numOfDocuments; ii++ )
@@ -45,7 +45,7 @@ int main(int, char* [])
             jsFree["index"] = ii;
             jsFree["task"] = "exampleQuery";
             jsFree["properties"]["value"] = 10.01*ii;
-            auto rkey = coll.createDocument( jsFree );
+            auto rkey = coll->createDocument( jsFree );
             recKeys.push_back(rkey);
         }
 
@@ -57,12 +57,12 @@ int main(int, char* [])
 
         // Select all records
         recjsonValues.clear();
-        coll.allQuery( {}, setfnc_key );
+        coll->allQuery( {}, setfnc_key );
         printData( "Select all records 1 ", recjsonValues );
 
         recjsonValues.clear();
         std::set<std::string> fields = { "_id", "name", "index"};
-        coll.allQuery( fields, setfnc_key );
+        coll->allQuery( fields, setfnc_key );
         printData( "Select all records 2 ", recjsonValues );
 
         // Define call back function
@@ -75,7 +75,7 @@ int main(int, char* [])
         // Select records by template
         recjsonValues.clear();
         DBQueryBase    templatequery( "{ \"name\" : \"a\" }", DBQueryBase::qTemplate );
-        coll.selectQuery( templatequery, setfnc );
+        coll->selectQuery( templatequery, setfnc );
         printData( "Select records by template", recjsonValues );
 
         // Select records by AQL query
@@ -84,13 +84,13 @@ int main(int, char* [])
                 "\nFILTER u.properties.value > 50 \n"
                 "RETURN { \"_id\": u._id, \"name\":u.name, \"index\":u.index }";
         DBQueryBase    aqlquery( aql, DBQueryBase::qAQL );
-        coll.selectQuery( aqlquery, setfnc );
+        coll->selectQuery( aqlquery, setfnc );
         printData( "Select records by AQL query", recjsonValues );
 
         // delete all
-        coll.removeByKeys( recKeys );
+        coll->removeByKeys( recKeys );
         recjsonValues.clear();
-        coll.selectQuery(  DBQueryBase(), setfnc );
+        coll->selectQuery(  DBQueryBase(), setfnc );
         printData( "All after removing", recjsonValues );
 
         std::cout <<  "Finish test " <<  std::endl;

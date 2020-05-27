@@ -23,10 +23,11 @@ class DBCollection
     friend class DBDocumentBase;
     friend class DBVertexDocument;
 
-public:
-
     ///  Constructor
     DBCollection( const DataBase& adbconnect, const std::string& name );
+
+public:
+
     ///  Destructor
     virtual ~DBCollection()
     {}

@@ -132,11 +132,11 @@ public:
     /// Load the collection with the given colname or create new if no such collection exists.
     /// \param type - type of collection ( "undef", "schema", "vertex", "edge" )
     /// \param colname - name of collection
-    DBCollection *getCollection( const std::string& type, const std::string& colname  ) const
+    std::shared_ptr<DBCollection> getCollection( const std::string& type, const std::string& colname  ) const
     {
         auto itr = collections_list.find(colname);
         if( itr != collections_list.end() )
-            return itr->second.get();
+            return itr->second;
 
         return addCollection( type, colname );
     }
@@ -152,7 +152,7 @@ protected:
     /// Load the collection with the given colname or create new if no such collection exists.
     /// \param type - type of collection ( "undef", "schema", "vertex", "edge" )
     /// \param colname - name of collection
-    DBCollection *addCollection( const std::string& type, const std::string& colname  ) const ;
+    std::shared_ptr<DBCollection> addCollection( const std::string& type, const std::string& colname  ) const ;
 
 };
 
