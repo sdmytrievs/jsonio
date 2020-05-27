@@ -150,6 +150,12 @@ public:
         top_section.setValue( jsonpath, avalue);
     }
 
+    /// @brief Dump settings to JSON string.
+    std::string dump() const
+    {
+        return  all_settings.dump( true );
+    }
+
     /// Writes any unsaved changes to permanent storage
     virtual void sync() const
     {

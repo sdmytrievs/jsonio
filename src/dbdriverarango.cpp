@@ -14,8 +14,8 @@ namespace jsonio14 {
 // Default Constructor
 ArangoDBClient::ArangoDBClient():AbstractDBDriver()
 {
-    arangocpp::ArangoDBConnection aconnect_data;
-    /// ???? aconnect_data.getFromSettings(ioSettings().defaultArangoDB());
+    arangocpp::ArangoDBConnection aconnect_data =
+            arangocpp::connectFromSettings( ioSettings().dump(), false );
     reset_db_connection( aconnect_data );
 }
 
