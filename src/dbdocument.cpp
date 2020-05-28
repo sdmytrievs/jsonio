@@ -8,7 +8,7 @@ namespace jsonio14 {
 
 // Default configuration of the Data Base
 DBDocumentBase::DBDocumentBase( const DataBase& dbconnect, const std::string& collection_type, const std::string& collection_name  ):
-    collection_from(nullptr), query_result(nullptr)
+    collection_from(nullptr), query_result(nullptr), query_result_mutex()
 {
     collection_from = dbconnect.collection( collection_name, collection_type  );
     collection_from->addDocument(this);
@@ -17,7 +17,7 @@ DBDocumentBase::DBDocumentBase( const DataBase& dbconnect, const std::string& co
 
 // Default configuration of the Data Base
 DBDocumentBase::DBDocumentBase( DBCollection* collection  ):
-    collection_from( collection ), query_result(nullptr)
+    collection_from( collection ), query_result(nullptr), query_result_mutex()
 {
     collection_from->addDocument(this);
 }
@@ -25,11 +25,28 @@ DBDocumentBase::DBDocumentBase( DBCollection* collection  ):
 
 void DBDocumentBase::setQuery( const DBQueryDef& querydef )
 {
-    if(query_result.get() == nullptr )
-        query_result.reset( new DBQueryResult( querydef ) );
-    else
-        query_result->setQuery( querydef );
+    {
+        std::unique_lock<std::shared_mutex> g(query_result_mutex);
+        if(query_result.get() == nullptr )
+            query_result.reset( new DBQueryResult( querydef ) );
+        else
+            query_result->setQuery( querydef );
+    }
     updateQuery();
+}
+
+void DBDocumentBase::updateQuery()
+{
+    {
+        std::shared_lock<std::shared_mutex> g(query_result_mutex);
+        if( query_result.get() == nullptr )
+            return;
+    }
+    // update_query();
+    // Create a thread using member function
+    std::thread th( &DBDocumentBase::update_query, this );
+    th.detach();
+    std::this_thread::sleep_for(std::chrono::microseconds(1)); // wait start thread
 }
 
 

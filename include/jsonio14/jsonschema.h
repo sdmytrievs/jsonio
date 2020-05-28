@@ -22,10 +22,10 @@ public:
     using const_iterator = std::vector<std::shared_ptr<JsonSchema>>::const_iterator;
 
     /// Create object JSON value
-    static  JsonSchema object( const std::string& schema_name );
+    static  JsonSchema object( const std::string& aschema_name );
 
     // Create array JSON value
-    //static  JsonSchema array( const std::string& schema_name, const std::string& key = "top" )
+    //static  JsonSchema array( const std::string& aschema_name, const std::string& key = "top" )
     //{
     //    return JsonSchema( Array, key, "", nullptr );
     //}

@@ -23,7 +23,7 @@ void loads( const std::string& jsonstr, JsonBase& object );
 /// Deserialize a JSON document to a free format json object.
 JsonFree loads( const std::string& jsonstr );
 /// Deserialize a JSON document to a schema define json object.
-JsonSchema loads( const std::string& schema_name, const std::string& jsonstr );
+JsonSchema loads( const std::string& aschema_name, const std::string& jsonstr );
 
 
 /// @brief dump escaped string.

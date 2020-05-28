@@ -310,13 +310,15 @@ public:
     virtual void setQuery( const DBQueryDef& querydef );
 
     /// Run current query, rebuild internal table of values
-    virtual void updateQuery() = 0;
+    void updateQuery();
 
-    const DBQueryResult* currentQueryResult() const
+    const DBQueryResult& currentQueryResult() const
     {
+        std::shared_lock<std::shared_mutex> g(query_result_mutex);
+
         JSONIO_THROW_IF( query_result.get() == nullptr, "DBDocument", 1,
                           "'currentQueryResult' could be execute only into selection mode." );
-        return query_result.get();
+        return *query_result;
     }
 
 protected:
@@ -327,13 +329,18 @@ protected:
     /// Last query result if exists
     std::shared_ptr<DBQueryResult>  query_result;
 
+    mutable std::shared_mutex query_result_mutex;
 
     /// Prepare data to save to database
     virtual JsonBase& current_data() const = 0;
 
+    /// Run current query, rebuild internal table of values
+    virtual void update_query() = 0;
+
     /// Add line to view table
     void add_line( const std::string& key_str, const JsonBase& nodedata, bool isupdate )
     {
+        std::unique_lock<std::shared_mutex> g(query_result_mutex);
         if( query_result.get() != nullptr )
             query_result->add_line( key_str, nodedata, isupdate );
     }
@@ -341,6 +348,7 @@ protected:
     /// Update line into view table
     void update_line( const std::string& key_str, const JsonBase& nodedata )
     {
+        std::unique_lock<std::shared_mutex> g(query_result_mutex);
         if( query_result.get() != nullptr )
             query_result->update_line( key_str, nodedata );
     }
@@ -348,6 +356,7 @@ protected:
     /// Delete line from view table
     void delete_line( const std::string& key_str )
     {
+        std::unique_lock<std::shared_mutex> g(query_result_mutex);
         if( query_result.get() != nullptr )
             query_result->delete_line( key_str );
     }
@@ -368,6 +377,8 @@ protected:
     /// Compare to data into query table
     virtual std::string get_key_from_query_result() const
     {
+        std::shared_lock<std::shared_mutex> g(query_result_mutex);
+
         JSONIO_THROW_IF( query_result.get() == nullptr, "DBDocument", 10,
                           "'get_key_from_query_result' could be execute only into selection mode." );
         return  query_result->getKeyFromValue( current_data() );

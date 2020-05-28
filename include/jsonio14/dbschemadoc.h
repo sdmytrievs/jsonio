@@ -67,11 +67,9 @@ public:
     void setQuery( const DBQueryDef& querydef ) override
     {
        DBDocumentBase::setQuery( querydef );
+       std::shared_lock<std::shared_mutex> g(query_result_mutex);
        query_result->updateSchema( schema_name );
     }
-
-    /// Run current query, rebuild internal table of values
-    void updateQuery() override;
 
 protected:
 
@@ -93,6 +91,9 @@ protected:
     {
         return  const_cast<JsonSchema&>( current_schema_object );
     }
+
+    /// Run current query, rebuild internal table of values
+    void update_query() override;
 
     /// Build default query for collection ( by default all documents )
     DBQueryBase make_default_query_template() const override

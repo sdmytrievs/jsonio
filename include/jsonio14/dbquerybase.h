@@ -251,7 +251,7 @@ public:
     void setQuery( const DBQueryDef& qrdef )
     {
         query_data = qrdef;
-        query_result.clear();
+        clear();
     }
     void updateSchema( const std::string& shname )
     {
@@ -260,13 +260,13 @@ public:
 
     void clear()
     {
-        query_result.clear();
+        query_result_data.clear();
     }
 
     /// Get query result table
     const key_values_table_t& queryResult() const
     {
-        return query_result;
+        return query_result_data;
     }
 
     ///  Get all keys list for current query
@@ -292,7 +292,7 @@ protected:
     /// Description query
     DBQueryDef      query_data;
     /// Table of values were gotten from query
-    key_values_table_t  query_result = {};
+    key_values_table_t  query_result_data = {};
 
     /// Make line to view table
     void node_to_values(  const JsonBase& node, values_t& values ) const;

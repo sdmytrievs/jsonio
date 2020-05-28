@@ -9,13 +9,13 @@
 namespace jsonio14 {
 
 
-std::string collectionNameFromSchema( const std::string& schema_name )
+std::string collectionNameFromSchema( const std::string& aschema_name )
 {
-    std::string labelVertex = DataBase::getVertexCollection( schema_name );
+    std::string labelVertex = DataBase::getVertexCollection( aschema_name );
     if(!labelVertex.empty())
         return labelVertex;
 
-    labelVertex = DataBase::getEdgeCollection( schema_name );
+    labelVertex = DataBase::getEdgeCollection( aschema_name );
     if(!labelVertex.empty())
         return labelVertex;
     return "collection";

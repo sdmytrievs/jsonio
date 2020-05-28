@@ -7,7 +7,7 @@ namespace jsonio14 {
 /// Map unique fields values<-> record key
 using unique_fields_map_t = std::map<std::vector<std::string>, std::string >;
 
-std::string collectionNameFromSchema( const std::string& schema_name );
+std::string collectionNameFromSchema( const std::string& aschema_name );
 
 /// Definition of graph databases chain: Handling Vertices
 /// \class DBVertexDocument - implementation of the database vertex as schema-based JSON.

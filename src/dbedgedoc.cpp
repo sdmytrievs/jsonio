@@ -25,13 +25,13 @@ DBEdgeDocument* documentAllEdges( const DataBase& dbconnect )
 }
 
 
-DBEdgeDocument *DBEdgeDocument::newEdgeDocumentQuery(const DataBase &dbconnect, const std::string &schema_name,
+DBEdgeDocument *DBEdgeDocument::newEdgeDocumentQuery(const DataBase &dbconnect, const std::string &aschema_name,
                                                      DBQueryBase&& query)
 {
-    if( schema_name.empty()  )
+    if( aschema_name.empty()  )
         return nullptr;
 
-    auto new_document = new DBEdgeDocument( schema_name, dbconnect );
+    auto new_document = new DBEdgeDocument( aschema_name, dbconnect );
     // internal selection
     new_document->setQuery( std::move(query));
     return new_document;

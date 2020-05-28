@@ -25,10 +25,9 @@ DBJsonDocument *DBJsonDocument::newJsonDocumentQuery( const DataBase &dbconnect,
 }
 
 
-void DBJsonDocument::updateQuery()
+void DBJsonDocument::update_query()
 {
-    if( query_result.get() == nullptr )
-        return;
+    std::unique_lock<std::shared_mutex> g(query_result_mutex);
 
     query_result->clear();
     SetReaded_f setfnc = [&]( const std::string& jsondata )
@@ -39,9 +38,6 @@ void DBJsonDocument::updateQuery()
     };
 
     collection_from->selectQuery( query_result->condition(), setfnc );
-    // Create a thread using member function
-    //std::thread th(&TDBCollection::selectQuery, _collection, _queryResult->getQuery().getQueryCondition(), setfnc );
-    //th.detach();
 }
 
 

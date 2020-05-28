@@ -66,9 +66,6 @@ public:
         current_object.loads(json_document);
     }
 
-    /// Run current query, rebuild internal table of values
-    void updateQuery() override;
-
 protected:
 
     /// Names of fields to generate key template
@@ -82,6 +79,9 @@ protected:
     {
         return  const_cast<JsonFree&>( current_object );
     }
+
+    /// Run current query, rebuild internal table of values
+    void update_query() override;
 
     /// Build default query for collection ( by default all documents )
     DBQueryBase make_default_query_template() const override

@@ -227,23 +227,22 @@ The driver works like an adaptor which connects a generic interface to a specifi
 Implementation of Database Driver using Low-Level C++ Driver for ArangoDB.
 
 > *source: "+";  test: "-";  example: "-"*
-> Not implemented:  aconnect_data.getFromSettings(ioSettings().defaultArangoDB());
-> All test into jsonArango
+> All tests into jsonArango
 
 18. dbconnect.h(cpp)
 
-class DataBase to managing database connection.
+class DataBase to managing database connection (thread-safee).
 
-> *source: "+";  test: "-";  example: "-"*
+> *source: "+";  test: "-";  example: "+"*
 > ? tests
 
 
 19. dbcollection.h(cpp)
 
-class  DBCollection  the definition collections API.  A collection contains zero or more documents.
+class  DBCollection  the definition collections API (thread-safee).  A collection contains zero or more documents.
+Function loadCollectionFile runs in the other thread.
 
-> *source: "+";  test: "-";  example: "-"*
-> Could be ```loadCollectionFile(  const std::set<std::string>& query_fields )``` in other thread
+> *source: "+";  test: "-";  example: "+"*
 > ? tests
 
 20. dbdocument.h(cpp)

@@ -222,13 +222,13 @@ void DBQueryResult::add_line( const std::string &key_str, const JsonBase& nodeda
 
     if( isupdate )
     {
-        auto it =  query_result.find(key_str);
-        if( it != query_result.end() )
+        auto it =  query_result_data.find(key_str);
+        if( it != query_result_data.end() )
         {   it->second = values;
             return;
         }
     }
-    query_result.insert(std::pair<std::string,values_t>( key_str, values ));
+    query_result_data.insert(std::pair<std::string,values_t>( key_str, values ));
 }
 
 void DBQueryResult::update_line(const std::string &key_str, const JsonBase& nodedata)
@@ -236,16 +236,16 @@ void DBQueryResult::update_line(const std::string &key_str, const JsonBase& node
     values_t values;
     node_to_values( nodedata, values );
 
-    auto it =  query_result.find(key_str);
-    if( it != query_result.end() )
+    auto it =  query_result_data.find(key_str);
+    if( it != query_result_data.end() )
         it->second = values;
 }
 
 void DBQueryResult::delete_line( const std::string& key_str )
 {
-    auto it =  query_result.find(key_str);
-    if( it != query_result.end() )
-        query_result.erase(it);
+    auto it =  query_result_data.find(key_str);
+    if( it != query_result_data.end() )
+        query_result_data.erase(it);
 }
 
 std::size_t DBQueryResult::getKeysValues(std::vector<std::string> &aKeyList, std::vector<values_t> &aValList) const
@@ -253,7 +253,7 @@ std::size_t DBQueryResult::getKeysValues(std::vector<std::string> &aKeyList, std
     aKeyList.clear();
     aValList.clear();
 
-    for( const auto& it: query_result )
+    for( const auto& it: query_result_data )
     {
         aKeyList.push_back( it.first );
         aValList.push_back( it.second );
@@ -268,7 +268,7 @@ std::size_t DBQueryResult::getKeysValues(std::vector<std::string> &aKeyList, std
     aKeyList.clear();
     aValList.clear();
 
-    for( const auto& it: query_result )
+    for( const auto& it: query_result_data )
     {
         auto key = it.first;
         if( compareTemplate(keypart, key ) )
@@ -304,7 +304,7 @@ std::size_t DBQueryResult::getKeysValues( std::vector<std::string> &aKeyList, st
             return 0;  // no field
     }
 
-    for( const auto& it: query_result )
+    for( const auto& it: query_result_data )
     {
         bool getdata=true;
         for( ii=0; ii<fieldindexes.size(); ii++ )
@@ -330,7 +330,7 @@ std::string DBQueryResult::getKeyFromValue( const JsonBase& node ) const
     values_t values;
     node_to_values( node, values );
 
-    for( const auto& it: query_result )
+    for( const auto& it: query_result_data )
     {
         for( ii=0; ii< query_data.fields().size(); ++ii )
         {
@@ -348,8 +348,8 @@ std::string DBQueryResult::getKeyFromValue( const JsonBase& node ) const
 
 std::string DBQueryResult::getFirstKey() const
 {
-    auto it = query_result.begin();
-    if( it != query_result.end() )
+    auto it = query_result_data.begin();
+    if( it != query_result_data.end() )
        return it->first;
     return "";  // empty table
 }

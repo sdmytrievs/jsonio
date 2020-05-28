@@ -32,6 +32,7 @@ void DBSchemaDocument::resetSchema( const std::string &aschema_name, bool change
         schema_name = aschema_name;
         current_schema_object = JsonSchema::object(schema_name);
     }
+    std::unique_lock<std::shared_mutex> g(query_result_mutex);
     if( change_queries && query_result.get() != nullptr  )
     {
       // for new schema need new query
@@ -65,10 +66,9 @@ std::string DBSchemaDocument::genOid( const std::string &key_template )
     return collection_from->generateOid( thetemplate );
 }
 
-void DBSchemaDocument::updateQuery()
+void DBSchemaDocument::update_query()
 {
-    if( query_result.get() == nullptr )
-        return;
+    std::unique_lock<std::shared_mutex> g(query_result_mutex);
 
     query_result->clear();
     SetReaded_f setfnc = [&]( const std::string& jsondata )
@@ -79,9 +79,6 @@ void DBSchemaDocument::updateQuery()
     };
 
     collection_from->selectQuery( query_result->condition(), setfnc );
-    // Create a thread using member function
-    //std::thread th(&TDBCollection::selectQuery, _collection, _queryResult->getQuery().getQueryCondition(), setfnc );
-    //th.detach();
 }
 
 
