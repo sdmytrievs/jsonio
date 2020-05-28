@@ -2,7 +2,7 @@
 
 #include <iostream>
 #include "jsonio14/jsonfree.h"
-#include "jsonio14/dbconnect.h"
+#include "jsonio14/dbcollection.h"
 #include "jsonio14/dbquerybase.h"
 #include "jsonio14/io_settings.h"
 using namespace jsonio14;
@@ -35,7 +35,7 @@ int main(int, char* [])
         // Connect to Arangodb ( load settings from "jsonio14-config.json" config file )
         DataBase db;
         // Open collection, if document collection collectionName not exist it would be created
-        auto coll= db.getCollection( "document", collectionName );
+        auto coll= db.collection( collectionName );
 
         // Insert documents to database
         for( int ii=0; ii<numOfDocuments; ii++ )

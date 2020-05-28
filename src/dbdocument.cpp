@@ -10,7 +10,7 @@ namespace jsonio14 {
 DBDocumentBase::DBDocumentBase( const DataBase& dbconnect, const std::string& collection_type, const std::string& collection_name  ):
     collection_from(nullptr), query_result(nullptr)
 {
-    collection_from = dbconnect.getCollection( collection_type, collection_name  );
+    collection_from = dbconnect.collection( collection_name, collection_type  );
     collection_from->addDocument(this);
 }
 

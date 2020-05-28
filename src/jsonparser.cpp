@@ -2,7 +2,7 @@
 #include "jsonio14/jsondump.h"
 #include "jsonio14/exceptions.h"
 #include "jsonio14/service.h"
-
+#include "jsonio14/jsonbuilder.h"
 
 namespace jsonio14 {
 

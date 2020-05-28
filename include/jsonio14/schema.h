@@ -404,14 +404,14 @@ public:
 protected:
 
     /// Dictionary of readed files (name, doc)
-    schema_files_t files;
+    schema_files_t files = {};
     /// Dictionary of all structures
-    schemas_t structs;
+    schemas_t structs = {};
     /// Dictionary of all enums
-    enums_t enums;
+    enums_t enums = {};
 
     /// Dictionary of implemented schemas  for Factory Method
-    std::map<std::string, SchemaReadFactory_f> methods;
+    std::map<std::string, SchemaReadFactory_f> methods = {};
 };
 
 } // namespace jsonio14

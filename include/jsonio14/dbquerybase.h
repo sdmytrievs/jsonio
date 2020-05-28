@@ -209,11 +209,11 @@ public:
 protected:
 
     /// Short name of query (used as key field)
-    std::string key_name;
+    std::string key_name ="";
     /// Description of query
-    std::string rec_comment;
+    std::string rec_comment ="";
     /// Schema for query about
-    std::string toschema;
+    std::string toschema ="";
     /// List of fieldpaths to collect
     std::vector<std::string> fields_collect;
 //    /// Internal query generator state
@@ -292,7 +292,7 @@ protected:
     /// Description query
     DBQueryDef      query_data;
     /// Table of values were gotten from query
-    key_values_table_t  query_result;
+    key_values_table_t  query_result = {};
 
     /// Make line to view table
     void node_to_values(  const JsonBase& node, values_t& values ) const;

@@ -64,7 +64,7 @@ public:
     template <class T>
     JsonFree &operator =( const T& value )
     {
-        this->set_from( value  );
+        this->set_from( value );
         return *this;
     }
 

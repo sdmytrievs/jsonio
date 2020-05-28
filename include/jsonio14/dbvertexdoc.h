@@ -70,7 +70,7 @@ public:
     ///  Constructor document
     DBVertexDocument( const std::string& aschema_name, DBCollection* collection  ):
         DBSchemaDocument( aschema_name, collection ),
-        change_schema_mode(false)
+        change_schema_mode(false), object_type("vertex"), object_label()
     {
         resetSchema( aschema_name, true );
     }
@@ -160,6 +160,9 @@ public:
     /// Extract schema from the document-handle ( no query ).
     virtual std::string  extractSchemaFromId( const std::string& id  );
 
+    /// Init uniqueFields when load collection
+    void load_unique_fields();
+
 protected:
 
     /// When reading new record from DB, schema Name can be changed.
@@ -170,15 +173,15 @@ protected:
     std::string object_label;
 
     /// Names of fields group to be unique.
-    std::vector<std::string>  unique_fields_names;
+    std::vector<std::string>  unique_fields_names ={};
     /// Table to save unique fields values
-    unique_fields_map_t unique_fields_values;
+    unique_fields_map_t unique_fields_values ={};
 
     /// Type constructor
     DBVertexDocument( const std::string& aschema_name, const DataBase& dbconnect,
                        const std::string& collection_type, const std::string& collection_name ):
         DBSchemaDocument( aschema_name, dbconnect, collection_type, collection_name ),
-        change_schema_mode(false)
+        change_schema_mode(false), object_type("vertex"), object_label()
     {}
 
     /// Build default query for collection
@@ -194,8 +197,6 @@ protected:
     /// Change base collections
     void update_collection( const std::string& aschemaName );
 
-    /// Init uniqueFields when load collection
-    void load_unique_fields();
     unique_fields_map_t::iterator unique_line_by_id( const std::string& idschem );
 
 };

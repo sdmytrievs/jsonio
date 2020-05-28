@@ -79,7 +79,7 @@ protected:
     /// Constructor
     SectionSettings( const JsonioSettings& iosettins,
                      JsonFree* topData ):
-        io_settins( iosettins ),head_object( topData )
+        io_settins( iosettins ), head_object( topData )
     { }
 
     /// Full configuration data.

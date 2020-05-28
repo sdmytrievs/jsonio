@@ -1,5 +1,5 @@
 
-#include "jsonio14/dbconnect.h"
+#include "jsonio14/dbcollection.h"
 #include "jsonio14/dbdriverarango.h"
 
 namespace jsonio14 {
@@ -47,7 +47,8 @@ void DataBase::update_from_schema( const schemas_t &schema_data )
 }
 
 DataBase::DataBase():
-    current_driver(nullptr), collections_list()
+    current_driver(nullptr), collections_list(),
+    driver_mutex(), collections_mutex()
 {
     // Default Constructor - extract data from settings
     std::shared_ptr<AbstractDBDriver> db_driver( new ArangoDBClient() );
@@ -59,18 +60,24 @@ DataBase::~DataBase()
 
 void DataBase::updateDriver( std::shared_ptr<AbstractDBDriver> db_driver )
 {
-    current_driver = db_driver;
-
+    {
+        std::unique_lock lock(driver_mutex);
+        current_driver = db_driver;
+    }
+    std::shared_lock lock(collections_mutex);
     for( auto coll:  collections_list )
-        coll.second->change_driver( current_driver.get() );
+        coll.second->reload();
 }
 
-std::shared_ptr<DBCollection> DataBase::addCollection( const std::string& type, const std::string& colname  ) const
+std::shared_ptr<DBCollection> DataBase::add_collection( const std::string& colname, const std::string& type  ) const
 {
     auto col_ptr = std::shared_ptr<DBCollection>( new DBCollection( *this, colname) );
     col_ptr->coll_type = type;
     col_ptr->load();
-    collections_list[colname] = col_ptr;
+    {
+        std::unique_lock lock(collections_mutex);
+        collections_list[colname] = col_ptr;
+    }
     return col_ptr;
 }
 

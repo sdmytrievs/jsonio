@@ -31,7 +31,7 @@ std::string SectionSettings::directoryPath( const std::string& fldpath, const st
 JsonioSettings::JsonioSettings( const std::string& config_file_path ):
     config_file( config_file_path ), all_settings(JsonFree::object()),
     top_section( SectionSettings( *this, &all_settings ) ),
-    jsonio_section( SectionSettings( *this, &all_settings ) )
+    jsonio_section( SectionSettings( *this, &all_settings ) ), schema()
 {
     // register thrift schemas
     schema.addSchemaMethod( schema_thrift, ThriftSchemaRead );

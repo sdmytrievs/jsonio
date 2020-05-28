@@ -5,7 +5,7 @@
 
 #include <iostream>
 #include "jsonio14/jsonfree.h"
-#include "jsonio14/dbconnect.h"
+#include "jsonio14/dbcollection.h"
 #include "jsonio14/dbquerybase.h"
 #include "jsonio14/io_settings.h"
 using namespace jsonio14;
@@ -58,8 +58,8 @@ int main(int argc, char* argv[])
         // Connect to Arangodb ( load settings from "jsonio14-config.json" config file )
         DataBase db;
 
-        //different_query_types( db );
-        substances_query_types( db );
+        different_query_types( db );
+        //substances_query_types( db );
 
     }
     catch(...)
@@ -85,7 +85,7 @@ int different_query_types( DataBase& connect )
 
     auto start = std::chrono::high_resolution_clock::now();
 
-    auto coll= connect.getCollection( "document", collectionName );
+    auto coll= connect.collection( collectionName );
 
     // Open collection, if document collection collectionName not exist it would be created
     auto end1 = std::chrono::high_resolution_clock::now();
@@ -142,6 +142,24 @@ int different_query_types( DataBase& connect )
     return 0;
 }
 
+/*
+You are connected to: arango 3.6.1
+Create collection
+Elapsed time in microseconds: 147365 μs
+Insert documents to database
+Elapsed time in microseconds: 6771490 μs
+Select all records
+Elapsed time in microseconds: 69230 μs
+Select records by template
+Elapsed time in microseconds: 72953 μs
+Select records by AQL query
+Elapsed time in microseconds: 65737 μs
+Delete by keys
+Elapsed time in microseconds: 205997 μs
+All time
+Elapsed time in microseconds: 7332774 μs
+
+*/
 
 int substances_query_types( DataBase& connect )
 {
@@ -164,7 +182,7 @@ int substances_query_types( DataBase& connect )
     auto start = std::chrono::high_resolution_clock::now();
 
     // If document collection collectionName not exist it would be created
-    auto coll= connect.getCollection( "document", collectionName );
+    auto coll= connect.collection( collectionName );
 
     auto end1 = std::chrono::high_resolution_clock::now();
     printTimeSec( "Create collection", start, end1 );
@@ -205,3 +223,22 @@ int substances_query_types( DataBase& connect )
     printTimeSec( "All time", start, end5 );
     return 0;
 }
+
+/*
+You are connected to: arango 3.6.1
+Create collection
+Elapsed time in seconds: 1526ms
+Select all records ( 6003 )
+Elapsed time in seconds: 2094ms
+Select all records with fields ( 6003 )
+Elapsed time in seconds: 994ms
+Select records by template ( 6003 )
+Elapsed time in seconds: 1971ms
+Select records by AQL query ( 6003 )
+Elapsed time in seconds: 975ms
+All time
+Elapsed time in seconds: 7562ms
+
+
+
+*/

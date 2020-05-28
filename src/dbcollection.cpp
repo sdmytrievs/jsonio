@@ -1,6 +1,5 @@
 #include "jsonio14/jsonbase.h"
-#include "jsonio14/dbdocument.h"
-#include "jsonio14/dbconnect.h"
+#include "jsonio14/dbvertexdoc.h"
 #include "jsonio14/jsonfree.h"
 #include "jsonio14/jsondump.h"
 
@@ -34,15 +33,15 @@ std::string make_template_key( const JsonBase& object, const std::vector<std::st
 // Default configuration of the Data Base
 DBCollection::DBCollection(  const DataBase& adbconnect,
                              const std::string& name  ):
-    coll_name( name ), db_connect(adbconnect), db_driver( adbconnect.theDriver() ),
-    documents_list(), key_record_map()
+    coll_name( name ), db_connect(adbconnect),
+    documents_list(), key_record_map(),
+    keysmap_mutex(), documents_mutex()
 { }
 
 
 // Open collection file and build linked record list
 void DBCollection::load()
 {
-    key_record_map.clear();
     loadCollection();
 }
 
@@ -50,7 +49,6 @@ void DBCollection::load()
 void DBCollection::close()
 {
     closeCollection();
-    key_record_map.clear();
 }
 
 
@@ -59,9 +57,14 @@ void DBCollection::reload()
 {
     close();
     load();
+    std::shared_lock<std::shared_mutex> g(documents_mutex);
     for( auto doc: documents_list )
-        doc->updateQuery(); // Rebuild internal table of values
-    // doc->load_unique_fields();?
+    {
+        doc->updateQuery();            // Rebuild internal table of values
+        DBVertexDocument* vertex_doc = dynamic_cast<DBVertexDocument*>(doc);
+        if( vertex_doc )
+            vertex_doc->load_unique_fields();
+    }
 }
 
 std::string DBCollection::getKeyFrom( const JsonBase& object )
@@ -80,13 +83,16 @@ std::string DBCollection::generateOid( const std::string& key_template )
 {
     if( key_template.empty())
         return "";
-    auto sanitized_handle = db_driver->sanitization(key_template);
+    auto sanitized_handle = db_driver()->sanitization(key_template);
     return coll_name+"/"+key_from_template(sanitized_handle);
 }
 
 
 bool DBCollection::existsDocument( const std::string &key ) const
 {
+    //std::shared_lock<std::shared_mutex> g(keysmap_mutex);
+    //std::lock_guard<std::shared_mutex> g(keysmap_mutex);
+    std::shared_lock<std::shared_mutex> g(keysmap_mutex);
     return  key_record_map.find(key)  != key_record_map.end();
 }
 
@@ -95,18 +101,21 @@ std::string DBCollection::createDocument( JsonBase& data_object )
     auto new_key = getKeyFrom( data_object );
 
     JSONIO_THROW_IF( !is_allowed( new_key ), "DBCollection", 11,
-                      " some of characters cannot be used inside _key values '" + new_key +"'." );
+                     " some of characters cannot be used inside _key values '" + new_key +"'." );
 
     JSONIO_THROW_IF( existsDocument( new_key ), "DBCollection", 12,
-                      " two records with the same key '" + new_key +"'." );
+                     " two records with the same key '" + new_key +"'." );
 
-    std::unique_ptr<char> second = nullptr;
-    // save record to data base
-    std::string ret_id = db_driver->create_record( name(), second, data_object );
-    JSONIO_THROW_IF( ret_id.empty(), "DBCollection", 13," error saving record '" + new_key +"'." );
-    data_object.set_oid( ret_id );
-    new_key = getKeyFrom( data_object );
-    key_record_map[new_key] = std::move(second);
+    {
+        std::unique_lock<std::shared_mutex> g(keysmap_mutex);
+        std::unique_ptr<char> second = nullptr;
+        // save record to data base
+        std::string ret_id = db_driver()->create_record( name(), second, data_object );
+        JSONIO_THROW_IF( ret_id.empty(), "DBCollection", 13," error saving record '" + new_key +"'." );
+        data_object.set_oid( ret_id );
+        new_key = getKeyFrom( data_object );
+        key_record_map[new_key] = std::move(second);
+    }
     return new_key;
 }
 
@@ -119,10 +128,11 @@ std::string DBCollection::createDocument( DBDocumentBase *document )
 
 bool DBCollection::readDocument( JsonBase& data_object, const std::string &key )
 {
+    std::shared_lock<std::shared_mutex> g(keysmap_mutex);
     auto itr = key_record_map.find(key);
     JSONIO_THROW_IF( itr==key_record_map.end(), "DBCollection", 14,
                       " record to retrive does not exist '" + key +"'." );
-    return db_driver->read_record( name(), itr, data_object);
+    return db_driver()->read_record( name(), itr, data_object);
 }
 
 
@@ -134,14 +144,19 @@ void DBCollection::readDocument(DBDocumentBase *document, const std::string &key
 
 std::string DBCollection::updateDocument( const JsonBase& data_object )
 {
+    std::string rec_id = "";
     auto key = getKeyFrom( data_object );
 
-    auto itr = key_record_map.find(key);
-    JSONIO_THROW_IF( itr==key_record_map.end(), "DBCollection", 16,
-                      " record to update does not exist '" + key +"'." );
+    {
+        std::shared_lock<std::shared_mutex> g(keysmap_mutex);
+        auto itr = key_record_map.find(key);
+        JSONIO_THROW_IF( itr==key_record_map.end(), "DBCollection", 16,
+                         " record to update does not exist '" + key +"'." );
 
-    auto rec_id = db_driver->update_record( name(), itr, data_object );
+        rec_id = db_driver()->update_record( name(), itr, data_object );
+    }
 
+    std::shared_lock<std::shared_mutex> g(documents_mutex);
     for( auto itdoc:  documents_list)
         itdoc->update_line( rec_id, data_object );
     return rec_id;
@@ -172,20 +187,26 @@ std::string DBCollection::saveDocument( DBDocumentBase *document, const std::str
 
 bool DBCollection::deleteDocument( const std::string &key )
 {
-    auto itr = key_record_map.find(key);
-    JSONIO_THROW_IF( itr==key_record_map.end(), "DBCollection", 18,
-                      " record to delete does not exist '" + key +"'." );
-
-    if( db_driver->delete_record( name(), itr) )
+    bool rec_deleted = false;
     {
+        std::unique_lock<std::shared_mutex> g(keysmap_mutex);
+        auto itr = key_record_map.find(key);
+        JSONIO_THROW_IF( itr==key_record_map.end(), "DBCollection", 18,
+                         " record to delete does not exist '" + key +"'." );
+
+        rec_deleted = db_driver()->delete_record( name(), itr);
+        if( rec_deleted)
+            key_record_map.erase(itr);
+    }
+    if( rec_deleted )
+    {
+        std::shared_lock<std::shared_mutex> g(documents_mutex);
         for( auto itdoc:  documents_list)
             itdoc->delete_line( key );
-        key_record_map.erase(itr);
-
-        return true;
     }
-    return false;
+    return rec_deleted;
 }
+
 
 void DBCollection::deleteDocument(DBDocumentBase *document)
 {
@@ -197,26 +218,29 @@ void DBCollection::deleteDocument(DBDocumentBase *document)
 
 //-----------------------------------------------------------------
 
-// Reconnect DataBase (collection)
-void DBCollection::change_driver( AbstractDBDriver*  adriver )
-{
-    close();
-    db_driver = adriver;
-    load();
-    for( auto doc: documents_list )
-        doc->updateQuery(); // Run current query, rebuild internal table of values
-        // doc->load_unique_fields();? vertex&edges
-        // Add virtual refresh lists
-}
-
-// ?? other thread
+//  Other thread
 void DBCollection::loadCollectionFile(  const std::set<std::string>& query_fields )
 {
+    std::unique_lock<std::shared_mutex> g(keysmap_mutex);
+    std::cout << "loadCollectionFile locked" << std::endl;
     SetReadedKey_f setfnc = [=]( const std::string& jsondata, const std::string& keydata )
     {
         add_record_to_map( jsondata, keydata );
     };
-    db_driver->all_query( name(), query_fields, setfnc );
+    db_driver()->all_query( name(), query_fields, setfnc );
+    std::cout << "loadCollectionFile unlocked" << std::endl;
+}
+
+void DBCollection::loadCollection()
+{
+    clear_keysmap();
+    // create collection if no exist
+    db_driver()->create_collection( name(), coll_type );
+    //loadCollectionFile( keyFields() );
+    // Create a thread using member function
+    std::thread th( &DBCollection::loadCollectionFile, this,  keyFields() );
+    th.detach();
+    std::this_thread::sleep_for(std::chrono::microseconds(1)); // wait start thread
 }
 
 
@@ -239,7 +263,7 @@ std::string DBCollection::key_from_template( const std::string& key_template ) c
 void DBCollection::add_record_to_map( const std::string& jsondata, const std::string& keydata )
 {
     std::unique_ptr<char> second = nullptr;
-    db_driver->set_server_key(second, keydata);
+    db_driver()->set_server_key(second, keydata);
 
     auto jsFree = json::loads( jsondata );
     auto id_key = getKeyFrom( jsFree );
@@ -254,12 +278,13 @@ void DBCollection::add_record_to_map( const std::string& jsondata, const std::st
 std::vector<std::string> DBCollection::ids_from_keys(const std::vector<std::string> &rkeys) const
 {
     std::vector<std::string> ids;
+    std::shared_lock<std::shared_mutex> g(keysmap_mutex);
 
     for( auto rkey: rkeys )
     {
         const auto itrl = key_record_map.find( rkey );
         if( itrl != key_record_map.end() )
-            ids.push_back( db_driver->get_server_key( itrl->second ) );
+            ids.push_back( db_driver()->get_server_key( itrl->second ) );
     }
     return ids;
 }
@@ -268,6 +293,7 @@ std::vector<std::string> DBCollection::ids_from_keys(const std::vector<std::stri
 std::set<std::string> DBCollection::get_ids_as_template( const std::string& id_head ) const
 {
     std::set<std::string> ids_list;
+    std::shared_lock<std::shared_mutex> g(keysmap_mutex);
     for( const auto& it: key_record_map )
     {
         if( it.second.get() != nullptr )
@@ -279,7 +305,7 @@ std::set<std::string> DBCollection::get_ids_as_template( const std::string& id_h
 
 bool DBCollection::is_allowed( const std::string &akey ) const
 {
-    return akey == db_driver->sanitization(akey);
+    return akey == db_driver()->sanitization(akey);
 }
 
 

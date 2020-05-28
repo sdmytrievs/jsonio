@@ -1,7 +1,6 @@
 #pragma once
 
-#include <memory>
-#include "jsonio14/dbdriverbase.h"
+#include "jsonio14/dbconnect.h"
 
 namespace jsonio14 {
 
@@ -12,6 +11,7 @@ class DBDocumentBase;
 
 /// Internal function to generate key template
 std::string make_template_key( const JsonBase& object, const std::vector<std::string>&  key_template_fields );
+
 
 
 /// \class  DBCollection  the definition collections API.
@@ -30,7 +30,10 @@ public:
 
     ///  Destructor
     virtual ~DBCollection()
-    {}
+    {
+        // wait loading finish
+        close();
+    }
 
     /// Load the collection or create new if no such collection exists.
     void load();
@@ -56,6 +59,7 @@ public:
     /// Get number of documents into collection
     std::size_t documentsCount() const
     {
+        std::shared_lock<std::shared_mutex> g(keysmap_mutex);
         return key_record_map.size();
     }
 
@@ -108,7 +112,7 @@ public:
     ///  \param setfnc -   callback function fetching document data
     void selectQuery( const DBQueryBase& query,  SetReaded_f setfnc )
     {
-        db_driver->select_query( name(), query, setfnc );
+        db_driver()->select_query( name(), query, setfnc );
     }
 
     /// Looks up the documents in the specified collection using the array of keys provided.
@@ -117,7 +121,7 @@ public:
     void lookupByKeys( const std::vector<std::string>& rkeys,  SetReaded_f setfnc )
     {
         auto ids = ids_from_keys(  rkeys );
-        db_driver->lookup_by_ids( name(), ids, setfnc );
+        db_driver()->lookup_by_ids( name(), ids, setfnc );
     }
 
     /// Looks up the documents in the specified collection using the array of ids provided.
@@ -125,7 +129,7 @@ public:
     ///  \param setfnc -   callback function fetching document data
     void lookupByIds( const std::vector<std::string>& ids,  SetReaded_f setfnc )
     {
-        db_driver->lookup_by_ids( name(), ids, setfnc );
+        db_driver()->lookup_by_ids( name(), ids, setfnc );
     }
 
     /// Fetches all documents from a collection.
@@ -133,14 +137,14 @@ public:
     ///  \param setfnc -     callback function fetching document data
     void allQuery( const std::set<std::string>& queryFields, SetReadedKey_f setfnc )
     {
-        db_driver->all_query( name(), queryFields, setfnc );
+        db_driver()->all_query( name(), queryFields, setfnc );
     }
 
     /// Delete all edges linked to vertex record.
     ///  \param vertexid - vertex record id
     void deleteEdges( const std::string& vertexid )
     {
-        db_driver->delete_edges( name(), vertexid );
+        db_driver()->delete_edges( name(), vertexid );
         reload();
     }
 
@@ -150,7 +154,7 @@ public:
     void removeByKeys( const std::vector<std::string>& rkeys  )
     {
         auto ids = ids_from_keys(  rkeys );
-        db_driver->remove_by_ids( name(), ids );
+        db_driver()->remove_by_ids( name(), ids );
         reload();
     }
 
@@ -159,7 +163,7 @@ public:
     ///  \param return values by specified fpath and collection
     void fpathCollect( const std::string& fpath, std::vector<std::string>& values )
     {
-        db_driver->fpath_collect( name(), fpath, values );
+        db_driver()->fpath_collect( name(), fpath, values );
     }
 
 protected:
@@ -174,36 +178,42 @@ protected:
     /// Operations started in one database
     const DataBase& db_connect;
 
-    /// Access to a specific database vendor implementation
-    AbstractDBDriver* db_driver = nullptr;
-
     /// Documents are linked to collection
     std::set<DBDocumentBase*> documents_list;
 
     /// List all documents keys into collection (internal loaded data)
     keysmap_t key_record_map;
 
-    /// Reconnect DataBase ( switch to the new database driver)
-    void change_driver( AbstractDBDriver* adriver );
+    mutable std::shared_mutex keysmap_mutex;
+    mutable std::shared_mutex documents_mutex;
+
+    /// Access to a specific database vendor implementation
+    AbstractDBDriver* db_driver() const
+    {
+        return db_connect.theDriver();
+    }
 
     /// Load all keys from one collection
     virtual void loadCollectionFile( const std::set<std::string>& query_fields );
     /// Close collection file
     virtual void closeCollectionFile() {}
 
+    /// Clear keys
+    void clear_keysmap()
+    {
+        std::unique_lock<std::shared_mutex> g(keysmap_mutex);
+        key_record_map.clear();
+    }
+
     /// Close collection
     void closeCollection()
     {
+        clear_keysmap();
         closeCollectionFile();
     }
 
     /// Load collection
-    void loadCollection()
-    {
-        // create collection if no exist
-        db_driver->create_collection( name(), coll_type );
-        loadCollectionFile( keyFields() );
-    }
+    void loadCollection();
 
     /// Generate new unique _key from key template
     std::string key_from_template( const std::string& key_template ) const;
@@ -226,11 +236,13 @@ protected:
     /// Add new opened document from collection
     void addDocument( DBDocumentBase* doc )
     {
+        std::unique_lock<std::shared_mutex> g(documents_mutex);
         documents_list.insert(doc);
     }
     /// Erase document from collection
     void eraseDocument( DBDocumentBase* doc )
     {
+        std::unique_lock<std::shared_mutex> g(documents_mutex);
         auto itr =  documents_list.find(doc);
         if( itr != documents_list.end() )
             documents_list.erase(doc);

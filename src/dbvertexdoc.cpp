@@ -254,7 +254,7 @@ void DBVertexDocument::update_collection( const std::string& aschema_name )
     if( newName != oldName )
     {
         collection_from->eraseDocument(this);
-        collection_from = collection_from->db_connect.getCollection( type(), newName );
+        collection_from = collection_from->db_connect.collection( newName, type() );
         collection_from->addDocument(this);
     }
 }
