@@ -340,7 +340,6 @@ private:
     {
         auto obj_type = type();
         if( !( obj_type == atype or
-               obj_type == Null or
                atype == Null or
                ( ( obj_type == Type::Int or obj_type == Type::Double ) and
                  ( atype == Type::Int or atype == Type::Double ) ) ) )

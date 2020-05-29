@@ -280,6 +280,7 @@ int substances_vertex( DataBase& connect )
     auto end1 = std::chrono::high_resolution_clock::now();
     printTimeSec( "Create collection", start, end1 );
 
+    return 0;
     //vertex_doc->readDocument("substances/methionine,cr;0:SC_COMPONENT;23:SLOP16");
     //std::cout << vertex_doc->getJson(true) << std::endl;
 

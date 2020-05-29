@@ -48,6 +48,7 @@ public:
     virtual ~DBDocumentBase()
     {
         collection_from->eraseDocument(this);
+        std::unique_lock<std::shared_mutex> g(query_result_mutex);
     }
 
     /// Get type of document ( collection )
