@@ -11,6 +11,8 @@ list_names_t files_into_directory( const std::string& directory_path, const std:
 /// Read whole ASCII file into string.
 std::string read_ascii_file( const std::string& file_path );
 
+/// Generate path.
+std::string make_path(const std::string& dir, const std::string& name, const std::string& ext);
 /// Checks if the given file status or path corresponds to an existing file or directory.
 bool path_exist( const std::string& path );
 
@@ -19,6 +21,17 @@ std::string  home_dir();
 ///  Link path to home directory
 ///  "~" generally refers to the user's home directory.
 std::string expand_home_dir( const std::string& path, const std::string& home_dir = "" );
+
+/// Creates the directory path.
+bool create_directory( const std::string& path );
+/// Copies a directory, the subdirectories are also copied, with their content, recursively.
+/// \param source - 	path to the source directory
+///        target - 	path to the target directory
+void copy_directory( const std::string& source,  const std::string& target );
+/// Copies a single file.
+/// \param source - 	path to the source file
+///        target - 	path to the target file
+void copy_file( const std::string& source,  const std::string& target );
 
 
 ///  Base interface for working with text files.

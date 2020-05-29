@@ -4,6 +4,9 @@
 
 namespace jsonio14 {
 
+// How to split a string in C++.
+std::vector<std::string> split2(const std::string& s, char delimiter);
+
 // Returns whether the string matches the regular expression.
 bool regexp_test(const std::string& str, std::string rgx_str)
 {

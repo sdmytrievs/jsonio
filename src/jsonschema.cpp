@@ -532,7 +532,7 @@ void JsonSchema::struct2model( const  StructDef* strDef )
     while( it != struct_descrip->cend() )
     {
         if( it->get()->required() == FieldDef::fld_required or
-            !it->get()->defaultValue().empty()    )
+                !it->get()->defaultValue().empty()    )
         {
             // add only requrled
             auto child = new JsonSchema( it->get(), this );

@@ -9,6 +9,12 @@ namespace jsonio14 {
 
 namespace json {
 
+/* encode_utf8(pt, out)
+ *
+ * Encode pt as UTF-8 and add it to out.
+ */
+void encode_utf8(long pt, std::string & out);
+
 std::string dump(const JsonBase &object, bool dense)
 {
     return object.dump(dense);

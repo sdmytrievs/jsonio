@@ -11,11 +11,11 @@ CONFIG -= qt
 !win32 {
   DEFINES += __unix
 QMAKE_CFLAGS += pedantic -Wall -Wextra -Wwrite-strings -Werror
-QMAKE_CXXFLAGS += -ansi -pedantic -Wall -Wextra -Weffc++
-#QMAKE_CXXFLAGS += -Wall -Wextra -Wformat-nonliteral -Wcast-align -Wpointer-arith \
-# -Wmissing-declarations -Winline -Wundef -Weffc++ \
-# -Wcast-qual -Wshadow -Wwrite-strings -Wno-unused-parameter \
-#-Wfloat-equal -pedantic -ansi
+#QMAKE_CXXFLAGS += -ansi -pedantic -Wall -Wextra -Weffc++
+QMAKE_CXXFLAGS += -Wall -Wextra -Wformat-nonliteral -Wcast-align -Wpointer-arith \
+ -Wmissing-declarations -Winline -Wundef \ #-Weffc++ \
+ -Wcast-qual -Wshadow -Wwrite-strings -Wno-unused-parameter \
+ -Wfloat-equal -pedantic -ansi
 }
 
 macx-g++ {
@@ -33,9 +33,6 @@ win32 {
   INCLUDEPATH   += "C:\usr\local\include"
   DEPENDPATH   += "C:\usr\local\include"
   LIBPATH += "C:\usr\local\lib"
-  INCLUDEPATH   += "C:\usr\local\boost\include\boost-1_70"
-  DEPENDPATH   += "C:\usr\local\boost\include\boost-1_70"
-  LIBPATH += "C:\usr\local\boost\lib"
 }
 
 # Define the directory where jsonArango source code is located
@@ -48,26 +45,22 @@ DEPENDPATH   += $$JSONIO14_HEADERS_DIR
 INCLUDEPATH   += $$JSONIO14_DIR
 INCLUDEPATH   += $$JSONIO14_HEADERS_DIR
 
-win32:LIBS +=   -lboost_system-mgw73-mt-d-x64-1_70 -lboost_filesystem-mgw73-mt-d-x64-1_70
-#!win32:LIBS +=  -lboost_system -lboost_filesystem -lstdc++fs
 !win32:LIBS +=  -lstdc++fs
-#LIBS +=   -lvelocypack
-LIBS +=   -ljsonarango
-LIBS +=  -lcurl  -lvelocypack
+LIBS +=   -ljsonarango -lcurl  -lvelocypack
 
 OBJECTS_DIR   = obj
 
 include($$JSONIO14_DIR/jsonio14.pri)
 
 SOURCES += \
-#       main.cpp \
+#       main.cpp
 #      examples/create_example.cpp
 #      examples/schema_example.cpp
 #      examples/builder_example.cpp
 #      examples/parser_example.cpp
 #      examples/time_parser.cpp
-       examples/coll_query_example.cpp
-#       examples/coll_time_test.cpp
+#       examples/coll_query_example.cpp
+       examples/coll_time_test.cpp
 
 DISTFILES += \
     Resources/docs/source.md \

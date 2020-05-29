@@ -225,6 +225,7 @@ void DBCollection::loadCollectionFile(  const std::set<std::string>& query_field
     std::cout << "loadCollectionFile locked" << std::endl;
     SetReadedKey_f setfnc = [=]( const std::string& jsondata, const std::string& keydata )
     {
+        //std::cout << jsondata << std::endl;
         add_record_to_map( jsondata, keydata );
     };
     db_driver()->all_query( name(), query_fields, setfnc );

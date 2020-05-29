@@ -59,9 +59,9 @@ public:
     ///     "[\"name1\"][\"name2\"][3][\"name3\"]"
     /// @return true if modified.
     template <class T>
-    bool setValue( const std::string& jsonpath, const T& value  )
+    bool setValue( const std::string& jsonpath, const T& avalue  )
     {
-        if( head_object->set_value_via_path( jsonpath, value ) )
+        if( head_object->set_value_via_path( jsonpath, avalue ) )
         {
             sync();
             return true;
@@ -69,9 +69,9 @@ public:
         return false;
     }
 
-    bool setValue( const std::string& jsonpath, const char* value  )
+    bool setValue( const std::string& jsonpath, const char* avalue  )
     {
-        return setValue( jsonpath, std::string(value) );
+        return setValue( jsonpath, std::string(avalue) );
     }
 
 protected:

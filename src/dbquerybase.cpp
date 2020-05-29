@@ -6,6 +6,9 @@
 
 namespace jsonio14 {
 
+arangocpp::ArangoDBQuery::QueryType to_arrango_query_type( DBQueryBase::QType qtype );
+DBQueryBase::QType to_base_query_types( arangocpp::ArangoDBQuery::QueryType arango_type );
+
 arangocpp::ArangoDBQuery::QueryType to_arrango_query_type( DBQueryBase::QType qtype )
 {
     arangocpp::ArangoDBQuery::QueryType arango_type = arangocpp::ArangoDBQuery::Undef;

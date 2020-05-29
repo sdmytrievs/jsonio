@@ -1,6 +1,7 @@
 
 #include "jsonio14/dbcollection.h"
 #include "jsonio14/dbdriverarango.h"
+#include "jsonio14/service.h"
 
 namespace jsonio14 {
 
@@ -26,17 +27,20 @@ void DataBase::update_from_schema( const schemas_t &schema_data )
     {
         const  FieldDef* type_fld = structdata.second->getField( "_type" );
         const  FieldDef* label_fld = structdata.second->getField( "_label" );
-        std::string label, name;
+        std::string label, name, type;
         if( type_fld != nullptr && label_fld != nullptr )
         {
             name = structdata.second->name();
             label = label_fld->defaultValue();
-            if( type_fld->defaultValue() == "vertex")
+            trim(label, "\"");
+            type = type_fld->defaultValue();
+            trim(type, "\"");
+            if( type == "vertex")
             {
                 vertexes[label ] = name;
                 vertex_collections[ name ] = label+"s";
             }
-            else if( type_fld->defaultValue() == "edge")
+            else if( type == "edge")
             {
                 edges[ label ] = name;
                 edge_collections[ name ] = label;

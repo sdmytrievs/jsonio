@@ -42,7 +42,7 @@ void DBDocumentBase::updateQuery()
         if( query_result.get() == nullptr )
             return;
     }
-    // update_query();
+    //update_query();
     // Create a thread using member function
     std::thread th( &DBDocumentBase::update_query, this );
     th.detach();

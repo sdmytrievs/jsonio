@@ -5,7 +5,8 @@
 
 #include <iostream>
 #include "jsonio14/jsonfree.h"
-#include "jsonio14/dbcollection.h"
+//#include "jsonio14/dbcollection.h"
+#include "jsonio14/dbvertexdoc.h"
 #include "jsonio14/dbquerybase.h"
 #include "jsonio14/io_settings.h"
 using namespace jsonio14;
@@ -42,6 +43,8 @@ void printTimeSec( const std::string&  title, const time_point_t& start, const t
 /// Test different query types
 int different_query_types( DataBase& connect );
 int substances_query_types( DataBase& connect );
+int substances_vertex( DataBase& connect );
+
 
 int main(int argc, char* argv[])
 {
@@ -58,13 +61,22 @@ int main(int argc, char* argv[])
         // Connect to Arangodb ( load settings from "jsonio14-config.json" config file )
         DataBase db;
 
-        different_query_types( db );
+        //different_query_types( db );
         //substances_query_types( db );
+        substances_vertex( db );
 
+    }
+    catch(jsonio_exception& e)
+    {
+        std::cout <<   e.what() <<  std::endl;
+    }
+    catch(std::exception& e)
+    {
+        std::cout <<   "std::exception: " << e.what() <<  std::endl;
     }
     catch(...)
     {
-        std::cout <<  "  unknown exception" <<  std::endl;
+        std::cout <<  "unknown exception" <<  std::endl;
     }
     return 0;
 }
@@ -239,6 +251,77 @@ Elapsed time in seconds: 975ms
 All time
 Elapsed time in seconds: 7562ms
 
+
+
+*/
+
+int substances_vertex( DataBase& connect )
+{
+    // Test collection name
+    std::string collectionName = "substances";
+    // Record keys
+    std::vector<std::string> recKeys;
+    std::vector<std::string> recjsonValues;
+    // Define call back function
+    SetReaded_f setfnc = [&recjsonValues]( const std::string& jsondata )
+    {
+        //std::cout << jsondata << std::endl;
+        recjsonValues.push_back(jsondata);
+    };
+
+    auto start = std::chrono::high_resolution_clock::now();
+
+    // If document collection collectionName not exist it would be created
+//    auto vertex_doc =  std::shared_ptr<DBVertexDocument>(
+//                DBVertexDocument::newVertexDocument( connect, "VertexSubstance" ));
+    auto vertex_doc =  std::shared_ptr<DBVertexDocument>(
+                DBVertexDocument::newVertexDocumentQuery( connect, "VertexSubstance", DBQueryBase(DBQueryBase::qUndef) ));
+
+    auto end1 = std::chrono::high_resolution_clock::now();
+    printTimeSec( "Create collection", start, end1 );
+
+    //vertex_doc->readDocument("substances/methionine,cr;0:SC_COMPONENT;23:SLOP16");
+    //std::cout << vertex_doc->getJson(true) << std::endl;
+
+    // Select records by template
+    recjsonValues.clear();
+    DBQueryBase    templatequery( "{ \"_label\" : \"substance\" }", DBQueryBase::qTemplate );
+    vertex_doc->selectQuery( templatequery, setfnc );
+    //printData( "Select records by template", recjsonValues );
+    auto end2 = std::chrono::high_resolution_clock::now();
+    printTimeSec( "Select records by template ( " + std::to_string(recjsonValues.size()) + " )", end1, end2 );
+
+    // Select records by AQL query
+    recjsonValues.clear();
+    std::string aql = "FOR u IN " + collectionName +
+            // "\nFILTER u.properties.value > 50 \n"
+            "\nRETURN { \"_id\": u._id, \"name\":u.properties.name }";
+    DBQueryBase    aqlquery( aql, DBQueryBase::qAQL );
+    vertex_doc->selectQuery( aqlquery, setfnc );
+    //printData( "Select records by AQL query", recjsonValues );
+    auto end3 = std::chrono::high_resolution_clock::now();
+    printTimeSec( "Select records by AQL query ( " + std::to_string(recjsonValues.size()) + " )", end2, end3 );
+
+    printTimeSec( "All time", start, end3 );
+    return 0;
+}
+
+/*
+You are connected to: arango 3.6.1
+loadCollectionFile locked
+loadCollectionFile unlocked
+VertexSubstance Loding collection 819784 Loding query 206600
+Create collection
+Elapsed time in seconds: 1026ms
+
+
+--- threads
+You are connected to: arango 3.6.1
+loadCollectionFile locked
+loadCollectionFile unlocked
+VertexSubstance Loding collection 64694 Loding query 159827
+Create collection
+Elapsed time in seconds: 224ms
 
 
 */

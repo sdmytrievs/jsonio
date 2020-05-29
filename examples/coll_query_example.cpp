@@ -7,6 +7,8 @@
 #include "jsonio14/io_settings.h"
 using namespace jsonio14;
 
+void printData( const std::string&  title, const std::vector<std::string>& values );
+
 void printData( const std::string&  title, const std::vector<std::string>& values )
 {
     std::cout <<  title <<  std::endl;

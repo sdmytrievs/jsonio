@@ -75,6 +75,7 @@ void DBSchemaDocument::update_query()
     {
         auto json_schema = json::loads( schema_name, jsondata );
         auto key = collection_from->getKeyFrom( json_schema );
+
         query_result->add_line( key,  json_schema, false );
     };
 
