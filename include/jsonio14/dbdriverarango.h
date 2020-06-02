@@ -40,12 +40,12 @@ public:
     /// \param ctype - types of collection to select.
     std::set<std::string> get_collections_names( CollTypes ctype ) override;
 
-    std::string get_server_key( const std::unique_ptr<char>& second ) const override
+    std::string get_server_key( const std::string& second ) const override
     {
-        return std::string(second.get());
+        return second;
     }
 
-    void set_server_key( std::unique_ptr<char>& second, const std::string& key ) override;
+    void set_server_key( std::string& second, const std::string& key ) override;
 
     // CRUD API
 
@@ -54,7 +54,7 @@ public:
     /// \param collname - collection name
     /// \param jsonrec - json object with data
     /// \return the document-handle.
-    std::string create_record( const std::string& collname, std::unique_ptr<char>& second, const JsonBase& recdata ) override;
+    std::string create_record( const std::string& collname, std::string& second, const JsonBase& recdata ) override;
 
     /// Returns the document described by the selector.
     /// \param collname - collection name

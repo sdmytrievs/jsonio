@@ -54,16 +54,13 @@ std::set<std::string> ArangoDBClient::get_collections_names( CollTypes ctype )
     }
 }
 
-void ArangoDBClient::set_server_key(std::unique_ptr<char> &second, const std::string& id_key )
+void ArangoDBClient::set_server_key(std::string &second, const std::string& id_key )
 {
-    char *bytes = new char[id_key.length()+1];
-    strncpy( bytes, id_key.c_str(), id_key.length() );
-    bytes[id_key.length()] = '\0';
-    second.reset(bytes);
+    second = id_key;
 }
 
 std::string ArangoDBClient::create_record(const std::string &collname,
-                                          std::unique_ptr<char>& second, const JsonBase& recdata)
+                                          std::string& second, const JsonBase& recdata)
 {
     try {
         JSONIO_THROW_IF( arando_connect->readonlyDBAccess(), "ArangoDBClient", 2,

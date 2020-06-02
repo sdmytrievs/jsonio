@@ -12,7 +12,7 @@ class JsonBase;
 class DBQueryBase;
 
 /// Table key -> the selector, which must be an object containing the _id or _key attribute.
-using keysmap_t = std::map<std::string, std::unique_ptr<char> >;
+using keysmap_t = std::map<std::string, std::string >;
 // Now we use "_id" as key and "_id" as selector, but for internal key we can use other data in future
 // and for selector data can be used other data in driver
 
@@ -55,9 +55,9 @@ public:
     /// \param ctype - types of collection to select.
     virtual std::set<std::string> get_collections_names( CollTypes ctype ) = 0;
 
-    virtual std::string get_server_key( const std::unique_ptr<char>& second ) const = 0;
+    virtual std::string get_server_key( const std::string& second ) const = 0;
 
-    virtual void set_server_key( std::unique_ptr<char>& second, const std::string& key ) = 0;
+    virtual void set_server_key( std::string& second, const std::string& key ) = 0;
 
     // CRUD API
 
@@ -66,7 +66,7 @@ public:
     /// \param collname - collection name
     /// \param jsonrec - json object with data
     /// \return the document-handle.
-    virtual std::string create_record( const std::string& collname, std::unique_ptr<char>& second, const JsonBase& recdata ) = 0;
+    virtual std::string create_record( const std::string& collname, std::string& second, const JsonBase& recdata ) = 0;
 
     /// Returns the document described by the selector.
     /// \param collname - collection name

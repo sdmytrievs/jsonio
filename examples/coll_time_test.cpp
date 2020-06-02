@@ -15,7 +15,7 @@ using namespace jsonio14;
 using time_point_t = std::chrono::time_point<std::chrono::high_resolution_clock>;
 
 // Current number documents into collection
-static int documentsInCollection =  100;
+static int documentsInCollection =  10;
 
 
 void printData( const std::string&  title, const std::vector<std::string>& values )
@@ -61,9 +61,9 @@ int main(int argc, char* argv[])
         // Connect to Arangodb ( load settings from "jsonio14-config.json" config file )
         DataBase db;
 
-        //different_query_types( db );
+        different_query_types( db );
         //substances_query_types( db );
-        substances_vertex( db );
+        //substances_vertex( db );
 
     }
     catch(jsonio_exception& e)
@@ -280,7 +280,6 @@ int substances_vertex( DataBase& connect )
     auto end1 = std::chrono::high_resolution_clock::now();
     printTimeSec( "Create collection", start, end1 );
 
-    return 0;
     //vertex_doc->readDocument("substances/methionine,cr;0:SC_COMPONENT;23:SLOP16");
     //std::cout << vertex_doc->getJson(true) << std::endl;
 

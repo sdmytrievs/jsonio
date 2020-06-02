@@ -108,7 +108,7 @@ std::string DBCollection::createDocument( JsonBase& data_object )
 
     {
         std::unique_lock<std::shared_mutex> g(keysmap_mutex);
-        std::unique_ptr<char> second = nullptr;
+        std::string second;
         // save record to data base
         std::string ret_id = db_driver()->create_record( name(), second, data_object );
         JSONIO_THROW_IF( ret_id.empty(), "DBCollection", 13," error saving record '" + new_key +"'." );
@@ -223,7 +223,7 @@ void DBCollection::loadCollectionFile(  const std::set<std::string>& query_field
 {
     std::unique_lock<std::shared_mutex> g(keysmap_mutex);
     std::cout << "loadCollectionFile locked" << std::endl;
-    SetReadedKey_f setfnc = [=]( const std::string& jsondata, const std::string& keydata )
+    SetReadedKey_f setfnc = [&]( const std::string& jsondata, const std::string& keydata )
     {
         //std::cout << jsondata << std::endl;
         add_record_to_map( jsondata, keydata );
@@ -263,13 +263,13 @@ std::string DBCollection::key_from_template( const std::string& key_template ) c
 
 void DBCollection::add_record_to_map( const std::string& jsondata, const std::string& keydata )
 {
-    std::unique_ptr<char> second = nullptr;
+    std::string second;
     db_driver()->set_server_key(second, keydata);
 
     auto jsFree = json::loads( jsondata );
     auto id_key = getKeyFrom( jsFree );
 
-    auto it_new =  key_record_map.insert( std::pair<std::string,std::unique_ptr<char> >(
+    auto it_new =  key_record_map.insert( std::pair<std::string,std::string >(
                                               id_key, std::move(second) ) );
     // Test unique keys name before add the record(s)
     if( it_new.second == false)
@@ -297,9 +297,9 @@ std::set<std::string> DBCollection::get_ids_as_template( const std::string& id_h
     std::shared_lock<std::shared_mutex> g(keysmap_mutex);
     for( const auto& it: key_record_map )
     {
-        if( it.second.get() != nullptr )
-            if( std::string(it.second.get()).substr(0, id_head.length()) == id_head  )
-                ids_list.insert( it.second.get() );
+        if( !it.second.empty() )
+            if( it.second.substr(0, id_head.length()) == id_head  )
+                ids_list.insert( it.second );
     }
     return ids_list;
 }
