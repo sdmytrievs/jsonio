@@ -16,6 +16,9 @@ QMAKE_CXXFLAGS += -Wall -Wextra -Wformat-nonliteral -Wcast-align -Wpointer-arith
  -Wmissing-declarations -Winline -Wundef \ #-Weffc++ \
  -Wcast-qual -Wshadow -Wwrite-strings -Wno-unused-parameter \
  -Wfloat-equal -pedantic -ansi
+
+#QMAKE_CXXFLAGS += -pg  # gprof information
+
 }
 
 macx-g++ {
@@ -45,7 +48,9 @@ DEPENDPATH   += $$JSONIO14_HEADERS_DIR
 INCLUDEPATH   += $$JSONIO14_DIR
 INCLUDEPATH   += $$JSONIO14_HEADERS_DIR
 
-!win32:LIBS +=  -lstdc++fs
+#LIBS += -pg  # gprof information
+
+!win32:LIBS += -pg -lstdc++fs
 LIBS +=   -ljsonarango -lcurl  -lvelocypack
 
 OBJECTS_DIR   = obj

@@ -12,7 +12,7 @@ add_subdirectory(googletest REQUIRED)
 # -------------------------------------
 
 add_executable(test_main  main.cpp )
-target_link_libraries(test_main gtest jsonio14 stdc++fs ${CMAKE_THREAD_LIBS_INIT} )
+target_link_libraries(test_main gtest jsonio14 stdc++fs  jsonarango curl  velocypack pthread ${CMAKE_THREAD_LIBS_INIT} )
 
 target_include_directories(test_main PRIVATE
 ${CMAKE_CURRENT_SOURCE_DIR}/../src
