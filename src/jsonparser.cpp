@@ -2,7 +2,7 @@
 #include "jsonio14/jsondump.h"
 #include "jsonio14/exceptions.h"
 #include "jsonio14/service.h"
-
+#include "jsonio14/jsonbuilder.h"
 
 namespace jsonio14 {
 
@@ -38,7 +38,7 @@ void JsonParser::parse_to( JsonBase* out )
       set_scalar( *out );
     }
     skip_space_comment();
-    JARANGO_THROW_IF( cur_pos < end_pos, "JsonParser", 14, "extra value after close: " + err_part() );
+    JSONIO_THROW_IF( cur_pos < end_pos, "JsonParser", 14, "extra value after close: " + err_part() );
 }
 
 //  object = { "<key1>" : <value1>, ... , "<keyN>" : <valueN> }
@@ -47,7 +47,7 @@ void JsonParser::parse_object( int depth, JsonObjectBuilder &builder)
     std::string keyn;
     if( jsontext[cur_pos] == jsBeginObject )
         cur_pos++;
-    JARANGO_THROW_IF( !skip_space_comment(), "JsonParser", 1, "unterminated object: " + err_part() );
+    JSONIO_THROW_IF( !skip_space_comment(), "JsonParser", 1, "unterminated object: " + err_part() );
 
     // empty object
     if( jsontext[cur_pos] == jsEndObject )
@@ -58,17 +58,17 @@ void JsonParser::parse_object( int depth, JsonObjectBuilder &builder)
 
     do {
         if( !parse_string( keyn ) )
-            JARANGO_THROW(  "JsonParser", 2, "missing key of object: " + err_part() );
+            JSONIO_THROW(  "JsonParser", 2, "missing key of object: " + err_part() );
 
-        JARANGO_THROW_IF( !skip_space_comment(), "JsonParser", 3, "missing value of object: " + err_part() );
+        JSONIO_THROW_IF( !skip_space_comment(), "JsonParser", 3, "missing value of object: " + err_part() );
 
         if( jsontext[cur_pos] == jsNameSeparator  )
             cur_pos++;
         else
-            JARANGO_THROW(  "JsonParser", 4, "missing ':' : " + err_part() );
+            JSONIO_THROW(  "JsonParser", 4, "missing ':' : " + err_part() );
 
         parse_value( depth, keyn,  builder );
-        JARANGO_THROW_IF( !skip_space_comment(), "JsonParser", 1, "unterminated object: " + err_part() );
+        JSONIO_THROW_IF( !skip_space_comment(), "JsonParser", 1, "unterminated object: " + err_part() );
 
         if( jsontext[cur_pos] == jsEndObject  )
         {
@@ -78,7 +78,7 @@ void JsonParser::parse_object( int depth, JsonObjectBuilder &builder)
 
     }while( jsontext[cur_pos++] == jsValueSeparator );
 
-    JARANGO_THROW(  "JsonParser", 5, "illegal symbol : '" + jsontext.substr(cur_pos-1, err_block_size)+"'" );
+    JSONIO_THROW(  "JsonParser", 5, "illegal symbol : '" + jsontext.substr(cur_pos-1, err_block_size)+"'" );
 }
 
 //    array = [ <value1>, ... <valueN> ]
@@ -86,7 +86,7 @@ void JsonParser::parse_array( int depth, JsonArrayBuilder &builder)
 {
     if( jsontext[cur_pos] == jsBeginArray )
         cur_pos++;
-    JARANGO_THROW_IF( !skip_space_comment(), "JsonParser", 6, "unterminated array: " + err_part() );
+    JSONIO_THROW_IF( !skip_space_comment(), "JsonParser", 6, "unterminated array: " + err_part() );
 
     // empty array
     if( jsontext[cur_pos] == jsEndArray )
@@ -97,7 +97,7 @@ void JsonParser::parse_array( int depth, JsonArrayBuilder &builder)
 
     do {
         parse_value( depth, builder.nextKey(),  builder );
-        JARANGO_THROW_IF( !skip_space_comment(), "JsonParser", 6, "unterminated array: " + err_part() );
+        JSONIO_THROW_IF( !skip_space_comment(), "JsonParser", 6, "unterminated array: " + err_part() );
         if( jsontext[cur_pos] == jsEndArray  )
         {
             cur_pos++;
@@ -105,7 +105,7 @@ void JsonParser::parse_array( int depth, JsonArrayBuilder &builder)
         }
     }while( jsontext[cur_pos++] == jsValueSeparator );
 
-    JARANGO_THROW(  "JsonParser", 5, "illegal symbol : '" + jsontext.substr(cur_pos-1, err_block_size)+"'" );
+    JSONIO_THROW(  "JsonParser", 5, "illegal symbol : '" + jsontext.substr(cur_pos-1, err_block_size)+"'" );
 }
 
 std::string JsonParser::err_part() const
@@ -149,7 +149,7 @@ bool JsonParser::parse_string( std::string &str )
 {
     bool lastCh = false;
     str = "";
-    JARANGO_THROW_IF( !skip_space_comment(), "JsonParser", 7, "must be string: " + err_part() );
+    JSONIO_THROW_IF( !skip_space_comment(), "JsonParser", 7, "must be string: " + err_part() );
 
     if( jsontext[cur_pos++] != jsQuote )
         return false;
@@ -160,7 +160,7 @@ bool JsonParser::parse_string( std::string &str )
         if (  static_cast<uint8_t>(jsontext[cur_pos]) < 0x20)
         {
           // control character
-          JARANGO_THROW( "JsonParser", 10, "Unexpected control character" + err_part() );
+          JSONIO_THROW( "JsonParser", 10, "Unexpected control character" + err_part() );
         }
 
         str += jsontext[cur_pos];
@@ -181,8 +181,8 @@ bool JsonParser::parse_string( std::string &str )
 
 void JsonParser::parse_value( int depth, const std::string &name, JsonBuilderBase &builder)
 {
-    JARANGO_THROW_IF( depth > json_max_depth, "JsonParser", 10, "exceeded maximum nesting depth " + err_part() );
-    JARANGO_THROW_IF( !skip_space_comment(), "JsonParser", 8, "must be value " + err_part() );
+    JSONIO_THROW_IF( depth > json_max_depth, "JsonParser", 10, "exceeded maximum nesting depth " + err_part() );
+    JSONIO_THROW_IF( !skip_space_comment(), "JsonParser", 8, "must be value " + err_part() );
 
     switch( jsontext[cur_pos] )
     {
@@ -220,7 +220,7 @@ void JsonParser::parse_value( int depth, const std::string &name, JsonBuilderBas
         }
         auto valuestr = jsontext.substr(cur_pos, end_size);
         trim(valuestr);
-        JARANGO_THROW_IF( valuestr.empty(), "JsonParser", 8, "must be value " + err_part() );
+        JSONIO_THROW_IF( valuestr.empty(), "JsonParser", 8, "must be value " + err_part() );
         builder.testScalar( name, valuestr );
         cur_pos = pos_end_value;
     }
@@ -261,7 +261,7 @@ void JsonParser::set_scalar( JsonBase& result_object )
                         if( is<double>( dval, value ))
                             result_object.set_from(  dval );
                         else
-                            JARANGO_THROW(  "JsonParser", 9, "must be value " + value );
+                            JSONIO_THROW(  "JsonParser", 9, "must be value " + value );
 }
 
 } // namespace jsonio14

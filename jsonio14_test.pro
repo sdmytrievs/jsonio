@@ -1,5 +1,5 @@
 TEMPLATE = app
-CONFIG += console c++14
+CONFIG += console c++17
 CONFIG -= app_bundle
 CONFIG += thread
 CONFIG -= qt
@@ -42,6 +42,7 @@ INCLUDEPATH   += $$JSONIO14_HEADERS_DIR
 INCLUDEPATH   += $$TESTS_DIR
 
 LIBS +=  -lstdc++fs
+LIBS +=  -ljsonarango -lcurl  -lvelocypack
 
 OBJECTS_DIR   = obj
 
@@ -60,7 +61,8 @@ HEADERS += \
         $$TESTS_DIR/tst_parser.h \
         $$TESTS_DIR/tst_base_complex.h \
         $$TESTS_DIR/tst_schema.h \
-        $$TESTS_DIR/tst_jsonschema.h
+        $$TESTS_DIR/tst_jsonschema.h \
+        $$TESTS_DIR/tst_dbquery.h
 
 SOURCES += \
         $$TESTS_DIR/main.cpp

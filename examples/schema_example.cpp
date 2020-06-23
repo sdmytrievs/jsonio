@@ -61,9 +61,9 @@ int main()
         SimpleSchema();
         ComplexSchema();
     }
-    catch(jarango_exception& e)
+    catch(jsonio_exception& e)
     {
-        std::cout <<   e.what() <<  std::endl;
+        std::cout <<  e.what() <<  std::endl;
     }
     catch(std::exception& e)
     {

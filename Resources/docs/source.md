@@ -1,5 +1,7 @@
 ## Files descriptions
 
+### Json and schema json parsing ###
+
 1. exeptions.h
 
 General exception structure into project.
@@ -199,7 +201,100 @@ std::cout <<  simple_object << std::endl;
 
 
 > By default add requered fields and fields with default value
-> *source: "-";    test: "+";  example: "+"*
+> *source: "+";    test: "+";  example: "+"*
+
+### Working with database ###
+
+
+15. dbquerybase.h(cpp)
+
+class DBQueryBase describing the query and query parameters. Used to retrieve data that are stored in the DataBase.
+class DBQueryDef is a query description into a Database record.
+class DBQueryResult used to store query definition and result.
+
+> *source: "+";  test: "+-";  example: "-"*
+> No tests for DBQueryResult
+
+16. dbdriverbase.h
+
+Interface for Abstract Database Driver
+The driver works like an adaptor which connects a generic interface to a specific database vendor implementation.
+
+> *source: "+";  test: "-";  example: "-"*
+
+17. dbdriverarango.h(cpp)
+
+Implementation of Database Driver using Low-Level C++ Driver for ArangoDB.
+
+> *source: "+";  test: "-";  example: "-"*
+> All tests into jsonArango
+
+18. dbconnect.h(cpp)
+
+class DataBase to managing database connection (thread-safee).
+
+> *source: "+";  test: "-";  example: "+"*
+> ? tests
+
+
+19. dbcollection.h(cpp)
+
+class  DBCollection  the definition collections API (thread-safee).  A collection contains zero or more documents.
+Function loadCollectionFile runs in the other thread.
+
+> *source: "+";  test: "-";  example: "+"*
+> ? tests
+
+20. dbdocument.h(cpp)
+
+Implementation interface DBDocumentBase for working with documents. Documents are JSON like objects.
+These objects can be nested (to any depth) and may contain lists.  Each document has a unique primary key that identifies it within its collection.
+Furthermore, each document is uniquely identified by its document handle across all collections in the same database.
+
+> *source: "+";  test: "-";  example: "-"*
+> Implement some addition functions
+> ? tests
+
+
+21. dbjsondoc.h(cpp)
+
+class DBJsonDocument - implementation of the database document  as free structure JSON
+
+> *source: "+";  test: "-";  example: "-"*
+> ? tests
+
+22. dbschemadoc.h(cpp)
+
+class DBSchemaDocument - implementation of the database document as schema-based JSON
+
+> *source: "+";  test: "-";  example: "-"*
+> ? tests
+
+
+23.  dbvertexdoc.h(cpp)
+
+Definition of graph databases chain: Handling Vertices
+class DBVertexDocument - implementation of the database vertex as schema-based JSON.
+
+> *source: "+";  test: "-";  example: "-"*
+> Handling  unique fields values are blocked
+> ? tests
+
+24.  dbedgedoc.h(cpp)
+
+Definition of graph databases chain: Handling Edges
+class DBEdgeDocument - implementation of the database edge as schema-based JSON.
+
+> *source: "+";  test: "-";  example: "-"*
+> ? tests
+
+
+25. traversal.h(cpp)
+
+class GraphTraversal implementation traversal of graph  for Database
+
+> *source: "+";  test: "-";  example: "-"*
+> ? tests
 
 
 ## Next steps --------------------------------------------------------------------------------
@@ -207,19 +302,12 @@ std::cout <<  simple_object << std::endl;
 To do:
 
 - add top level std::shared_ptr
+- implement examples and tests for database part
+
+https://en.cppreference.com/w/cpp/utility/optional
 
 ## Database
 
-12. dbquerydef.h(cpp)
-13. dbconnect.h(cpp)
-14. dbarango.h(cpp)
-15. dbcollection.h(cpp)
-16. dbdocument.h(cpp)
-17. dbjsondoc.h(cpp)
-18. dbschemadoc.h(cpp)
-19. dbvertexdoc.h(cpp)
-20. dbedgedoc.h(cpp)
-21. traversal.h(cpp)
 
 Work about jsonimpex
 Work about jsonui

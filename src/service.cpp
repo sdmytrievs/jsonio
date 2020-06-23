@@ -4,6 +4,9 @@
 
 namespace jsonio14 {
 
+// How to split a string in C++.
+std::vector<std::string> split2(const std::string& s, char delimiter);
+
 // Returns whether the string matches the regular expression.
 bool regexp_test(const std::string& str, std::string rgx_str)
 {
@@ -52,6 +55,43 @@ std::string regexp_replace(const std::string& instr, const std::string& rgx_str,
    std::regex re(rgx_str);
    std::string output_str = regex_replace(instr, re, replacement);
    return output_str;
+}
+
+// Extract the string value from string
+std::string regexp_extract_string( const std::string& regstr, const std::string& data )
+{
+    std::string token = "";
+    std::regex re( regstr );
+    std::smatch match;
+
+    if( std::regex_search( data, match, re ))
+    {
+        if (match.ready())
+            token = match[1];
+    }
+    return token;
+}
+
+// Extract the string value by key from jsonstring
+std::string extract_string_json( const std::string& key, const std::string& jsondata )
+{
+    std::string data = jsondata;
+    replace_all( data, "\'", '\"');
+    std::string regstr =  std::string(".*\"")+key+"\"\\s*:\\s*\"([^\"]*)\".*";
+    return regexp_extract_string( regstr, data );
+}
+
+// Extract the string value by key from query
+int extract_int_json( const std::string& key, const std::string& jsondata )
+{
+    std::string data = jsondata;
+    replace_all( data, "\'", '\"');
+    std::string regstr =  std::string(".*\"")+key+"\"\\s*:\\s*([+-]?[1-9]\\d*|0).*";
+    auto token = regexp_extract_string( regstr, data );
+    //cout << key << "  token " << token  << endl;
+    if( token.empty() )
+        return 0;
+    return stoi(token);
 }
 
 

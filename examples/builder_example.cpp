@@ -79,7 +79,7 @@ int main()
         buildComplexObject();
         buildObjectInfers();
     }
-    catch(jarango_exception& e)
+    catch(jsonio_exception& e)
     {
         std::cout <<   e.what() <<  std::endl;
     }

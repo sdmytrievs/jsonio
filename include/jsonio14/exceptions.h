@@ -7,7 +7,7 @@
 namespace jsonio14 {
 
 /// @brief General exception structure into project.
-class jarango_exception: public std::exception
+class jsonio_exception: public std::exception
 {
 
 public:
@@ -27,15 +27,15 @@ public:
     ///  @param aid       the id of the exception
     ///  @param what_arg  the explanatory string
     ///  @return jarango_exception object.
-    static jarango_exception create(const std::string& atitle, int aid, const std::string& what_arg)
+    static jsonio_exception create(const std::string& atitle, int aid, const std::string& what_arg)
     {
         std::string w = header(atitle, aid) +  ": " + what_arg;
-        return jarango_exception( aid, w.c_str());
+        return jsonio_exception( aid, w.c_str());
     }
 
 protected:
 
-    jarango_exception(int aid, const char* what_arg) : id(aid), m(what_arg) {}
+    jsonio_exception(int aid, const char* what_arg) : id(aid), m(what_arg) {}
 
     static std::string header(const std::string& aname, int aid)
     {
@@ -50,15 +50,15 @@ private:
 
 
 /// Throw  jarango_exception.
-[[ noreturn ]] inline void JARANGO_THROW( const std::string& title, int id, const std::string& message )
+[[ noreturn ]] inline void JSONIO_THROW( const std::string& title, int id, const std::string& message )
 {
-    throw jarango_exception::create(title, id, message);
+    throw jsonio_exception::create(title, id, message);
 }
 
 /// Throw by condition jsonio_exception.
-inline void JARANGO_THROW_IF(bool error, const std::string& title, int id, const std::string& message )
+inline void JSONIO_THROW_IF(bool error, const std::string& title, int id, const std::string& message )
 {
-    if(error) throw jarango_exception::create(title, id, message);
+    if(error) throw jsonio_exception::create(title, id, message);
 }
 
 } // namespace jsonio14

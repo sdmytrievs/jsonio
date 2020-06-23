@@ -1,5 +1,6 @@
 #include "jsonio14/io_settings.h"
 #include "jsonio14/schema_thrift.h"
+#include "jsonio14/dbconnect.h"
 
 namespace jsonio14 {
 
@@ -30,7 +31,7 @@ std::string SectionSettings::directoryPath( const std::string& fldpath, const st
 JsonioSettings::JsonioSettings( const std::string& config_file_path ):
     config_file( config_file_path ), all_settings(JsonFree::object()),
     top_section( SectionSettings( *this, &all_settings ) ),
-    jsonio_section( SectionSettings( *this, &all_settings ) )
+    jsonio_section( SectionSettings( *this, &all_settings ) ), schema()
 {
     // register thrift schemas
     schema.addSchemaMethod( schema_thrift, ThriftSchemaRead );
@@ -101,6 +102,8 @@ void JsonioSettings::readSchemaDir(const std::string &dir_path)
         for (auto file: file_names)
             schema.addSchemaFile( schema_thrift, file );
     }
+    // init vertex&edge lists from schema data
+    DataBase::update_from_schema( schema.allStructs() );
 }
 
 

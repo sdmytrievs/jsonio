@@ -31,25 +31,30 @@ void AccesstoObjectError();
 /// Test read schema
 void ReadThriftSchemas()
 {
-   const SchemasData& all_schemas = ioSettings().Schema();
-   std::cout << "Structs: "<< all_schemas.getStructs(false).size() << "\n";
-   //for( auto& astruct: all_schemas.getStructs(false) )
-   //     std::cout << astruct  << "\n";
+    const SchemasData& all_schemas = ioSettings().Schema();
+    std::cout << "Structs: "<< all_schemas.getStructs(false).size() << "\n";
+    //for( auto& astruct: all_schemas.getStructs(false) )
+    //     std::cout << astruct  << "\n";
 
-   auto object = JsonSchema::object("VertexElement");
-   std::cout <<  object << std::endl;
-   auto json_data = read_ascii_file( "O-old.VertexElement.json" );
-   object.loads(json_data);
-   std::cout <<  object << std::endl;
+//    auto object_limits = JsonSchema::object("LimitsTP");
+//    std::cout <<  object_limits << std::endl;
+//    object_limits["upperT"] = 200;
+//    std::cout <<  object_limits << std::endl;
 
-  // test read substance to element (add only existing field other skip)
-   json_data = read_ascii_file( "HO2-old.VertexSubstance.json" );
-  //    object.loads(json_data);
-  //    std::cout <<  object << std::endl;
+    auto object = JsonSchema::object("VertexElement");
+    std::cout <<  object << std::endl;
+    auto json_data = read_ascii_file( "O-old.VertexElement.json" );
+    object.loads(json_data);
+    std::cout <<  object << std::endl;
 
-   auto object_sub = JsonSchema::object("VertexSubstance");
-   object_sub.loads(json_data);
-         std::cout <<  object_sub << std::endl;
+    // test read substance to element (add only existing field other skip)
+    // json_data = read_ascii_file( "HO2-old.VertexSubstance.json" );
+    json_data = read_ascii_file( "methionine.VertexSubstance.json" );
+    //std::cout <<  json_data << std::endl;
+
+    auto object_sub = JsonSchema::object("VertexSubstance");
+    object_sub.loads(json_data);
+    std::cout <<  object_sub << std::endl;
 }
 
 
@@ -61,7 +66,7 @@ int main()
         ReadThriftSchemas();
         //AccesstoObjectError();
     }
-    catch(jarango_exception& e)
+    catch(jsonio_exception& e)
     {
         std::cout <<   e.what() <<  std::endl;
     }

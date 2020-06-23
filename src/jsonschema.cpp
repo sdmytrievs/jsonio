@@ -11,7 +11,7 @@ namespace jsonio14 {
 JsonSchema JsonSchema::object( const std::string &schema_name )
 {
     auto strDef  = ioSettings().Schema().getStruct( schema_name );
-    JARANGO_THROW_IF( strDef == nullptr, "JsonSchema", 12, "undefined struct definition " + schema_name  );
+    JSONIO_THROW_IF( strDef == nullptr, "JsonSchema", 12, "undefined struct definition " + schema_name  );
     return JsonSchema( strDef );
 }
 
@@ -77,7 +77,7 @@ JsonSchema::JsonSchema( JsonBase::Type , const std::string &akey, const std::str
         break;
     default:
         break;
-        //JARANGO_THROW( "JsonSchema", 13, "illegal parent type " + std::string( parent_object->typeName() )  );
+        //JSONIO_THROW( "JsonSchema", 13, "illegal parent type " + std::string( parent_object->typeName() )  );
     }
     set_children();
 }
@@ -118,7 +118,7 @@ void JsonSchema::update_node( JsonBase::Type atype, const std::string &avalue )
     set_value( avalue );
 }
 
-JsonBase *JsonSchema::append_node(const std::string &akey, JsonBase::Type atype, const std::string &avalue )
+JsonSchema *JsonSchema::append_node(const std::string &akey, JsonBase::Type atype, const std::string &avalue )
 {
     // if exist key => update node, for Free json too
     auto element = find_key(akey);
@@ -166,17 +166,17 @@ JsonBase *JsonSchema::append_node(const std::string &akey, JsonBase::Type atype,
 
 const JsonSchema& JsonSchema::get_child(std::size_t idx) const
 {
-    JARANGO_THROW_IF( idx>=getChildrenCount(), "JsonSchema", 25,  "array index " + std::to_string(idx) + " is out of range" );
+    JSONIO_THROW_IF( idx>=getChildrenCount(), "JsonSchema", 25,  "array index " + std::to_string(idx) + " is out of range" );
     return *children[idx];
 }
 
 JsonSchema& JsonSchema::get_child(std::size_t idx)
 {
-    JARANGO_THROW_IF( idx>getChildrenCount(), "JsonSchema", 25, "array index " + std::to_string(idx) + " is out of range" );
+    JSONIO_THROW_IF( idx>getChildrenCount(), "JsonSchema", 25, "array index " + std::to_string(idx) + " is out of range" );
     if( idx==getChildrenCount() ) // next element
     {
         auto obj = dynamic_cast<JsonSchema*>(append_node( std::to_string(idx), JsonBase::Null, "" ));
-        JARANGO_THROW_IF( obj==nullptr, "JsonSchema", 25, "array element " + std::to_string(idx) + " is illegal type" );
+        JSONIO_THROW_IF( obj==nullptr, "JsonSchema", 25, "array element " + std::to_string(idx) + " is illegal type" );
         return *obj;
     }
     return *children[idx];
@@ -188,7 +188,7 @@ JsonSchema& JsonSchema::get_child(const std::string &key)
     if( element == children.end() )
     {
         auto obj = dynamic_cast<JsonSchema*>(append_node( key, JsonBase::Null, "" ));
-        JARANGO_THROW_IF( obj==nullptr, "JsonSchema", 25, "object element " + key + " is illegal type" );
+        JSONIO_THROW_IF( obj==nullptr, "JsonSchema", 25, "object element " + key + " is illegal type" );
         return *obj;
     }
     return *element->get();
@@ -199,14 +199,14 @@ const JsonSchema& JsonSchema::get_child(const std::string &key) const
     auto element = find_key(key);
     if( element == children.end() )
     {
-        JARANGO_THROW( "JsonSchema", 26, "key '" + key + "' not found" );
+        JSONIO_THROW( "JsonSchema", 26, "key '" + key + "' not found" );
     }
     return *element->get();
 }
 
 JsonSchema &JsonSchema::get_parent() const
 {
-    JARANGO_THROW_IF( !parent_object, "JsonSchema", 27, "parent object is undefined" );
+    JSONIO_THROW_IF( !parent_object, "JsonSchema", 27, "parent object is undefined" );
     return *parent_object;
 }
 
@@ -268,6 +268,51 @@ JsonSchema *JsonSchema::field( std::queue<std::string> names ) const
     return element->get()->field(names);
 }
 
+JsonSchema *JsonSchema::field( std::queue<int> ids ) const
+{
+    if( ids.empty() )
+        return  const_cast<JsonSchema *>(this);
+
+    int aid = ids.front();
+    ids.pop();
+
+    for(size_t ii=0; ii< children.size(); ii++ )
+        if( ( !isArray() && !isMap() && children[ii]->field_descrip->id() == aid ) ||
+            ( (isArray() || isMap()) && static_cast<int>(ii) == aid )    )
+            return children[ii]->field( ids );
+
+    return nullptr;  // not found
+}
+
+const JsonBase *JsonSchema::field(const std::string &fieldpath) const
+{
+    auto pos = fieldpath.find_first_not_of("0123456789.");
+    if( pos != std::string::npos || isArray() )
+    {
+        auto names = split( fieldpath, field_path_delimiters );
+        return field(names);
+    }
+    else
+    {
+        auto ids = split_int( fieldpath, ".");
+        return field(ids);
+    }
+}
+
+JsonSchema &JsonSchema::add_object_via_path(const std::string &jsonpath)
+{
+    auto names = split(jsonpath, field_path_delimiters);
+    auto pobj = field_add( names );
+    if( pobj )
+    {
+        if( !pobj->isObject())
+            pobj->update_node( JsonBase::Object, "" );
+        return *pobj;
+    }
+    JSONIO_THROW( "JsonBase", 12, "cannot create object with jsonpath " + std::string( jsonpath ) );
+
+}
+
 JsonSchema *JsonSchema::field_add( std::queue<std::string> names )
 {
     if( names.empty() )
@@ -281,8 +326,8 @@ JsonSchema *JsonSchema::field_add( std::queue<std::string> names )
     {
         if( isObject() )
         {
-            append_node( fname, JsonBase::Object, "" );
-            return children.back()->field_add(names);
+            auto new_obj = append_node( fname, JsonBase::Null, "" );
+            return /*children.back()*/ new_obj->field_add(names);
         }
         else
             return nullptr;
@@ -387,7 +432,7 @@ void JsonSchema::resize_array_level( size_t level, const std::vector<size_t>& si
 
 void JsonSchema::array_resize( std::size_t  newsize, const std::string& defval  )
 {
-    JARANGO_THROW_IF( !isArray(), "JsonSchema", 11, "cannot resize not array data " + std::string( typeName() ) );
+    JSONIO_THROW_IF( !isArray(), "JsonSchema", 11, "cannot resize not array data " + std::string( typeName() ) );
 
     if( newsize == children.size() )     // the same size
         ;
@@ -419,6 +464,7 @@ void JsonSchema::array_resize( std::size_t  newsize, const std::string& defval  
         }
     }
 }
+
 
 //----------------------------------------------------------------------------------------------
 
@@ -474,7 +520,7 @@ void JsonSchema::set_children()
         else
             strDef2  = ioSettings().Schema().getStruct( field_descrip->className() );
 
-        JARANGO_THROW_IF( strDef2 == nullptr,"JsonSchema", 12, "undefined struct definition " + field_descrip->className()  );
+        JSONIO_THROW_IF( strDef2 == nullptr,"JsonSchema", 12, "undefined struct definition " + field_descrip->className()  );
         struct2model( strDef2 );
     }
 }
@@ -486,7 +532,7 @@ void JsonSchema::struct2model( const  StructDef* strDef )
     while( it != struct_descrip->cend() )
     {
         if( it->get()->required() == FieldDef::fld_required or
-            !it->get()->defaultValue().empty()    )
+                !it->get()->defaultValue().empty()    )
         {
             // add only requrled
             auto child = new JsonSchema( it->get(), this );

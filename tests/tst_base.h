@@ -414,7 +414,7 @@ TEST( JsonioBase, get_to_no_exist_free )
     EXPECT_TRUE( vumaps.empty() );
 
     const auto& constobj = obj;
-    EXPECT_THROW( constobj["noexist7"].get_to( vint ), jarango_exception );
+    EXPECT_THROW( constobj["noexist7"].get_to( vint ), jsonio_exception );
 
     //std::cout << "Test get_to_no_exist" << obj << std::endl;
 }
@@ -427,12 +427,12 @@ TEST( JsonioBase, AddValueViaPath )
                            "{\"group\":\"int\",\"value\":100},{\"group\":\"double\",\"value\":1e-10},{\"group\":\"double\",\"value\":10000000000}],"
                            "\"values\":[[1,2,3],[11,12,13]]}");
 
-    auto new_obj1 = obj.add_object_via_path("formats.add_object1");
+    JsonFree& new_obj1 = obj.add_object_via_path("formats.add_object1");
     EXPECT_TRUE( new_obj1.isObject() );
     EXPECT_TRUE( new_obj1.empty() );
     EXPECT_TRUE( obj.path_if_exists( "formats.add_object1" ) );
 
-    EXPECT_THROW( obj.add_object_via_path("data[10]"), jarango_exception );
+    EXPECT_THROW( obj.add_object_via_path("data[10]"), jsonio_exception );
 
     int iwidth = 10;
     EXPECT_TRUE( obj.set_value_via_path( "formats.add_object2.width", iwidth ) );
@@ -441,4 +441,20 @@ TEST( JsonioBase, AddValueViaPath )
     EXPECT_EQ( obj["formats"]["add_object2"]["width"].toInt(), iwidth );
 
     EXPECT_FALSE( obj.set_value_via_path( "data[4].value", 2.5 ) );
+}
+
+TEST( JsonioBase, SetOid )
+{
+    auto obj = json::loads("{ \"task\" : \"exampleCRUD\", "
+                           "  \"properties\" : { \"level\": \"insert record\" } }");
+
+    obj.set_oid("test/eCRUD");
+    EXPECT_EQ( obj["_id"].toString(), "test/eCRUD" );
+    EXPECT_EQ( obj["_key"].toString(), "eCRUD" );
+    EXPECT_EQ( obj.dump(true), "{\"task\":\"exampleCRUD\",\"properties\":{\"level\":\"insert record\"},\"_key\":\"eCRUD\",\"_id\":\"test/eCRUD\"}\n" );
+
+    obj.set_oid("");
+    EXPECT_EQ( obj["_id"].toString(), "" );
+    EXPECT_EQ( obj["_key"].toString(), "" );
+    EXPECT_EQ( obj.dump(true), "{\"task\":\"exampleCRUD\",\"properties\":{\"level\":\"insert record\"}}\n" );
 }

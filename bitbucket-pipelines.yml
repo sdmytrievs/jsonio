@@ -3,12 +3,14 @@
 # Only use spaces to indent your .yml configuration.
 # -----
 # You can specify a custom docker image from Docker Hub as your build environment.
-image: gcc:6.5
+# image: gcc:6.5
+
 
 pipelines:
   default:
     - step:
         script: # Modify the commands below to build your repository.
-          - ./configure
-          - make
-          - make test
+          - bash ci/pipelines/install.sh
+          #- pytest -ra -vv .
+          #- bash ci/pipelines/test.sh
+

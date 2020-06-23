@@ -18,6 +18,13 @@ std::string regexp_replace(const std::string& instr, const std::string& rgx_str,
 ///  Returns true whether the string matches the regular expression.
 bool regexp_test(const std::string& str, std::string rgx_str);
 
+//// Extract the string value from data.
+std::string regexp_extract_string( const std::string& regstr, const std::string& data );
+/// Extract the string value by key from json string
+std::string extract_string_json( const std::string& key, const std::string& jsondata );
+/// Extract the int value by key from json string
+int extract_int_json( const std::string& key, const std::string& jsondata );
+
 /// Replace all characters to character in string (in place).
 inline void replace_all(std::string &s, const std::string &characters, char to_character )
 {

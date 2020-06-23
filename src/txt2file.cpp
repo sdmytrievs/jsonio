@@ -44,7 +44,7 @@ std::string  home_dir()
         if (pwd)
             homeDir = pwd->pw_dir;
     }
-    JARANGO_THROW_IF( !homeDir, "filesystem", 1,  "HOME environment variable not set.");
+    JSONIO_THROW_IF( !homeDir, "filesystem", 1,  "HOME environment variable not set.");
     //std::cout << "Home directory is " << homeDir << std::endl;
     return std::string(homeDir);
 #endif
@@ -127,7 +127,7 @@ list_names_t files_into_directory( const std::string& directory_path, const std:
 std::string read_ascii_file( const std::string& file_path )
 {
     std::ifstream t(file_path);
-    JARANGO_THROW_IF( !t.good(), "filesystem", 4, "file open error...  " + file_path );
+    JSONIO_THROW_IF( !t.good(), "filesystem", 4, "file open error...  " + file_path );
     std::stringstream buffer;
     buffer << t.rdbuf();
 
@@ -200,8 +200,8 @@ bool TxtFile::check_permission(TxtFile::OpenModeTypes mode) const
 
 std::string TxtFile::load_all() const
 {
-    JARANGO_THROW_IF( !exist(), "filesystem", 2, "trying read not existing file  " + file_path );
-    JARANGO_THROW_IF( !check_permission(ReadOnly), "filesystem", 3, "other users have not read permission  " + file_path );
+    JSONIO_THROW_IF( !exist(), "filesystem", 2, "trying read not existing file  " + file_path );
+    JSONIO_THROW_IF( !check_permission(ReadOnly), "filesystem", 3, "other users have not read permission  " + file_path );
     return read_ascii_file( file_path );
 }
 
@@ -234,7 +234,7 @@ void JsonFile::loadJson(JsonBase& object) const
 void JsonFile::saveJson(const JsonBase& object) const
 {
     std::fstream fout(file_path, std::ios::out );
-    JARANGO_THROW_IF( !fout.good(), "filesystem", 5, "file save error...  " + file_path );
+    JSONIO_THROW_IF( !fout.good(), "filesystem", 5, "file save error...  " + file_path );
     object.dump( fout, false );
 }
 
@@ -288,7 +288,7 @@ void JsonArrayFile::Open(TxtFile::OpenModeTypes amode)
 {
     if( isOpened() )
     {
-        JARANGO_THROW_IF( open_mode!=amode, "filesystem", 6, "file was opened in different mode  " + file_path );
+        JSONIO_THROW_IF( open_mode!=amode, "filesystem", 6, "file was opened in different mode  " + file_path );
         return;
     }
 
@@ -303,7 +303,7 @@ void JsonArrayFile::Open(TxtFile::OpenModeTypes amode)
     }
     else if( open_mode != WriteOnly )
     {
-        JARANGO_THROW( "filesystem", 7, "illegal file open mode for class JsonArrayFile" );
+        JSONIO_THROW( "filesystem", 7, "illegal file open mode for class JsonArrayFile" );
     }
     is_opened = true;
 }

@@ -19,6 +19,10 @@ TEST( JsonioService, regexpSplit )
     EXPECT_EQ( "[ \"1\", \"22\", \"333\" ]", json::dump(tokens) );
     auto strquery = regexp_split("a:bb:ccc", ":" );
     EXPECT_EQ( "[ \"a\", \"bb\", \"ccc\" ]", json::dump(strquery) );
+
+    tokens = regexp_split( " \"aaa\", \"bbb\", \"ccc\" ", "[\",\\s]+" );
+    std::cout << json::dump(tokens) << std::endl;
+    EXPECT_EQ( "[ \"\", \"aaa\", \"bbb\", \"ccc\" ]", json::dump(tokens) );
 }
 
 //  Function that can be used to extract tokens using regexp
@@ -29,9 +33,10 @@ TEST( JsonioService, regexpExtract )
     EXPECT_EQ( "[ \"%h11\", \"%h22\", \"%h33\" ]", json::dump(tokens) );
 
     tokens = regexp_extract(
-                    "\"limitsTP\":null,\"m_compressibility\":10,\"m_expansivity\":null,\"name\":\"Al(OH)4-\",\"reaction\":null,",
-                               "(?!,)[^,\n]+(?=null,)" );
+                "\"limitsTP\":null,\"m_compressibility\":10,\"m_expansivity\":null,\"name\":\"Al(OH)4-\",\"reaction\":null,",
+                "(?!,)[^,\n]+(?=null,)" );
     EXPECT_EQ( "[ \"\\\"limitsTP\\\":\", \"\\\"m_expansivity\\\":\", \"\\\"reaction\\\":\" ]", json::dump(tokens) );
+
 }
 
 //  Function that can be used to replase text using regexp
@@ -54,6 +59,53 @@ TEST( JsonioService, regexprTest )
     EXPECT_TRUE( regexp_test("baz.dat", "^[a-z].*") );
     EXPECT_FALSE( regexp_test("2zoidberg", "^[a-z].*") );
 }
+
+
+TEST( JsonioService, regexprExtractString )
+{
+    std::string test_data = R"({\n "_key"  : "eCRUD"    ,"properties":{"level": "insert record"},"task":
+                            "exampleCRUD"})";
+
+    EXPECT_EQ( regexp_extract_string(".*\"_key\"\\s*:\\s*\"([^\"]*)\".*", test_data), "eCRUD" );
+    EXPECT_EQ( regexp_extract_string(".*\"level\"\\s*:\\s*\"([^\"]*)\".*", test_data), "insert record" );
+    EXPECT_EQ( regexp_extract_string(".*\"task\"\\s*:\\s*\"([^\"]*)\".*", test_data), "exampleCRUD" );
+}
+
+
+TEST( JsonioService, extractStringJson )
+{
+    std::string test_data = R"({"_id":"test/eCRUD",  "_key":
+                                "eCRUD" ,"properties":{"level":"insert record"},"task":"exampleCRUD"})";
+    EXPECT_EQ( extract_string_json("_id", test_data), "test/eCRUD" );
+    EXPECT_EQ( extract_string_json("_key", test_data), "eCRUD" );
+    EXPECT_EQ( extract_string_json("level", test_data), "insert record" );
+    EXPECT_EQ( extract_string_json("task", test_data), "exampleCRUD" );
+
+    EXPECT_EQ( extract_string_json("notexist", test_data), "" );
+    EXPECT_EQ( extract_int_json("task", test_data), 0 );
+
+    test_data = R"({
+                "_rev" :   "",
+                "_type" :   "vertex",
+                "_label" :   "element"
+           })";
+    EXPECT_EQ( extract_string_json("_type", test_data), "vertex" );
+    EXPECT_EQ( extract_string_json("_label", test_data), "element" );
+
+}
+
+TEST( JsonioService, extractIntJson )
+{
+    std::string test_data = "{ \"i1\": +5,  \"i2\":-8\t,\"properties\":{\t\"level\"\n: 15},\"task\":\n\r\f\v 10 \t}";
+    EXPECT_EQ( extract_int_json("i1", test_data), 5 );
+    EXPECT_EQ( extract_int_json("i2", test_data), -8 );
+    EXPECT_EQ( extract_int_json("level", test_data), 15 );
+    EXPECT_EQ( extract_int_json("task", test_data), 10 );
+
+    EXPECT_EQ( extract_string_json("task", test_data), "" );
+    EXPECT_EQ( extract_int_json("notexist", test_data), 0 );
+}
+
 
 TEST( JsonioService, Trim )
 {

@@ -22,10 +22,10 @@ public:
     using const_iterator = std::vector<std::shared_ptr<JsonSchema>>::const_iterator;
 
     /// Create object JSON value
-    static  JsonSchema object( const std::string& schema_name );
+    static  JsonSchema object( const std::string& aschema_name );
 
     // Create array JSON value
-    //static  JsonSchema array( const std::string& schema_name, const std::string& key = "top" )
+    //static  JsonSchema array( const std::string& aschema_name, const std::string& key = "top" )
     //{
     //    return JsonSchema( Array, key, "", nullptr );
     //}
@@ -77,7 +77,7 @@ public:
         {
             return get_child( idx );
         }
-        JARANGO_THROW( "JsonSchema", 21, "cannot use operator[] with a numeric argument with " + std::string( typeName() ) );
+        JSONIO_THROW( "JsonSchema", 21, "cannot use operator[] with a numeric argument with " + std::string( typeName() ) );
     }
 
     /// Return a reference to arr[i] if this is an array, exception otherwise.
@@ -88,7 +88,7 @@ public:
         {
             return get_child( idx );
         }
-        JARANGO_THROW( "JsonSchema", 22, "cannot use operator[] with a numeric argument with " + std::string( typeName() ) );
+        JSONIO_THROW( "JsonSchema", 22, "cannot use operator[] with a numeric argument with " + std::string( typeName() ) );
     }
 
 
@@ -100,7 +100,7 @@ public:
         {
             return get_child( key );
         }
-        JARANGO_THROW( "JsonSchema", 23, "cannot use operator[] with a string argument with " + std::string( typeName() ) );
+        JSONIO_THROW( "JsonSchema", 23, "cannot use operator[] with a string argument with " + std::string( typeName() ) );
     }
 
     /// Return a reference to object[key] if this is an object, exception otherwise.
@@ -111,7 +111,7 @@ public:
         {
             return get_child( key );
         }
-        JARANGO_THROW( "JsonSchema", 24, "cannot use operator[] with a string argument with " + std::string( typeName() ) );
+        JSONIO_THROW( "JsonSchema", 24, "cannot use operator[] with a string argument with " + std::string( typeName() ) );
     }
 
     /// @brief returns an iterator to one past the last element.
@@ -197,6 +197,12 @@ public:
     /// Set up defval values if the JSON type of elements is primitive.
     void array_resize( std::size_t size, const std::string &defval ) override;
 
+    /// Get field by fieldpath ("name1.name2.name3")
+    const JsonBase *field(  const std::string& fieldpath ) const override;
+
+    /// Return a reference to object[jsonpath] if an object can be create, exception otherwise.
+    JsonSchema &add_object_via_path(const std::string &jsonpath) override;
+
 protected:
 
     // Get methods ( using in Qt GUI model ) --------------------------
@@ -277,10 +283,12 @@ private:
     JsonSchema( JsonBase::Type atype, const std::string &akey, const std::string& avalue, JsonSchema *aparent  );
 
     void update_node(  JsonBase::Type atype, const std::string& avalue ) override;
-    JsonBase *append_node( const std::string& akey, JsonBase::Type atype, const std::string& avalue ) override;
+    JsonSchema *append_node( const std::string& akey, JsonBase::Type atype, const std::string& avalue ) override;
 
     /// Get field by fieldpath
     JsonSchema *field( std::queue<std::string> names ) const override;
+    /// Get field by idspath
+    JsonSchema *field( std::queue<int> ids ) const;
     /// Add field by fieldpath
     JsonSchema *field_add(std::queue<std::string> names) override;
 
@@ -319,7 +327,7 @@ private:
                      ( field_descrip == other.field_descrip and level_type == other.level_type)))  )
             {
                 if( use_exception )
-                    JARANGO_THROW( "JsonSchema", 10, "copy or move assignment unpossible"  );
+                    JSONIO_THROW( "JsonSchema", 10, "copy or move assignment unpossible"  );
                 else
                     return false;
             }
@@ -337,7 +345,7 @@ private:
                  ( atype == Type::Int or atype == Type::Double ) ) ) )
         {
             if( use_exception )
-                JARANGO_THROW( "JsonSchema", 11, "assignment of value of type is unpossible " + std::string( typeName() ) );
+                JSONIO_THROW( "JsonSchema", 11, "assignment of value of type is unpossible " + std::string( typeName() ) );
             else
                 return false;
         }

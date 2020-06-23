@@ -184,7 +184,7 @@ public:
         values.clear();
         if( isNull() )
             return true;
-        //JARANGO_THROW_IF( !isStructured(), "JsonBase", 11, "cannot use getArray with " + std::string( typeName() ) );
+        //JSONIO_THROW_IF( !isStructured(), "JsonBase", 11, "cannot use getArray with " + std::string( typeName() ) );
         if( !isStructured() )
             return false;
         typename T::value_type val;
@@ -206,7 +206,7 @@ public:
         values.clear();
         if( isNull() )
             return true;
-        //JARANGO_THROW_IF( !isStructured(), "JsonBase", 12, "cannot use getMapKey with " + std::string( typeName() ) );
+        //JSONIO_THROW_IF( !isStructured(), "JsonBase", 12, "cannot use getMapKey with " + std::string( typeName() ) );
         if( !isStructured() )
             return false;
         using Tkey = std::remove_const_t<typename Map::value_type::first_type>;
@@ -316,7 +316,7 @@ public:
     /// Set up defval values if the JSON type of elements is primitive
     virtual void array_resize_xD( const std::vector<size_t> &sizes, const std::string& defval )
     {
-        JARANGO_THROW_IF( !isArray(), "JsonBase", 11, "cannot resize not array data " + std::string( typeName() ) );
+        JSONIO_THROW_IF( !isArray(), "JsonBase", 11, "cannot resize not array data " + std::string( typeName() ) );
         resize_array_level( 0, sizes, defval  );
     }
 
@@ -328,7 +328,9 @@ public:
     // Field path  methods --------------------------
 
     /// Get field by fieldpath ("name1.name2.name3")
-    const JsonBase *field(  const std::string& fieldpath ) const;
+    virtual const JsonBase *field(  const std::string& fieldpath ) const;
+
+    virtual JsonBase *field( std::queue<std::string> names ) const = 0;
 
     /// Return a string representation of the jsonpath to top field.
     std::string get_path() const;
@@ -397,6 +399,12 @@ public:
         return false;
     }
 
+    /// Return a reference to object[jsonpath] if an object can be create, exception otherwise.
+    virtual JsonBase &add_object_via_path(const std::string &jsonpath) = 0;
+
+    /// Set _id to object
+    virtual void set_oid( const std::string& oid  );
+
 protected:
 
     // Get methods ( using in Qt GUI ) --------------------------
@@ -429,7 +437,6 @@ private:
     void dump2stream(std::ostream &os, int depth, bool dense) const;
     // Get field by fieldpath ("name1.name2.name3")
     //JsonBase *field(  const std::string& fieldpath ) const;
-    virtual JsonBase *field( std::queue<std::string> names ) const = 0;
     /// Get field by fieldpath ("name1.name2.name3")
     JsonBase *field_add(  const std::string& fieldpath );
     virtual JsonBase *field_add(std::queue<std::string> names) = 0;

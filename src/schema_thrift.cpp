@@ -113,7 +113,7 @@ void ThriftFieldDef::read_type_spec( const JsonFree& field_object,
 {
     auto it = name_to_thrift_types.find(typeID);
     if( it == name_to_thrift_types.end() )
-        JARANGO_THROW( "ThriftSchema", 1, "undefined field type " + typeID  );
+        JSONIO_THROW( "ThriftSchema", 1, "undefined field type " + typeID  );
 
     auto type = it->second;
     f_type_id.push_back(type);
@@ -122,7 +122,7 @@ void ThriftFieldDef::read_type_spec( const JsonFree& field_object,
     {
         auto nextobj = field_object[ keyspec ];
         if( !nextobj.get_value_via_path<std::string>(  key_class, class_name, "" ) )
-            JARANGO_THROW( "ThriftSchema", 2, "undefined class name "+typeID );
+            JSONIO_THROW( "ThriftSchema", 2, "undefined class name "+typeID );
         size_t pos = class_name.find_last_of('.');
         if( pos != std::string::npos)
             class_name.erase(0, pos+1);

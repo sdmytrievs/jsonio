@@ -27,7 +27,7 @@ int jsonio14_parse_test( const std::vector<std::string>& json_files )
             //std::cout <<  "Pass: " <<  " Result: "  <<  jsFree.dump(true) <<  std::endl;
             std::cout <<  "Pass: " <<  file <<  std::endl;
         }
-        catch( jsonio14::jarango_exception& e )
+        catch( jsonio14::jsonio_exception& e )
         {
             std::cout << "Fail: " << file <<  "  Exeption: "  <<  e.what() <<  std::endl;
         }

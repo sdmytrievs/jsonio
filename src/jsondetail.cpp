@@ -85,7 +85,7 @@ std::queue<int> split_int( const std::string& str_data, const std::string& delim
             res.push( value );
         }
         else {
-          JARANGO_THROW( "detail", 1, "illegal input value " + str_data );
+          JSONIO_THROW( "detail", 1, "illegal input value " + str_data );
         }
         str = str.substr( pos + delimiter.length() );
         pos = str.find( delimiter );

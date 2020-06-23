@@ -64,7 +64,7 @@ public:
     template <class T>
     JsonFree &operator =( const T& value )
     {
-        this->set_from( value  );
+        this->set_from( value );
         return *this;
     }
 
@@ -76,7 +76,7 @@ public:
         {
             return get_child( idx );
         }
-        JARANGO_THROW( "JsonFree", 21, "cannot use operator[] with a numeric argument with " + std::string( typeName() ) );
+        JSONIO_THROW( "JsonFree", 21, "cannot use operator[] with a numeric argument with " + std::string( typeName() ) );
     }
 
     /// Return a reference to arr[i] if this is an array, exception otherwise.
@@ -87,7 +87,7 @@ public:
         {
             return get_child( idx );
         }
-        JARANGO_THROW( "JsonFree", 22, "cannot use operator[] with a numeric argument with " + std::string( typeName() ) );
+        JSONIO_THROW( "JsonFree", 22, "cannot use operator[] with a numeric argument with " + std::string( typeName() ) );
     }
 
 
@@ -99,7 +99,7 @@ public:
         {
             return get_child( key );
         }
-        JARANGO_THROW( "JsonFree", 23, "cannot use operator[] with a string argument with " + std::string( typeName() ) );
+        JSONIO_THROW( "JsonFree", 23, "cannot use operator[] with a string argument with " + std::string( typeName() ) );
     }
 
     /// Return a reference to object[key] if this is an object, exception otherwise.
@@ -112,7 +112,7 @@ public:
         {
             return get_child( key );
         }
-        JARANGO_THROW( "JsonFree", 24, "cannot use operator[] with a string argument with " + std::string( typeName() ) );
+        JSONIO_THROW( "JsonFree", 24, "cannot use operator[] with a string argument with " + std::string( typeName() ) );
     }
 
     /// @brief returns an iterator to one past the last element.
@@ -170,8 +170,10 @@ public:
     /// Set up defval values if the JSON type of elements is primitive.
     void array_resize( std::size_t size, const std::string &defval ) override;
 
+    using JsonBase::field;
+
     /// Return a reference to object[jsonpath] if an object can be create, exception otherwise.
-    JsonFree &add_object_via_path(const std::string &jsonpath);
+    JsonFree &add_object_via_path(const std::string &jsonpath) override;
 
 protected:
 
@@ -220,7 +222,7 @@ private:
     JsonFree( JsonBase::Type atype, const std::string &akey, const std::string& avalue, JsonFree *aparent  );
 
     void update_node(  JsonBase::Type atype, const std::string& avalue ) override;
-    JsonBase *append_node( const std::string& akey, JsonBase::Type atype, const std::string& avalue ) override;
+    JsonFree *append_node( const std::string& akey, JsonBase::Type atype, const std::string& avalue ) override;
     /// Get field by fieldpath
     JsonFree *field( std::queue<std::string> names ) const override;
     /// Add field by fieldpath

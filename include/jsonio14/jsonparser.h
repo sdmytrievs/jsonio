@@ -1,9 +1,12 @@
 #pragma once
 
-#include "jsonio14/jsonbuilder.h"
+#include "jsonio14/jsonbase.h"
 
 namespace jsonio14 {
 
+class JsonBuilderBase;
+class JsonObjectBuilder;
+class JsonArrayBuilder;
 
 /// Class for read JsonBase structure from json string.
 class JsonParser final

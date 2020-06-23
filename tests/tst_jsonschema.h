@@ -56,9 +56,9 @@ TEST( JsonioSchemaJson, ObjectSimple)
                                          "\"vlist\":[17,27,11],\"vmap\":{\"key1\":\"val1\",\"key2\":\"val2\",\"key3\":\"10\"}}\n" );
 
     // exception undefined field
-    EXPECT_THROW( simple_object["no_exist"], jarango_exception );
+    EXPECT_THROW( simple_object["no_exist"], jsonio_exception );
     // exception not next index
-    EXPECT_THROW( simple_object["vlist"][10], jarango_exception );
+    EXPECT_THROW( simple_object["vlist"][10], jsonio_exception );
 }
 
 
@@ -91,5 +91,31 @@ TEST( JsonioSchemaJson, ObjectComplex)
                                             "\"formats\":{\"new\":{\"width\":10,\"precision\":8}},"
                                             "\"data\":[{\"group\":\"the group\",\"value\":100000}],"
                                             "\"values\":[[1,2],[3,4]]}\n" );
+}
+
+
+TEST( JsonioSchemaJson, fieldOidPath )
+{
+    ioSettings().addSchemaFormat(schema_thrift, schema_str);
+    auto obj = json::loads( "ComplexSchemaTest", complex_schema_value );
+
+    std::string sval;
+    EXPECT_TRUE( obj.get_value_via_path( "about.description", sval, std::string("undef") ) );
+    EXPECT_EQ( sval, "About");
+    EXPECT_TRUE( obj.get_value_via_path( "1.4", sval, std::string("undef") ) );
+    EXPECT_EQ( sval, "About");
+    double dval;
+    EXPECT_TRUE( obj.get_value_via_path( "formats.float.width", dval, 1.5 ) );
+    EXPECT_EQ( dval, 10);
+    EXPECT_TRUE( obj.get_value_via_path( "2.1.1", dval, 1.5 ) );
+    EXPECT_EQ( dval, 10);
+    EXPECT_TRUE( obj.get_value_via_path( "data.1.value", dval, 1.5 ) );
+    EXPECT_EQ( dval, 100);
+    EXPECT_TRUE( obj.get_value_via_path( "3.1.2", dval, 1.5 ) );
+    EXPECT_EQ( dval, 100);
+    EXPECT_FALSE( obj.get_value_via_path( "data.4.value", dval, 1.5 ) );
+    EXPECT_EQ( dval, 1.5);
+    EXPECT_FALSE( obj.get_value_via_path( "3.4.2", dval, 1.5 ) );
+    EXPECT_EQ( dval, 1.5);
 }
 

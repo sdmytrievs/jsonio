@@ -46,7 +46,7 @@ public:
     }
     /// Field Type or all "typeId"+"type"+"elemTypeId"+"elemTypeId"  - all levels
     virtual FieldType type( size_t level=0 ) const override {
-        JARANGO_THROW_IF( level >= f_type_id.size(), "ThriftSchema", 2, "undefined field level " );
+        JSONIO_THROW_IF( level >= f_type_id.size(), "ThriftSchema", 2, "undefined field level " );
         return f_type_id[level];
     }
     /// A requiredness attribute (FieldRequered)
@@ -64,6 +64,9 @@ public:
 
     /// Default value
     virtual std::string  defaultValue()const override {
+
+        if( !f_default.empty() && type() == T_BOOL)  // problems for thrift parser
+          return ( f_default=="0" or f_default=="false" ? "false": "true" );
         return f_default;
     }
     virtual double minValue()const override {

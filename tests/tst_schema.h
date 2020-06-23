@@ -110,7 +110,7 @@ TEST( JsonioSchema, ComplexField )
     EXPECT_EQ( dfield->description(), "Description of task " );
     EXPECT_EQ( dfield->className(), "Describe" );
     EXPECT_EQ( dfield->defaultValue(), "{\"version\":1}\n" );
-    EXPECT_THROW( dfield->type(1), jarango_exception );
+    EXPECT_THROW( dfield->type(1), jsonio_exception );
 
     dfield = schem_spec->getField("values");
     EXPECT_EQ( dfield->id(), 4 );

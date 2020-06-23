@@ -2,7 +2,6 @@
 
 #include <iostream>
 #include <vector>
-#include "jsonio14/txt2file.h"
 #include "jsonio14/schema.h"
 
 namespace jsonio14 {
@@ -60,9 +59,9 @@ public:
     ///     "[\"name1\"][\"name2\"][3][\"name3\"]"
     /// @return true if modified.
     template <class T>
-    bool setValue( const std::string& jsonpath, const T& value  )
+    bool setValue( const std::string& jsonpath, const T& avalue  )
     {
-        if( head_object->set_value_via_path( jsonpath, value ) )
+        if( head_object->set_value_via_path( jsonpath, avalue ) )
         {
             sync();
             return true;
@@ -70,9 +69,9 @@ public:
         return false;
     }
 
-    bool setValue( const std::string& jsonpath, const char* value  )
+    bool setValue( const std::string& jsonpath, const char* avalue  )
     {
-        return setValue( jsonpath, std::string(value) );
+        return setValue( jsonpath, std::string(avalue) );
     }
 
 protected:
@@ -80,7 +79,7 @@ protected:
     /// Constructor
     SectionSettings( const JsonioSettings& iosettins,
                      JsonFree* topData ):
-        io_settins( iosettins ),head_object( topData )
+        io_settins( iosettins ), head_object( topData )
     { }
 
     /// Full configuration data.
@@ -149,6 +148,12 @@ public:
     void setValue( const char *jsonpath, const T& avalue )
     {
         top_section.setValue( jsonpath, avalue);
+    }
+
+    /// @brief Dump settings to JSON string.
+    std::string dump() const
+    {
+        return  all_settings.dump( true );
     }
 
     /// Writes any unsaved changes to permanent storage
