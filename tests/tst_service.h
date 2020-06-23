@@ -19,6 +19,10 @@ TEST( JsonioService, regexpSplit )
     EXPECT_EQ( "[ \"1\", \"22\", \"333\" ]", json::dump(tokens) );
     auto strquery = regexp_split("a:bb:ccc", ":" );
     EXPECT_EQ( "[ \"a\", \"bb\", \"ccc\" ]", json::dump(strquery) );
+
+    tokens = regexp_split( " \"aaa\", \"bbb\", \"ccc\" ", "[\",\\s]+" );
+    std::cout << json::dump(tokens) << std::endl;
+    EXPECT_EQ( "[ \"\", \"aaa\", \"bbb\", \"ccc\" ]", json::dump(tokens) );
 }
 
 //  Function that can be used to extract tokens using regexp
@@ -29,9 +33,10 @@ TEST( JsonioService, regexpExtract )
     EXPECT_EQ( "[ \"%h11\", \"%h22\", \"%h33\" ]", json::dump(tokens) );
 
     tokens = regexp_extract(
-                    "\"limitsTP\":null,\"m_compressibility\":10,\"m_expansivity\":null,\"name\":\"Al(OH)4-\",\"reaction\":null,",
-                               "(?!,)[^,\n]+(?=null,)" );
+                "\"limitsTP\":null,\"m_compressibility\":10,\"m_expansivity\":null,\"name\":\"Al(OH)4-\",\"reaction\":null,",
+                "(?!,)[^,\n]+(?=null,)" );
     EXPECT_EQ( "[ \"\\\"limitsTP\\\":\", \"\\\"m_expansivity\\\":\", \"\\\"reaction\\\":\" ]", json::dump(tokens) );
+
 }
 
 //  Function that can be used to replase text using regexp

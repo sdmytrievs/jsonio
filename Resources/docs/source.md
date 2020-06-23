@@ -304,6 +304,8 @@ To do:
 - add top level std::shared_ptr
 - implement examples and tests for database part
 
+https://en.cppreference.com/w/cpp/utility/optional
+
 ## Database
 
 
