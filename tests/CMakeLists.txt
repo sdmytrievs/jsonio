@@ -37,4 +37,10 @@ target_include_directories(test_main PRIVATE
 ${CMAKE_CURRENT_SOURCE_DIR}/../src
 )
 
-add_test(NAME test_main COMMAND test_main)
+add_test(NAME test_main COMMAND ./tests/test_main)
+
+#https://cliutils.gitlab.io/modern-cmake/chapters/testing/googletest.html
+#https://github.com/TusharChugh/travis-gcov-gtest-example/blob/master/.travis.yml
+#ctest --extra-verbose --output-on-failure
+#https://cmake.org/cmake/help/v3.7/manual/ctest.1.html
+#https://cmake.org/cmake/help/v3.10/module/GoogleTest.html
