@@ -10,13 +10,30 @@ set(Examples
         schema_example
         coll_time_test
         coll_query_example
-)
+        time_parser )
 
 foreach (exampleName ${Examples})
     add_executable(${exampleName} ${exampleName}.cpp)
-    target_link_libraries(${exampleName} jsonio14 stdc++fs  jsonarango curl  velocypack pthread )
+    if(${CMAKE_CXX_COMPILER_ID} STREQUAL MSVC)
+          target_link_libraries(${exampleName}
+                PUBLIC jsonio14-static
+                PUBLIC stdc++fs
+                PUBLIC jsonarango-static
+                PRIVATE velocypack
+                PRIVATE libcurl
+                PUBLIC pthread )
+    else()
+          target_link_libraries( ${exampleName}
+               PUBLIC jsonio14
+               PUBLIC stdc++fs
+               PUBLIC jsonarango
+               PUBLIC velocypack
+               PUBLIC curl
+               PUBLIC pthread )
+    endif()
+#target_link_libraries(${exampleName} jsonio14 stdc++fs  jsonarango curl  velocypack pthread )
 endforeach()
 
-add_executable(time_parser time_parser.cpp)
-target_link_libraries(time_parser jsonio14 stdc++fs jsonarango curl  velocypack )
+#add_executable(time_parser time_parser.cpp)
+#target_link_libraries(time_parser jsonio14 stdc++fs jsonarango curl  velocypack )
 

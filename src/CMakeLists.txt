@@ -14,8 +14,25 @@ add_library(JSONIO14_OBJECTS OBJECT ${HEADER_FILES} ${SOURCE_FILES} )
 # Check if a shared library is to be built
 if(BUILD_SHARED_LIBS)
     add_library(JSONIO14_SHARED SHARED $<TARGET_OBJECTS:JSONIO14_OBJECTS>)
+
+if(${CMAKE_CXX_COMPILER_ID} STREQUAL MSVC)
+      target_link_libraries(JSONIO14_SHARED
+            PUBLIC stdc++fs
+            PUBLIC jsonarango-static
+            PRIVATE velocypack
+            PRIVATE libcurl
+            PUBLIC pthread )
+else()
+      target_link_libraries( JSONIO14_SHARED
+           PUBLIC stdc++fs
+           PUBLIC jsonarango
+           PUBLIC velocypack
+           PUBLIC curl
+           PUBLIC pthread )
+endif()
+
 #if( ${CMAKE_CXX_COMPILER_ID} MATCHES "Clang")
-    target_link_libraries(JSONIO14_SHARED stdc++fs )
+#    target_link_libraries(JSONIO14_SHARED stdc++fs )
 #endif()
     set_target_properties(JSONIO14_SHARED PROPERTIES OUTPUT_NAME jsonio14)
     install(TARGETS JSONIO14_SHARED DESTINATION lib)
@@ -24,7 +41,7 @@ endif()
 # Check if a static library is to be built
 if(BUILD_STATIC_LIBS)
     add_library(JSONIO14_STATIC STATIC $<TARGET_OBJECTS:JSONIO14_OBJECTS>)
-    set_target_properties(JSONIO14_STATIC PROPERTIES OUTPUT_NAME jsonio14)
+    set_target_properties(JSONIO14_STATIC PROPERTIES OUTPUT_NAME jsonio14-static)
     install(TARGETS JSONIO14_STATIC DESTINATION lib)
 endif()
 
