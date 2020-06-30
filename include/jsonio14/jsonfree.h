@@ -157,7 +157,6 @@ public:
     /// Important: get only sizes of first children.
     std::vector<size_t> array_sizes() const override;
 
-
     // Update methods  --------------------------
 
     /// Clear field and set value to default (empty or 0).

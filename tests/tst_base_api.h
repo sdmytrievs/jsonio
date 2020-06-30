@@ -148,6 +148,12 @@ TYPED_TEST( JsonioBaseTest, getTypeSize )
     EXPECT_FALSE( obj["vlist"].empty() );
     EXPECT_FALSE( obj["vmap"].empty() );
     EXPECT_TRUE( obj["vbool"].empty() );
+
+    EXPECT_THROW( obj["vdouble"].child(0), jsonio_exception  );
+    EXPECT_EQ( obj["vlist"][3].dump(), obj["vlist"].child(3).dump() );
+    EXPECT_EQ( obj["vmap"]["key1"].dump(), obj["vmap"].child(0).dump() );
+    EXPECT_EQ( obj["vdouble"].dump(), obj.child(2).dump() );
+
 }
 
 /*

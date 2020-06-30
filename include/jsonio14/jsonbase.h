@@ -129,6 +129,14 @@ public:
     /// Important: get only sizes of first children.
     virtual std::vector<size_t> array_sizes() const = 0;
 
+    virtual const JsonBase& child( size_t ii ) const
+    {
+        auto cild_ptr = getChild(ii);
+        if( cild_ptr )
+            return *cild_ptr;
+        JSONIO_THROW( "JsonBase", 19, "cannot use child with " + std::to_string( ii ) );
+    }
+
     // Get values  --------------------------
 
     /// Get internal data to json string
