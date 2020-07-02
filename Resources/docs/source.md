@@ -301,16 +301,16 @@ class GraphTraversal implementation traversal of graph  for Database
 
 To do:
 
+- Implement examples and tests for database part ( try use googlemock )
+http://artlang.net/post/unit-testirovaniye-c++-mock-obyekty-google-c++-mocking-framework/
+
+
+- Finish work about jsonimpex
+- Do work about jsonui
 - add top level std::shared_ptr
-- implement examples and tests for database part
 
-https://en.cppreference.com/w/cpp/utility/optional
+## Important links  --------------------------------------------------------------------------------
 
-## Database
-
-
-Work about jsonimpex
-Work about jsonui
 
 https://gist.github.com/Cartexius/4c437c084d6e388288201aadf9c8cdd5
 
@@ -328,3 +328,6 @@ sudo apt-get install -y googletest
 
 // http://www.vishalchovatiya.com/21-new-features-of-modern-cpp-to-use-in-your-project/
 // 21 new features of Modern C++ to use in your project
+
+- tried change pointer to "optional" value - not works for reference values.
+https://en.cppreference.com/w/cpp/utility/optional
