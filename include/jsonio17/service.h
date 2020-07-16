@@ -5,6 +5,7 @@
 #include <cmath>
 #include <limits>
 #include <algorithm>
+#include <cwctype>
 
 namespace jsonio17 {
 
