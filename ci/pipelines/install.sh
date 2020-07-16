@@ -24,5 +24,6 @@ cmake -GNinja \
     -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_INSTALL_LIBDIR=lib \
     ..
+ninja
 ninja install
 conda list
