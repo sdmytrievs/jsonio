@@ -26,5 +26,5 @@ cmake -DCMAKE_BUILD_TYPE=Release \
       ..
 # Build step
 make #-j${CPU_COUNT}
-#make install
+make install
 conda list

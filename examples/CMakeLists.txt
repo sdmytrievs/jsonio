@@ -24,7 +24,7 @@ foreach (exampleName ${Examples})
                 PUBLIC pthread )
     else()
           target_link_libraries( ${exampleName}
-               PUBLIC jsonio17
+               PRIVATE jsonio17
                PUBLIC stdc++fs
                PUBLIC jsonarango
                PUBLIC velocypack
