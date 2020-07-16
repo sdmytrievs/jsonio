@@ -7,7 +7,7 @@
 #include <queue>
 //#include "type_test.h"
 
-namespace jsonio14 {
+namespace jsonio17 {
 
 
 /// Basic class for read/write scalar/array to format.
@@ -81,4 +81,4 @@ std::queue<int> split_int( const std::string& str_data, const std::string& delim
 /// A split string function  ( "a;b;c" to  { "a", "b", "c" } )
 std::queue<std::string> split(const std::string& str, const std::string& delimiters);
 
-} // namespace jsonio14
+} // namespace jsonio17

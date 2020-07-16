@@ -1,12 +1,12 @@
-#include "jsonio14/io_settings.h"
-#include "jsonio14/schema_thrift.h"
-#include "jsonio14/dbconnect.h"
+#include "jsonio17/io_settings.h"
+#include "jsonio17/schema_thrift.h"
+#include "jsonio17/dbconnect.h"
 
-namespace jsonio14 {
+namespace jsonio17 {
 
 const std::string version = "v1.0";
 //const std::string groupName = "jsonio";
-std::string JsonioSettings::settingsFileName = "jsonio14-config.json";
+std::string JsonioSettings::settingsFileName = "jsonio17-config.json";
 
 JsonioSettings& ioSettings()
 {

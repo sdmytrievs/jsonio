@@ -1,8 +1,8 @@
-#include "jsonio14/dbschemadoc.h"
-#include "jsonio14/jsondump.h"
-#include "jsonio14/io_settings.h"
+#include "jsonio17/dbschemadoc.h"
+#include "jsonio17/jsondump.h"
+#include "jsonio17/io_settings.h"
 
-namespace jsonio14 {
+namespace jsonio17 {
 
 DBSchemaDocument *DBSchemaDocument::newSchemaDocumentQuery( const DataBase &dbconnect, const std::string &aschema_name,
                                                             const std::string &collection_name, DBQueryBase &&query)
@@ -111,4 +111,4 @@ field_value_map_t DBSchemaDocument::extract_fields(const std::vector<std::string
     return extract_fields( queryFields, jsonbase );
 }
 
-} // namespace jsonio14
+} // namespace jsonio17

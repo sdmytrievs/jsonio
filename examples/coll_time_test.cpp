@@ -4,12 +4,12 @@
 /// Time test example for ArangoDBCollectionAPI the API for manipulating collections and documents into.
 
 #include <iostream>
-#include "jsonio14/jsonfree.h"
-//#include "jsonio14/dbcollection.h"
-#include "jsonio14/dbvertexdoc.h"
-#include "jsonio14/dbquerybase.h"
-#include "jsonio14/io_settings.h"
-using namespace jsonio14;
+#include "jsonio17/jsonfree.h"
+//#include "jsonio17/dbcollection.h"
+#include "jsonio17/dbvertexdoc.h"
+#include "jsonio17/dbquerybase.h"
+#include "jsonio17/io_settings.h"
+using namespace jsonio17;
 
 
 using time_point_t = std::chrono::time_point<std::chrono::high_resolution_clock>;
@@ -48,7 +48,7 @@ int substances_vertex( DataBase& connect );
 
 int main(int argc, char* argv[])
 {
-    JsonioSettings::settingsFileName = "jsonio14-config.json";
+    JsonioSettings::settingsFileName = "jsonio17-config.json";
 
     if( argc > 1)
         documentsInCollection = std::stoi(argv[1]);
@@ -58,7 +58,7 @@ int main(int argc, char* argv[])
 
     try{
 
-        // Connect to Arangodb ( load settings from "jsonio14-config.json" config file )
+        // Connect to Arangodb ( load settings from "jsonio17-config.json" config file )
         DataBase db;
 
         different_query_types( db );

@@ -4,13 +4,13 @@
 #include <memory>
 #include <map>
 #include <set>
-#include "jsonio14/service.h"
+#include "jsonio17/service.h"
 
 namespace arangocpp {
 class ArangoDBQuery;
 }
 
-namespace jsonio14 {
+namespace jsonio17 {
 
 class JsonBase;
 class JsonFree;
@@ -306,5 +306,5 @@ protected:
 
 };
 
-} // namespace jsonio14
+} // namespace jsonio17
 

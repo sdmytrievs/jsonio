@@ -16,13 +16,15 @@ conda install conda-devenv
 conda update -q conda
 conda info -a
 conda devenv
-source activate jsonio14
+source activate jsonio17
 mkdir build
 cd build
 # Configure step
 cmake -GNinja \
     -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_INSTALL_LIBDIR=lib \
+    -DBuildExamples=OFF \
     ..
+ninja
 ninja install
 conda list

@@ -5,14 +5,14 @@
 #include <list>
 #include <map>
 #include <unordered_map>
-#include "jsonio14/jsonfree.h"
-#include "jsonio14/jsonschema.h"
-#include "jsonio14/io_settings.h"
-#include "jsonio14/schema_thrift.h"
+#include "jsonio17/jsonfree.h"
+#include "jsonio17/jsonschema.h"
+#include "jsonio17/io_settings.h"
+#include "jsonio17/schema_thrift.h"
 #include "example_schema.h"
 
 using namespace testing;
-using namespace jsonio14;
+using namespace jsonio17;
 
 
 template <typename T>
@@ -148,6 +148,12 @@ TYPED_TEST( JsonioBaseTest, getTypeSize )
     EXPECT_FALSE( obj["vlist"].empty() );
     EXPECT_FALSE( obj["vmap"].empty() );
     EXPECT_TRUE( obj["vbool"].empty() );
+
+    EXPECT_THROW( obj["vdouble"].child(0), jsonio_exception  );
+    EXPECT_EQ( obj["vlist"][3].dump(), obj["vlist"].child(3).dump() );
+    EXPECT_EQ( obj["vmap"]["key1"].dump(), obj["vmap"].child(0).dump() );
+    EXPECT_EQ( obj["vdouble"].dump(), obj.child(2).dump() );
+
 }
 
 /*

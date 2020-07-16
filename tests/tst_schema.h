@@ -3,13 +3,13 @@
 #include <gtest/gtest.h>
 
 
-#include "jsonio14/jsondump.h"
-#include "jsonio14/schema_thrift.h"
+#include "jsonio17/jsondump.h"
+#include "jsonio17/schema_thrift.h"
 #include "example_schema.h"
 
 
 using namespace testing;
-using namespace jsonio14;
+using namespace jsonio17;
 
 
 TEST( JsonioSchema, Struct )

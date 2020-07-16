@@ -1,8 +1,8 @@
 #pragma once
 
-#include "jsonio14/jsonbase.h"
+#include "jsonio17/jsonbase.h"
 
-namespace jsonio14 {
+namespace jsonio17 {
 
 class JsonFree;
 class JsonSchema;
@@ -82,5 +82,5 @@ void undumpString( std::string& strvalue );
 
 } // namespace json
 
-} // namespace jsonio14
+} // namespace jsonio17
 

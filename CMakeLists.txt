@@ -2,7 +2,7 @@
 cmake_minimum_required(VERSION 3.7)
 
 # Set the name of the project
-project(jsonio14 CXX C)
+project(jsonio17 CXX C)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_CXX_STANDARD 17)
@@ -68,20 +68,21 @@ if(${CMAKE_CXX_COMPILER_ID} STREQUAL MSVC)
         /D_CRT_SECURE_NO_WARNINGS=1
         /MP4
         /EHsc
+        /Od
         /D_SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING
         /DNOMINMAX
     )
 endif()
 
 
-# Set the jsonio14 source directory path
-set(JSONIO14_SOURCE_DIR ${CMAKE_SOURCE_DIR}/src)
-set(JSONIO14_HEADER_DIR ${CMAKE_SOURCE_DIR}/include)
+# Set the jsonio17 source directory path
+set(JSONIO17_SOURCE_DIR ${CMAKE_SOURCE_DIR}/src)
+set(JSONIO17_HEADER_DIR ${CMAKE_SOURCE_DIR}/include)
 
 
 # Set the include directories
-include_directories(${JSONIO14_SOURCE_DIR})
-include_directories(${JSONIO14_HEADER_DIR})
+include_directories(${JSONIO17_SOURCE_DIR})
+include_directories(${JSONIO17_HEADER_DIR})
 if(${CMAKE_CXX_COMPILER_ID} MATCHES "Clang")
     include_directories("/usr/local/include")
     link_directories("/usr/local/lib")

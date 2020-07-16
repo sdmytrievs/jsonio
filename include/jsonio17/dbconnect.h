@@ -3,14 +3,14 @@
 #include <memory>
 #include <thread>
 #include <shared_mutex>
-#include "jsonio14/dbdriverbase.h"
-#include "jsonio14/schema.h"
+#include "jsonio17/dbdriverbase.h"
+#include "jsonio17/schema.h"
 
 // https://en.cppreference.com/w/cpp/thread/shared_mutex
 // https://ncona.com/2019/03/read-write-mutex-with-shared_mutex/
 
 
-namespace jsonio14 {
+namespace jsonio17 {
 
 /// Table of correspondence data.
 using datamap_t = std::map<std::string, std::string>;
@@ -171,6 +171,6 @@ protected:
 
 };
 
-} // namespace jsonio14
+} // namespace jsonio17
 
 

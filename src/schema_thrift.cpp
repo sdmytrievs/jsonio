@@ -1,10 +1,10 @@
 
-#include "jsonio14/schema_thrift.h"
-#include "jsonio14/service.h"
-#include "jsonio14/jsondump.h"
+#include "jsonio17/schema_thrift.h"
+#include "jsonio17/service.h"
+#include "jsonio17/jsondump.h"
 
 
-namespace jsonio14 {
+namespace jsonio17 {
 
 static const char * key_name = "name";
 static const char * key_doc = "doc";
@@ -242,4 +242,4 @@ void ThriftSchemaRead( const std::string& jsondata, schema_files_t& files,
 }
 
 
-} // namespace jsonio14
+} // namespace jsonio17

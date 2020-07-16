@@ -8,12 +8,12 @@ RETURN e
 */
 
 #include <iostream>
-#include "jsonio14/dbedgedoc.h"
-#include "jsonio14/dbconnect.h"
-#include "jsonio14/io_settings.h"
+#include "jsonio17/dbedgedoc.h"
+#include "jsonio17/dbconnect.h"
+#include "jsonio17/io_settings.h"
 
 
-namespace jsonio14 {
+namespace jsonio17 {
 
 
 DBEdgeDocument* documentAllEdges( const DataBase& dbconnect )
@@ -77,4 +77,4 @@ std::string DBEdgeDocument::extractSchemaFromId(const std::string &oid)
 }
 
 
-} // namespace jsonio14
+} // namespace jsonio17

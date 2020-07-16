@@ -23,22 +23,19 @@ win32 {
   INCLUDEPATH   += "C:\usr\local\include"
   DEPENDPATH   += "C:\usr\local\include"
   LIBPATH += "C:\usr\local\lib"
-  INCLUDEPATH   += "C:\usr\local\boost\include\boost-1_70"
-  DEPENDPATH   += "C:\usr\local\boost\include\boost-1_70"
-  LIBPATH += "C:\usr\local\boost\lib"
 }
 
-# Define the directory where jsonio14 source code is located
-JSONIO14_DIR =  $$PWD/src
-JSONIO14_HEADERS_DIR =  $$PWD/include
+# Define the directory where jsonio17 source code is located
+JSONIO17_DIR =  $$PWD/src
+JSONIO17_HEADERS_DIR =  $$PWD/include
 TESTS_DIR =  $$PWD/tests
 
-DEPENDPATH   += $$JSONIO14_DIR
-DEPENDPATH   += $$JSONIO14_HEADERS_DIR
+DEPENDPATH   += $$JSONIO17_DIR
+DEPENDPATH   += $$JSONIO17_HEADERS_DIR
 DEPENDPATH   += $$TESTS_DIR
 
-INCLUDEPATH   += $$JSONIO14_DIR
-INCLUDEPATH   += $$JSONIO14_HEADERS_DIR
+INCLUDEPATH   += $$JSONIO17_DIR
+INCLUDEPATH   += $$JSONIO17_HEADERS_DIR
 INCLUDEPATH   += $$TESTS_DIR
 
 LIBS +=  -lstdc++fs
@@ -47,7 +44,7 @@ LIBS +=  -ljsonarango -lcurl  -lvelocypack
 OBJECTS_DIR   = obj
 
 include($$TESTS_DIR/gtest_dependency.pri)
-include($$JSONIO14_DIR/jsonio14.pri)
+include($$JSONIO17_DIR/jsonio17.pri)
 
 HEADERS += \
         $$TESTS_DIR/example_schema.h \

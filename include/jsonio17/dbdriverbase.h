@@ -6,7 +6,7 @@
 #include <vector>
 #include <set>
 
-namespace jsonio14 {
+namespace jsonio17 {
 
 class JsonBase;
 class DBQueryBase;
@@ -130,6 +130,6 @@ public:
 };
 
 
-} // namespace jsonio14
+} // namespace jsonio17
 
 

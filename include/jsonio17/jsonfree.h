@@ -3,10 +3,10 @@
 #include <memory>
 #include <algorithm>
 
-#include "jsonio14/exceptions.h"
-#include "jsonio14/jsonbase.h"
+#include "jsonio17/exceptions.h"
+#include "jsonio17/jsonbase.h"
 
-namespace jsonio14 {
+namespace jsonio17 {
 
 
 /// @brief a class to store JSON object
@@ -157,7 +157,6 @@ public:
     /// Important: get only sizes of first children.
     std::vector<size_t> array_sizes() const override;
 
-
     // Update methods  --------------------------
 
     /// Clear field and set value to default (empty or 0).
@@ -262,4 +261,4 @@ private:
 /// Set up string json value to array or struct field
 //void setComplexValue(const std::string& newval );
 
-} // namespace jsonio14
+} // namespace jsonio17

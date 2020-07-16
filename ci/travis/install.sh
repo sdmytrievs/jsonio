@@ -17,7 +17,7 @@ conda install conda-devenv
 conda update -q conda
 conda info -a
 conda devenv
-source activate jsonio14
+source activate jsonio17
 mkdir build
 cd build
 cmake -DCMAKE_BUILD_TYPE=Release \
@@ -26,5 +26,5 @@ cmake -DCMAKE_BUILD_TYPE=Release \
       ..
 # Build step
 make #-j${CPU_COUNT}
-#make install
+make install
 conda list

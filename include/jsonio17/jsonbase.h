@@ -3,11 +3,11 @@
 #include <iostream>
 #include <vector>
 #include <set>
-#include "jsonio14/exceptions.h"
-#include "jsonio14/type_test.h"
-#include "jsonio14/jsondetail.h"
+#include "jsonio17/exceptions.h"
+#include "jsonio17/type_test.h"
+#include "jsonio17/jsondetail.h"
 
-namespace jsonio14 {
+namespace jsonio17 {
 
 using list_names_t =  std::vector<std::string>;
 using set_names_t =  std::set<std::string>;
@@ -128,6 +128,14 @@ public:
     /// Get sizes of complex array ( 2D, 3D ... ).
     /// Important: get only sizes of first children.
     virtual std::vector<size_t> array_sizes() const = 0;
+
+    virtual const JsonBase& child( size_t ii ) const
+    {
+        auto cild_ptr = getChild(ii);
+        if( cild_ptr )
+            return *cild_ptr;
+        JSONIO_THROW( "JsonBase", 19, "cannot use child with " + std::to_string( ii ) );
+    }
 
     // Get values  --------------------------
 
@@ -493,4 +501,4 @@ template <> JsonBase::Type JsonBase::typeTraits( const bool& );
 template <> JsonBase::Type JsonBase::typeTraits( const char& );
 template <> JsonBase::Type JsonBase::typeTraits( const std::string& );
 
-} // namespace jsonio14
+} // namespace jsonio17

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "jsonio14/dbdriverbase.h"
+#include "jsonio17/dbdriverbase.h"
 
 namespace arangocpp {
 enum class CollectionTypes;
@@ -8,7 +8,7 @@ class ArangoDBConnection;
 class ArangoDBCollectionAPI;
 }
 
-namespace jsonio14 {
+namespace jsonio17 {
 
 /// Implementation of Database Driver using Low-Level C++ Driver for ArangoDB.
 class ArangoDBClient: public AbstractDBDriver
@@ -132,6 +132,6 @@ protected:
 };
 
 
-} // namespace jsonio14
+} // namespace jsonio17
 
 

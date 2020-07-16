@@ -1,10 +1,10 @@
 
-#include "jsonio14/dbquerybase.h"
-#include "jsonio14/jsonfree.h"
+#include "jsonio17/dbquerybase.h"
+#include "jsonio17/jsonfree.h"
 #include "jsonarango/arangoquery.h"
 
 
-namespace jsonio14 {
+namespace jsonio17 {
 
 arangocpp::ArangoDBQuery::QueryType to_arrango_query_type( DBQueryBase::QType qtype );
 DBQueryBase::QType to_base_query_types( arangocpp::ArangoDBQuery::QueryType arango_type );
@@ -358,6 +358,6 @@ std::string DBQueryResult::getFirstKey() const
 }
 
 
-} // namespace jsonio14
+} // namespace jsonio17
 
 

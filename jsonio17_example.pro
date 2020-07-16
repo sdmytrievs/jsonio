@@ -39,23 +39,23 @@ win32 {
 }
 
 # Define the directory where jsonArango source code is located
-JSONIO14_DIR =  $$PWD/src
-JSONIO14_HEADERS_DIR =  $$PWD/include
+JSONIO17_DIR =  $$PWD/src
+JSONIO17_HEADERS_DIR =  $$PWD/include
 
-DEPENDPATH   += $$JSONIO14_DIR
-DEPENDPATH   += $$JSONIO14_HEADERS_DIR
+DEPENDPATH   += $$JSONIO17_DIR
+DEPENDPATH   += $$JSONIO17_HEADERS_DIR
 
-INCLUDEPATH   += $$JSONIO14_DIR
-INCLUDEPATH   += $$JSONIO14_HEADERS_DIR
+INCLUDEPATH   += $$JSONIO17_DIR
+INCLUDEPATH   += $$JSONIO17_HEADERS_DIR
 
 #LIBS += -pg  # gprof information
 
-!win32:LIBS += -pg -lstdc++fs
+!win32:LIBS += -pg  -lstdc++fs
 LIBS +=   -ljsonarango -lcurl  -lvelocypack
 
 OBJECTS_DIR   = obj
 
-include($$JSONIO14_DIR/jsonio14.pri)
+include($$JSONIO17_DIR/jsonio17.pri)
 
 SOURCES += \
 #       main.cpp
