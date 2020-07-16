@@ -23,6 +23,7 @@ cd build
 cmake -GNinja \
     -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_INSTALL_LIBDIR=lib \
+    -DBuildExamples=OFF \
     ..
 ninja
 ninja install
