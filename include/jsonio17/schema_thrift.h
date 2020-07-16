@@ -1,9 +1,9 @@
 /// Implementation of FieldDef, StructDef, EnumDef interfaces for Thrift schemas
 
 #pragma once
-#include "jsonio14/schema.h"
+#include "jsonio17/schema.h"
 
-namespace jsonio14 {
+namespace jsonio17 {
 
 const std::string schema_thrift = "thrift";
 
@@ -141,6 +141,6 @@ public:
 void ThriftSchemaRead( const std::string& jsondata, schema_files_t& files,
                                   schemas_t& structs,  enums_t& enums );
 
-} // namespace jsonio14
+} // namespace jsonio17
 
 

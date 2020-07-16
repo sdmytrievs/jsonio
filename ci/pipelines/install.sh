@@ -16,7 +16,7 @@ conda install conda-devenv
 conda update -q conda
 conda info -a
 conda devenv
-source activate jsonio14
+source activate jsonio17
 mkdir build
 cd build
 # Configure step

@@ -7,8 +7,8 @@
 #include <unistd.h>
 #endif
 
-#include "jsonio14/txt2file.h"
-#include "jsonio14/jsonfree.h"
+#include "jsonio17/txt2file.h"
+#include "jsonio17/jsonfree.h"
 
 //#include "boost/filesystem.hpp"
 //namespace fs = boost::filesystem;
@@ -17,7 +17,7 @@
 namespace fs = std::experimental::filesystem;
 
 
-namespace jsonio14 {
+namespace jsonio17 {
 
 
 // Get home directory in Linux, C++
@@ -309,4 +309,4 @@ void JsonArrayFile::Open(TxtFile::OpenModeTypes amode)
 }
 
 
-} // namespace jsonio14
+} // namespace jsonio17

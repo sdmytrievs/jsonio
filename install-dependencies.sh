@@ -1,5 +1,5 @@
 #!/bin/bash
-# Installing dependencies needed to build jsonio14
+# Installing dependencies needed to build jsonio17
 
 if [ "$(uname)" == "Darwin" ]; then
 

@@ -15,7 +15,7 @@ add_executable(test_main  main.cpp )
 if(${CMAKE_CXX_COMPILER_ID} STREQUAL MSVC)
       target_link_libraries( test_main
             PUBLIC gtest
-            PUBLIC jsonio14-static
+            PUBLIC jsonio17-static
             PUBLIC stdc++fs
             PUBLIC jsonarango-static
             PRIVATE velocypack
@@ -24,14 +24,14 @@ if(${CMAKE_CXX_COMPILER_ID} STREQUAL MSVC)
 else()
       target_link_libraries( test_main
            PUBLIC gtest
-           PUBLIC jsonio14
+           PUBLIC jsonio17
            PUBLIC stdc++fs
            PUBLIC jsonarango
            PUBLIC velocypack
            PUBLIC curl
            PUBLIC pthread )
 endif()
-#target_link_libraries(test_main gtest jsonio14 stdc++fs  jsonarango curl  velocypack pthread ${CMAKE_THREAD_LIBS_INIT} )
+#target_link_libraries(test_main gtest jsonio17 stdc++fs  jsonarango curl  velocypack pthread ${CMAKE_THREAD_LIBS_INIT} )
 
 target_include_directories(test_main PRIVATE
 ${CMAKE_CURRENT_SOURCE_DIR}/../src
@@ -44,3 +44,4 @@ add_test(NAME test_main COMMAND ./tests/test_main)
 #ctest --extra-verbose --output-on-failure
 #https://cmake.org/cmake/help/v3.7/manual/ctest.1.html
 #https://cmake.org/cmake/help/v3.10/module/GoogleTest.html
+

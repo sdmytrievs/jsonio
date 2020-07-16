@@ -1,8 +1,8 @@
 #pragma once
 
-#include "jsonio14/dbvertexdoc.h"
+#include "jsonio17/dbvertexdoc.h"
 
-namespace jsonio14 {
+namespace jsonio17 {
 
 
 /// Definition of graph databases chain: Handling Edges
@@ -103,6 +103,6 @@ protected:
 
 DBEdgeDocument* documentAllEdges( const DataBase& dbconnect );
 
-} // namespace jsonio14
+} // namespace jsonio17
 
 

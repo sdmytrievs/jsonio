@@ -1,10 +1,10 @@
 ﻿#pragma once
 
-#include "jsonio14/dbdocument.h"
-#include "jsonio14/jsonfree.h"
+#include "jsonio17/dbdocument.h"
+#include "jsonio17/jsonfree.h"
 
 
-namespace jsonio14 {
+namespace jsonio17 {
 
 
 /// \class DBJsonDocument - implementation of the database document  as free structure JSON
@@ -99,6 +99,6 @@ protected:
 
 };
 
-} // namespace jsonio14
+} // namespace jsonio17
 
 

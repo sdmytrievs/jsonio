@@ -6,7 +6,7 @@
 #include <limits>
 #include <algorithm>
 
-namespace jsonio14 {
+namespace jsonio17 {
 
 
 ///  Function that can be used to split text using regexp.
@@ -113,4 +113,4 @@ bool definitelyLessThan( const T& a, const T& b, const T& epsilon = std::numeric
 /// Generate vector with minimal values from two vectors
 std::vector<size_t> min_vector(const std::vector<size_t>& lhs, const std::vector<size_t>& rhs);
 
-} // namespace jsonio14
+} // namespace jsonio17

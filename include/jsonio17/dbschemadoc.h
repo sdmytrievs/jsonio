@@ -1,10 +1,10 @@
 #pragma once
 
-#include "jsonio14/dbdocument.h"
-#include "jsonio14/jsonschema.h"
+#include "jsonio17/dbdocument.h"
+#include "jsonio17/jsonschema.h"
 
 
-namespace jsonio14 {
+namespace jsonio17 {
 
 /// \class DBSchemaDocument - implementation of the database document as schema-based JSON.
 class DBSchemaDocument : public  DBDocumentBase
@@ -108,5 +108,5 @@ protected:
     field_value_map_t extract_fields( const std::vector<std::string> queryFields, const std::string& jsondata ) const override;
 };
 
-} // namespace jsonio14
+} // namespace jsonio17
 

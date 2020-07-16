@@ -3,11 +3,11 @@
 #include <iostream>
 #include <vector>
 #include <set>
-#include "jsonio14/exceptions.h"
-#include "jsonio14/type_test.h"
-#include "jsonio14/jsondetail.h"
+#include "jsonio17/exceptions.h"
+#include "jsonio17/type_test.h"
+#include "jsonio17/jsondetail.h"
 
-namespace jsonio14 {
+namespace jsonio17 {
 
 using list_names_t =  std::vector<std::string>;
 using set_names_t =  std::set<std::string>;
@@ -501,4 +501,4 @@ template <> JsonBase::Type JsonBase::typeTraits( const bool& );
 template <> JsonBase::Type JsonBase::typeTraits( const char& );
 template <> JsonBase::Type JsonBase::typeTraits( const std::string& );
 
-} // namespace jsonio14
+} // namespace jsonio17

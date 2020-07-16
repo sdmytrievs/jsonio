@@ -1,14 +1,14 @@
 #include <cstring>
 #include <iostream>
 
-#include "jsonio14/dbdriverarango.h"
-#include "jsonio14/dbquerybase.h"
-#include "jsonio14/io_settings.h"
+#include "jsonio17/dbdriverarango.h"
+#include "jsonio17/dbquerybase.h"
+#include "jsonio17/io_settings.h"
 
 #include "jsonarango/arangocollection.h"
 #include "jsonarango/arangoexception.h"
 
-namespace jsonio14 {
+namespace jsonio17 {
 
 
 // Default Constructor
@@ -251,4 +251,4 @@ bool ArangoDBClient::is_comlex_fields( const std::set<std::string>& queryFields)
 }
 
 
-} // namespace jsonio14
+} // namespace jsonio17

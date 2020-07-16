@@ -2,9 +2,9 @@
 
 #include <iostream>
 #include <vector>
-#include "jsonio14/schema.h"
+#include "jsonio17/schema.h"
 
-namespace jsonio14 {
+namespace jsonio17 {
 
 class JsonioSettings;
 /// Function to connect for a Preferences object
@@ -239,5 +239,5 @@ private:
 };
 
 
-} // namespace jsonio14
+} // namespace jsonio17
 

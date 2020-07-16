@@ -1,12 +1,12 @@
 
 #include <chrono>
-#include <jsonio14/dbedgedoc.h>
-#include "jsonio14/dbconnect.h"
-#include "jsonio14/io_settings.h"
-#include "jsonio14/service.h"
-#include "jsonio14/jsondump.h"
+#include <jsonio17/dbedgedoc.h>
+#include "jsonio17/dbconnect.h"
+#include "jsonio17/io_settings.h"
+#include "jsonio17/service.h"
+#include "jsonio17/jsondump.h"
 
-namespace jsonio14 {
+namespace jsonio17 {
 
 
 std::string collectionNameFromSchema( const std::string& aschema_name )
@@ -286,4 +286,4 @@ void DBVertexDocument::test_schema( const std::string &jsondata )
     }
 }
 
-} // namespace jsonio14
+} // namespace jsonio17

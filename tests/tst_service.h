@@ -2,14 +2,14 @@
 
 #include <gtest/gtest.h>
 
-#include "jsonio14/service.h"
-#include "jsonio14/txt2file.h"
-#include "jsonio14/jsondump.h"
-#include "jsonio14/exceptions.h"
-#include "jsonio14/io_settings.h"
+#include "jsonio17/service.h"
+#include "jsonio17/txt2file.h"
+#include "jsonio17/jsondump.h"
+#include "jsonio17/exceptions.h"
+#include "jsonio17/io_settings.h"
 
 using namespace testing;
-using namespace jsonio14;
+using namespace jsonio17;
 
 //  Function that can be used to split text using regexp
 TEST( JsonioService, regexpSplit )
@@ -390,26 +390,26 @@ TEST( JsonioSettings, TestSettingsPath )
 
     JsonioSettings  tst_settings( fpath );
     std::string ahome_dir = home_dir();
-    tst_settings.setHomeDir("~/newJSONIO/jsonio14" );
+    tst_settings.setHomeDir("~/newJSONIO/jsonio17" );
     tst_settings.setValue("common.ResourcesDirectory","~/Resources" );
     tst_settings.setValue("common.SchemasDirectory","~/Resources/data/schemas" );
     tst_settings.setUserDir("." );
 
     EXPECT_EQ( tst_settings.userDir(), "." );
 #ifdef _WIN32
-    EXPECT_EQ( tst_settings.homeDir(), "D:\\/newJSONIO/jsonio14" );
-    EXPECT_EQ( tst_settings.resourcesDir(), "D:\\/newJSONIO/jsonio14/Resources" );
+    EXPECT_EQ( tst_settings.homeDir(), "D:\\/newJSONIO/jsonio17" );
+    EXPECT_EQ( tst_settings.resourcesDir(), "D:\\/newJSONIO/jsonio17/Resources" );
     EXPECT_EQ( tst_settings.directoryPath( "common.SchemasDirectory",  std::string("") ),
-               "D:\\/newJSONIO/jsonio14/Resources/data/schemas" );
+               "D:\\/newJSONIO/jsonio17/Resources/data/schemas" );
 #else
-    EXPECT_EQ( tst_settings.homeDir(), ahome_dir+"/newJSONIO/jsonio14" );
-    EXPECT_EQ( tst_settings.resourcesDir(), ahome_dir+"/newJSONIO/jsonio14/Resources" );
+    EXPECT_EQ( tst_settings.homeDir(), ahome_dir+"/newJSONIO/jsonio17" );
+    EXPECT_EQ( tst_settings.resourcesDir(), ahome_dir+"/newJSONIO/jsonio17/Resources" );
     EXPECT_EQ( tst_settings.directoryPath( "common.SchemasDirectory",  std::string("") ),
-               ahome_dir+"/newJSONIO/jsonio14/Resources/data/schemas" );
+               ahome_dir+"/newJSONIO/jsonio17/Resources/data/schemas" );
 #endif
 
     JsonFile fjson(fpath);
-    EXPECT_EQ( fjson.load_json(), "{\"jsonio\":{},\"common\":{\"UserHomeDirectoryPath\":\"~/newJSONIO/jsonio14\","
+    EXPECT_EQ( fjson.load_json(), "{\"jsonio\":{},\"common\":{\"UserHomeDirectoryPath\":\"~/newJSONIO/jsonio17\","
                                   "\"ResourcesDirectory\":\"~/Resources\",\"SchemasDirectory\":\"~/Resources/data/schemas\","
                                   "\"WorkDirectoryPath\":\".\"}}\n" );
     if(path_exist( fpath ) )

@@ -4,7 +4,7 @@
 #include <stdexcept>
 #include <string>
 
-namespace jsonio14 {
+namespace jsonio17 {
 
 /// @brief General exception structure into project.
 class jsonio_exception: public std::exception
@@ -61,4 +61,4 @@ inline void JSONIO_THROW_IF(bool error, const std::string& title, int id, const 
     if(error) throw jsonio_exception::create(title, id, message);
 }
 
-} // namespace jsonio14
+} // namespace jsonio17
