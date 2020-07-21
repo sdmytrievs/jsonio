@@ -22,6 +22,14 @@ foreach (exampleName ${Examples})
                 PRIVATE velocypack
                 PRIVATE libcurl
                 PUBLIC pthread )
+   elseif(${CMAKE_CXX_COMPILER_ID} MATCHES "Clang")
+
+          target_link_libraries( ${exampleName}
+                PRIVATE jsonio17
+                PUBLIC jsonarango
+                PUBLIC velocypack
+                PUBLIC curl
+                PUBLIC pthread )
     else()
           target_link_libraries( ${exampleName}
                PRIVATE jsonio17
