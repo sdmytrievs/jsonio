@@ -289,7 +289,7 @@ void JsonArrayFile::Close()
     is_opened = false;
 }
 
-void JsonArrayFile::Open(TxtFile::OpenModeTypes amode)
+void JsonArrayFile::Open( TxtFile::OpenModeTypes amode )
 {
     if( isOpened() )
     {
@@ -311,6 +311,30 @@ void JsonArrayFile::Open(TxtFile::OpenModeTypes amode)
         JSONIO_THROW( "filesystem", 7, "illegal file open mode for class JsonArrayFile" );
     }
     is_opened = true;
+}
+
+void JsonArrayFile::loadString( const std::string &json_string )
+{
+    if( isOpened() )
+    {
+        JSONIO_THROW( "filesystem", 8, "file was opened " + file_path );
+        return;
+    }
+
+    // clear settings
+    open_mode  = ReadOnly;
+    loaded_ndx = 0;
+    arr_object.clear();
+    arr_object.loads(json_string);;
+}
+
+std::string JsonArrayFile::getString()
+{
+    if( open_mode == WriteOnly )
+    {
+        return arr_object.dump();
+    }
+    return "";
 }
 
 

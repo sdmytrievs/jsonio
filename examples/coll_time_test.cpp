@@ -17,6 +17,9 @@ using time_point_t = std::chrono::time_point<std::chrono::high_resolution_clock>
 // Current number documents into collection
 static int documentsInCollection =  10;
 
+void printData( const std::string&  title, const std::vector<std::string>& values );
+void printTime( const std::string&  title, const time_point_t& start, const time_point_t& end );
+void printTimeSec( const std::string&  title, const time_point_t& start, const time_point_t& end );
 
 void printData( const std::string&  title, const std::vector<std::string>& values )
 {

@@ -22,7 +22,7 @@ public:
 
     static const FieldDef* topfield()
     {
-      return  top_field.get();
+        return  top_field.get();
     }
 
 
@@ -70,6 +70,9 @@ public:
 
     /// Field Type or all "typeId"+"type"+"elemTypeId"+"elemTypeId"  - all levels
     virtual FieldType type( size_t level=0 ) const = 0;
+
+    /// Field Type for back level
+    virtual FieldType elemType() const = 0;
 
     /// A requiredness attribute (FieldRequered)
     virtual FieldRequered required() const = 0;
@@ -306,7 +309,7 @@ using schemas_t = std::map<std::string, std::shared_ptr<StructDef>>;
 using enums_t = std::map<std::string, std::shared_ptr<EnumDef>>;
 /// Factory method fetching schema definition from a json format strin
 using  SchemaReadFactory_f = std::function<void( const std::string& jsondata,
-                         schema_files_t& files, schemas_t& schemas,  enums_t& enums )>;
+schema_files_t& files, schemas_t& schemas,  enums_t& enums )>;
 
 
 ///  All json schemas collection

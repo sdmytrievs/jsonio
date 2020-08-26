@@ -88,7 +88,7 @@ if(${CMAKE_CXX_COMPILER_ID} MATCHES "Clang")
     link_directories("/usr/local/lib")
 endif()
 
-# Find all GEMSReaktoro dependencies
+# Find all  dependencies
 include(JsonioFindDeps)
 
 # Build jsonio library

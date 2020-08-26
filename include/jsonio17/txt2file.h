@@ -156,11 +156,15 @@ public:
     /// Constructor
     JsonArrayFile( const std::string& name, const std::string& ext, const std::string& dir=""):
         JsonFile( name, ext, dir ), arr_object( JsonFree::array() )
-    { }
+    {
+        open_mode = WriteOnly;
+    }
     /// Constructor from path
     JsonArrayFile( const std::string& path):
         JsonFile( path ), arr_object( JsonFree::array() )
-    { }
+    {
+        open_mode = WriteOnly;
+    }
     /// Destructor
     virtual ~JsonArrayFile()
     {
@@ -190,7 +194,12 @@ public:
     bool saveNext( const std::string& strjson );
 
     virtual void Close();
-    virtual void Open(OpenModeTypes amode );
+    virtual void Open( OpenModeTypes amode );
+
+    /// Load array from string ( do not need open file )
+    virtual void loadString( const std::string& input_data );
+    /// Export internal data to string
+    virtual std::string getString();
 
 protected:
 
