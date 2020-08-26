@@ -204,7 +204,7 @@ public:
     void array_resize( std::size_t size, const std::string &defval ) override;
 
     /// Get field by fieldpath ("name1.name2.name3")
-    const JsonBase *field(  const std::string& fieldpath ) const override;
+    const JsonSchema *field(  const std::string& fieldpath ) const override;
 
     /// Return a reference to object[jsonpath] if an object can be create, exception otherwise.
     JsonSchema &add_object_via_path(const std::string &jsonpath) override;

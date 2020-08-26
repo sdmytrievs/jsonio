@@ -75,8 +75,13 @@ JsonFree *JsonFree::append_node(const std::string &akey, JsonBase::Type atype, c
     return children.back().get();
 }
 
+const JsonFree *JsonFree::field(const std::string &fieldpath ) const
+{
+    auto names = split( fieldpath, field_path_delimiters );
+    return field( names );
+}
 
-JsonFree *JsonFree::field(std::queue<std::string> names ) const
+JsonFree *JsonFree::field( std::queue<std::string> names ) const
 {
     if( names.empty() )
         return const_cast<JsonFree *>(this);
