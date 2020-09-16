@@ -284,7 +284,7 @@ JsonSchema *JsonSchema::field( std::queue<int> ids ) const
     return nullptr;  // not found
 }
 
-const JsonBase *JsonSchema::field(const std::string &fieldpath) const
+const JsonSchema *JsonSchema::field(const std::string &fieldpath) const
 {
     auto pos = fieldpath.find_first_not_of("0123456789.");
     if( pos != std::string::npos || isArray() )

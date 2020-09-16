@@ -221,7 +221,7 @@ void JsonParser::parse_value( int depth, const std::string &name, JsonBuilderBas
         auto valuestr = jsontext.substr(cur_pos, end_size);
         trim(valuestr);
         JSONIO_THROW_IF( valuestr.empty(), "JsonParser", 8, "must be value " + err_part() );
-        builder.testScalar( name, valuestr );
+        builder.testScalar( name, valuestr, true );
         cur_pos = pos_end_value;
     }
         break;

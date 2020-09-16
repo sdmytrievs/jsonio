@@ -22,13 +22,19 @@ if(${CMAKE_CXX_COMPILER_ID} STREQUAL MSVC)
             PRIVATE velocypack
             PRIVATE libcurl
             PUBLIC pthread )
-else()
+elseif(${CMAKE_CXX_COMPILER_ID} MATCHES "Clang")
       target_link_libraries( JSONIO17_SHARED
-           PUBLIC stdc++fs
            PUBLIC jsonarango
            PUBLIC velocypack
            PUBLIC curl
            PUBLIC pthread )
+else()
+    target_link_libraries( JSONIO17_SHARED
+          PUBLIC stdc++fs
+          PUBLIC jsonarango
+          PUBLIC velocypack
+          PUBLIC curl
+          PUBLIC pthread )
 endif()
 
     set_target_properties(JSONIO17_SHARED PROPERTIES OUTPUT_NAME jsonio17)

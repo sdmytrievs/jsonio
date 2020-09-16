@@ -49,6 +49,12 @@ public:
         JSONIO_THROW_IF( level >= f_type_id.size(), "ThriftSchema", 2, "undefined field level " );
         return f_type_id[level];
     }
+
+    /// Field Type for back level
+    virtual FieldType elemType() const override {
+        return f_type_id.back();
+    }
+
     /// A requiredness attribute (FieldRequered)
     virtual FieldRequered required() const override {
         return f_required;
@@ -66,7 +72,7 @@ public:
     virtual std::string  defaultValue()const override {
 
         if( !f_default.empty() && type() == T_BOOL)  // problems for thrift parser
-          return ( f_default=="0" or f_default=="false" ? "false": "true" );
+            return ( f_default=="0" or f_default=="false" ? "false": "true" );
         return f_default;
     }
     virtual double minValue()const override {
@@ -139,7 +145,7 @@ public:
 /// Thrift schema definition
 /// Read thrift schema from json string
 void ThriftSchemaRead( const std::string& jsondata, schema_files_t& files,
-                                  schemas_t& structs,  enums_t& enums );
+                       schemas_t& structs,  enums_t& enums );
 
 } // namespace jsonio17
 

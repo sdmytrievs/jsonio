@@ -4,6 +4,8 @@ CONFIG -= app_bundle
 CONFIG += thread
 CONFIG -= qt
 
+QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.15
+
 !win32 {
   DEFINES += __unix
 }
@@ -38,7 +40,7 @@ INCLUDEPATH   += $$JSONIO17_DIR
 INCLUDEPATH   += $$JSONIO17_HEADERS_DIR
 INCLUDEPATH   += $$TESTS_DIR
 
-LIBS +=  -lstdc++fs
+!macx-clang:LIBS +=  -lstdc++fs
 LIBS +=  -ljsonarango -lcurl  -lvelocypack
 
 OBJECTS_DIR   = obj

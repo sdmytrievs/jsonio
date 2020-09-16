@@ -96,17 +96,17 @@ int extract_int_json( const std::string& key, const std::string& jsondata )
 
 
 // How to split a string in C++.
-std::vector<std::string> split2(const std::string& s, char delimiter)
-{
-   std::vector<std::string> tokens;
-   std::string token;
-   std::istringstream tokenStream(s);
-   while (std::getline(tokenStream, token, delimiter))
-   {
-      tokens.push_back(token);
-   }
-   return tokens;
-}
+//std::vector<std::string> split2(const std::string& s, char delimiter)
+//{
+//   std::vector<std::string> tokens;
+//   std::string token;
+//   std::istringstream tokenStream(s);
+//   while (std::getline(tokenStream, token, delimiter))
+//   {
+//      tokens.push_back(token);
+//   }
+//   return tokens;
+//}
 
 
 std::vector<size_t> min_vector(const std::vector<size_t>& lhs, const std::vector<size_t>& rhs)

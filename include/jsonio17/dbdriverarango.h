@@ -4,7 +4,7 @@
 
 namespace arangocpp {
 enum class CollectionTypes;
-class ArangoDBConnection;
+struct ArangoDBConnection;
 class ArangoDBCollectionAPI;
 }
 

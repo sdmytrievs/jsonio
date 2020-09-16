@@ -161,7 +161,7 @@ public:
     FieldDef::FieldType fieldKeyType() const
     {
         if( !isTop() )
-           return  parent_object->field_descrip->type(parent_object->level_type+1);
+            return  parent_object->field_descrip->type(parent_object->level_type+1);
         return FieldDef::T_STRING;
     }
 
@@ -169,6 +169,12 @@ public:
     FieldDef::FieldType fieldType() const
     {
         return field_descrip->type(level_type);
+    }
+
+    /// Get type of elements (back) for Object
+    FieldDef::FieldType elemType() const
+    {
+        return field_descrip->elemType();
     }
 
     const std::string& getKey() const override
@@ -198,7 +204,7 @@ public:
     void array_resize( std::size_t size, const std::string &defval ) override;
 
     /// Get field by fieldpath ("name1.name2.name3")
-    const JsonBase *field(  const std::string& fieldpath ) const override;
+    const JsonSchema *field(  const std::string& fieldpath ) const override;
 
     /// Return a reference to object[jsonpath] if an object can be create, exception otherwise.
     JsonSchema &add_object_via_path(const std::string &jsonpath) override;
@@ -245,13 +251,13 @@ protected:
     /// Get min Value to Node
     double minValue() const
     {
-      return field_descrip->minValue();
+        return field_descrip->minValue();
     }
 
     /// Get max Value to Node
     double maxValue() const
     {
-      return field_descrip->maxValue();
+        return field_descrip->maxValue();
     }
 
 private:

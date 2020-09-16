@@ -59,6 +59,7 @@ TEST( JsonioParser, TestDouble )
     TEST_DOUBLE("[1.234E+10]", 1.234E+10);
     TEST_DOUBLE("[1.234E-10]", 1.234E-10);
     TEST_DOUBLE("[1.79769e+308]", 1.79769e+308);
+#ifndef __APPLE__
     TEST_DOUBLE("[2.22507e-308]", 2.22507e-308);
     TEST_DOUBLE("[-1.79769e+308]", -1.79769e+308);
     TEST_DOUBLE("[-2.22507e-308]", -2.22507e-308);
@@ -67,11 +68,14 @@ TEST( JsonioParser, TestDouble )
     TEST_DOUBLE("[2.2250738585072009e-308]", 2.2250738585072009e-308); // Max subnormal double
     TEST_DOUBLE("[2.2250738585072014e-308]", 2.2250738585072014e-308); // Min normal positive double
     TEST_DOUBLE("[1.7976931348623157e+308]", 1.7976931348623157e+308); // Max double
+
     TEST_DOUBLE("[1e-10000]", 0.0);                                   // must underflow
     TEST_DOUBLE("[1e-214748363]", 0.0);
     TEST_DOUBLE("[1e-214748364]", 0.0);
 
     TEST_DOUBLE("[0.017976931348623157e+310]", 1.7976931348623157e+308); // Max double in another form
+#endif
+
 }
 
 TEST( JsonioParser, TestInt )

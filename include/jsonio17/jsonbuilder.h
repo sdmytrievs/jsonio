@@ -26,7 +26,7 @@ public:
     virtual JsonBuilderBase& addString( const std::string& key, const std::string& value ) =0;
     /// Adds a key/ value pair to the JSON object associated with this object builder.
     /// Infers the value type by parsing input string. Throw Exeption when undefined value type.
-    virtual JsonBuilderBase& testScalar(const std::string& key, const std::string& value );
+    virtual JsonBuilderBase& testScalar(const std::string& key, const std::string& value, bool no_string=false );
 
     /*template <class T>
     operator T() const

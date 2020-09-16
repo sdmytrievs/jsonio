@@ -36,9 +36,9 @@ void JsonBuilderBase::append_scalar(const std::string &key, const std::string &v
                                 current_json->append_node( key, JsonBase::String, v2string(value) );
 }
 
-JsonBuilderBase &JsonBuilderBase::testScalar(const std::string &key, const std::string &value)
+JsonBuilderBase &JsonBuilderBase::testScalar(const std::string &key, const std::string &value, bool noString)
 {
-    append_scalar( key,  value, true  );
+    append_scalar( key,  value, noString  );
     return *this;
 }
 

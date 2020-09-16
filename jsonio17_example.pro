@@ -8,6 +8,9 @@ CONFIG -= qt
 #Heaptrack
 #Hotspot
 
+
+QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.15
+
 !win32 {
   DEFINES += __unix
 QMAKE_CFLAGS += pedantic -Wall -Wextra -Wwrite-strings -Werror
@@ -50,7 +53,7 @@ INCLUDEPATH   += $$JSONIO17_HEADERS_DIR
 
 #LIBS += -pg  # gprof information
 
-!win32:LIBS += -pg  -lstdc++fs
+!macx-clang:LIBS += -pg  -lstdc++fs
 LIBS +=   -ljsonarango -lcurl  -lvelocypack
 
 OBJECTS_DIR   = obj

@@ -21,6 +21,15 @@ if(${CMAKE_CXX_COMPILER_ID} STREQUAL MSVC)
             PRIVATE velocypack
             PRIVATE libcurl
             PUBLIC pthread )
+elseif(${CMAKE_CXX_COMPILER_ID} MATCHES "Clang")
+
+     target_link_libraries( test_main
+            PUBLIC gtest
+            PUBLIC jsonio17
+            PUBLIC jsonarango
+            PUBLIC velocypack
+            PUBLIC curl
+            PUBLIC pthread )
 else()
       target_link_libraries( test_main
            PUBLIC gtest
