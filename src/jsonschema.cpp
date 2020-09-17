@@ -313,6 +313,20 @@ JsonSchema &JsonSchema::add_object_via_path(const std::string &jsonpath)
 
 }
 
+JsonSchema &JsonSchema::add_array_via_path(const std::string &jsonpath)
+{
+    auto names = split(jsonpath, field_path_delimiters);
+    auto pobj = field_add( names );
+    if( pobj )
+    {
+        if( !pobj->isArray())
+            pobj->update_node( JsonBase::Array, "" );
+        return *pobj;
+    }
+    JSONIO_THROW( "JsonBase", 21, "cannot create array with jsonpath " + std::string( jsonpath ) );
+
+}
+
 JsonSchema *JsonSchema::field_add( std::queue<std::string> names )
 {
     if( names.empty() )

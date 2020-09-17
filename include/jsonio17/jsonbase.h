@@ -408,6 +408,9 @@ public:
     /// Return a reference to object[jsonpath] if an object can be create, exception otherwise.
     virtual JsonBase &add_object_via_path(const std::string &jsonpath) = 0;
 
+    /// Return a reference to object[jsonpath] if an array can be create, exception otherwise.
+    virtual JsonBase &add_array_via_path(const std::string &jsonpath) = 0;
+
     /// Set _id to object
     virtual void set_oid( const std::string& oid  );
 

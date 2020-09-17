@@ -132,6 +132,19 @@ JsonFree &JsonFree::add_object_via_path(const std::string &jsonpath)
     JSONIO_THROW( "JsonBase", 12, "cannot create object with jsonpath " + std::string( jsonpath ) );
 }
 
+JsonFree &JsonFree::add_array_via_path(const std::string &jsonpath)
+{
+    auto names = split(jsonpath, field_path_delimiters);
+    auto pobj = field_add( names );
+    if( pobj )
+    {
+        if( !pobj->isArray())
+            pobj->update_node( JsonBase::Array, "" );
+        return *pobj;
+    }
+    JSONIO_THROW( "JsonBase", 21, "cannot create array with jsonpath " + std::string( jsonpath ) );
+}
+
 // key and parent not changed
 void JsonFree::copy(const JsonFree &obj)
 {
