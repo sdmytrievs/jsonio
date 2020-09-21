@@ -57,6 +57,9 @@ public:
         return collection_from->type();
     }
 
+    /// Internal loaded data
+    virtual const JsonBase& loaded_data()  const = 0;
+
     /// Explicit type conversion between the JSON path value and a compatible primitive value.
     /// The following jsonpath expression could be used
     ///     "name1.name2.3.name3"

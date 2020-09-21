@@ -45,6 +45,11 @@ public:
     ///  Destructor
     virtual ~DBJsonDocument(){}
 
+    /// Link to internal data
+    const JsonFree& loaded_data() const override
+    {
+        return  current_object;
+    }
 
     /// Generate new document-handle (_id) or other pointer of location
     std::string genOid( const std::string& key_template ) override

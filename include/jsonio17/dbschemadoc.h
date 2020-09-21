@@ -48,6 +48,12 @@ public:
         return schema_name;
     }
 
+    /// Link to internal data
+    const JsonSchema& loaded_data() const override
+    {
+        return  current_schema_object;
+    }
+
     /// Generate new document-handle (_id) or other pointer of location
     std::string genOid( const std::string& key_template ) override;
 

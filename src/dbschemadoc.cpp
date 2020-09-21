@@ -11,7 +11,7 @@ DBSchemaDocument *DBSchemaDocument::newSchemaDocumentQuery( const DataBase &dbco
         return nullptr;
     auto new_document =  new DBSchemaDocument( aschema_name, dbconnect, collection_name );
     // init internal selection block
-    new_document->setQuery( std::move(query));
+    new_document->setQuery( std::move(query) );
     return new_document;
 }
 
