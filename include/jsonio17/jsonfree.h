@@ -191,7 +191,7 @@ protected:
     std::size_t getChildrenCount() const override
     {   return children.size();  }
 
-    const JsonBase* getChild( std::size_t ndx ) const override
+    JsonBase* getChild( std::size_t ndx ) const override
     {
         if( ndx < getChildrenCount() )
         {
@@ -200,8 +200,10 @@ protected:
         return nullptr;
     }
 
-    const JsonBase* getParent() const override
-    {  return parent_object;  }
+    JsonBase* getParent() const override
+    {
+        return parent_object;
+    }
 
     list_names_t getUsedKeys() const override;
 
@@ -254,6 +256,7 @@ private:
 
     void resize_array_level(size_t level, const std::vector<size_t> &sizes, const std::string &defval) override;
 
+    //friend class JsonFreeModel;
 };
 
 // Add iterator?

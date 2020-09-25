@@ -414,7 +414,7 @@ public:
     /// Set _id to object
     virtual void set_oid( const std::string& oid  );
 
-protected:
+public:
 
     // Get methods ( using in Qt GUI ) --------------------------
 
@@ -424,9 +424,9 @@ protected:
 
     virtual std::size_t getChildrenCount() const = 0;
 
-    virtual const JsonBase* getChild( std::size_t ndx ) const = 0;
+    virtual JsonBase* getChild( std::size_t ndx ) const = 0;
 
-    virtual const JsonBase* getParent() const = 0;
+    virtual JsonBase* getParent() const = 0;
 
     virtual list_names_t getUsedKeys() const = 0;
 

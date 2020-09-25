@@ -225,7 +225,7 @@ protected:
     std::size_t getChildrenCount() const override
     {   return children.size();  }
 
-    const JsonBase* getChild( std::size_t ndx ) const override
+    JsonBase* getChild( std::size_t ndx ) const override
     {
         if( ndx < getChildrenCount() )
         {
@@ -233,9 +233,10 @@ protected:
         }
         return nullptr;
     }
-
-    const JsonBase* getParent() const override
-    {  return parent_object;  }
+    JsonBase* getParent() const override
+    {
+        return parent_object;
+    }
 
     /// Generate list of non existing fields
     list_names_t getNoUsedKeys() const;
