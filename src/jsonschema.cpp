@@ -482,7 +482,7 @@ void JsonSchema::array_resize( std::size_t  newsize, const std::string& defval  
 
 //----------------------------------------------------------------------------------------------
 
-JsonBase::Type JsonSchema::fieldtype2basetype( FieldDef::FieldType field_type ) const
+JsonBase::Type JsonSchema::fieldtype2basetype( FieldDef::FieldType field_type )
 {
     JsonBase::Type base_type = JsonBase::Null;
     switch( field_type )

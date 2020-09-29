@@ -178,8 +178,6 @@ public:
     /// Return a reference to object[jsonpath] if an array can be create, exception otherwise.
     JsonFree &add_array_via_path(const std::string &jsonpath) override;
 
-protected:
-
     // Get methods ( using in Qt GUI model ) --------------------------
 
     size_t getNdx() const override
@@ -187,6 +185,10 @@ protected:
 
     const std::string& getFieldValue() const override
     {   return  field_value;  }
+
+    list_names_t getUsedKeys() const override;
+
+protected:
 
     std::size_t getChildrenCount() const override
     {   return children.size();  }
@@ -204,8 +206,6 @@ protected:
     {
         return parent_object;
     }
-
-    list_names_t getUsedKeys() const override;
 
 private:
 
@@ -256,7 +256,6 @@ private:
 
     void resize_array_level(size_t level, const std::vector<size_t> &sizes, const std::string &defval) override;
 
-    //friend class JsonFreeModel;
 };
 
 // Add iterator?

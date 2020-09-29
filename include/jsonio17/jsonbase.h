@@ -320,6 +320,7 @@ public:
     /// Remove current field from json.
     virtual bool remove() = 0;
 
+
     /// Resize array ( 1D, 2D, 3D ... ).
     /// Set up defval values if the JSON type of elements is primitive
     virtual void array_resize_xD( const std::vector<size_t> &sizes, const std::string& defval )
