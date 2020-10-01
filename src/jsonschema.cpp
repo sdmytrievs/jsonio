@@ -141,13 +141,24 @@ JsonSchema *JsonSchema::append_node(const std::string &akey, JsonBase::Type atyp
                 shptr->update_node( atype, avalue );
 
             auto flds_before =struct_descrip->getFieldsBefore(akey);
-            auto fld_insert_after = children.begin();
-            while( fld_insert_after != children.end() and
-                   flds_before.find( fld_insert_after->get()->getKey() ) != flds_before.end() )
-                fld_insert_after++;
+            auto fld_insert_before = children.begin();
+            while( fld_insert_before != children.end() and
+                   flds_before.find( fld_insert_before->get()->getKey() ) != flds_before.end() )
+                fld_insert_before++;
+
+            if( fld_insert_before != children.end() )
+            {
+              auto fields_after =  fld_insert_before;
+              while( fields_after != children.end() )
+              {
+                 fields_after->get()->ndx_in_parent++;
+                 fields_after++;
+              }
+            }
 
             // add by order
-            return children.insert( fld_insert_after, shptr )->get();
+            shptr->ndx_in_parent = fld_insert_before-children.begin();
+            return children.insert( fld_insert_before, shptr )->get();
         }
         return nullptr;
     }
@@ -222,7 +233,7 @@ bool JsonSchema::remove_child( JsonSchema* child )
     if( level_type==0 and child->field_descrip->required() == FieldDef::fld_required )
     {
         // not remove requered field ( only clear )
-        clear();
+        child->clear();
         return true;
     }
 
@@ -343,6 +354,11 @@ JsonSchema *JsonSchema::field_add( std::queue<std::string> names )
             auto new_obj = append_node( fname, JsonBase::Null, "" );
             return /*children.back()*/ new_obj->field_add(names);
         }
+        else if( isArray() and fname== std::to_string(children.size()) )
+        {
+            append_node( fname, JsonBase::Null, "" );
+            return children.back()->field_add(names);
+        }
         else
             return nullptr;
     }
@@ -399,6 +415,16 @@ std::string JsonSchema::getFullDescription() const
     return desc;
 }
 
+JsonSchema *JsonSchema::getChild(const std::string &key) const
+{
+    auto element = find_key(key);
+    if( element == children.end() )
+    {
+        return nullptr;
+    }
+    return element->get();
+}
+
 bool JsonSchema::clear()
 {
     set_children();
@@ -417,7 +443,7 @@ std::vector<size_t> JsonSchema::array_sizes() const
 {
     std::vector<size_t> sizes;
 
-    if( !isArray() )
+    if( !( isArray() || isMap() ) )
         return sizes;
 
     if( !empty() )
@@ -446,7 +472,7 @@ void JsonSchema::resize_array_level( size_t level, const std::vector<size_t>& si
 
 void JsonSchema::array_resize( std::size_t  newsize, const std::string& defval  )
 {
-    JSONIO_THROW_IF( !isArray(), "JsonSchema", 11, "cannot resize not array data " + std::string( typeName() ) );
+    JSONIO_THROW_IF( !(isArray() || isMap() ), "JsonSchema", 11, "cannot resize not array data " + std::string( typeName() ) );
 
     if( newsize == children.size() )     // the same size
         ;
@@ -472,9 +498,15 @@ void JsonSchema::array_resize( std::size_t  newsize, const std::string& defval  
         }
         else
         {
-            JsonArrayBuilder jsBuilder(this);
-            for( size_t ii=0; ii<newsize; ii++)
-                jsBuilder.addScalar( defval );
+            auto level = level_type;
+            if( isMap() )
+              level++;
+            level++;
+            auto new_type = fieldtype2basetype( field_descrip->type(level) );
+            std::string new_el_value = checked_value(new_type, defval );
+
+            for( auto ii=children.size(); ii<newsize; ii++)
+                append_node( std::to_string(ii),  new_type, new_el_value );
         }
     }
 }

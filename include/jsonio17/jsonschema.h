@@ -199,6 +199,14 @@ public:
     /// Remove current field.
     bool remove() override;
 
+    /// Resize array ( 1D, 2D, 3D ... ).
+    /// Set up defval values if the JSON type of elements is primitive
+    void array_resize_xD( const std::vector<size_t> &sizes, const std::string& defval ) override
+    {
+        JSONIO_THROW_IF( !(isArray() || isMap()), "JsonBase", 11, "cannot resize not array data " + std::string( typeName() ) );
+        resize_array_level( 0, sizes, defval  );
+    }
+
     /// Resize 1D array.
     /// Set up defval values if the JSON type of elements is primitive.
     void array_resize( std::size_t size, const std::string &defval ) override;
@@ -230,12 +238,6 @@ public:
 
     /// Type conversion from schema to json types
     static JsonBase::Type fieldtype2basetype(FieldDef::FieldType field_type);
-
-    size_t getNdx() const override
-    {   return ndx_in_parent;  }
-
-    const std::string& getFieldValue() const override
-    {   return  field_value;  }
 
     /// Change Map Key
     void setMapKey( const std::string& new_key  )
@@ -274,10 +276,17 @@ public:
 
 protected:
 
+    size_t getNdx() const override
+    {   return ndx_in_parent;  }
+
+    const std::string& getFieldValue() const override
+    {   return  field_value;  }
+
+
     std::size_t getChildrenCount() const override
     {   return children.size();  }
 
-    JsonBase* getChild( std::size_t ndx ) const override
+    JsonSchema* getChild( std::size_t ndx ) const override
     {
         if( ndx < getChildrenCount() )
         {
@@ -285,7 +294,10 @@ protected:
         }
         return nullptr;
     }
-    JsonBase* getParent() const override
+
+    JsonSchema* getChild( const std::string& key ) const override;
+
+    JsonSchema* getParent() const override
     {
         return parent_object;
     }

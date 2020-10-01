@@ -39,6 +39,15 @@ list_names_t JsonFree::getUsedKeys() const
     return usekeys;
 }
 
+JsonFree *JsonFree::getChild(const std::string &key) const
+{
+    auto element = find_key(key);
+    if( element == children.end() )
+        return nullptr;
+    return element->get();
+}
+
+
 bool JsonFree::clear()
 {
     children.clear();
@@ -109,6 +118,11 @@ JsonFree *JsonFree::field_add(std::queue<std::string> names )
     if( element == children.end() )
     {
         if( isObject() )
+        {
+            append_node( fname, JsonBase::Object, "" );
+            return children.back()->field_add(names);
+        }
+        else if( isArray() and fname== std::to_string(children.size()) )
         {
             append_node( fname, JsonBase::Object, "" );
             return children.back()->field_add(names);
