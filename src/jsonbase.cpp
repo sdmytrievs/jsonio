@@ -129,6 +129,7 @@ const char *JsonBase::typeName(JsonBase::Type type)
     case Bool:
         return "bool";
     }
+    return "";
 }
 
 
