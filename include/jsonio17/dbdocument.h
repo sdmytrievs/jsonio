@@ -308,7 +308,7 @@ public:
     // internal selection part
 
     /// Set&execute query for document
-    virtual void setQuery( DBQueryBase&& query, std::vector<std::string>  fieldsList = {} );
+    virtual void setQuery( const DBQueryBase& query, std::vector<std::string>  fieldsList = {} );
 
     /// Set&execute query for document
     virtual void setQuery( const DBQueryDef& querydef );

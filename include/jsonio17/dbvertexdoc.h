@@ -57,7 +57,8 @@ public:
         return edgesQuery( id_vertex, DBQueryBase::qEdgesTo, edge_collections );
     }
 
-    static DBVertexDocument* newVertexDocumentQuery( const DataBase& dbconnect, const std::string& aschema_name, DBQueryBase&& query );
+    static DBVertexDocument* newVertexDocumentQuery( const DataBase& dbconnect, const std::string& aschema_name,
+                                                     const DBQueryBase& query = DBQueryBase::emptyQuery() );
     static DBVertexDocument* newVertexDocument( const DataBase& dbconnect, const std::string& aschema_name );
 
     ///  Constructor collection&document
@@ -158,7 +159,7 @@ public:
     }
 
     /// Extract schema from the document-handle ( no query ).
-    virtual std::string  extractSchemaFromId( const std::string& id  );
+    virtual std::string  extractSchemaFromId( const std::string& id  ) const;
 
     /// Init uniqueFields when load collection
     void load_unique_fields();

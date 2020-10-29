@@ -15,7 +15,7 @@ class DBEdgeDocument : public DBVertexDocument
 public:
 
     static DBEdgeDocument* newEdgeDocumentQuery( const DataBase& dbconnect, const std::string& aschema_name,
-                                                 DBQueryBase&& query  );
+                                                 const DBQueryBase& query = DBQueryBase::emptyQuery()  );
 
     static DBEdgeDocument* newEdgeDocument( const DataBase& dbconnect, const std::string& aschema_name );
 
@@ -53,7 +53,7 @@ public:
     }
 
     /// Extract schema by id  ( no query )
-    std::string  extractSchemaFromId( const std::string& oid  ) override;
+    std::string  extractSchemaFromId( const std::string& oid  ) const override;
 
 protected:
 

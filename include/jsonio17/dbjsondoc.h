@@ -25,7 +25,8 @@ protected:
 public:
 
     static DBJsonDocument* newJsonDocumentQuery( const DataBase& dbconnect, const std::string& collcName,
-                                                 const std::vector<std::string>& key_template_fields, DBQueryBase&& query );
+                                                 const std::vector<std::string>& key_template_fields,
+                                                 const DBQueryBase& query = DBQueryBase::emptyQuery() );
 
     static DBJsonDocument* newJsonDocument( const DataBase& dbconnect, const std::string& collcName,
                                             const std::vector<std::string>& key_template_fields = {} );

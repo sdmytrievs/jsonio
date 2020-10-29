@@ -19,7 +19,8 @@ protected:
 public:
 
     static DBSchemaDocument *newSchemaDocumentQuery( const DataBase& dbconnect, const std::string& aschema_name,
-                         const std::string& collection_name,  DBQueryBase&& query  );
+                                                     const std::string& collection_name,
+                                                     const DBQueryBase& query = DBQueryBase::emptyQuery()  );
 
     static DBSchemaDocument* newSchemaDocument( const DataBase& dbconnect,
               const std::string& aschema_name, const std::string& collection_name  );

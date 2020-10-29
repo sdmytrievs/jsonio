@@ -31,7 +31,8 @@ DBQueryBase DBVertexDocument::edgesQuery(const std::string& id_document, DBQuery
 }
 
 
-DBVertexDocument *DBVertexDocument::newVertexDocumentQuery(const DataBase &dbconnect, const std::string &aschema_name, DBQueryBase &&query)
+DBVertexDocument *DBVertexDocument::newVertexDocumentQuery( const DataBase& dbconnect, const std::string& aschema_name,
+                                                            const DBQueryBase& query)
 {
     if( aschema_name.empty()  )
         return nullptr;
@@ -41,7 +42,7 @@ DBVertexDocument *DBVertexDocument::newVertexDocumentQuery(const DataBase &dbcon
     std::chrono::high_resolution_clock::time_point t2 = std::chrono::high_resolution_clock::now();
 
     // init internal selection block
-    new_document->setQuery( std::move(query));
+    new_document->setQuery( query );
     std::chrono::high_resolution_clock::time_point t3 = std::chrono::high_resolution_clock::now();
 
     auto duration1 = std::chrono::duration_cast<std::chrono::microseconds>( t2 - t1 ).count();
@@ -109,7 +110,7 @@ void DBVertexDocument::updateVertexObject(const std::string &aschema_name, const
         current_schema_object.set_value_via_path( ent.first, ent.second  );
 }
 
-std::string DBVertexDocument::extractSchemaFromId( const std::string& oid )
+std::string DBVertexDocument::extractSchemaFromId( const std::string& oid ) const
 {
     auto names = split( oid, "/" );
     if( names.size()>1 )

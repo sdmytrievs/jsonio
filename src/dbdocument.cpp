@@ -51,15 +51,18 @@ void DBDocumentBase::updateQuery()
 
 
 // Set&execute query for document
-void DBDocumentBase::setQuery( DBQueryBase &&query, std::vector<std::string> fields_list)
+void DBDocumentBase::setQuery( const DBQueryBase& query, std::vector<std::string> fields_list)
 {
+    std::shared_ptr<DBQueryBase> internal_query;
     if( query.empty()  )
-        query = make_default_query_template();
+        internal_query = std::make_shared<DBQueryBase>(make_default_query_template());
+    else
+        internal_query = std::make_shared<DBQueryBase>(query);
 
     if( fields_list.empty()  )
         fields_list = make_default_query_fields();
 
-    setQuery( DBQueryDef( std::make_shared<DBQueryBase>(query), fields_list )  );
+    setQuery( DBQueryDef( internal_query, fields_list )  );
 }
 
 

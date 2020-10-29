@@ -56,6 +56,10 @@ public:
         qEJDB = 7
     };
 
+    static DBQueryBase emptyQuery()
+    {
+       return  DBQueryBase(qUndef);
+    }
 
     /// Empty or All  query constructor.
     explicit DBQueryBase( QType atype = qAll  );

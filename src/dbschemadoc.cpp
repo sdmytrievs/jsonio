@@ -4,19 +4,19 @@
 
 namespace jsonio17 {
 
-DBSchemaDocument *DBSchemaDocument::newSchemaDocumentQuery( const DataBase &dbconnect, const std::string &aschema_name,
-                                                            const std::string &collection_name, DBQueryBase &&query)
+DBSchemaDocument *DBSchemaDocument::newSchemaDocumentQuery( const DataBase& dbconnect, const std::string& aschema_name,
+                                                            const std::string& collection_name, const DBQueryBase& query)
 {
     if( aschema_name.empty() || collection_name.empty() )
         return nullptr;
     auto new_document =  new DBSchemaDocument( aschema_name, dbconnect, collection_name );
     // init internal selection block
-    new_document->setQuery( std::move(query) );
+    new_document->setQuery( query );
     return new_document;
 }
 
-DBSchemaDocument *DBSchemaDocument::newSchemaDocument( const DataBase &dbconnect, const std::string &aschema_name,
-                                                       const std::string &collection_name)
+DBSchemaDocument *DBSchemaDocument::newSchemaDocument( const DataBase& dbconnect, const std::string& aschema_name,
+                                                       const std::string& collection_name)
 {
     if( aschema_name.empty() || collection_name.empty() )
         return nullptr;
