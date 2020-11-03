@@ -179,6 +179,7 @@ bool DBDocumentBase::existDocumentsByQuery( DBQueryBase &&query ) const
     fields2query_t query_fields;
     query_fields["_id"] = "_id";
     query.setQueryFields( query_fields );
+    std::cout<< query.type() << " Query " << query.queryString() << std::endl;
     values_t result_data = selectQuery( query );
     return !result_data.empty();
 }

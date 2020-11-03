@@ -91,11 +91,11 @@ public:
 
     /// Load document from json string
     /// \return current document key
-    std::string recFromJson( const std::string& jsondata ) override
+    std::string recFromJson( const std::string& jsondata, bool testValues ) override
     {
-        test_schema( jsondata );
+        test_schema( jsondata, testValues );
         setJson( jsondata );
-        return getKeyFromCurrent( );
+        return getKeyFromCurrent();
     }
 
     /// Test existence outgoing edges.
@@ -193,7 +193,7 @@ protected:
     }
 
     /// Test true type and label for schema
-    void test_schema( const std::string& jsondata );
+    void test_schema( const std::string& jsondata, bool testValues );
 
     /// Change base collections
     void update_collection( const std::string& aschemaName );

@@ -67,12 +67,13 @@ void DBVertexDocument::resetSchema( const std::string &aschema_name, bool change
     if( schema_name != aschema_name || change_queries  )
     {
         schema_name = aschema_name;
-        current_schema_object = JsonSchema::object(schema_name);
+        current_schema_object = JsonSchema::object(aschema_name);
         current_schema_object.get_value_via_path("_label", object_label, std::string("") );
         current_schema_object.get_value_via_path("_type", object_type, std::string("") );
 
         JSONIO_THROW_IF( object_type != type(), "DBVertexDocument", 11,
                           " illegal record type:" + object_type );
+
         // update collection
         update_collection(  aschema_name );
         load_unique_fields();
@@ -261,7 +262,7 @@ void DBVertexDocument::update_collection( const std::string& aschema_name )
 }
 
 // Test true type and label for schema
-void DBVertexDocument::test_schema( const std::string &jsondata )
+void DBVertexDocument::test_schema( const std::string &jsondata, bool testValues )
 {
     auto newtype = extract_string_json( "_type", jsondata );
     auto newlabel = extract_string_json( "_label", jsondata );
@@ -278,7 +279,7 @@ void DBVertexDocument::test_schema( const std::string &jsondata )
 
         JSONIO_THROW_IF( newschema.empty(), "DBVertexDocument", 15,
                           " undefined record type: " + newtype + " or label: " + newlabel );
-        resetSchema( newschema, false );
+        resetSchema( newschema, testValues );
     }
     else
     {

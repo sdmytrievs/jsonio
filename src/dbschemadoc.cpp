@@ -90,7 +90,6 @@ std::vector<std::string> DBSchemaDocument::make_default_query_fields() const
         return DBDocumentBase::make_default_query_fields();
 
     std::vector<std::string> key_fields = schema_struct->getSelectedList();
-
     if( key_fields.empty() )
     {
         auto field_it = schema_struct->cbegin();
@@ -98,6 +97,7 @@ std::vector<std::string> DBSchemaDocument::make_default_query_fields() const
         {
             if( field_it->get()->required() == FieldDef::fld_required )
                 key_fields.push_back(field_it->get()->name());
+            field_it++;
         }
     }
 

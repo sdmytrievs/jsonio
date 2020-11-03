@@ -189,7 +189,7 @@ public:
 
     /// Load document from json string
     /// \return current document key
-    virtual std::string recFromJson( const std::string& jsondata )
+    virtual std::string recFromJson( const std::string& jsondata, bool  )
     {
         setJson( jsondata );
         return getKeyFromCurrent( );
@@ -282,7 +282,7 @@ public:
     /// \return new key of document ( generate from template if key undefined )
     std::string createFromJson(  const std::string& jsondata, bool testValues = false )
     {
-        setJson( jsondata );
+        recFromJson( jsondata, testValues );
         return createWithTestValues( testValues );
     }
 
@@ -292,7 +292,7 @@ public:
     /// and if all the values are the same, then we update the selected record instead of creating new ones.
     void updateFromJson( const std::string& jsondata, bool testValues = false )
     {
-        setJson( jsondata );
+        recFromJson( jsondata, testValues );
         updateWithTestValues( testValues );
     }
 
