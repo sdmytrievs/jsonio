@@ -119,3 +119,20 @@ TEST( JsonioSchemaJson, fieldOidPath )
     EXPECT_EQ( dval, 1.5);
 }
 
+TEST( JsonioSchemaJson, ObjectAssign)
+{
+    ioSettings().addSchemaFormat(schema_thrift, schema_str);
+
+    auto complex_object = JsonSchema( JsonSchema::object("ComplexSchemaTest") );
+    EXPECT_EQ(  complex_object.dump(true), "{\"about\":{\"version\":1},\"values\":[[1,2],[3,4]]}\n" );
+
+    auto simpl_obj = json::loads( "SimpleSchemaTest", simple_schema_value );
+    EXPECT_NO_THROW( complex_object = simpl_obj );
+    EXPECT_EQ(  complex_object.getStructName(), simpl_obj.getStructName() );
+    EXPECT_EQ(  complex_object.dump(), simpl_obj.dump() );
+
+    EXPECT_NO_THROW( complex_object = json::loads( "ComplexSchemaTest", complex_schema_value ) );
+    EXPECT_EQ(  complex_object.getStructName(), "ComplexSchemaTest" );
+
+    EXPECT_THROW( complex_object["about"] = simpl_obj, jsonio_exception );
+}
