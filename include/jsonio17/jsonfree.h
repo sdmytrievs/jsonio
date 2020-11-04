@@ -175,6 +175,9 @@ public:
     /// Return a reference to object[jsonpath] if an object can be create, exception otherwise.
     JsonFree &add_object_via_path(const std::string &jsonpath) override;
 
+    /// Return a reference to object[jsonpath] if an array can be create, exception otherwise.
+    JsonFree &add_array_via_path(const std::string &jsonpath) override;
+
 protected:
 
     // Get methods ( using in Qt GUI model ) --------------------------
@@ -185,10 +188,12 @@ protected:
     const std::string& getFieldValue() const override
     {   return  field_value;  }
 
+    list_names_t getUsedKeys() const override;
+
     std::size_t getChildrenCount() const override
     {   return children.size();  }
 
-    const JsonBase* getChild( std::size_t ndx ) const override
+    JsonFree* getChild( std::size_t ndx ) const override
     {
         if( ndx < getChildrenCount() )
         {
@@ -197,10 +202,12 @@ protected:
         return nullptr;
     }
 
-    const JsonBase* getParent() const override
-    {  return parent_object;  }
+    JsonFree* getChild( const std::string& key ) const override;
 
-    list_names_t getUsedKeys() const override;
+    JsonFree* getParent() const override
+    {
+        return parent_object;
+    }
 
 private:
 

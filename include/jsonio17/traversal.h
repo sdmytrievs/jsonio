@@ -58,12 +58,14 @@ public:
       edge_list.clear();
 
       if( startFromVertex )
-      {  for(auto const &id : ids)
-          parseVertex( id, afunc );
+      {
+          for(auto const &id : ids)
+             parseVertex( id, afunc );
       }
       else
-      {  for(auto const &id : ids)
-           parseEdge( id, afunc );
+      {
+          for(auto const &id : ids)
+             parseEdge( id, afunc );
       }
       std::cout << "vertexList " << vertex_list.size() << " edgeList " << edge_list.size() << std::endl;
     }

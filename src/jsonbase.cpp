@@ -114,6 +114,10 @@ const char *JsonBase::typeName(JsonBase::Type type)
 {
     switch( type )
     {
+    case Int:
+        return "int";
+    case Double:
+        return "double";
     case Null:
         return "null";
     case Object:
@@ -123,10 +127,9 @@ const char *JsonBase::typeName(JsonBase::Type type)
     case String:
         return "string";
     case Bool:
-        return "boolean";
-    default:
-        return "number";
+        return "bool";
     }
+    return "";
 }
 
 

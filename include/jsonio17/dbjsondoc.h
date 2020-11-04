@@ -25,7 +25,8 @@ protected:
 public:
 
     static DBJsonDocument* newJsonDocumentQuery( const DataBase& dbconnect, const std::string& collcName,
-                                                 const std::vector<std::string>& key_template_fields, DBQueryBase&& query );
+                                                 const std::vector<std::string>& key_template_fields,
+                                                 const DBQueryBase& query = DBQueryBase::emptyQuery() );
 
     static DBJsonDocument* newJsonDocument( const DataBase& dbconnect, const std::string& collcName,
                                             const std::vector<std::string>& key_template_fields = {} );
@@ -45,6 +46,11 @@ public:
     ///  Destructor
     virtual ~DBJsonDocument(){}
 
+    /// Link to internal data
+    const JsonFree& loaded_data() const override
+    {
+        return  current_object;
+    }
 
     /// Generate new document-handle (_id) or other pointer of location
     std::string genOid( const std::string& key_template ) override

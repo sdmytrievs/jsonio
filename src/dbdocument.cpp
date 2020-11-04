@@ -51,23 +51,26 @@ void DBDocumentBase::updateQuery()
 
 
 // Set&execute query for document
-void DBDocumentBase::setQuery( DBQueryBase &&query, std::vector<std::string> fields_list)
+void DBDocumentBase::setQuery( const DBQueryBase& query, std::vector<std::string> fields_list)
 {
+    std::shared_ptr<DBQueryBase> internal_query;
     if( query.empty()  )
-        query = make_default_query_template();
+        internal_query = std::make_shared<DBQueryBase>(make_default_query_template());
+    else
+        internal_query = std::make_shared<DBQueryBase>(query);
 
     if( fields_list.empty()  )
         fields_list = make_default_query_fields();
 
-    setQuery( DBQueryDef( std::make_shared<DBQueryBase>(query), fields_list )  );
+    setQuery( DBQueryDef( internal_query, fields_list )  );
 }
 
 
-std::string DBDocumentBase::createWithTestValues( bool testValues )
+std::string DBDocumentBase::createWithTestValues( bool test_values )
 {
     auto key = getKeyFromCurrent();
 
-    if( key.empty() && testValues )
+    if( key.empty() && test_values )
     {
         key = get_key_from_query_result();
         if( !key.empty() )
@@ -79,12 +82,12 @@ std::string DBDocumentBase::createWithTestValues( bool testValues )
     return createDocument( key );
 }
 
-void DBDocumentBase::updateWithTestValues( bool testValues )
+void DBDocumentBase::updateWithTestValues( bool test_values )
 {
     auto key = getKeyFromCurrent();
 
     if( !existsDocument(key) )
-       createWithTestValues( testValues );
+       createWithTestValues( test_values );
     else
        updateDocument( key );
 }

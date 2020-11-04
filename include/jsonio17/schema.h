@@ -114,6 +114,11 @@ public:
         return fields.cbegin();
     }
 
+    /// Get size of structure
+    size_t size() const {
+        return fields.size();
+    }
+
     /// Get name of structure
     const std::string& name() const {
         return schema_name;

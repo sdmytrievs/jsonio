@@ -64,9 +64,9 @@ int main(int argc, char* argv[])
         // Connect to Arangodb ( load settings from "jsonio17-config.json" config file )
         DataBase db;
 
-        different_query_types( db );
+        //different_query_types( db );
         //substances_query_types( db );
-        //substances_vertex( db );
+        substances_vertex( db );
 
     }
     catch(jsonio_exception& e)
@@ -278,13 +278,16 @@ int substances_vertex( DataBase& connect )
 //    auto vertex_doc =  std::shared_ptr<DBVertexDocument>(
 //                DBVertexDocument::newVertexDocument( connect, "VertexSubstance" ));
     auto vertex_doc =  std::shared_ptr<DBVertexDocument>(
-                DBVertexDocument::newVertexDocumentQuery( connect, "VertexSubstance", DBQueryBase(DBQueryBase::qUndef) ));
+                DBVertexDocument::newVertexDocumentQuery( connect, "VertexSubstance", DBQueryBase(DBQueryBase::qAll) ));
 
     auto end1 = std::chrono::high_resolution_clock::now();
     printTimeSec( "Create collection", start, end1 );
 
     //vertex_doc->readDocument("substances/methionine,cr;0:SC_COMPONENT;23:SLOP16");
     //std::cout << vertex_doc->getJson(true) << std::endl;
+
+    std::cout << " !!! out " << vertex_doc->existOutEdges("substances/H2O;1:SC_GASFLUID;18:MINES") << std::endl;
+    std::cout << " !!! in " << vertex_doc->existInEdges("substances/(NpO2)2(OH)2+2;2:SC_AQSOLUTE;15:PSI_NAGRA") << std::endl;
 
     // Select records by template
     recjsonValues.clear();

@@ -4,19 +4,19 @@
 
 namespace jsonio17 {
 
-DBSchemaDocument *DBSchemaDocument::newSchemaDocumentQuery( const DataBase &dbconnect, const std::string &aschema_name,
-                                                            const std::string &collection_name, DBQueryBase &&query)
+DBSchemaDocument *DBSchemaDocument::newSchemaDocumentQuery( const DataBase& dbconnect, const std::string& aschema_name,
+                                                            const std::string& collection_name, const DBQueryBase& query)
 {
     if( aschema_name.empty() || collection_name.empty() )
         return nullptr;
     auto new_document =  new DBSchemaDocument( aschema_name, dbconnect, collection_name );
     // init internal selection block
-    new_document->setQuery( std::move(query));
+    new_document->setQuery( query );
     return new_document;
 }
 
-DBSchemaDocument *DBSchemaDocument::newSchemaDocument( const DataBase &dbconnect, const std::string &aschema_name,
-                                                       const std::string &collection_name)
+DBSchemaDocument *DBSchemaDocument::newSchemaDocument( const DataBase& dbconnect, const std::string& aschema_name,
+                                                       const std::string& collection_name)
 {
     if( aschema_name.empty() || collection_name.empty() )
         return nullptr;
@@ -90,7 +90,6 @@ std::vector<std::string> DBSchemaDocument::make_default_query_fields() const
         return DBDocumentBase::make_default_query_fields();
 
     std::vector<std::string> key_fields = schema_struct->getSelectedList();
-
     if( key_fields.empty() )
     {
         auto field_it = schema_struct->cbegin();
@@ -98,6 +97,7 @@ std::vector<std::string> DBSchemaDocument::make_default_query_fields() const
         {
             if( field_it->get()->required() == FieldDef::fld_required )
                 key_fields.push_back(field_it->get()->name());
+            field_it++;
         }
     }
 

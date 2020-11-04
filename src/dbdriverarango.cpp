@@ -10,6 +10,30 @@
 
 namespace jsonio17 {
 
+// Get settings data from ison section
+arangocpp::ArangoDBConnection getFromSettings( const SectionSettings& section, bool rootdata )
+{
+    arangocpp::ArangoDBConnection connect_data;
+
+    if( rootdata )
+    {
+        connect_data.serverUrl = section.value<std::string>( "DB_URL", arangocpp::ArangoDBConnection::local_server_endpoint );
+        connect_data.databaseName = section.value<std::string>( "DBRootName", arangocpp::ArangoDBConnection::local_root_database );
+        connect_data.user.name = section.value<std::string>( "DBRootUser", arangocpp::ArangoDBConnection::local_root_username );
+        connect_data.user.password = section.value<std::string>( "DBRootPassword", arangocpp::ArangoDBConnection::local_root_password );
+        connect_data.user.access = "rw";
+    }
+    else
+    {
+        connect_data.serverUrl = section.value<std::string>( "DB_URL", arangocpp::ArangoDBConnection::local_server_endpoint );
+        connect_data.databaseName = section.value<std::string>( "DBName", arangocpp::ArangoDBConnection::local_server_database );
+        connect_data.user.name = section.value<std::string>( "DBUser", arangocpp::ArangoDBConnection::local_server_username );
+        connect_data.user.password = section.value<std::string>( "DBUserPassword", arangocpp::ArangoDBConnection::local_server_password );
+        connect_data.user.access = section.value<std::string>( "DBAccess", "rw" );
+    }
+    return connect_data;
+}
+
 
 // Default Constructor
 ArangoDBClient::ArangoDBClient():AbstractDBDriver()
@@ -17,6 +41,11 @@ ArangoDBClient::ArangoDBClient():AbstractDBDriver()
     arangocpp::ArangoDBConnection aconnect_data =
             arangocpp::connectFromSettings( ioSettings().dump(), false );
     reset_db_connection( aconnect_data );
+}
+
+const arangocpp::ArangoDBConnection &ArangoDBClient::connect_data() const
+{
+    return *arando_connect.get();
 }
 
 void ArangoDBClient::reset_db_connection( const arangocpp::ArangoDBConnection& aconnect_data )

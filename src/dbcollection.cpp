@@ -98,25 +98,26 @@ bool DBCollection::existsDocument( const std::string &key ) const
 
 std::string DBCollection::createDocument( JsonBase& data_object )
 {
-    auto new_key = getKeyFrom( data_object );
+    auto new_id = getKeyFrom( data_object );
+    auto  parts = split( new_id, "/");
 
-    JSONIO_THROW_IF( !is_allowed( new_key ), "DBCollection", 11,
-                     " some of characters cannot be used inside _key values '" + new_key +"'." );
+    JSONIO_THROW_IF( !is_allowed( parts.back() ), "DBCollection", 11,
+                     " some of characters cannot be used inside _key values '" + new_id +"'." );
 
-    JSONIO_THROW_IF( existsDocument( new_key ), "DBCollection", 12,
-                     " two records with the same key '" + new_key +"'." );
+    JSONIO_THROW_IF( existsDocument( new_id ), "DBCollection", 12,
+                     " two records with the same key '" + new_id +"'." );
 
     {
         std::unique_lock<std::shared_mutex> g(keysmap_mutex);
         std::string second;
         // save record to data base
         std::string ret_id = db_driver()->create_record( name(), second, data_object );
-        JSONIO_THROW_IF( ret_id.empty(), "DBCollection", 13," error saving record '" + new_key +"'." );
+        JSONIO_THROW_IF( ret_id.empty(), "DBCollection", 13," error saving record '" + new_id +"'." );
         data_object.set_oid( ret_id );
-        new_key = getKeyFrom( data_object );
-        key_record_map[new_key] = std::move(second);
+        new_id = getKeyFrom( data_object );
+        key_record_map[new_id] = std::move(second);
     }
-    return new_key;
+    return new_id;
 }
 
 std::string DBCollection::createDocument( DBDocumentBase *document )

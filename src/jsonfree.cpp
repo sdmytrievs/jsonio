@@ -39,6 +39,15 @@ list_names_t JsonFree::getUsedKeys() const
     return usekeys;
 }
 
+JsonFree *JsonFree::getChild(const std::string &key) const
+{
+    auto element = find_key(key);
+    if( element == children.end() )
+        return nullptr;
+    return element->get();
+}
+
+
 bool JsonFree::clear()
 {
     children.clear();
@@ -113,6 +122,11 @@ JsonFree *JsonFree::field_add(std::queue<std::string> names )
             append_node( fname, JsonBase::Object, "" );
             return children.back()->field_add(names);
         }
+        else if( isArray() and fname== std::to_string(children.size()) )
+        {
+            append_node( fname, JsonBase::Object, "" );
+            return children.back()->field_add(names);
+        }
         else
             return nullptr;
     }
@@ -130,6 +144,19 @@ JsonFree &JsonFree::add_object_via_path(const std::string &jsonpath)
         return *pobj;
     }
     JSONIO_THROW( "JsonBase", 12, "cannot create object with jsonpath " + std::string( jsonpath ) );
+}
+
+JsonFree &JsonFree::add_array_via_path(const std::string &jsonpath)
+{
+    auto names = split(jsonpath, field_path_delimiters);
+    auto pobj = field_add( names );
+    if( pobj )
+    {
+        if( !pobj->isArray())
+            pobj->update_node( JsonBase::Array, "" );
+        return *pobj;
+    }
+    JSONIO_THROW( "JsonBase", 21, "cannot create array with jsonpath " + std::string( jsonpath ) );
 }
 
 // key and parent not changed
@@ -226,7 +253,11 @@ bool JsonFree::remove_child( JsonFree* child )
         if( children[ii].get() == child )
             thisndx = static_cast<int>(ii);
         if( thisndx >= 0 )
-            children[ii]->ndx_in_parent--;
+        {
+          children[ii]->ndx_in_parent--;
+          if( isArray() )
+              children[ii]->field_key = std::to_string(children[ii]->ndx_in_parent);
+        }
     }
     if( thisndx >= 0 )
     {   children.erase(children.begin() + thisndx);

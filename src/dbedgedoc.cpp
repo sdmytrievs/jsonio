@@ -25,19 +25,19 @@ DBEdgeDocument* documentAllEdges( const DataBase& dbconnect )
 }
 
 
-DBEdgeDocument *DBEdgeDocument::newEdgeDocumentQuery(const DataBase &dbconnect, const std::string &aschema_name,
-                                                     DBQueryBase&& query)
+DBEdgeDocument *DBEdgeDocument::newEdgeDocumentQuery( const DataBase& dbconnect, const std::string& aschema_name,
+                                                      const DBQueryBase& query)
 {
     if( aschema_name.empty()  )
         return nullptr;
 
     auto new_document = new DBEdgeDocument( aschema_name, dbconnect );
     // internal selection
-    new_document->setQuery( std::move(query));
+    new_document->setQuery( query );
     return new_document;
 }
 
-DBEdgeDocument *DBEdgeDocument::newEdgeDocument(const DataBase &dbconnect, const std::string &aschema_name)
+DBEdgeDocument *DBEdgeDocument::newEdgeDocument( const DataBase& dbconnect, const std::string& aschema_name)
 {
     if( aschema_name.empty()  )
         return nullptr;
@@ -65,7 +65,7 @@ void DBEdgeDocument::setEdgeObject( const std::string &aschema_name, const std::
         current_schema_object.set_value_via_path( ent.first, ent.second  );
 }
 
-std::string DBEdgeDocument::extractSchemaFromId(const std::string &oid)
+std::string DBEdgeDocument::extractSchemaFromId(const std::string &oid) const
 {
     auto names = split( oid, "/" );
     if( names.size()>1 )

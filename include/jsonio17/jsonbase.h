@@ -125,10 +125,6 @@ public:
         return size() < 1;
     }
 
-    /// Get sizes of complex array ( 2D, 3D ... ).
-    /// Important: get only sizes of first children.
-    virtual std::vector<size_t> array_sizes() const = 0;
-
     virtual const JsonBase& child( size_t ii ) const
     {
         auto cild_ptr = getChild(ii);
@@ -320,6 +316,10 @@ public:
     /// Remove current field from json.
     virtual bool remove() = 0;
 
+    /// Get sizes of complex array ( 2D, 3D ... ).
+    /// Important: get only sizes of first children.
+    virtual std::vector<size_t> array_sizes() const = 0;
+
     /// Resize array ( 1D, 2D, 3D ... ).
     /// Set up defval values if the JSON type of elements is primitive
     virtual void array_resize_xD( const std::vector<size_t> &sizes, const std::string& defval )
@@ -408,10 +408,13 @@ public:
     /// Return a reference to object[jsonpath] if an object can be create, exception otherwise.
     virtual JsonBase &add_object_via_path(const std::string &jsonpath) = 0;
 
+    /// Return a reference to object[jsonpath] if an array can be create, exception otherwise.
+    virtual JsonBase &add_array_via_path(const std::string &jsonpath) = 0;
+
     /// Set _id to object
     virtual void set_oid( const std::string& oid  );
 
-protected:
+public:
 
     // Get methods ( using in Qt GUI ) --------------------------
 
@@ -421,9 +424,11 @@ protected:
 
     virtual std::size_t getChildrenCount() const = 0;
 
-    virtual const JsonBase* getChild( std::size_t ndx ) const = 0;
+    virtual JsonBase* getChild( std::size_t ndx ) const = 0;
 
-    virtual const JsonBase* getParent() const = 0;
+    virtual JsonBase* getChild( const std::string& key ) const = 0;
+
+    virtual JsonBase* getParent() const = 0;
 
     virtual list_names_t getUsedKeys() const = 0;
 
@@ -441,6 +446,7 @@ private:
     virtual void update_node(  Type atype, const std::string& avalue ) =0;
     virtual JsonBase *append_node( const std::string& akey, Type atype, const std::string& avalue ) =0;
     void dump2stream(std::ostream &os, int depth, bool dense) const;
+
     // Get field by fieldpath ("name1.name2.name3")
     //JsonBase *field(  const std::string& fieldpath ) const;
     virtual JsonBase *field( std::queue<std::string> names ) const = 0;

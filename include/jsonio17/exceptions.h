@@ -49,7 +49,7 @@ private:
 };
 
 
-/// Throw  jarango_exception.
+/// Throw  jsonio_exception.
 [[ noreturn ]] inline void JSONIO_THROW( const std::string& title, int id, const std::string& message )
 {
     throw jsonio_exception::create(title, id, message);

@@ -57,7 +57,8 @@ public:
         return edgesQuery( id_vertex, DBQueryBase::qEdgesTo, edge_collections );
     }
 
-    static DBVertexDocument* newVertexDocumentQuery( const DataBase& dbconnect, const std::string& aschema_name, DBQueryBase&& query );
+    static DBVertexDocument* newVertexDocumentQuery( const DataBase& dbconnect, const std::string& aschema_name,
+                                                     const DBQueryBase& query = DBQueryBase::emptyQuery() );
     static DBVertexDocument* newVertexDocument( const DataBase& dbconnect, const std::string& aschema_name );
 
     ///  Constructor collection&document
@@ -90,11 +91,11 @@ public:
 
     /// Load document from json string
     /// \return current document key
-    std::string recFromJson( const std::string& jsondata ) override
+    std::string recFromJson( const std::string& jsondata, bool test_values ) override
     {
-        test_schema( jsondata );
+        test_schema( jsondata, test_values );
         setJson( jsondata );
-        return getKeyFromCurrent( );
+        return getKeyFromCurrent();
     }
 
     /// Test existence outgoing edges.
@@ -131,23 +132,23 @@ public:
 
     /// Creates a new vertex document in the collection from the given fldvalues data.
     /// \param  fldvalues - data to save
-    /// \param  testValues - If testValues is true, we compare the current data with the internally loaded values,
+    /// \param  test_values - If test_values is true, we compare the current data with the internally loaded values,
     /// and if all the values are the same, then we update the selected record instead of creating new ones.
     /// \return new key of document
-    std::string createVertex( const std::string& aschema_name, const field_value_map_t& fldvalues, bool testValues = false )
+    std::string createVertex( const std::string& aschema_name, const field_value_map_t& fldvalues, bool test_values = false )
     {
         setVertexObject( aschema_name, fldvalues );
-        return createWithTestValues( testValues );
+        return createWithTestValues( test_values );
     }
 
     /// Update/create a vertex document.
     /// \param  fldvalues - values to update
-    /// \param  testValues - If testValues is true, we compare the current data with the internally loaded values,
+    /// \param  test_values - If test_values is true, we compare the current data with the internally loaded values,
     /// and if all the values are the same, then we update the selected record instead of creating new ones.
-    void updateVertex( const std::string& aschema_name, const field_value_map_t& fldvalues, bool testValues = false )
+    void updateVertex( const std::string& aschema_name, const field_value_map_t& fldvalues, bool test_values = false )
     {
         updateVertexObject( aschema_name, fldvalues );
-        updateWithTestValues( testValues );
+        updateWithTestValues( test_values );
     }
 
     /// Build map of fields-value pairs
@@ -158,7 +159,7 @@ public:
     }
 
     /// Extract schema from the document-handle ( no query ).
-    virtual std::string  extractSchemaFromId( const std::string& id  );
+    virtual std::string  extractSchemaFromId( const std::string& id  ) const;
 
     /// Init uniqueFields when load collection
     void load_unique_fields();
@@ -192,7 +193,7 @@ protected:
     }
 
     /// Test true type and label for schema
-    void test_schema( const std::string& jsondata );
+    void test_schema( const std::string& jsondata, bool test_values );
 
     /// Change base collections
     void update_collection( const std::string& aschemaName );

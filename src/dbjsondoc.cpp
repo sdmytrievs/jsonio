@@ -4,8 +4,8 @@
 
 namespace jsonio17 {
 
-DBJsonDocument *DBJsonDocument::newJsonDocument( const DataBase &dbconnect, const std::string &coll_name,
-                                                 const std::vector<std::string> &key_template_fields)
+DBJsonDocument *DBJsonDocument::newJsonDocument( const DataBase& dbconnect, const std::string& coll_name,
+                                                 const std::vector<std::string>& key_template_fields)
 {
     if( coll_name.empty() )
         return nullptr;
@@ -13,14 +13,15 @@ DBJsonDocument *DBJsonDocument::newJsonDocument( const DataBase &dbconnect, cons
 }
 
 
-DBJsonDocument *DBJsonDocument::newJsonDocumentQuery( const DataBase &dbconnect, const std::string &coll_name,
-                                                      const std::vector<std::string> &key_template_fields, DBQueryBase &&query)
+DBJsonDocument *DBJsonDocument::newJsonDocumentQuery( const DataBase& dbconnect, const std::string& coll_name,
+                                                      const std::vector<std::string>& key_template_fields,
+                                                      const DBQueryBase& query)
 {
     if( coll_name.empty() )
         return nullptr;
     auto new_document = new DBJsonDocument( dbconnect, coll_name, key_template_fields );
     // init internal selection block
-    new_document->setQuery( std::move(query) );
+    new_document->setQuery( query );
     return new_document;
 }
 

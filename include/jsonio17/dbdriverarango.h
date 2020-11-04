@@ -1,6 +1,7 @@
 #pragma once
 
 #include "jsonio17/dbdriverbase.h"
+#include "jsonio17/io_settings.h"
 
 namespace arangocpp {
 enum class CollectionTypes;
@@ -9,6 +10,9 @@ class ArangoDBCollectionAPI;
 }
 
 namespace jsonio17 {
+
+/// Get settings data from ison section
+arangocpp::ArangoDBConnection getFromSettings( const SectionSettings& section, bool rootdata );
 
 /// Implementation of Database Driver using Low-Level C++ Driver for ArangoDB.
 class ArangoDBClient: public AbstractDBDriver
@@ -28,6 +32,9 @@ public:
     ///  Destructor
     ~ArangoDBClient()
     {}
+
+    /// ArangoDB connection data
+    const arangocpp::ArangoDBConnection& connect_data() const;
 
     // Collections API
 

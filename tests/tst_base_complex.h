@@ -93,7 +93,8 @@ TYPED_TEST( JsonioBaseComplexTest, ValueViaPath )
     dval = 2.5;
     EXPECT_TRUE( obj.set_value_via_path( "data[1].value", dval ) );
     EXPECT_EQ( obj["data"][1]["value"].toDouble(), dval );
-    EXPECT_FALSE( obj.set_value_via_path( "data[4].value", dval ) );
+    EXPECT_FALSE( obj.set_value_via_path( "data[5].value", dval ) );
+    EXPECT_TRUE( obj.set_value_via_path( "data[4].value", dval ) );
 
     std::string sval;
     EXPECT_TRUE( obj.get_value_via_path( "data[2]", sval, std::string("undefined") ) );
@@ -117,7 +118,8 @@ TYPED_TEST( JsonioBaseComplexTest, AddValueViaPath )
     EXPECT_FALSE( obj["formats"]["add_object2"].empty() );
     EXPECT_EQ( obj["formats"]["add_object2"]["width"].toInt(), iwidth );
 
-    EXPECT_FALSE( obj.set_value_via_path( "data[4].value", 2.5 ) );
+    EXPECT_FALSE( obj.set_value_via_path( "data[7].value", 2.5 ) );
+    EXPECT_TRUE( obj.set_value_via_path( "data[4].value", 2.5 ) );
 }
 
 

@@ -15,7 +15,7 @@ class DBEdgeDocument : public DBVertexDocument
 public:
 
     static DBEdgeDocument* newEdgeDocumentQuery( const DataBase& dbconnect, const std::string& aschema_name,
-                                                 DBQueryBase&& query  );
+                                                 const DBQueryBase& query = DBQueryBase::emptyQuery()  );
 
     static DBEdgeDocument* newEdgeDocument( const DataBase& dbconnect, const std::string& aschema_name );
 
@@ -42,18 +42,18 @@ public:
 
     /// Creates a new edge document in the collection from the given fldvalues data.
     /// \param  fldvalues - data to save
-    /// \param  testValues - If testValues is true, we compare the current data with the internally loaded values,
+    /// \param  test_values - If test_values is true, we compare the current data with the internally loaded values,
     /// and if all the values are the same, then we update the selected record instead of creating new ones.
     /// \return new key of document
     std::string createEdge( const std::string& aschema_name, const std::string& outV,
-                            const std::string& inV, const field_value_map_t& fldvalues, bool testValues = false )
+                            const std::string& inV, const field_value_map_t& fldvalues, bool test_values = false )
     {
         setEdgeObject( aschema_name, outV, inV, fldvalues );
-        return createWithTestValues( testValues );
+        return createWithTestValues( test_values );
     }
 
     /// Extract schema by id  ( no query )
-    std::string  extractSchemaFromId( const std::string& oid  ) override;
+    std::string  extractSchemaFromId( const std::string& oid  ) const override;
 
 protected:
 

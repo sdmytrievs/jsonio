@@ -107,6 +107,7 @@ public:
 
     /// Task settings file name
     static std::string settingsFileName;
+    static std::string jsonio_section_name;
 
     /// Constructor
     explicit JsonioSettings( const std::string& config_file_path );
@@ -138,14 +139,14 @@ public:
 
     /// Get value from settings
     template <class T>
-    T value(const std::string& jsonpath, const T& defaultValue ) const
+    T value( const std::string& jsonpath, const T& defaultValue ) const
     {
         return top_section.value( jsonpath, defaultValue);
     }
 
     /// Set addition settings
     template <class T>
-    void setValue( const char *jsonpath, const T& avalue )
+    void setValue( const std::string& jsonpath, const T& avalue )
     {
         top_section.setValue( jsonpath, avalue);
     }
@@ -210,8 +211,6 @@ private:
 
     /// Link to top settings
     SectionSettings top_section;
-
-    std::string jsonio_section_name = "jsonio";
 
     /// Link to jsonio settings
     SectionSettings jsonio_section;

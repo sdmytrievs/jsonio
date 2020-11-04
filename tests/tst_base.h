@@ -440,7 +440,17 @@ TEST( JsonioBase, AddValueViaPath )
     EXPECT_FALSE( obj["formats"]["add_object2"].empty() );
     EXPECT_EQ( obj["formats"]["add_object2"]["width"].toInt(), iwidth );
 
-    EXPECT_FALSE( obj.set_value_via_path( "data[4].value", 2.5 ) );
+    EXPECT_FALSE( obj.set_value_via_path( "data[5].value", 2.5 ) );
+
+    std::array<int, 4> arr1 = {1,2,3,4};
+    EXPECT_TRUE( obj.set_value_via_path( "data2", arr1 ) );
+    EXPECT_EQ( obj["data2"].dump(true), "[1,2,3,4]\n" );
+
+    int x[4] = {10,20,30,40};
+    EXPECT_TRUE( obj.set_value_via_path( "data3", std::vector<int>(x, x + sizeof x / sizeof x[0]) ) );
+    EXPECT_EQ( obj["data3"].dump(true), "[10,20,30,40]\n" );
+
+
 }
 
 TEST( JsonioBase, SetOid )
