@@ -17,19 +17,19 @@ arangocpp::ArangoDBConnection getFromSettings( const SectionSettings& section, b
 
     if( rootdata )
     {
-        connect_data.serverUrl = section.value( "DB_URL", std::string( arangocpp::ArangoDBConnection::local_server_endpoint ));
-        connect_data.databaseName = section.value( "DBRootName", std::string( arangocpp::ArangoDBConnection::local_root_database ));
-        connect_data.user.name = section.value( "DBRootUser", std::string( arangocpp::ArangoDBConnection::local_root_username ));
-        connect_data.user.password = section.value( "DBRootPassword", std::string( arangocpp::ArangoDBConnection::local_root_password ));
+        connect_data.serverUrl = section.value<std::string>( "DB_URL", arangocpp::ArangoDBConnection::local_server_endpoint );
+        connect_data.databaseName = section.value<std::string>( "DBRootName", arangocpp::ArangoDBConnection::local_root_database );
+        connect_data.user.name = section.value<std::string>( "DBRootUser", arangocpp::ArangoDBConnection::local_root_username );
+        connect_data.user.password = section.value<std::string>( "DBRootPassword", arangocpp::ArangoDBConnection::local_root_password );
         connect_data.user.access = "rw";
     }
     else
     {
-        connect_data.serverUrl = section.value( "DB_URL", std::string( arangocpp::ArangoDBConnection::local_server_endpoint ));
-        connect_data.databaseName = section.value( "DBName", std::string( arangocpp::ArangoDBConnection::local_server_database ));
-        connect_data.user.name = section.value( "DBUser", std::string( arangocpp::ArangoDBConnection::local_server_username ));
-        connect_data.user.password = section.value( "DBUserPassword", std::string( arangocpp::ArangoDBConnection::local_server_password ));
-        connect_data.user.access = section.value( "DBAccess",  std::string("rw"));
+        connect_data.serverUrl = section.value<std::string>( "DB_URL", arangocpp::ArangoDBConnection::local_server_endpoint );
+        connect_data.databaseName = section.value<std::string>( "DBName", arangocpp::ArangoDBConnection::local_server_database );
+        connect_data.user.name = section.value<std::string>( "DBUser", arangocpp::ArangoDBConnection::local_server_username );
+        connect_data.user.password = section.value<std::string>( "DBUserPassword", arangocpp::ArangoDBConnection::local_server_password );
+        connect_data.user.access = section.value<std::string>( "DBAccess", "rw" );
     }
     return connect_data;
 }

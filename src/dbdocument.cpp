@@ -66,11 +66,11 @@ void DBDocumentBase::setQuery( const DBQueryBase& query, std::vector<std::string
 }
 
 
-std::string DBDocumentBase::createWithTestValues( bool testValues )
+std::string DBDocumentBase::createWithTestValues( bool test_values )
 {
     auto key = getKeyFromCurrent();
 
-    if( key.empty() && testValues )
+    if( key.empty() && test_values )
     {
         key = get_key_from_query_result();
         if( !key.empty() )
@@ -82,12 +82,12 @@ std::string DBDocumentBase::createWithTestValues( bool testValues )
     return createDocument( key );
 }
 
-void DBDocumentBase::updateWithTestValues( bool testValues )
+void DBDocumentBase::updateWithTestValues( bool test_values )
 {
     auto key = getKeyFromCurrent();
 
     if( !existsDocument(key) )
-       createWithTestValues( testValues );
+       createWithTestValues( test_values );
     else
        updateDocument( key );
 }
@@ -179,7 +179,6 @@ bool DBDocumentBase::existDocumentsByQuery( DBQueryBase &&query ) const
     fields2query_t query_fields;
     query_fields["_id"] = "_id";
     query.setQueryFields( query_fields );
-    std::cout<< query.type() << " Query " << query.queryString() << std::endl;
     values_t result_data = selectQuery( query );
     return !result_data.empty();
 }

@@ -265,44 +265,44 @@ public:
     //--- Addition complex functions
 
     /// Creates a new document in the collection from the given data.
-    /// \param  testValues - If testValues is true, we compare the current data with the internally loaded values,
+    /// \param  test_values - If test_values is true, we compare the current data with the internally loaded values,
     /// and if all the values are the same, then we update the selected record instead of creating new ones.
     /// \return new key of document ( generate from template if key undefined into the given data )
-    std::string createWithTestValues( bool testValues = false );
+    std::string createWithTestValues( bool test_values = false );
 
     /// Updates an existing document or creates a new document described by the given data (key must present in data).
-    /// \param  testValues - If testValues is true, we compare the current data with the internally loaded values,
+    /// \param  test_values - If test_values is true, we compare the current data with the internally loaded values,
     /// and if all the values are the same, then we update the selected record instead of creating new ones.
-    void updateWithTestValues(  bool testValues = false );
+    void updateWithTestValues(  bool test_values = false );
 
     /// Creates a new document in the collection from the given json data.
     /// \param jsondata - data to save
-    /// \param  testValues - If testValues is true, we compare the current data with the internally loaded values,
+    /// \param  test_values - If test_values is true, we compare the current data with the internally loaded values,
     /// and if all the values are the same, then we update the selected record instead of creating new ones.
     /// \return new key of document ( generate from template if key undefined )
-    std::string createFromJson(  const std::string& jsondata, bool testValues = false )
+    std::string createFromJson(  const std::string& jsondata, bool test_values = false )
     {
-        recFromJson( jsondata, testValues );
-        return createWithTestValues( testValues );
+        recFromJson( jsondata, test_values );
+        return createWithTestValues( test_values );
     }
 
     /// Updates an existing document.
     /// \param  jsondata - data to save ( must contain the key )
-    /// \param  testValues - If testValues is true, we compare the current data with the internally loaded values,
+    /// \param  test_values - If test_values is true, we compare the current data with the internally loaded values,
     /// and if all the values are the same, then we update the selected record instead of creating new ones.
-    void updateFromJson( const std::string& jsondata, bool testValues = false )
+    void updateFromJson( const std::string& jsondata, bool test_values = false )
     {
-        recFromJson( jsondata, testValues );
-        updateWithTestValues( testValues );
+        recFromJson( jsondata, test_values );
+        updateWithTestValues( test_values );
     }
 
     /*
      *  Most of this functions used in import part.
-     *  If  testValues is false all this function work as usual CRUD with addition setting data.
-     *  If testValues is true, we compare the current data with the internally loaded values,
+     *  If  test_values is false all this function work as usual CRUD with addition setting data.
+     *  If test_values is true, we compare the current data with the internally loaded values,
      *    and if all the values are the same, then we update the selected record instead of creating new ones.
      *
-     *   All this functions could be call with  testValues == true only if executed before SetQuery, otherwise will be exception.
+     *   All this functions could be call with  test_values == true only if executed before SetQuery, otherwise will be exception.
     */
 
     // internal selection part

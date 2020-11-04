@@ -371,7 +371,7 @@ private:
         if ( this != &other)
         {
             if( isTop() && other.isTop()) // change schema
-                return true;
+                struct_descrip = other.struct_descrip;
             if( !( struct_descrip == other.struct_descrip  and
                    ( FieldDef::topfield() == other.field_descrip or
                      ( field_descrip == other.field_descrip and level_type == other.level_type)))  )

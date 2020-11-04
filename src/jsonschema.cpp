@@ -85,10 +85,6 @@ JsonSchema::JsonSchema( JsonBase::Type , const std::string &akey, const std::str
 // key and parent not changed
 void JsonSchema::copy(const JsonSchema &obj)
 {
-    if( isTop())
-    {
-        struct_descrip= obj.struct_descrip;
-    }
     // field_key =  obj.field_key; // must be the same
     field_value = obj.field_value;
     children.clear();
@@ -103,10 +99,6 @@ void JsonSchema::copy(const JsonSchema &obj)
 // key and parent not changed
 void JsonSchema::move(JsonSchema &&obj)
 {
-    if( isTop())
-    {
-        struct_descrip= obj.struct_descrip;
-    }
     field_value = std::move(obj.field_value);
     children = std::move(obj.children);
     obj.children.clear();
