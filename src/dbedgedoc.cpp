@@ -76,5 +76,26 @@ std::string DBEdgeDocument::extractSchemaFromId(const std::string &oid) const
     return "";
 }
 
+DBQueryBase DBEdgeDocument::make_default_query_template() const
+{
+    std::string AQLquery = "FOR u IN " + collection_from->name();
+    AQLquery += "\nFILTER u._label == '" + object_label + "' ";
+    //AQLquery += "\nRETURN u ";
+    //std::cout << "AQLquery" << AQLquery << std::endl;
+    auto flds_query = make_default_query_fields();
+    auto key_flds = collection_from->keyFields();
+    flds_query.insert(flds_query.end(), key_flds.begin(), key_flds.end() );
+
+    DBQueryBase def_query( AQLquery, DBQueryBase::qAQL );
+    if( !flds_query.empty() )
+        def_query.setQueryFields(flds_query);
+    return def_query;
+}
+
+DBQueryBase DBEdgeDocument::make_default_query_old() const
+{
+    return DBQueryBase(std::string("{ \"_label\" : \"")+ object_label + "\" }", DBQueryBase::qTemplate);
+}
+
 
 } // namespace jsonio17

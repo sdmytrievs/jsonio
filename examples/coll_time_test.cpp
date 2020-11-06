@@ -3,7 +3,7 @@
 
 /// Time test example for ArangoDBCollectionAPI the API for manipulating collections and documents into.
 
-#include <iostream>
+#include <fstream>
 #include "jsonio17/jsonfree.h"
 //#include "jsonio17/dbcollection.h"
 #include "jsonio17/dbvertexdoc.h"
@@ -278,11 +278,21 @@ int substances_vertex( DataBase& connect )
 //    auto vertex_doc =  std::shared_ptr<DBVertexDocument>(
 //                DBVertexDocument::newVertexDocument( connect, "VertexSubstance" ));
     auto vertex_doc =  std::shared_ptr<DBVertexDocument>(
-                DBVertexDocument::newVertexDocumentQuery( connect, "VertexSubstance", DBQueryBase(DBQueryBase::qAll) ));
+                DBVertexDocument::newVertexDocumentQuery( connect, "VertexSubstance" ));
 
     auto end1 = std::chrono::high_resolution_clock::now();
     printTimeSec( "Create collection", start, end1 );
 
+//    std::fstream table_fout("subst_table_part.csv", std::ios::out );
+//    auto sub_table = vertex_doc->currentQueryResult().queryResult();
+//    for( const auto& line: sub_table)
+//    {
+//      table_fout  << line.first << "; ";
+//      for( const auto& col: line.second )
+//          table_fout  << col << "; ";
+//      table_fout  << "\n";
+//    }
+//    return 0;
     //vertex_doc->readDocument("substances/methionine,cr;0:SC_COMPONENT;23:SLOP16");
     //std::cout << vertex_doc->getJson(true) << std::endl;
 
@@ -301,7 +311,8 @@ int substances_vertex( DataBase& connect )
     recjsonValues.clear();
     std::string aql = "FOR u IN " + collectionName +
             // "\nFILTER u.properties.value > 50 \n"
-            "\nRETURN { \"_id\": u._id, \"name\":u.properties.name }";
+            // "\nRETURN { \"_id\": u._id, \"name\":u.properties.name }";
+            "\nRETURN u ";
     DBQueryBase    aqlquery( aql, DBQueryBase::qAQL );
     vertex_doc->selectQuery( aqlquery, setfnc );
     //printData( "Select records by AQL query", recjsonValues );

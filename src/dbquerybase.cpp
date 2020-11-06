@@ -218,6 +218,23 @@ void DBQueryResult::node_to_values( const JsonBase& node, values_t& values ) con
     }
 }
 
+// Make line to view table
+void DBQueryResult::node_to_values_fields( const JsonBase& node, const fields2query_t& map_fields, values_t& values ) const
+{
+    values.clear();
+    std::string kbuf, fld_key;
+    for( const auto& afield: query_data.fields() )
+    {
+        auto it_fld = map_fields.find(afield);
+        if( it_fld == map_fields.end() )
+            kbuf = std::string("---");
+        else
+            node.get_value_via_path( it_fld->second, kbuf, std::string("---") );
+        trim( kbuf );
+        values.push_back(kbuf);
+    }
+}
+
 void DBQueryResult::add_line( const std::string &key_str, const JsonBase& nodedata, bool isupdate )
 {
     values_t values;
@@ -231,6 +248,13 @@ void DBQueryResult::add_line( const std::string &key_str, const JsonBase& nodeda
             return;
         }
     }
+    query_result_data.insert(std::pair<std::string,values_t>( key_str, values ));
+}
+
+void DBQueryResult::add_line_fields( const std::string& key_str, const JsonBase& nodedata, const fields2query_t& map_fields )
+{
+    values_t values;
+    node_to_values_fields( nodedata, map_fields, values );
     query_result_data.insert(std::pair<std::string,values_t>( key_str, values ));
 }
 

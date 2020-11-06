@@ -187,10 +187,8 @@ protected:
 
     /// Build default query for collection
     /// (could be changed to AQL)
-    DBQueryBase make_default_query_template() const override
-    {
-        return DBQueryBase(std::string("{ \"_label\" : \"")+ object_label + "\" }", DBQueryBase::qTemplate);
-    }
+    DBQueryBase make_default_query_template() const override;
+    DBQueryBase make_default_query_old() const;
 
     /// Test true type and label for schema
     void test_schema( const std::string& jsondata, bool test_values );

@@ -73,10 +73,18 @@ void DBSchemaDocument::update_query()
     query_result->clear();
     SetReaded_f setfnc = [&]( const std::string& jsondata )
     {
-        auto json_schema = json::loads( schema_name, jsondata );
-        auto key = collection_from->getKeyFrom( json_schema );
-
-        query_result->add_line( key,  json_schema, false );
+        if( query_result->condition().isOnlyFieldsQuery() )
+        {
+            auto json_free = json::loads( jsondata );
+            auto key = collection_from->getKeyFrom( json_free/*, query_result->condition().queryFields()*/ );
+            query_result->add_line_fields( key, json_free, query_result->condition().queryFields() );
+        }
+        else
+        {
+           auto json_schema = json::loads( schema_name, jsondata );
+           auto key = collection_from->getKeyFrom( json_schema );
+           query_result->add_line( key,  json_schema, false );
+        }
     };
 
     collection_from->selectQuery( query_result->condition(), setfnc );
@@ -89,8 +97,8 @@ std::vector<std::string> DBSchemaDocument::make_default_query_fields() const
     if( schema_struct == nullptr )
         return DBDocumentBase::make_default_query_fields();
 
-    std::vector<std::string> key_fields = schema_struct->getSelectedList();
-    if( key_fields.empty() )
+    std::vector<std::string> key_fields, ids_or_names = schema_struct->getSelectedList();
+    if( ids_or_names.empty() )
     {
         auto field_it = schema_struct->cbegin();
         while( field_it != schema_struct->cend() )
@@ -100,7 +108,24 @@ std::vector<std::string> DBSchemaDocument::make_default_query_fields() const
             field_it++;
         }
     }
-
+    else  // generate names if index
+    {
+       key_fields.clear();
+       for( const auto& id_or_key: ids_or_names )
+       {
+           auto pos = id_or_key.find_first_not_of("0123456789.");
+           if( pos == std::string::npos  )
+           {
+               auto ids = split_int( id_or_key, ".");
+               auto the_name = schema_struct->getPathFromIds( ids );
+               key_fields.push_back( the_name );
+           }
+           else
+           {
+               key_fields.push_back( id_or_key );
+           }
+       }
+    }
     return key_fields;
 }
 

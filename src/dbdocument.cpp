@@ -60,8 +60,9 @@ void DBDocumentBase::setQuery( const DBQueryBase& query, std::vector<std::string
         internal_query = std::make_shared<DBQueryBase>(query);
 
     if( fields_list.empty()  )
+    {
         fields_list = make_default_query_fields();
-
+    }
     setQuery( DBQueryDef( internal_query, fields_list )  );
 }
 
