@@ -237,6 +237,20 @@ private:
 
 };
 
+inline std::string common_section( const std::string& item )
+{
+    return   "common."+item;
+}
+
+inline std::string jsonio_section( const std::string& item )
+{
+    return   jsonio17::JsonioSettings::jsonio_section_name+"."+item;
+}
+
+inline std::string arangodb_section( const std::string& item )
+{
+    return   "arangodb."+item;
+}
 
 } // namespace jsonio17
 
