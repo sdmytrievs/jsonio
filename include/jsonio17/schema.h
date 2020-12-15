@@ -139,6 +139,9 @@ public:
         return key_select_list;
     }
 
+    /// Generate field name from ids list
+    std::string getPathFromIds( std::queue<int> ids ) const;
+
     /// Get list of fields what must to be unique
     const list_names_t& getUniqueList() const {
         return unique_list;

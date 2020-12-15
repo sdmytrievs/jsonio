@@ -128,11 +128,17 @@ public:
         {
             std::string fld = *itr;
             replace_all( fld, ".", '_');
-            map_fields[fld] = *itr;
+            map_fields[*itr] = fld;
         }
         setQueryFields( map_fields );
     }
 
+    /// Special only defined fields query
+    /// Generate return into jsonArango
+    bool isOnlyFieldsQuery() const
+    {
+      return ( type()== qAQL && !queryFields().empty() &&  queryString().find("RETURN") == std::string::npos );
+    }
     friend bool operator!=( const DBQueryBase&,  const DBQueryBase& );
 
 protected:
@@ -300,14 +306,17 @@ protected:
 
     /// Make line to view table
     void node_to_values(  const JsonBase& node, values_t& values ) const;
+    /// Make line to view table when only selected fields
+    void node_to_values_fields(const JsonBase &node, const fields2query_t &map_fields, values_t &values) const;
 
     /// Add line to view table
-    void add_line( const std::string& key_str,  const JsonBase& nodedata, bool isupdate );
+    void add_line( const std::string& key_str, const JsonBase& nodedata, bool isupdate );
     /// Update line into view table
-    void update_line( const std::string& key_str,  const JsonBase& nodedata );
+    void update_line( const std::string& key_str, const JsonBase& nodedata );
     /// Delete line from view table
     void delete_line( const std::string& key_str );
 
+    void add_line_fields( const std::string& key_str, const JsonBase &nodedata, const fields2query_t &map_fields);
 };
 
 } // namespace jsonio17

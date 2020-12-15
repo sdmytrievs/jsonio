@@ -95,7 +95,9 @@ int main(int argc, char* argv[])
     //test_dir = "pass";
     //test_dir = "fail";
     //test_dir = "nst_json_testsuite/test_parsing";
-    //test_dir = "nst_json_testsuite2/test_parsing";
+    test_dir = "nst_json_testsuite2/test_parsing";
+    //test_dir = "schemas";
+
 
     if( argc < 2)
         usage( argv[0]);

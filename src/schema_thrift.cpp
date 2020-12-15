@@ -2,9 +2,54 @@
 #include "jsonio17/schema_thrift.h"
 #include "jsonio17/service.h"
 #include "jsonio17/jsondump.h"
-
+#include "jsonio17/io_settings.h"
 
 namespace jsonio17 {
+
+
+// Generate field name from ids list
+std::string StructDef::getPathFromIds( std::queue<int> ids ) const
+{
+    std::string key_name;
+    if( ids.empty() )
+        return  key_name;
+
+    int aid = ids.front();
+    ids.pop();
+
+    auto field_def = getField( aid );
+    if( field_def == nullptr )
+        return key_name;
+
+    key_name = field_def->name();
+    int level = 0;
+    while(   field_def->type(level) == jsonio17::FieldDef::T_SET ||
+             field_def->type(level) == jsonio17::FieldDef::T_LIST ||
+             field_def->type(level) == jsonio17::FieldDef::T_MAP  )
+    {
+        if( ids.empty() )
+            return key_name;
+
+        aid = ids.front();
+        ids.pop();
+        key_name += "."+ std::to_string(aid);
+        if(field_def->type(level) == jsonio17::FieldDef::T_MAP )
+            level++;
+        level++;
+    }
+
+    if( !ids.empty() && field_def->type(level) == jsonio17::FieldDef::T_STRUCT )
+    {
+        auto filed_str  = ioSettings().Schema().getStruct( field_def->className() );
+        if( filed_str != nullptr )
+        {
+            auto next_path = filed_str->getPathFromIds( ids );
+            if (!next_path.empty() )
+                key_name += "." + next_path;
+        }
+    }
+    return key_name;
+}
 
 static const char * key_name = "name";
 static const char * key_doc = "doc";
