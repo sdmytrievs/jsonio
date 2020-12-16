@@ -8,6 +8,7 @@ if [ "$(uname)" == "Darwin" ]; then
     brew upgrade
     brew install cmake
 
+    EXTN=dylib
     CXXSTANDARD=17
 
 elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
@@ -16,18 +17,19 @@ elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
     sudo apt-get update
     sudo apt-get install -y libcurl4-openssl-dev
 
-    CXXSTANDARD=11
+        EXTN=so
+        CXXSTANDARD=11
 fi
 
 # Uncomment what is necessary to reinstall by force
 #sudo rm -f /usr/local/lib/libvelocypack.a
-#sudo rm -f /usr/local/lib/libjsonarango.a
+#sudo rm -f /usr/local/lib/libjsonarango.$EXTN
 
 
 threads=3
 
 
-# Velocypack from ArangoDB (added for installing JSONIO database client)
+# Velocypack from ArangoDB (added for installing jsonArango database client)
 # if no VPack installed in /usr/local/lib/libvelocypack.a (/usr/local/include/velocypack)
 test -f /usr/local/lib/libvelocypack.a || {
 
@@ -47,9 +49,9 @@ test -f /usr/local/lib/libvelocypack.a || {
                  rm -rf ~/code
 }
 
-# JSONIO database client (added for building ThermoMatch code)
-# if no JSONIO installed in /usr/local/lib/libjsonarango.a
-test -f /usr/local/lib/libjsonarango.a || {
+# jsonArango database client
+# if no jsonArango installed in /usr/local/lib/libjsonarango.a
+test -f /usr/local/lib/libjsonarango.$EXTN || {
 
         # Building jsonio library
         mkdir -p ~/code && \

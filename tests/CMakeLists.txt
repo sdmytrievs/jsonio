@@ -5,6 +5,7 @@ file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/fail" DESTINATION "${CMAKE_CURRENT_BINARY
 include(CTest)
 enable_testing()
 find_package(Threads)
+#set(INSTALL_GTEST OFF)
 add_subdirectory(googletest REQUIRED)
 
 # -------------------------------------
