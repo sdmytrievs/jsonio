@@ -17,8 +17,9 @@ elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
     sudo apt-get update
     sudo apt-get install -y libcurl4-openssl-dev
 
-        EXTN=so
-        CXXSTANDARD=11
+    EXTN=so
+    CXXSTANDARD=11
+
 fi
 
 # Uncomment what is necessary to reinstall by force
