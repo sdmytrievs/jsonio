@@ -20,18 +20,24 @@ source activate jsonio17
 mkdir build
 cd build
 # Configure step
-cmake -GNinja \
+cmake \
     -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_INSTALL_LIBDIR=lib \
-    -DBuildExamples=OFF \
     ..
-ninja
-ninja install
+make
 if [ $? -eq 0 ]
 then
-echo "The make step ran ok"
+    echo "The cmake step ran OK"
 else
-echo "The make step failed" >&2
-exit 1
+    echo "The cmake step failed" >&2
+    exit 1
+fi
+make install
+if [ $? -eq 0 ]
+then
+    echo "The make step ran OK"
+else
+    echo "The make step failed" >&2
+    exit 1
 fi
 conda list
