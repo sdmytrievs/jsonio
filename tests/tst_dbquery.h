@@ -117,12 +117,16 @@ TEST( DBQuery, dbQueryDef )
     query->setOptions(options);
     fields2query_t map_fields =
     {
-      { "symbol", "properties.symbol" },
-      { "name", "properties.name" },
-      { "class_", "properties.class_" },
-      { "number", "properties.number" }
+      { "properties.symbol", "symbol" },
+      { "properties.name", "name" },
+      { "properties.class_", "class_" },
+      { "properties.number", "number" }
     };
     query->setQueryFields(map_fields);
+    EXPECT_EQ( DBQueryBase::generateRETURN( true, map_fields, "u"),
+               "\nRETURN DISTINCT  {  \"class_\" : u.properties.class_,  \"name\" : u.properties.name,  \"number\" : u.properties.number,  \"symbol\" : u.properties.symbol } ");
+    EXPECT_EQ( DBQueryBase::generateRETURN( false, map_fields, "u"),
+               "\nRETURN  {  \"class_\" : u.properties.class_,  \"name\" : u.properties.name,  \"number\" : u.properties.number,  \"symbol\" : u.properties.symbol } ");
 
     DBQueryDef query_def( query);
     query_def.setName("testAQL");

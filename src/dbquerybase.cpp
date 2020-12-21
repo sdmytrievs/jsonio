@@ -166,6 +166,21 @@ const fields2query_t &DBQueryBase::queryFields() const
     return arando_query->queryFields();
 }
 
+std::string DBQueryBase::generateRETURN(bool is_distinct, const std::string &collvalue) const
+{
+    return arando_query->generateRETURN( is_distinct, collvalue);
+}
+
+std::string DBQueryBase::generateRETURN(bool is_distinct, const fields2query_t &map_fields, const std::string &collvalue)
+{
+    return arangocpp::ArangoDBQuery::generateRETURN( is_distinct, map_fields, collvalue );
+}
+
+std::string DBQueryBase::generateFILTER(const field_value_map_t &fldvalues, bool as_template, const std::string &collvalue)
+{
+    return arangocpp::ArangoDBQuery::generateFILTER( fldvalues, as_template, collvalue );
+}
+
 bool operator!=(const DBQueryBase & left, const DBQueryBase &right)
 {
     return (*left.arando_query != *right.arando_query);
