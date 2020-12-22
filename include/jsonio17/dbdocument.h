@@ -10,12 +10,6 @@
 namespace jsonio17 {
 
 
-//// some extern functions
-//int extractIntField( const std::string& key, const std::string& query );
-//std::string extractStringField( const std::string& key, const std::string& query );
-//void addFieldsToQueryAQL( DBQueryBase& query, const field_value_map_t& fldvalues );
-
-
 /// Interface for working with documents.
 /// Documents are JSON like objects. These objects can be nested (to any depth) and may contain lists.
 /// Each document has a unique primary key which identifies it within its collection.
@@ -87,6 +81,22 @@ public:
     bool setValueViaPath( const std::string& jsonpath, const T& val  )
     {
         return current_data().set_value_via_path( jsonpath, val );
+    }
+
+    /// Return a reference to object[jsonpath] if an object can be create, exception otherwise.
+    void setObjectViaPath( const std::string &jsonpath, const std::string &json_object )
+    {
+        decltype(current_data())& obj = current_data().add_object_via_path( jsonpath );
+        if( !json_object.empty() )
+            obj.loads(json_object);
+    }
+
+    /// Return a reference to object[jsonpath] if an array can be create, exception otherwise.
+    void setArrayViaPath( const std::string &jsonpath, const std::string &json_array )
+    {
+        decltype(current_data())& arr = current_data().add_array_via_path( jsonpath );
+        if( !json_array.empty() )
+            arr.loads(json_array);
     }
 
     //--- Manipulation documents

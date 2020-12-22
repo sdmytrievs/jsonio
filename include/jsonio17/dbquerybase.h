@@ -139,7 +139,24 @@ public:
     {
       return ( type()== qAQL && !queryFields().empty() &&  queryString().find("RETURN") == std::string::npos );
     }
+
     friend bool operator!=( const DBQueryBase&,  const DBQueryBase& );
+
+
+    //// Add addition filter to query
+    virtual void addFieldsToFilter( const field_value_map_t& fldvalues );
+
+    /// Generate AQL RETURN with predefined fields
+    virtual std::string generateRETURN( bool is_distinct, const std::string& collvalue = "u" ) const;
+
+    /// Generate AQL RETURN with mapFields fields
+    static std::string generateRETURN( bool is_distinct, const fields2query_t& map_fields,
+                                       const std::string& collvalue = "u" );
+
+    /// Generate AQL FILTER with predefined fields
+    static std::string generateFILTER( const field_value_map_t& fldvalues, bool as_template = false,
+                                       const std::string& collvalue = "u" );
+
 
 protected:
 

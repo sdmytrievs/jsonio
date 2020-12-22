@@ -117,12 +117,16 @@ TEST( DBQuery, dbQueryDef )
     query->setOptions(options);
     fields2query_t map_fields =
     {
-      { "symbol", "properties.symbol" },
-      { "name", "properties.name" },
-      { "class_", "properties.class_" },
-      { "number", "properties.number" }
+      { "properties.symbol", "symbol" },
+      { "properties.name", "name" },
+      { "properties.class_", "class_" },
+      { "properties.number", "number" }
     };
     query->setQueryFields(map_fields);
+    EXPECT_EQ( DBQueryBase::generateRETURN( true, map_fields, "u"),
+               "\nRETURN DISTINCT  {  \"class_\" : u.properties.class_,  \"name\" : u.properties.name,  \"number\" : u.properties.number,  \"symbol\" : u.properties.symbol } ");
+    EXPECT_EQ( DBQueryBase::generateRETURN( false, map_fields, "u"),
+               "\nRETURN  {  \"class_\" : u.properties.class_,  \"name\" : u.properties.name,  \"number\" : u.properties.number,  \"symbol\" : u.properties.symbol } ");
 
     DBQueryDef query_def( query);
     query_def.setName("testAQL");
@@ -161,4 +165,55 @@ TEST( DBQuery, dbQueryDef )
     EXPECT_EQ( query2.schema(), "VertexElement");
     EXPECT_EQ( query2.comment(), "AQL query for elements");
     EXPECT_EQ( query2.fields(), fields);
+}
+
+
+TEST( DBQuery, addFieldsToFilter )
+{
+    field_value_map_t field_value = {
+            { "foo.baz", "1"},
+            { "bar", "\"string\""},  };
+
+    DBQueryBase query_all( DBQueryBase::qAll);
+    query_all.addFieldsToFilter(field_value);
+    EXPECT_EQ( query_all.type(),DBQueryBase::qTemplate);
+    EXPECT_EQ( query_all.queryString(),"{  \"bar\" : \"string\" ,  \"foo.baz\" : 1  }");
+    EXPECT_EQ( query_all.bindVars(),"");
+    EXPECT_EQ( query_all.options(), "");
+    EXPECT_EQ( query_all.queryFields(), fields2query_t{} );
+
+    DBQueryBase query_template( "{ \"name\" : \"a\" }", DBQueryBase::qTemplate);
+    query_template.addFieldsToFilter(field_value);
+    EXPECT_EQ( query_template.type(),DBQueryBase::qTemplate);
+    EXPECT_EQ( query_template.queryString(),"{ \"name\" : \"a\" ,  \"bar\" : \"string\" ,  \"foo.baz\" : 1 }");
+    EXPECT_EQ( query_template.bindVars(),"");
+    EXPECT_EQ( query_template.options(), "");
+    EXPECT_EQ( query_template.queryFields(), fields2query_t{} );
+
+    DBQueryBase query_aql( "FOR u IN elements\nFILTER u.number IN @nbrs \n", DBQueryBase::qAQL);
+
+    std::string bind_vars = "{ \"nbrs\": [1,2,3] }";
+    query_aql.setBindVars( bind_vars );
+    std::string options = "{ \"maxPlans\" : 1, "
+                          "  \"optimizer\" : { \"rules\" : [ \"-all\", \"+remove-unnecessary-filters\" ]  } } ";
+    query_aql.setOptions(options);
+    fields2query_t map_fields =
+    {
+      { "properties.symbol", "symbol" },
+      { "properties.number", "number" }
+    };
+    query_aql.setQueryFields(map_fields);
+
+    query_aql.addFieldsToFilter(field_value);
+    EXPECT_EQ( query_aql.type(),DBQueryBase::qAQL);
+    EXPECT_EQ( query_aql.queryString(),"FOR u IN elements\nFILTER u.number IN @nbrs \n\nFILTER u.bar == \"string\" && u.foo.baz == 1 ");
+    EXPECT_EQ( query_aql.bindVars(),bind_vars);
+    EXPECT_EQ( query_aql.options(),options);
+    EXPECT_EQ( query_aql.queryFields(), map_fields);
+
+    DBQueryBase query_aql_return( "FOR u IN elements\nRETURN u", DBQueryBase::qAQL);
+    query_aql_return.addFieldsToFilter(field_value);
+    EXPECT_EQ( query_aql_return.type(),DBQueryBase::qAQL);
+    EXPECT_EQ( query_aql_return.queryString(),"FOR u IN elements\n\nFILTER u.bar == \"string\" && u.foo.baz == 1 \nRETURN u");
+
 }

@@ -166,6 +166,21 @@ const fields2query_t &DBQueryBase::queryFields() const
     return arando_query->queryFields();
 }
 
+std::string DBQueryBase::generateRETURN(bool is_distinct, const std::string &collvalue) const
+{
+    return arando_query->generateRETURN( is_distinct, collvalue);
+}
+
+std::string DBQueryBase::generateRETURN(bool is_distinct, const fields2query_t &map_fields, const std::string &collvalue)
+{
+    return arangocpp::ArangoDBQuery::generateRETURN( is_distinct, map_fields, collvalue );
+}
+
+std::string DBQueryBase::generateFILTER(const field_value_map_t &fldvalues, bool as_template, const std::string &collvalue)
+{
+    return arangocpp::ArangoDBQuery::generateFILTER( fldvalues, as_template, collvalue );
+}
+
 bool operator!=(const DBQueryBase & left, const DBQueryBase &right)
 {
     return (*left.arando_query != *right.arando_query);
@@ -174,6 +189,55 @@ bool operator!=(const DBQueryBase & left, const DBQueryBase &right)
 bool operator==(const DBQueryBase & left, const DBQueryBase &right)
 {
     return !(left != right);
+}
+
+//// Into ArangoDB Query by example ( must be { "a.b" : value } , no { "a": { "b" : value } }
+//// https://docs.arangodb.com/3.3/Manual/DataModeling/Documents/DocumentMethods.html
+void DBQueryBase::addFieldsToFilter(const field_value_map_t &fldvalues)
+{
+    //std::cout << queryString() << std::endl;
+
+    auto new_query_string = queryString();
+    auto new_type = type();
+
+    switch(  type() )
+    {
+    case DBQueryBase::qTemplate:
+    {
+        auto pos = new_query_string.find_last_of("}");
+        new_query_string = new_query_string.substr(0, pos);
+        new_query_string += ", " + generateFILTER(fldvalues, true ) +  "}";
+    }
+        break;
+    case DBQueryBase::qUndef:
+    case DBQueryBase::qAll:
+    {
+        new_type = qTemplate;
+        new_query_string = "{ " + generateFILTER(fldvalues, true ) +  " }";
+    }
+        break;
+    case DBQueryBase::qAQL:
+    {
+        auto pos = new_query_string.find("RETURN");  // add before return
+        std::string retstring = "";
+        if( pos != std::string::npos )
+            retstring = new_query_string.substr( pos);
+        new_query_string = new_query_string.substr(0, pos);
+        new_query_string += generateFILTER(fldvalues, false, "u" ); // !!! only u
+        if( !retstring.empty() )
+            new_query_string += "\n"+retstring;
+    }
+        break;
+    default:
+        JSONIO_THROW( "DBQueryBase", 10, "Illegal query type to modify" );
+    }
+
+    auto new_arando_query = std::make_shared<arangocpp::ArangoDBQuery>( new_query_string, to_arrango_query_type(new_type) );
+    new_arando_query->setBindVars( arando_query->bindVars() );
+    new_arando_query->setOptions( arando_query->options() );
+    new_arando_query->setQueryFields( arando_query->queryFields() );
+    arando_query = new_arando_query;
+    //std::cout << " Result: " <<  queryString() << std::endl;
 }
 
 //----------------------------------------------------------------------------------------------
