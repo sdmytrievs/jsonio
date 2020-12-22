@@ -143,6 +143,9 @@ public:
     friend bool operator!=( const DBQueryBase&,  const DBQueryBase& );
 
 
+    //// Add addition filter to query
+    virtual void addFieldsToFilter( const field_value_map_t& fldvalues );
+
     /// Generate AQL RETURN with predefined fields
     virtual std::string generateRETURN( bool is_distinct, const std::string& collvalue = "u" ) const;
 
