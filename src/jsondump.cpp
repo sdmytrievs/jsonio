@@ -164,7 +164,7 @@ void undumpString( std::string& strvalue )
                     // accessing str[length]. Checking here reduces brittleness.
                     JSONIO_THROW_IF( esc.length() < 4, "JsonParser", 10, "bad \\u escape: " + esc );
                     for (size_t j = 0; j < 4; j++) {
-                        JSONIO_THROW_IF( !in_range(esc[j], 'a', 'f') and !in_range(esc[j], 'A', 'F') and !in_range(esc[j], '0', '9'),
+                        JSONIO_THROW_IF( !in_range(esc[j], 'a', 'f') && !in_range(esc[j], 'A', 'F') && !in_range(esc[j], '0', '9'),
                                           "JsonParser", 11, "bad \\u escape: " + esc );
                     }
                     long codepoint = strtol(esc.data(), nullptr, 16);

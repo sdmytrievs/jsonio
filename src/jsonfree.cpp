@@ -122,7 +122,7 @@ JsonFree *JsonFree::field_add(std::queue<std::string> names )
             append_node( fname, JsonBase::Object, "" );
             return children.back()->field_add(names);
         }
-        else if( isArray() and fname== std::to_string(children.size()) )
+        else if( isArray() && fname== std::to_string(children.size()) )
         {
             append_node( fname, JsonBase::Object, "" );
             return children.back()->field_add(names);

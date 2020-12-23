@@ -142,7 +142,7 @@ JsonSchema *JsonSchema::append_node(const std::string &akey, JsonBase::Type atyp
 
             auto flds_before =struct_descrip->getFieldsBefore(akey);
             auto fld_insert_before = children.begin();
-            while( fld_insert_before != children.end() and
+            while( fld_insert_before != children.end() &&
                    flds_before.find( fld_insert_before->get()->getKey() ) != flds_before.end() )
                 fld_insert_before++;
 
@@ -162,7 +162,7 @@ JsonSchema *JsonSchema::append_node(const std::string &akey, JsonBase::Type atyp
         }
         return nullptr;
     }
-    else if( isMap() or isArray() )
+    else if( isMap() || isArray() )
     {
         auto shptr = std::shared_ptr<JsonSchema>( new JsonSchema( atype, akey, avalue, this ) );
         // add only type is possible
@@ -230,7 +230,7 @@ bool JsonSchema::remove()
 
 bool JsonSchema::remove_child( JsonSchema* child )
 {
-    if( level_type==0 and child->field_descrip->required() == FieldDef::fld_required )
+    if( level_type==0 && child->field_descrip->required() == FieldDef::fld_required )
     {
         // not remove requered field ( only clear )
         child->clear();
@@ -354,7 +354,7 @@ JsonSchema *JsonSchema::field_add( std::queue<std::string> names )
             auto new_obj = append_node( fname, JsonBase::Null, "" );
             return /*children.back()*/ new_obj->field_add(names);
         }
-        else if( isArray() and fname== std::to_string(children.size()) )
+        else if( isArray() && fname== std::to_string(children.size()) )
         {
             append_node( fname, JsonBase::Null, "" );
             return children.back()->field_add(names);
@@ -577,7 +577,7 @@ void JsonSchema::struct2model( const  StructDef* strDef )
     auto it = struct_descrip->cbegin();
     while( it != struct_descrip->cend() )
     {
-        if( it->get()->required() == FieldDef::fld_required or
+        if( it->get()->required() == FieldDef::fld_required ||
                 !it->get()->defaultValue().empty()    )
         {
             // add only requrled

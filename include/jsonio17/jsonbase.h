@@ -52,7 +52,7 @@ public:
 
     /// This function returns true if and only if the JSON type is a numeric value.
     virtual bool isNumber() const
-    { return  type() == Type::Int or type() == Type::Double; }
+    { return  type() == Type::Int || type() == Type::Double; }
 
     /// This function returns true if and only if the JSON type is boolean.
     virtual bool isBool() const
@@ -71,7 +71,7 @@ public:
     /// (string, number, boolean, or null).
     bool isPrimitive() const
     {
-        return isNull() or isString() or isBool() or isNumber();
+        return isNull() || isString() || isBool() || isNumber();
     }
 
     /// @brief return whether type is structured
@@ -79,7 +79,7 @@ public:
     /// (array or object).
     bool isStructured() const
     {
-        return isArray() or isObject();
+        return isArray() || isObject();
     }
 
     // Get methods  --------------------------
