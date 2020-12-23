@@ -46,12 +46,12 @@ struct is_mappish : detail::is_mappish_impl<T>::type { };
 
 // http://fuelcycle.org/cyclus/api/prettyprint_8hpp_source.html
 
-template <bool, typename S, typename T> struct conditional { };
-template <typename S, typename T> struct conditional<true,  S, T> { typedef S type; };
-template <typename S, typename T> struct conditional<false, S, T> { typedef T type; };
+//template <bool, typename S, typename T> struct conditional { };
+//template <typename S, typename T> struct conditional<true,  S, T> { typedef S type; };
+//template <typename S, typename T> struct conditional<false, S, T> { typedef T type; };
 
-template <bool, typename T> struct enable_if { };
-template <typename T> struct enable_if<true, T> { typedef T type; };
+//template <bool, typename T> struct enable_if { };
+//template <typename T> struct enable_if<true, T> { typedef T type; };
 
 
 // SFINAE type trait to detect whether T::const_iterator exists.
@@ -76,7 +76,7 @@ template <typename T>
 struct has_begin_end
 {
     struct Dummy { typedef void const_iterator; };
-    typedef typename conditional<has_const_iterator<T>::value, T, Dummy>::type TType;
+    typedef typename std::conditional<has_const_iterator<T>::value, T, Dummy>::type TType;
     typedef typename TType::const_iterator iter;
 
     struct Fallback { iter begin() const; iter end() const; };
