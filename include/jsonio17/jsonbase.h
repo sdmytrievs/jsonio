@@ -1,12 +1,12 @@
 #pragma once
 
-#include "jsonio17/type_test.h"
-
 #include <iostream>
 #include <vector>
 #include <set>
 #include "jsonio17/exceptions.h"
 #include "jsonio17/jsondetail.h"
+#include "jsonio17/type_test.h"
+
 
 namespace jsonio17 {
 
