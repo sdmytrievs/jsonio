@@ -412,7 +412,7 @@ private:
     /// Set default value
     void set_default_value()
     {
-        if( level_type==0 and !field_descrip->defaultValue().empty() )
+        if( level_type==0 && !field_descrip->defaultValue().empty() )
             loads( field_descrip->defaultValue() );
         if( field_descrip->className() == "TimeStamp" )
             set_current_time();
