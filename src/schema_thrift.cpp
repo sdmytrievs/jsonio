@@ -148,7 +148,7 @@ void ThriftFieldDef::read_field( const JsonFree& field_object )
     else
         read_type_spec(field_object, key_type, typeId);
 
-    if( f_type_id[0] == T_STRING and !f_default.empty() )
+    if( f_type_id[0] == T_STRING && !f_default.empty() )
        f_default = "\""+f_default+"\"";
 }
 

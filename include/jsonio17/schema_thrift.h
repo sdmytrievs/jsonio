@@ -72,7 +72,7 @@ public:
     virtual std::string  defaultValue()const override {
 
         if( !f_default.empty() && type() == T_BOOL)  // problems for thrift parser
-            return ( f_default=="0" or f_default=="false" ? "false": "true" );
+            return ( f_default=="0" || f_default=="false" ? "false": "true" );
         return f_default;
     }
     virtual double minValue()const override {

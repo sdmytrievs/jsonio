@@ -3,9 +3,10 @@
 #include <iostream>
 #include <vector>
 #include <set>
-#include "jsonio17/type_test.h"
 #include "jsonio17/exceptions.h"
 #include "jsonio17/jsondetail.h"
+#include "jsonio17/type_test.h"
+
 
 namespace jsonio17 {
 
@@ -51,7 +52,7 @@ public:
 
     /// This function returns true if and only if the JSON type is a numeric value.
     virtual bool isNumber() const
-    { return  type() == Type::Int or type() == Type::Double; }
+    { return  type() == Type::Int || type() == Type::Double; }
 
     /// This function returns true if and only if the JSON type is boolean.
     virtual bool isBool() const
@@ -70,7 +71,7 @@ public:
     /// (string, number, boolean, or null).
     bool isPrimitive() const
     {
-        return isNull() or isString() or isBool() or isNumber();
+        return isNull() || isString() || isBool() || isNumber();
     }
 
     /// @brief return whether type is structured
@@ -78,7 +79,7 @@ public:
     /// (array or object).
     bool isStructured() const
     {
-        return isArray() or isObject();
+        return isArray() || isObject();
     }
 
     // Get methods  --------------------------

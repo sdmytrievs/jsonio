@@ -146,14 +146,14 @@ public:
 
     /// This function returns true if and only if the JSON type is defined structure Object.
     bool isStruct() const
-    { return( isTop() or  fieldType() == FieldDef::T_STRUCT ); }
+    { return( isTop() || fieldType() == FieldDef::T_STRUCT ); }
 
     /// This function returns true if and only if the JSON type is free structure Object.
     bool isMap() const
-    { return( !isTop() and fieldType() == FieldDef::T_MAP );  }
+    { return( !isTop() && fieldType() == FieldDef::T_MAP );  }
 
     bool isUnion( ) const
-    {  return ( !isTop() and parent_object->isStruct() && parent_object->struct_descrip->isUnion() );  }
+    {  return ( !isTop() && parent_object->isStruct() && parent_object->struct_descrip->isUnion() );  }
 
     // Get methods  --------------------------
 
@@ -372,9 +372,9 @@ private:
         {
             if( isTop() && other.isTop()) // change schema
                 struct_descrip = other.struct_descrip;
-            if( !( struct_descrip == other.struct_descrip  and
-                   ( FieldDef::topfield() == other.field_descrip or
-                     ( field_descrip == other.field_descrip and level_type == other.level_type)))  )
+            if( !( struct_descrip == other.struct_descrip  &&
+                   ( FieldDef::topfield() == other.field_descrip ||
+                     ( field_descrip == other.field_descrip && level_type == other.level_type)))  )
             {
                 if( use_exception )
                     JSONIO_THROW( "JsonSchema", 10, "copy or move assignment unpossible"  );
@@ -389,10 +389,10 @@ private:
     bool test_assign_value( JsonBase::Type atype, bool use_exception = true  )
     {
         auto obj_type = type();
-        if( !( obj_type == atype or
-               atype == Null or
-               ( ( obj_type == Type::Int or obj_type == Type::Double ) and
-                 ( atype == Type::Int or atype == Type::Double ) ) ) )
+        if( !( obj_type == atype ||
+               atype == Null ||
+               ( ( obj_type == Type::Int || obj_type == Type::Double ) &&
+                 ( atype == Type::Int || atype == Type::Double ) ) ) )
         {
             if( use_exception )
                 JSONIO_THROW( "JsonSchema", 11, "assignment of value of type is unpossible " + std::string( typeName() ) );
@@ -412,7 +412,7 @@ private:
     /// Set default value
     void set_default_value()
     {
-        if( level_type==0 and !field_descrip->defaultValue().empty() )
+        if( level_type==0 && !field_descrip->defaultValue().empty() )
             loads( field_descrip->defaultValue() );
         if( field_descrip->className() == "TimeStamp" )
             set_current_time();
