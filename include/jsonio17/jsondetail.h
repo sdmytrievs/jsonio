@@ -5,7 +5,6 @@
 #include <cmath>
 #include <limits>
 #include <queue>
-//#include "type_test.h"
 
 namespace jsonio17 {
 

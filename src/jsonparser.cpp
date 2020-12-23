@@ -126,7 +126,7 @@ bool JsonParser::skip_space()
 {
     for( ; cur_pos<end_pos; ++cur_pos )
     {
-        if( !std::isspace(jsontext[cur_pos]) )
+        if( !isspace(jsontext[cur_pos]) )
             break;
     }
     return (cur_pos < end_pos);
