@@ -1,9 +1,9 @@
 #include <fstream>
 
-#ifndef _WIN32
-#include <pwd.h>
-#include <unistd.h>
+#ifdef _MSC_VER
+#include  <io.h>
 #else
+#include <pwd.h>
 #include <unistd.h>
 #endif
 

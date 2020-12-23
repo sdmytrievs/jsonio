@@ -224,6 +224,12 @@ TEST( JsonioBase, set_fromMapKey )
     EXPECT_TRUE( jsFree.isObject() );
     EXPECT_EQ( jsFree.size(), 2 );
     EXPECT_EQ( "{\"key2\":\"val5\",\"key1\":\"val4\"}\n", jsFree.dump(  true ) );
+
+    std::map<int, std::string> smap = { { 1, "key1" }, { 2, "key2" } };
+    jsFree.set_from(smap);
+    EXPECT_TRUE( jsFree.isObject() );
+    EXPECT_EQ( jsFree.size(), 2 );
+    EXPECT_EQ( "{\"1\":\"key1\",\"2\":\"key2\"}\n", jsFree.dump(  true ) );
 }
 
 TEST( JsonioBase, get_to_list )

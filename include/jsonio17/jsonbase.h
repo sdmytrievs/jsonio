@@ -3,8 +3,8 @@
 #include <iostream>
 #include <vector>
 #include <set>
-#include "jsonio17/exceptions.h"
 #include "jsonio17/type_test.h"
+#include "jsonio17/exceptions.h"
 #include "jsonio17/jsondetail.h"
 
 namespace jsonio17 {
@@ -302,7 +302,7 @@ public:
         update_node(  Object, "" );
         for( const auto& el: values )
         {
-            auto obj = append_node( el.first, Null, "" );
+            auto obj = append_node( v2string(el.first), Null, "" );
             if( obj )
                 obj->set_from(el.second);
         }
