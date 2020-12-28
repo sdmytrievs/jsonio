@@ -9,6 +9,7 @@
 
 
 #include "jsonio17/dbquerybase.h"
+#include "jsonio17/jsondump.h"
 #include "jsonio17/jsonfree.h"
 #include "jsonio17/jsonschema.h"
 #include "jsonio17/io_settings.h"
@@ -216,4 +217,32 @@ TEST( DBQuery, addFieldsToFilter )
     EXPECT_EQ( query_aql_return.type(),DBQueryBase::qAQL);
     EXPECT_EQ( query_aql_return.queryString(),"FOR u IN elements\n\nFILTER u.bar == \"string\" && u.foo.baz == 1 \nRETURN u");
 
+}
+
+field_value_map_t extract_fields_test(const std::vector<std::string> queryFields,
+                                                 const JsonBase& domobj)
+{
+    std::string valbuf;
+    field_value_map_t res;
+    for( auto& ent: queryFields )
+    {
+        domobj.get_value_via_path( ent, valbuf, std::string("") );
+        res[ent] = valbuf;
+    }
+    return res;
+}
+
+TEST( DBQuery, extractFields )
+{
+    std::string jsondata = "{\"_id\":\"thermodatasets/test1;0:TDS_REF;1\",\"name\":\"fffff255\",\"stype\":{\"0\":\"TDS_REF\"},\"symbol\":\"test1\"}";
+
+    std::vector<std::string> queryFields = { "_id", "symbol", "name", "stype" };
+    auto jsonFree = json::loads( jsondata );
+    auto flds_values = extract_fields_test( queryFields, jsonFree );
+
+    EXPECT_EQ( flds_values.size(), 4 );
+    EXPECT_EQ( flds_values["_id"], "thermodatasets/test1;0:TDS_REF;1");
+    EXPECT_EQ( flds_values["symbol"], "test1");
+    EXPECT_EQ( flds_values["name"], "fffff255");
+    EXPECT_EQ( flds_values["stype"], "{\"0\":\"TDS_REF\"}\n");
 }

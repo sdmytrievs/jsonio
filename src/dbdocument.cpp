@@ -120,7 +120,7 @@ values_table_t DBDocumentBase::downloadDocuments(const DBQueryBase &query,
 
     SetReaded_f setfnc = [&, queryFields]( const std::string& jsondata )
     {
-        auto flds_values = extract_fields( queryFields, jsondata );
+        auto flds_values = DBDocumentBase::extract_fields( queryFields, jsondata );
         values_t row_data;
         for( const auto& fld: queryFields)
             row_data.push_back( flds_values[fld] );
@@ -138,7 +138,7 @@ values_table_t DBDocumentBase::downloadDocuments(const std::vector<std::string> 
 
     SetReaded_f setfnc = [&, queryFields]( const std::string& jsondata )
     {
-        auto flds_values = extract_fields( queryFields, jsondata );
+        auto flds_values = DBDocumentBase::extract_fields( queryFields, jsondata );
         values_t row_data;
         for( const auto& fld: queryFields)
             row_data.push_back( flds_values[fld] );
