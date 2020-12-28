@@ -66,6 +66,43 @@ std::string DBSchemaDocument::genOid( const std::string &key_template )
     return collection_from->generateOid( thetemplate );
 }
 
+values_table_t DBSchemaDocument::downloadDocumentsbySchema(const DBQueryBase &query, const std::vector<std::string> &queryFields) const
+{
+    values_table_t records_values;
+
+    SetReaded_f setfnc = [&, queryFields]( const std::string& jsondata )
+    {
+        auto jsonbase = json::loads(schema_name, jsondata);
+        auto flds_values = extract_fields( queryFields, jsonbase );
+        values_t row_data;
+        for( const auto& fld: queryFields)
+            row_data.push_back( flds_values[fld] );
+        records_values.push_back(row_data);
+    };
+
+    collection_from->selectQuery( query, setfnc );
+    return records_values;
+}
+
+values_table_t DBSchemaDocument::downloadDocumentsbySchema( const std::vector<std::string>& keys, const std::vector<std::string>& queryFields ) const
+{
+    values_table_t records_values;
+
+    SetReaded_f setfnc = [&, queryFields]( const std::string& jsondata )
+    {
+        auto jsonbase = json::loads(schema_name, jsondata);
+        auto flds_values = extract_fields( queryFields, jsonbase );
+        values_t row_data;
+        for( const auto& fld: queryFields)
+            row_data.push_back( flds_values[fld] );
+        records_values.push_back(row_data);
+    };
+
+    collection_from->lookupByKeys( keys, setfnc );
+    return records_values;
+}
+
+
 void DBSchemaDocument::update_query()
 {
     std::unique_lock<std::shared_mutex> g(query_result_mutex);
@@ -135,5 +172,6 @@ field_value_map_t DBSchemaDocument::extract_fields(const std::vector<std::string
     //auto jsonbase = json::loads( jsondata );   free json
     return extract_fields( queryFields, jsonbase );
 }
+
 
 } // namespace jsonio17

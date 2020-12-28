@@ -69,6 +69,19 @@ public:
         current_schema_object.loads(json_document);
     }
 
+    /// Build table of fields values by query ( add default values from chema )
+    ///  \param query - query condition
+    ///  \param  queryFields - list of fields (columns) in result table
+    ///  \return table of field values
+    values_table_t downloadDocumentsbySchema( const DBQueryBase&  query, const std::vector<std::string>& queryFields ) const;
+
+    /// Build table of fields values by their keys ( add default values from chema )
+    ///  \param rkeys - list of top level record keys
+    ///  \param  queryFields - list of fields (columns) in result table
+    ///  \return table of field values
+    values_table_t downloadDocumentsbySchema( const std::vector<std::string>& keys, const std::vector<std::string>& queryFields ) const;
+
+
     using DBDocumentBase::setQuery;
     /// Set&execute query for document
     void setQuery( const DBQueryDef& querydef ) override
