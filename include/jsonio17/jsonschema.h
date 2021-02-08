@@ -259,6 +259,34 @@ public:
     /// Get object description.
     virtual std::string getDescription() const override;
 
+    /// Add field by fieldpath
+    JsonSchema *field_add(std::queue<std::string> names) override;
+
+    void loads_from( const std::string& value  )
+    {
+        if( value.empty() )
+            return;
+        if( fieldType() == FieldDef::T_STRING )
+            set_from(value);
+        else
+            loads(value);
+    }
+
+    /// Set  vector-like objects (std::list, std::vector, std::set, etc) to current Node
+    template <class T,
+              class = typename std::enable_if<is_container<T>{}, bool>::type >
+    void loads_list_from( const T& values  )
+    {
+        int ii{0};
+        update_node(  Array, "" );
+        for( const auto& el: values )
+        {
+            auto obj = append_node( std::to_string(ii++), Null, "" );
+            if( obj )
+                obj->loads_from(el);
+        }
+    }
+
     /// Get Description from Node
     std::string getFullDescription() const;
 
@@ -337,8 +365,6 @@ private:
     JsonSchema *field( std::queue<std::string> names ) const override;
     /// Get field by idspath
     JsonSchema *field( std::queue<int> ids ) const;
-    /// Add field by fieldpath
-    JsonSchema *field_add(std::queue<std::string> names) override;
 
     /// Deep copy children
     void copy(const JsonSchema &obj);
@@ -414,6 +440,15 @@ private:
     {
         if( level_type==0 && !field_descrip->defaultValue().empty() )
             loads( field_descrip->defaultValue() );
+        else
+        {
+            if( isBool() )
+                field_value = "false";
+            else if( isNumber() )
+                field_value = "0";
+            else
+                field_value = "";
+        }
         if( field_descrip->className() == "TimeStamp" )
             set_current_time();
     }

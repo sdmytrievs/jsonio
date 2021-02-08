@@ -428,13 +428,6 @@ JsonSchema *JsonSchema::getChild(const std::string &key) const
 bool JsonSchema::clear()
 {
     set_children();
-    if( isBool() )
-        field_value = "false";
-    else if( isNumber() )
-        field_value = "0";
-    else
-        field_value = "";
-
     set_default_value();
     return true;
 }
