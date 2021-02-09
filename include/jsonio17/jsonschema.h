@@ -278,7 +278,11 @@ public:
     void loads_list_from( const T& values  )
     {
         int ii{0};
-        update_node(  Array, "" );
+        if( isArray() )
+            update_node(  Array, "" );
+        else
+            update_node(  Object, "" );
+
         for( const auto& el: values )
         {
             auto obj = append_node( std::to_string(ii++), Null, "" );

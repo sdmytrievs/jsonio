@@ -42,10 +42,15 @@ TEST( JsonioService, regexpExtract )
 //  Function that can be used to replase text using regexp
 TEST( JsonioService, regexpReplace )
 {
-    auto fieldstr = regexp_replace("field1.values.0" ,"values\\.0\\.*", "values[0]");
+    auto fieldstr = regexp_replace("field1.values.0" ,"\\.([0-9])", "[$1]");
     EXPECT_EQ( "field1.values[0]", fieldstr );
-    fieldstr = regexp_replace("field1.values.0.next" ,"values\\.0\\.*", "values[0]");
-    EXPECT_EQ( "field1.values[0]next", fieldstr );
+    fieldstr = regexp_replace("field1.values.0.next" ,"\\.([0-9])", "[$1]");
+    EXPECT_EQ( "field1.values[0].next", fieldstr );
+
+    fieldstr = regexp_replace("field1.values[0]" ,"\\[([0-9])+\\]", ".$1");
+    EXPECT_EQ( "field1.values.0", fieldstr );
+    fieldstr = regexp_replace("field1.values[0].next" ,"\\[([0-9])+\\]", ".$1");
+    EXPECT_EQ( "field1.values.0.next", fieldstr );
 
     auto resstr = regexp_replace("there is a subsequence in the string" ,"\\b(sub)([^ ]*)","sub-$2");
     EXPECT_EQ( "there is a sub-sequence in the string", resstr );

@@ -289,7 +289,8 @@ void DBQueryResult::node_to_values_fields( const JsonBase& node, const fields2qu
     std::string kbuf, fld_key;
     for( const auto& afield: query_data.fields() )
     {
-        auto it_fld = map_fields.find(afield);
+        auto fielkey = regexp_replace(afield ,"\\.([0-9])", "[$1]");
+        auto it_fld = map_fields.find(fielkey);
         if( it_fld == map_fields.end() )
             kbuf = std::string("---");
         else

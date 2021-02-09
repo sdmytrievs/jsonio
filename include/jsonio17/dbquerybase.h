@@ -127,8 +127,10 @@ public:
         for (; itr != end; ++itr)
         {
             std::string fld = *itr;
+            // to ArangoDB indexes
+            auto fielkey = regexp_replace(*itr ,"\\.([0-9])", "[$1]");
             replace_all( fld, ".", '_');
-            map_fields[*itr] = fld;
+            map_fields[fielkey] = fld;
         }
         setQueryFields( map_fields );
     }
