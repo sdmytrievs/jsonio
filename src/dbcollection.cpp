@@ -165,7 +165,7 @@ std::string DBCollection::updateDocument( const JsonBase& data_object )
 
 std::string DBCollection::saveDocument( JsonBase& data_object, const std::string &key)
 {
-    if( existsDocument(key) )
+    if( !existsDocument(key) )
     {
         data_object.set_oid( key );
         return createDocument( data_object );
