@@ -21,7 +21,7 @@ TEST( JsonioService, regexpSplit )
     EXPECT_EQ( "[ \"a\", \"bb\", \"ccc\" ]", json::dump(strquery) );
 
     tokens = regexp_split( " \"aaa\", \"bbb\", \"ccc\" ", "[\",\\s]+" );
-    std::cout << json::dump(tokens) << std::endl;
+    //std::cout << json::dump(tokens) << std::endl;
     EXPECT_EQ( "[ \"\", \"aaa\", \"bbb\", \"ccc\" ]", json::dump(tokens) );
 }
 

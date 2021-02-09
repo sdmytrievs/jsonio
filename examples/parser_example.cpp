@@ -10,8 +10,8 @@ using namespace std;
 int main(int argc, char* argv[])
 {
     string test_dir = ".";
-    //test_dir = "pass";
-    test_dir = "fail";
+    test_dir = "pass";
+    //test_dir = "fail";
     //test_dir = "nst_json_testsuite/test_parsing";
     //test_dir = "nst_json_testsuite2/test_parsing";
 

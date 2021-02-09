@@ -571,7 +571,8 @@ void JsonSchema::struct2model( const  StructDef* strDef )
     while( it != struct_descrip->cend() )
     {
         if( it->get()->required() == FieldDef::fld_required ||
-                !it->get()->defaultValue().empty()    )
+                !it->get()->defaultValue().empty() ||
+                it->get()->className() == "TimeStamp" )
         {
             // add only requrled
             auto child = new JsonSchema( it->get(), this );

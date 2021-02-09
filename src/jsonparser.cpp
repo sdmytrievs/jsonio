@@ -157,9 +157,10 @@ bool JsonParser::parse_string( std::string &str )
     while( jsontext[cur_pos] != jsQuote || lastCh )
     {
         // non-UTF-8 sequence
-        if (  static_cast<uint8_t>(jsontext[cur_pos]) < 0x20)
+        if (  !isspace(jsontext[cur_pos]) && static_cast<uint8_t>(jsontext[cur_pos]) < 0x20)
         {
           // control character
+          std::cout << str << " -- " << static_cast<uint8_t>(jsontext[cur_pos]) <<  std::endl;
           JSONIO_THROW( "JsonParser", 10, "Unexpected control character" + err_part() );
         }
 
