@@ -21,7 +21,7 @@ TEST( JsonioService, regexpSplit )
     EXPECT_EQ( "[ \"a\", \"bb\", \"ccc\" ]", json::dump(strquery) );
 
     tokens = regexp_split( " \"aaa\", \"bbb\", \"ccc\" ", "[\",\\s]+" );
-    std::cout << json::dump(tokens) << std::endl;
+    //std::cout << json::dump(tokens) << std::endl;
     EXPECT_EQ( "[ \"\", \"aaa\", \"bbb\", \"ccc\" ]", json::dump(tokens) );
 }
 
@@ -42,10 +42,15 @@ TEST( JsonioService, regexpExtract )
 //  Function that can be used to replase text using regexp
 TEST( JsonioService, regexpReplace )
 {
-    auto fieldstr = regexp_replace("field1.values.0" ,"values\\.0\\.*", "values[0]");
+    auto fieldstr = regexp_replace("field1.values.0" ,"\\.([0-9])", "[$1]");
     EXPECT_EQ( "field1.values[0]", fieldstr );
-    fieldstr = regexp_replace("field1.values.0.next" ,"values\\.0\\.*", "values[0]");
-    EXPECT_EQ( "field1.values[0]next", fieldstr );
+    fieldstr = regexp_replace("field1.values.0.next" ,"\\.([0-9])", "[$1]");
+    EXPECT_EQ( "field1.values[0].next", fieldstr );
+
+    fieldstr = regexp_replace("field1.values[0]" ,"\\[([0-9])+\\]", ".$1");
+    EXPECT_EQ( "field1.values.0", fieldstr );
+    fieldstr = regexp_replace("field1.values[0].next" ,"\\[([0-9])+\\]", ".$1");
+    EXPECT_EQ( "field1.values.0.next", fieldstr );
 
     auto resstr = regexp_replace("there is a subsequence in the string" ,"\\b(sub)([^ ]*)","sub-$2");
     EXPECT_EQ( "there is a sub-sequence in the string", resstr );
@@ -97,6 +102,10 @@ TEST( JsonioService, extractStringJson )
     EXPECT_EQ( extract_string_json("_type", test_data), "vertex" );
     EXPECT_EQ( extract_string_json("_label", test_data), "element" );
 
+    std::string test_data2 = R"({"_key":"Kaolinite-dbr-0-0000","set":"Kaolinite","r":1})";
+    EXPECT_EQ( extract_string_json("_key", test_data2), "Kaolinite-dbr-0-0000" );
+    EXPECT_EQ( extract_string_json("set", test_data2), "Kaolinite" );
+
 }
 
 TEST( JsonioService, extractIntJson )
@@ -120,6 +129,11 @@ TEST( JsonioService, Trim )
     str = ":: Test2 ;";
     trim( str, ": ;" );
     EXPECT_EQ( "Test2", str );
+    str = "[{}]\n";
+    trim( str );
+    trim( str, "[]" );
+    EXPECT_EQ( "{}", str );
+
 }
 
 TEST( JsonioService, Replace )

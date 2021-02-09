@@ -428,13 +428,6 @@ JsonSchema *JsonSchema::getChild(const std::string &key) const
 bool JsonSchema::clear()
 {
     set_children();
-    if( isBool() )
-        field_value = "false";
-    else if( isNumber() )
-        field_value = "0";
-    else
-        field_value = "";
-
     set_default_value();
     return true;
 }
@@ -578,7 +571,8 @@ void JsonSchema::struct2model( const  StructDef* strDef )
     while( it != struct_descrip->cend() )
     {
         if( it->get()->required() == FieldDef::fld_required ||
-                !it->get()->defaultValue().empty()    )
+                !it->get()->defaultValue().empty() ||
+                it->get()->className() == "TimeStamp" )
         {
             // add only requrled
             auto child = new JsonSchema( it->get(), this );
