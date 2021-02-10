@@ -62,7 +62,7 @@ void DBEdgeDocument::setEdgeObject( const std::string &aschema_name, const std::
     current_schema_object.set_value_via_path("_from", outV);
 
     for(auto const &ent : fldvalues)
-        current_schema_object.set_value_via_path( ent.first, ent.second  );
+        current_schema_object.load_value_via_path( ent.first, ent.second  );
 }
 
 std::string DBEdgeDocument::extractSchemaFromId(const std::string &oid) const

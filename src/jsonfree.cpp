@@ -106,7 +106,7 @@ JsonFree *JsonFree::field( std::queue<std::string> names ) const
     return element->get()->field(names);
 }
 
-JsonFree *JsonFree::field_add(std::queue<std::string> names )
+JsonFree *JsonFree::field_add_names(std::queue<std::string> names )
 {
     if( names.empty() )
         return const_cast<JsonFree *>(this);
@@ -120,23 +120,23 @@ JsonFree *JsonFree::field_add(std::queue<std::string> names )
         if( isObject() )
         {
             append_node( fname, JsonBase::Object, "" );
-            return children.back()->field_add(names);
+            return children.back()->field_add_names(names);
         }
         else if( isArray() && fname== std::to_string(children.size()) )
         {
             append_node( fname, JsonBase::Object, "" );
-            return children.back()->field_add(names);
+            return children.back()->field_add_names(names);
         }
         else
             return nullptr;
     }
-    return element->get()->field_add(names);
+    return element->get()->field_add_names(names);
 }
 
 JsonFree &JsonFree::add_object_via_path(const std::string &jsonpath)
 {
     auto names = split(jsonpath, field_path_delimiters);
-    auto pobj = field_add( names );
+    auto pobj = field_add_names( names );
     if( pobj )
     {
         if( !pobj->isObject())
@@ -149,7 +149,7 @@ JsonFree &JsonFree::add_object_via_path(const std::string &jsonpath)
 JsonFree &JsonFree::add_array_via_path(const std::string &jsonpath)
 {
     auto names = split(jsonpath, field_path_delimiters);
-    auto pobj = field_add( names );
+    auto pobj = field_add_names( names );
     if( pobj )
     {
         if( !pobj->isArray())

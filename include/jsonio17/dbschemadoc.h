@@ -55,6 +55,20 @@ public:
         return  current_schema_object;
     }
 
+    /// Use jsonpath to modify any value in a JSON object.
+    /// The following jsonpath expression could be used
+    ///     "name1.name2.3.name3"
+    ///     "name1.name2[3].name3"
+    ///     "/name1/name2/3/name3"
+    ///     "/name1/name2[3]/name3"
+    ///     "[\"name1\"][\"name2\"][3][\"name3\"]"
+    /// @return true if jsonpath present in a JSON object.
+    bool setValueViaPath( const std::string& jsonpath, const std::string& val  ) override
+    {
+        current_data().load_value_via_path( jsonpath, val );
+        return true;
+    }
+
     /// Generate new document-handle (_id) or other pointer of location
     std::string genOid( const std::string& key_template ) override;
 

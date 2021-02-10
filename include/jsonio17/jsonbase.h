@@ -339,6 +339,9 @@ public:
     /// Get field by fieldpath ("name1.name2.name3")
     virtual const JsonBase *field(  const std::string& fieldpath ) const =0;
 
+    /// Add field by fieldpath ("name1.name2.name3")
+    virtual JsonBase *field_add(  const std::string& fieldpath );
+
     /// Return a string representation of the jsonpath to top field.
     std::string get_path() const;
 
@@ -451,9 +454,7 @@ private:
     // Get field by fieldpath ("name1.name2.name3")
     //JsonBase *field(  const std::string& fieldpath ) const;
     virtual JsonBase *field( std::queue<std::string> names ) const = 0;
-    /// Get field by fieldpath ("name1.name2.name3")
-    JsonBase *field_add(  const std::string& fieldpath );
-    virtual JsonBase *field_add(std::queue<std::string> names) = 0;
+    virtual JsonBase *field_add_names(std::queue<std::string> names) = 0;
 
     virtual void resize_array_level(size_t level, const std::vector<size_t> &sizes, const std::string &defval)=0;
 

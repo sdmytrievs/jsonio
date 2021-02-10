@@ -233,7 +233,7 @@ private:
     /// Get field by fieldpath
     JsonFree *field( std::queue<std::string> names ) const override;
     /// Add field by fieldpath
-    JsonFree *field_add(std::queue<std::string> names) override;
+    JsonFree *field_add_names(std::queue<std::string> names) override;
 
     /// Deep copy children
     void copy(const JsonFree &obj);

@@ -313,7 +313,7 @@ const JsonSchema *JsonSchema::field(const std::string &fieldpath) const
 JsonSchema &JsonSchema::add_object_via_path(const std::string &jsonpath)
 {
     auto names = split(jsonpath, field_path_delimiters);
-    auto pobj = field_add( names );
+    auto pobj = field_add_names( names );
     if( pobj )
     {
         if( !pobj->isObject())
@@ -327,7 +327,7 @@ JsonSchema &JsonSchema::add_object_via_path(const std::string &jsonpath)
 JsonSchema &JsonSchema::add_array_via_path(const std::string &jsonpath)
 {
     auto names = split(jsonpath, field_path_delimiters);
-    auto pobj = field_add( names );
+    auto pobj = field_add_names( names );
     if( pobj )
     {
         if( !pobj->isArray())
@@ -338,7 +338,7 @@ JsonSchema &JsonSchema::add_array_via_path(const std::string &jsonpath)
 
 }
 
-JsonSchema *JsonSchema::field_add( std::queue<std::string> names )
+JsonSchema *JsonSchema::field_add_names( std::queue<std::string> names )
 {
     if( names.empty() )
         return const_cast<JsonSchema *>(this);
@@ -352,17 +352,17 @@ JsonSchema *JsonSchema::field_add( std::queue<std::string> names )
         if( isObject() )
         {
             auto new_obj = append_node( fname, JsonBase::Null, "" );
-            return /*children.back()*/ new_obj->field_add(names);
+            return /*children.back()*/ new_obj->field_add_names(names);
         }
         else if( isArray() && fname== std::to_string(children.size()) )
         {
             append_node( fname, JsonBase::Null, "" );
-            return children.back()->field_add(names);
+            return children.back()->field_add_names(names);
         }
         else
             return nullptr;
     }
-    return element->get()->field_add(names);
+    return element->get()->field_add_names(names);
 }
 
 list_names_t JsonSchema::getUsedKeys() const
@@ -401,6 +401,12 @@ std::string JsonSchema::getDescription() const
     if( level_type == 0 )
         return  field_descrip->description();
     return "";
+}
+
+JsonSchema *JsonSchema::field_add(const std::string &fieldpath)
+{
+    auto names = split(fieldpath, field_path_delimiters);
+    return field_add_names(names);
 }
 
 std::string JsonSchema::getFullDescription() const

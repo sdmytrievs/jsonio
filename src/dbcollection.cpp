@@ -99,14 +99,15 @@ bool DBCollection::existsDocument( const std::string &key ) const
 std::string DBCollection::createDocument( JsonBase& data_object )
 {
     auto new_id = getKeyFrom( data_object );
-    auto  parts = split( new_id, "/");
 
-    JSONIO_THROW_IF( !is_allowed( parts.back() ), "DBCollection", 11,
-                     " some of characters cannot be used inside _key values '" + new_id +"'." );
-
-    JSONIO_THROW_IF( existsDocument( new_id ), "DBCollection", 12,
-                     " two records with the same key '" + new_id +"'." );
-
+    if( !new_id.empty() )
+    {
+        auto  parts = split( new_id, "/");
+        JSONIO_THROW_IF( !is_allowed( parts.back() ), "DBCollection", 11,
+                         " some of characters cannot be used inside _key values '" + new_id +"'." );
+        JSONIO_THROW_IF( existsDocument( new_id ), "DBCollection", 12,
+                         " two records with the same key '" + new_id +"'." );
+    }
     {
         std::unique_lock<std::shared_mutex> g(keysmap_mutex);
         std::string second;
@@ -122,6 +123,7 @@ std::string DBCollection::createDocument( JsonBase& data_object )
 
 std::string DBCollection::createDocument( DBDocumentBase *document )
 {
+    //std::cout << "4.1 createWithTestValues " << document->current_data().dump(false) << std::endl;
     auto new_key = createDocument( document->current_data() );
     document->add_line( new_key, document->current_data(), false );
     return new_key;
