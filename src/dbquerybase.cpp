@@ -294,7 +294,11 @@ void DBQueryResult::node_to_values_fields( const JsonBase& node, const fields2qu
         if( it_fld == map_fields.end() )
             kbuf = std::string("---");
         else
+        {
             node.get_value_via_path( it_fld->second, kbuf, std::string("---") );
+            if( kbuf == "null" )  // ArangoDB returns null for no exist fields
+               kbuf = std::string("---");
+        }
         trim( kbuf );
         values.push_back(kbuf);
     }

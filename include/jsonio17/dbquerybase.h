@@ -144,7 +144,6 @@ public:
 
     friend bool operator!=( const DBQueryBase&,  const DBQueryBase& );
 
-
     //// Add addition filter to query
     virtual void addFieldsToFilter( const field_value_map_t& fldvalues );
 
@@ -180,7 +179,10 @@ public:
     /// Constructor
     DBQueryDef( const std::shared_ptr<DBQueryBase>& condition, const std::vector<std::string>& fields = {} ):
         fields_collect(fields), query_condition(condition)
-    { }
+    {
+        if( !fields_collect.empty() )
+            query_condition->setQueryFields(fields_collect);
+    }
 
     void toJson( JsonBase& object ) const;
     void fromJson( const JsonBase& object );
@@ -224,11 +226,15 @@ public:
     void setFields(const std::vector<std::string>& fields )
     {
         fields_collect = fields;
+        if( !fields_collect.empty() )
+            query_condition->setQueryFields(fields_collect);
     }
     template <typename Container>
     void  addFields( const Container& listFields )
     {
         fields_collect.insert(fields_collect.end(), listFields.begin(), listFields.end());
+        if( !fields_collect.empty() )
+            query_condition->setQueryFields(fields_collect);
     }
     const std::vector<std::string>& fields() const
     {

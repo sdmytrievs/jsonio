@@ -163,6 +163,8 @@ std::vector<std::string> DBSchemaDocument::make_default_query_fields() const
            }
        }
     }
+    auto key_flds = collection_from->keyFields();
+    key_fields.insert(key_fields.end(), key_flds.begin(), key_flds.end() );
     return key_fields;
 }
 
