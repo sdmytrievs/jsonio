@@ -226,7 +226,7 @@ void JsonBase::dump2stream( std::ostream& os, int depth, bool dense ) const
 JsonBase *JsonBase::field_add(const std::string &fieldpath )
 {
     auto names = split(fieldpath, field_path_delimiters);
-    return field_add(names);
+    return field_add_names(names);
 }
 
 std::string JsonBase::dump(bool dense) const

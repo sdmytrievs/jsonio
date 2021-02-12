@@ -129,7 +129,7 @@ TEST( DBQuery, dbQueryDef )
     EXPECT_EQ( DBQueryBase::generateRETURN( false, map_fields, "u"),
                "\nRETURN  {  \"class_\" : u.properties.class_,  \"name\" : u.properties.name,  \"number\" : u.properties.number,  \"symbol\" : u.properties.symbol } ");
 
-    DBQueryDef query_def( query);
+    DBQueryDef query_def( query );
     query_def.setName("testAQL");
     query_def.setSchema("VertexElement");
     query_def.setComment("AQL query for elements");
@@ -139,12 +139,19 @@ TEST( DBQuery, dbQueryDef )
                 "properties.class_",
                 "properties.number" };
     query_def.setFields(fields);
+    fields2query_t new_map_fields =
+    {
+      { "properties.symbol", "properties_symbol" },
+      { "properties.name", "properties_name" },
+      { "properties.class_", "properties_class_" },
+      { "properties.number", "properties_number" }
+    };
 
     EXPECT_EQ( query_def.condition()->type(),DBQueryBase::qAQL);
     EXPECT_EQ( query_def.condition()->queryString(),"FOR u IN elements\nFILTER u.number IN @nbrs \n");
     EXPECT_EQ( query_def.condition()->bindVars(),bind_vars);
     EXPECT_EQ( query_def.condition()->options(),options);
-    EXPECT_EQ( query_def.condition()->queryFields(), map_fields);
+    EXPECT_EQ( query_def.condition()->queryFields(), new_map_fields);
     EXPECT_EQ( query_def.name(), "testAQL");
     EXPECT_EQ( query_def.schema(), "VertexElement");
     EXPECT_EQ( query_def.comment(), "AQL query for elements");
@@ -161,7 +168,7 @@ TEST( DBQuery, dbQueryDef )
     EXPECT_EQ( query2.condition()->queryString(),"FOR u IN elements\nFILTER u.number IN @nbrs \n");
     EXPECT_EQ( query2.condition()->bindVars(),bind_vars);
     EXPECT_EQ( query2.condition()->options(),options);
-    EXPECT_EQ( query2.condition()->queryFields(), map_fields);
+    EXPECT_EQ( query2.condition()->queryFields(), new_map_fields);
     EXPECT_EQ( query2.name(), "testAQL");
     EXPECT_EQ( query2.schema(), "VertexElement");
     EXPECT_EQ( query2.comment(), "AQL query for elements");

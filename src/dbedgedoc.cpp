@@ -62,7 +62,7 @@ void DBEdgeDocument::setEdgeObject( const std::string &aschema_name, const std::
     current_schema_object.set_value_via_path("_from", outV);
 
     for(auto const &ent : fldvalues)
-        current_schema_object.set_value_via_path( ent.first, ent.second  );
+        current_schema_object.load_value_via_path( ent.first, ent.second  );
 }
 
 std::string DBEdgeDocument::extractSchemaFromId(const std::string &oid) const
@@ -82,13 +82,13 @@ DBQueryBase DBEdgeDocument::make_default_query_template() const
     AQLquery += "\nFILTER u._label == '" + object_label + "' ";
     //AQLquery += "\nRETURN u ";
     //std::cout << "AQLquery" << AQLquery << std::endl;
-    auto flds_query = make_default_query_fields();
-    auto key_flds = collection_from->keyFields();
-    flds_query.insert(flds_query.end(), key_flds.begin(), key_flds.end() );
+//    auto flds_query = make_default_query_fields();
+//    auto key_flds = collection_from->keyFields();
+//    flds_query.insert(flds_query.end(), key_flds.begin(), key_flds.end() );
 
     DBQueryBase def_query( AQLquery, DBQueryBase::qAQL );
-    if( !flds_query.empty() )
-        def_query.setQueryFields(flds_query);
+//    if( !flds_query.empty() )
+//        def_query.setQueryFields(flds_query);
     return def_query;
 }
 

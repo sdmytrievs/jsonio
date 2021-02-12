@@ -77,6 +77,19 @@ public:
     ///     "/name1/name2[3]/name3"
     ///     "[\"name1\"][\"name2\"][3][\"name3\"]"
     /// @return true if jsonpath present in a JSON object.
+    virtual bool setValueViaPath( const std::string& jsonpath, const std::string& val  )
+    {
+        return current_data().set_value_via_path( jsonpath, val );
+    }
+
+    /// Use jsonpath to modify any value in a JSON object.
+    /// The following jsonpath expression could be used
+    ///     "name1.name2.3.name3"
+    ///     "name1.name2[3].name3"
+    ///     "/name1/name2/3/name3"
+    ///     "/name1/name2[3]/name3"
+    ///     "[\"name1\"][\"name2\"][3][\"name3\"]"
+    /// @return true if jsonpath present in a JSON object.
     template <typename T>
     bool setValueViaPath( const std::string& jsonpath, const T& val  )
     {

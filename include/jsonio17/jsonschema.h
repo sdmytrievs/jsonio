@@ -259,17 +259,19 @@ public:
     /// Get object description.
     virtual std::string getDescription() const override;
 
-    /// Add field by fieldpath
-    JsonSchema *field_add(std::queue<std::string> names) override;
+    /// Add field by fieldpath ("name1.name2.name3")
+    JsonSchema *field_add(  const std::string& fieldpath ) override;
 
     void loads_from( const std::string& value  )
     {
-        if( value.empty() )
-            return;
         if( fieldType() == FieldDef::T_STRING )
             set_from(value);
         else
+        {
+            if( value.empty() )
+                return;
             loads(value);
+        }
     }
 
     /// Set  vector-like objects (std::list, std::vector, std::set, etc) to current Node
@@ -289,6 +291,21 @@ public:
             if( obj )
                 obj->loads_from(el);
         }
+    }
+
+    /// Use jsonpath to modify any value in a JSON object.
+    /// The following jsonpath expression could be used
+    ///     "name1.name2.3.name3"
+    ///     "name1.name2[3].name3"
+    ///     "/name1/name2/3/name3"
+    ///     "/name1/name2[3]/name3"
+    ///     "[\"name1\"][\"name2\"][3][\"name3\"]"
+    /// @return true if jsonpath present in a JSON object.
+    void load_value_via_path( const std::string& jsonpath, const std::string& val  )
+    {
+        auto pobj = field_add( jsonpath );
+        if( pobj )
+          pobj->loads_from(val);
     }
 
     /// Get Description from Node
@@ -369,6 +386,8 @@ private:
     JsonSchema *field( std::queue<std::string> names ) const override;
     /// Get field by idspath
     JsonSchema *field( std::queue<int> ids ) const;
+    /// Add field by fieldpath
+    JsonSchema *field_add_names(std::queue<std::string> names) override;
 
     /// Deep copy children
     void copy(const JsonSchema &obj);

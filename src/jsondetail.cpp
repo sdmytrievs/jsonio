@@ -7,7 +7,7 @@ namespace jsonio17 {
 
 int DetailSettings::doublePrecision = 15;
 int DetailSettings::floatPrecision = 7;
-const char* DetailSettings::infiniteValue = "null";
+const char* DetailSettings::infiniteValue = "---"; //"null";
 
 
 std::string v2string( const char* value )

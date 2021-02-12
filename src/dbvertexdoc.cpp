@@ -97,7 +97,7 @@ void DBVertexDocument::setVertexObject(const std::string &aschema_name, const fi
     current_schema_object.clear(); // set default values
 
     for(auto const &ent : fldvalues)
-        current_schema_object.set_value_via_path( ent.first, ent.second  );
+        current_schema_object.load_value_via_path( ent.first, ent.second  );
 }
 
 void DBVertexDocument::updateVertexObject(const std::string &aschema_name, const field_value_map_t &fldvalues)
@@ -107,7 +107,7 @@ void DBVertexDocument::updateVertexObject(const std::string &aschema_name, const
         JSONIO_THROW( "DBVertexDocument", 13,
                        " illegal record schame when update: " + aschema_name + " current schema: " + schema_name );
     for(auto const &ent : fldvalues)
-        current_schema_object.set_value_via_path( ent.first, ent.second  );
+        current_schema_object.load_value_via_path( ent.first, ent.second  );
 }
 
 std::string DBVertexDocument::extractSchemaFromId( const std::string& oid ) const
@@ -252,13 +252,13 @@ DBQueryBase DBVertexDocument::make_default_query_template() const
     AQLquery += "\nFILTER u._label == '" + object_label + "' ";
     //AQLquery += "\nRETURN u ";
     //std::cout << "AQLquery" << AQLquery << std::endl;
-    auto flds_query = make_default_query_fields();
-    auto key_flds = collection_from->keyFields();
-    flds_query.insert(flds_query.end(), key_flds.begin(), key_flds.end() );
+//    auto flds_query = make_default_query_fields();
+//    auto key_flds = collection_from->keyFields();
+//    flds_query.insert(flds_query.end(), key_flds.begin(), key_flds.end() );
 
     DBQueryBase def_query( AQLquery, DBQueryBase::qAQL );
-    if( !flds_query.empty() )
-        def_query.setQueryFields(flds_query);
+//    if( !flds_query.empty() )
+//        def_query.setQueryFields(flds_query);
     return def_query;
 }
 
