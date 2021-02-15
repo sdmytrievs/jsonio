@@ -88,7 +88,7 @@ void JsonSchema::copy(const JsonSchema &obj)
     // field_key =  obj.field_key; // must be the same
     field_value = obj.field_value;
     children.clear();
-    for( auto child: obj.children )
+    for( const auto& child: obj.children )
     {
         children.push_back( std::make_shared<JsonSchema>(*child) );
         children.back()->parent_object = this;
@@ -102,9 +102,9 @@ void JsonSchema::move(JsonSchema &&obj)
     field_value = std::move(obj.field_value);
     children = std::move(obj.children);
     obj.children.clear();
-    for( auto child: children )
+    for( const auto& child: children )
     {
-        children.back()->parent_object = this;
+        child->parent_object = this;
     }
 }
 

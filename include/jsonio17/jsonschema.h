@@ -444,7 +444,7 @@ private:
                  ( atype == Type::Int || atype == Type::Double ) ) ) )
         {
             if( use_exception )
-                JSONIO_THROW( "JsonSchema", 11, "assignment of value of type is unpossible " + std::string( typeName() ) );
+                JSONIO_THROW( "JsonSchema", 11, getKey() + " assignment of value of type is unpossible " + std::string( typeName() ) );
             else
                 return false;
         }
