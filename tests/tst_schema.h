@@ -109,7 +109,7 @@ TEST( JsonioSchema, ComplexField )
     EXPECT_EQ( dfield->required(), FieldDef::fld_default );
     EXPECT_EQ( dfield->description(), "Description of task " );
     EXPECT_EQ( dfield->className(), "Describe" );
-    EXPECT_EQ( dfield->defaultValue(), "{\"version\":1}\n" );
+    EXPECT_EQ( dfield->defaultValue(), "{\"version\":1}" );
     EXPECT_THROW( dfield->type(1), jsonio_exception );
 
     dfield = schem_spec->getField("values");
@@ -121,7 +121,7 @@ TEST( JsonioSchema, ComplexField )
     EXPECT_EQ( dfield->required(), FieldDef::fld_default );
     EXPECT_EQ( dfield->description(), "2D list " );
     EXPECT_EQ( dfield->className(), "" );
-    EXPECT_EQ( dfield->defaultValue(), "[[1,2],[3,4]]\n" );
+    EXPECT_EQ( dfield->defaultValue(), "[[1,2],[3,4]]" );
 
     EXPECT_EQ( schem_spec->getField("formats")->className(), "FormatData" );
     EXPECT_EQ( schem_spec->getField("data")->className(), "SpecifiersData" );

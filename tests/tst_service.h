@@ -276,7 +276,7 @@ TEST( Jsoniofilesystem, TestJsonArrayFileSave )
 
     EXPECT_TRUE( fjson.isOpened() );
     EXPECT_NO_THROW( fjson.Close() );
-    EXPECT_EQ( fjson.load_json(), "[{\"key\":0},{\"key\":1},{\"key\":2},{\"key\":3},{\"key\":4}]\n" );
+    EXPECT_EQ( fjson.load_json(), "[{\"key\":0},{\"key\":1},{\"key\":2},{\"key\":3},{\"key\":4}]" );
 }
 
 TEST( Jsoniofilesystem, TestJsonArrayFileSaveSimple )
@@ -293,7 +293,7 @@ TEST( Jsoniofilesystem, TestJsonArrayFileSaveSimple )
 
     EXPECT_TRUE( fjson.isOpened() );
     EXPECT_NO_THROW( fjson.Close() );
-    EXPECT_EQ( fjson.load_json(), "[0,1,2,3,4]\n" );
+    EXPECT_EQ( fjson.load_json(), "[0,1,2,3,4]" );
 }
 
 
@@ -317,16 +317,16 @@ TEST( Jsoniofilesystem, TestJsonArrayFileLoad )
     for( size_t ii=0; ii<5; ii++)
     {
         EXPECT_TRUE( fjson.loadNext( obj ));
-        EXPECT_EQ( obj.toString(true), std::string("{\"key\":")+std::to_string(ii)+"}\n" );
+        EXPECT_EQ( obj.toString(true), std::string("{\"key\":")+std::to_string(ii)+"}" );
     }
     EXPECT_NO_THROW( fjson.Close() );
-    EXPECT_EQ( fjson.load_json(), "[{\"key\":0},{\"key\":1},{\"key\":2},{\"key\":3},{\"key\":4}]\n" );
+    EXPECT_EQ( fjson.load_json(), "[{\"key\":0},{\"key\":1},{\"key\":2},{\"key\":3},{\"key\":4}]" );
 }
 
 TEST( Jsoniofilesystem, TestJsonArrayFileLoadSimple )
 {
     std::string fpath = "test_array_load2.json";
-    std::string fdata = "[0,1,2,3,4]\n";
+    std::string fdata = "[0,1,2,3,4]";
     auto obj = JsonFree::object();
 
     std::ofstream stream;
@@ -373,7 +373,7 @@ TEST( JsonioSettings, TestSettingsCreate )
 
     JsonFile ftxt(fpath);
     EXPECT_EQ( ftxt.load_json(),
-         "{\"jsonio\":{},\"common\":{\"test\":{\"UseString\":\"Test string\",\"UseBool\":true,\"UseInt\":1,\"UseDouble\":2.5}}}\n" );
+         "{\"jsonio\":{},\"common\":{\"test\":{\"UseString\":\"Test string\",\"UseBool\":true,\"UseInt\":1,\"UseDouble\":2.5}}}" );
 
     if(path_exist( fpath ) )
         fs::remove_all(fpath);
@@ -430,7 +430,7 @@ TEST( JsonioSettings, TestSettingsPath )
     JsonFile fjson(fpath);
     EXPECT_EQ( fjson.load_json(), "{\"jsonio\":{},\"common\":{\"UserHomeDirectoryPath\":\"~/newJSONIO/jsonio17\","
                                   "\"ResourcesDirectory\":\"~/Resources\",\"SchemasDirectory\":\"~/Resources/data/schemas\","
-                                  "\"WorkDirectoryPath\":\".\"}}\n" );
+                                  "\"WorkDirectoryPath\":\".\"}}" );
     if(path_exist( fpath ) )
         fs::remove_all(fpath);
 }
