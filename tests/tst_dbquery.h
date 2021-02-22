@@ -33,7 +33,7 @@ TEST( DBQuery, testEmpty )
 
     auto jsFree = JsonFree::object();
     query.toJson(jsFree);
-    EXPECT_EQ( jsFree.dump(true),"{\"style\":-1,\"find\":\"\",\"bind\":\"\",\"options\":\"\",\"fields\":{}}\n");
+    EXPECT_EQ( jsFree.dump(true),"{\"style\":-1,\"find\":\"\",\"bind\":\"\",\"options\":\"\",\"fields\":{}}");
 
     DBQueryBase query2;
     query2.fromJson(jsFree);
@@ -53,7 +53,7 @@ TEST( DBQuery, testAll )
 
     auto jsFree = JsonFree::object();
     query.toJson(jsFree);
-    EXPECT_EQ( jsFree.dump(true),"{\"style\":1,\"find\":\"\",\"bind\":\"\",\"options\":\"\",\"fields\":{}}\n");
+    EXPECT_EQ( jsFree.dump(true),"{\"style\":1,\"find\":\"\",\"bind\":\"\",\"options\":\"\",\"fields\":{}}");
 
     DBQueryBase query2(DBQueryBase::qUndef);
     query2.fromJson(jsFree);
@@ -74,7 +74,7 @@ TEST( DBQuery, testTemlate )
     auto jsFree = JsonFree::object();
     query.toJson(jsFree);
     EXPECT_EQ( jsFree.dump(true),
-          "{\"style\":0,\"find\":\"{ \\\"name\\\" : \\\"a\\\" }\",\"bind\":\"\",\"options\":\"\",\"fields\":{}}\n");
+          "{\"style\":0,\"find\":\"{ \\\"name\\\" : \\\"a\\\" }\",\"bind\":\"\",\"options\":\"\",\"fields\":{}}");
 
     DBQueryBase query2(DBQueryBase::qUndef);
     query2.fromJson(jsFree);
@@ -95,7 +95,7 @@ TEST( DBQuery, testAQL )
     auto jsFree = JsonFree::object();
     query.toJson(jsFree);
     EXPECT_EQ( jsFree.dump(true),
-         "{\"style\":6,\"find\":\"FOR u IN test RETURN u\",\"bind\":\"\",\"options\":\"\",\"fields\":{}}\n");
+         "{\"style\":6,\"find\":\"FOR u IN test RETURN u\",\"bind\":\"\",\"options\":\"\",\"fields\":{}}");
 
     DBQueryBase query2(DBQueryBase::qUndef);
     query2.fromJson(jsFree);
@@ -251,5 +251,5 @@ TEST( DBQuery, extractFields )
     EXPECT_EQ( flds_values["_id"], "thermodatasets/test1;0:TDS_REF;1");
     EXPECT_EQ( flds_values["symbol"], "test1");
     EXPECT_EQ( flds_values["name"], "fffff255");
-    EXPECT_EQ( flds_values["stype"], "{\"0\":\"TDS_REF\"}\n");
+    EXPECT_EQ( flds_values["stype"], "{\"0\":\"TDS_REF\"}");
 }

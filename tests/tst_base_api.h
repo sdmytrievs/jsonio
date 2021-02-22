@@ -124,8 +124,8 @@ TYPED_TEST( JsonioBaseTest, toType )
     EXPECT_EQ( "-100", obj["vint"].toString() );
     EXPECT_EQ( "2.5", obj["vdouble"].toString() );
     EXPECT_EQ( "Test string", obj["vstring"].toString() );
-    EXPECT_EQ( "[1.7,2.7,3.7,5.7]\n", obj["vlist"].toString(true) );
-    EXPECT_EQ( "{\"key1\":\"val1\",\"key2\":\"val2\"}\n", obj["vmap"].toString(true) );
+    EXPECT_EQ( "[1.7,2.7,3.7,5.7]", obj["vlist"].toString(true) );
+    EXPECT_EQ( "{\"key1\":\"val1\",\"key2\":\"val2\"}", obj["vmap"].toString(true) );
 }
 
 
@@ -253,7 +253,7 @@ TYPED_TEST( JsonioBaseTest, set_from )
     std::map<std::string, std::string> vumaps{ {"newkey1", "val11" }, {"newkey2", "val22" } };
     obj["vmap"].set_from(vumaps);
 
-    EXPECT_EQ( "{\"vbool\":false,\"vint\":15,\"vdouble\":-2.5,\"vstring\":\"New string\",\"vlist\":[17,27],\"vmap\":{\"newkey1\":\"val11\",\"newkey2\":\"val22\"}}\n", obj.toString(true) );
+    EXPECT_EQ( "{\"vbool\":false,\"vint\":15,\"vdouble\":-2.5,\"vstring\":\"New string\",\"vlist\":[17,27],\"vmap\":{\"newkey1\":\"val11\",\"newkey2\":\"val22\"}}", obj.toString(true) );
 }
 
 TYPED_TEST( JsonioBaseTest, get_to_illegal_value )
@@ -285,7 +285,7 @@ TYPED_TEST( JsonioBaseTest, get_to_illegal_value )
     EXPECT_TRUE( obj["vdouble"].get_to( vstr ));
     EXPECT_EQ( vstr, "5.2" );
     EXPECT_TRUE( obj["vlist"].get_to( vstr ));
-    EXPECT_EQ( vstr, "[1.7,2.7,3.7,5.7]\n" );
+    EXPECT_EQ( vstr, "[1.7,2.7,3.7,5.7]" );
 
     std::list<std::string> vlist;
     EXPECT_FALSE( obj["vdouble"].get_to( vlist ) );
@@ -309,11 +309,11 @@ TYPED_TEST( JsonioBaseTest, ArrayResize )
     EXPECT_EQ( 4, sizes[0] );
 
     obj["vlist"].array_resize(2, "5");
-    EXPECT_EQ( obj["vlist"].dump(true), "[1.7,2.7]\n" );
+    EXPECT_EQ( obj["vlist"].dump(true), "[1.7,2.7]" );
     obj["vlist"].array_resize(6, "5");
-    EXPECT_EQ( obj["vlist"].dump(true), "[1.7,2.7,5,5,5,5]\n" );
+    EXPECT_EQ( obj["vlist"].dump(true), "[1.7,2.7,5,5,5,5]" );
     obj["vlist"].array_resize(8, "");
-    EXPECT_EQ( obj["vlist"].dump(true), "[1.7,2.7,5,5,5,5,1.7,1.7]\n" );
+    EXPECT_EQ( obj["vlist"].dump(true), "[1.7,2.7,5,5,5,5,1.7,1.7]" );
 }
 
 TYPED_TEST( JsonioBaseTest, Iterators )

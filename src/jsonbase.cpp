@@ -258,9 +258,9 @@ void JsonBase::dump( std::ostream &os, bool dense ) const
 
     dump2stream( os, 0, dense );
     if( objtype == JsonBase::Object )
-        os << "}\n";
+        os << "}";
     else
-        os << "]\n";
+        os << "]";
 }
 
 void JsonBase::loads( const std::string &jsonstr )

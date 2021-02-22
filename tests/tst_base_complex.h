@@ -99,9 +99,9 @@ TYPED_TEST( JsonioBaseComplexTest, ValueViaPath )
     std::string sval;
     EXPECT_TRUE( obj.get_value_via_path( "data[2]", sval, std::string("undefined") ) );
 #ifdef _WIN32
-    EXPECT_EQ( sval, "{\"group\":\"double\",\"value\":1e-010}\n");
+    EXPECT_EQ( sval, "{\"group\":\"double\",\"value\":1e-010}");
 #else
-    EXPECT_EQ( sval, "{\"group\":\"double\",\"value\":1e-10}\n");
+    EXPECT_EQ( sval, "{\"group\":\"double\",\"value\":1e-10}");
 #endif
 
     EXPECT_TRUE( obj.get_key_via_path( "data[2]", sval ) );
@@ -134,7 +134,7 @@ TYPED_TEST( JsonioBaseComplexTest, ClearRemove )
     EXPECT_EQ( obj["about"]["description"].toString(), "" );
 
     EXPECT_TRUE( obj["formats"]["float"].clear() );
-    EXPECT_EQ( obj["formats"]["float"].toString(true), "{}\n" );
+    EXPECT_EQ( obj["formats"]["float"].toString(true), "{}" );
 
     EXPECT_FALSE( obj.remove() );
 
@@ -149,10 +149,10 @@ TYPED_TEST( JsonioBaseComplexTest, ClearRemove )
     EXPECT_EQ( obj["data"].size(), 3 );
 #ifdef _WIN32
     EXPECT_EQ( obj["data"].toString(true),
-            "[{\"group\":\"float\",\"value\":1.4},{\"group\":\"double\",\"value\":1e-010},{\"group\":\"double\",\"value\":10000000000}]\n" );
+            "[{\"group\":\"float\",\"value\":1.4},{\"group\":\"double\",\"value\":1e-010},{\"group\":\"double\",\"value\":10000000000}]" );
 #else
     EXPECT_EQ( obj["data"].toString(true),
-            "[{\"group\":\"float\",\"value\":1.4},{\"group\":\"double\",\"value\":1e-10},{\"group\":\"double\",\"value\":10000000000}]\n" );
+            "[{\"group\":\"float\",\"value\":1.4},{\"group\":\"double\",\"value\":1e-10},{\"group\":\"double\",\"value\":10000000000}]" );
 #endif
 }
 
@@ -166,11 +166,11 @@ TYPED_TEST( JsonioBaseComplexTest, ArrayResize )
     EXPECT_EQ( 3, sizes[1] );
 
     obj["values"].array_resize_xD({3,5}, "5");
-    EXPECT_EQ( obj["values"].dump(true), "[[1,2,3,5,5],[11,12,13,5,5],[1,2,3,5,5]]\n" );
+    EXPECT_EQ( obj["values"].dump(true), "[[1,2,3,5,5],[11,12,13,5,5],[1,2,3,5,5]]" );
     obj["values"].array_resize_xD({4,3}, "5");
-    EXPECT_EQ( obj["values"].dump(true), "[[1,2,3],[11,12,13],[1,2,3],[1,2,3]]\n" );
+    EXPECT_EQ( obj["values"].dump(true), "[[1,2,3],[11,12,13],[1,2,3],[1,2,3]]" );
     obj["values"].array_resize_xD({2,2}, "");
-    EXPECT_EQ( obj["values"].dump(true), "[[1,2],[11,12]]\n" );
+    EXPECT_EQ( obj["values"].dump(true), "[[1,2],[11,12]]" );
 }
 
 

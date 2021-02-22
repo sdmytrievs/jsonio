@@ -19,12 +19,12 @@ TEST( JsonioSchemaJson, ObjectLoads)
     ioSettings().addSchemaFormat(schema_thrift, schema_str);
     auto obj = json::loads( "ComplexSchemaTest", complex_schema_value );
 
-    EXPECT_EQ( obj["about"].dump(true), "{\"version\":1,\"description\":\"About\"}\n" );
+    EXPECT_EQ( obj["about"].dump(true), "{\"version\":1,\"description\":\"About\"}" );
     EXPECT_EQ( obj["formats"].dump(true),
-            "{\"int\":{\"width\":5,\"precision\":0},\"float\":{\"width\":10,\"precision\":4},\"double\":{\"width\":15,\"precision\":6}}\n" );
+            "{\"int\":{\"width\":5,\"precision\":0},\"float\":{\"width\":10,\"precision\":4},\"double\":{\"width\":15,\"precision\":6}}" );
     EXPECT_EQ( obj["data"].dump(true), "[{\"group\":\"float\",\"value\":1.4},"
-                                       "{\"group\":\"int\",\"value\":100},{\"group\":\"double\",\"value\":1e-10},{\"group\":\"double\",\"value\":10000000000}]\n" );
-    EXPECT_EQ( obj["values"].dump(true), "[[1,2,3],[11,12,13]]\n" );
+                                       "{\"group\":\"int\",\"value\":100},{\"group\":\"double\",\"value\":1e-10},{\"group\":\"double\",\"value\":10000000000}]" );
+    EXPECT_EQ( obj["values"].dump(true), "[[1,2,3],[11,12,13]]" );
 }
 
 
@@ -38,14 +38,14 @@ TEST( JsonioSchemaJson, ObjectSimple)
     std::string vstr{"New string"};
 
     auto simple_object = JsonSchema( JsonSchema::object("SimpleSchemaTest") );
-    EXPECT_EQ( simple_object.dump(true), "{}\n" );
+    EXPECT_EQ( simple_object.dump(true), "{}" );
 
     simple_object["vstring"] =  vstr;
     simple_object["vlist"] = vlist;
     simple_object["vlist"][2] = 11;
     simple_object["vmap"] = vumap;
 
-    EXPECT_EQ( simple_object.dump(true), "{\"vstring\":\"New string\",\"vlist\":[17,27,11],\"vmap\":{\"key1\":\"val1\",\"key2\":\"val2\"}}\n" );
+    EXPECT_EQ( simple_object.dump(true), "{\"vstring\":\"New string\",\"vlist\":[17,27,11],\"vmap\":{\"key1\":\"val1\",\"key2\":\"val2\"}}" );
 
     simple_object["vmap"]["key3"] = "10";
     simple_object["vbool"] = true;
@@ -53,7 +53,7 @@ TEST( JsonioSchemaJson, ObjectSimple)
     simple_object["vdouble"] = 2.5;   // order test
 
     EXPECT_EQ( simple_object.dump(true), "{\"vbool\":true,\"vint\":15,\"vdouble\":2.5,\"vstring\":\"New string\","
-                                         "\"vlist\":[17,27,11],\"vmap\":{\"key1\":\"val1\",\"key2\":\"val2\",\"key3\":\"10\"}}\n" );
+                                         "\"vlist\":[17,27,11],\"vmap\":{\"key1\":\"val1\",\"key2\":\"val2\",\"key3\":\"10\"}}" );
 
     // exception undefined field
     EXPECT_THROW( simple_object["no_exist"], jsonio_exception );
@@ -68,7 +68,7 @@ TEST( JsonioSchemaJson, ObjectComplex)
 
     auto complex_object = JsonSchema( JsonSchema::object("ComplexSchemaTest") );
     // se6t default
-    EXPECT_EQ(  complex_object.dump(true), "{\"about\":{\"version\":1},\"values\":[[1,2],[3,4]]}\n" );
+    EXPECT_EQ(  complex_object.dump(true), "{\"about\":{\"version\":1},\"values\":[[1,2],[3,4]]}" );
 
     auto describe_object = JsonSchema( JsonSchema::object("Describe") );
     describe_object["description"] = "the description";
@@ -76,12 +76,12 @@ TEST( JsonioSchemaJson, ObjectComplex)
     auto spdata_object = JsonSchema( JsonSchema::object("SpecifiersData") );
     spdata_object["group"] = "the group";
     // with default
-    EXPECT_EQ(  spdata_object.dump(true), "{\"group\":\"the group\",\"value\":100000}\n" );
+    EXPECT_EQ(  spdata_object.dump(true), "{\"group\":\"the group\",\"value\":100000}" );
 
     auto format_object = JsonSchema( JsonSchema::object("FormatData") );
     format_object["width"] = 10;
     format_object["precision"] = 8;
-    EXPECT_EQ(  format_object.dump(true) , "{\"width\":10,\"precision\":8}\n" );
+    EXPECT_EQ(  format_object.dump(true) , "{\"width\":10,\"precision\":8}" );
 
     complex_object["about"] = describe_object;
     complex_object["formats"]["new"] = format_object;
@@ -90,7 +90,7 @@ TEST( JsonioSchemaJson, ObjectComplex)
     EXPECT_EQ(  complex_object.dump(true) , "{\"about\":{\"description\":\"the description\"},"
                                             "\"formats\":{\"new\":{\"width\":10,\"precision\":8}},"
                                             "\"data\":[{\"group\":\"the group\",\"value\":100000}],"
-                                            "\"values\":[[1,2],[3,4]]}\n" );
+                                            "\"values\":[[1,2],[3,4]]}" );
 }
 
 
@@ -124,7 +124,7 @@ TEST( JsonioSchemaJson, ObjectAssign)
     ioSettings().addSchemaFormat(schema_thrift, schema_str);
 
     auto complex_object = JsonSchema( JsonSchema::object("ComplexSchemaTest") );
-    EXPECT_EQ(  complex_object.dump(true), "{\"about\":{\"version\":1},\"values\":[[1,2],[3,4]]}\n" );
+    EXPECT_EQ(  complex_object.dump(true), "{\"about\":{\"version\":1},\"values\":[[1,2],[3,4]]}" );
 
     auto simpl_obj = json::loads( "SimpleSchemaTest", simple_schema_value );
     EXPECT_NO_THROW( complex_object = simpl_obj );
