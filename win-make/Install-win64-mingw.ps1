@@ -7,12 +7,12 @@
 
 #Parameters
 #The script could take 2 arguments.
-param(  [string]$installPrefix="C:\usr",
+param(  [string]$installPrefix="D:\usr_vs",
         [string]$mingwPath ="C:\Qt5\Tools\mingw730_64\bin",
         [string]$cmakeVersion="3.16.8",
-        [string]$curlVersion="7.75.0_3",
-        [string]$ssh2Version="1.9.0_3",
-        [string]$opensslVersion="1.1.1j_3"
+        [string]$curlVersion="7.75.0",
+        [string]$ssh2Version="1.9.0",
+        [string]$opensslVersion="1.1.1i"
         )
 
 
@@ -86,16 +86,16 @@ $cmakeName = "$installPrefix/cmake-$cmakeVersion-win64-x64.zip"
 #https://curl.haxx.se/windows/dl-7.67.0/curl-7.67.0-win64-mingw.zip
 #https://curl.se/windows/dl-7.73.0/
 #https://curl.se/windows/dl-7.75.0_3/
-$curlUrl = ('https://curl.haxx.se/windows/dl-{0}/curl-{0}-win64-mingw.zip' -f $curlVersion)
+$curlUrl = ('https://curl.se/windows/dl-{0}/curl-{0}-win64-mingw.zip' -f $curlVersion)
 $curlName = "$installPrefix/curl-$curlVersion-win64-mingw.zip"
 
 #https://curl.haxx.se/windows/dl-7.67.0/libssh2-1.9.0-win64-mingw.zip
 #
-$ssh2Url = ('https://curl.haxx.se/windows/dl-{0}/libssh2-{1}-win64-mingw.zip' -f $curlVersion, $ssh2Version )
+$ssh2Url = ('https://curl.se/windows/dl-{0}/libssh2-{1}-win64-mingw.zip' -f $curlVersion, $ssh2Version )
 $ssh2Name = "$installPrefix/libssh2-$ssh2Version-win64-mingw.zip"
 
 #https://curl.haxx.se/windows/dl-7.67.0_2/openssl-1.1.1d_2-win64-mingw.zip
-$opensslUrl = ('https://curl.haxx.se/windows/dl-{0}_2/openssl-{1}-win64-mingw.zip' -f $curlVersion, $opensslVersion )
+$opensslUrl = ('https://curl.se/windows/dl-{0}/openssl-{1}-win64-mingw.zip' -f $curlVersion, $opensslVersion )
 $opensslName = "$installPrefix/openssl-$opensslVersion-win64-mingw.zip"
 
 
@@ -115,11 +115,11 @@ $destinationexists = Check-Folder $includePrefix -create
 #c) Install cmake
 
 # Download from "https://cmake.org/download/"
-Load-To $cmakeUrl $cmakeName
+# Load-To $cmakeUrl $cmakeName
 # Unpack to  "C:/usr" 
-Expand-Archive $cmakeName -DestinationPath $installPrefix -Force
+# Expand-Archive $cmakeName -DestinationPath $installPrefix -Force
 # Delete $cmakeName
-Remove-Item –path $cmakeName
+# Remove-Item –path $cmakeName
 
 #d) Install curl
 
@@ -131,7 +131,7 @@ Unzip-Dir $curlName "lib" "$localPrefix/lib"
 Unzip-Dir $curlName "include/curl" "$localPrefix/include/curl"
 # Expand-Archive $curlName -DestinationPath $installPrefix -Force
 # Delete $curlName
-Remove-Item –path $curlName
+# Remove-Item –path $curlName
 
 
 #) Install ssh2

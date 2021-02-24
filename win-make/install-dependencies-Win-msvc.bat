@@ -1,7 +1,7 @@
 @echo off
 setlocal EnableDelayedExpansion 
 
-set LOCALINSTALL ="D:/usr-vs/local"
+set LOCALINSTALL=D:/usr_vs/local
 set PROGFILES=%ProgramFiles%
 if not "%ProgramFiles(x86)%" == "" set PROGFILES=%ProgramFiles(x86)%
 
@@ -50,16 +50,11 @@ echo
 echo Get velocypack from git...
 git clone https://github.com/arangodb/velocypack.git
 cd velocypack
-mkdir build 
-cd build
 
 echo "Configuring..."
-cmake -G"Visual Studio 15 2017" -DCMAKE_BUILD_TYPE=Release  -DCMAKE_SH="CMAKE_SH-NOTFOUND" -DBuildVelocyPackExamples=OFF -DCMAKE_INSTALL_PREFIX=%LOCALINSTALL% .. -A x64 -S . -B build
+cmake -G"Visual Studio 16 2019" .. -DCMAKE_BUILD_TYPE=Release  -DBuildVelocyPackExamples=OFF -DCMAKE_INSTALL_PREFIX=%LOCALINSTALL% .. -A x64 -S . -B build
 echo "Building..."
 cmake --build build  --target install
-
-cd ..
-
 
 cd ..\..
 
