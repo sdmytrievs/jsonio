@@ -1,11 +1,11 @@
-# JSONIO17 
+## JSONIO17 
 
 
 Jsonio17 library and API for creating structured data exchange interfaces (in RAM, via files, and using ArangoDB remote and local instances). 
 The data munging is based on JSON schemas connected with the internal JSONDOM object. A JSON schema can be easily generated from a Thrift data structure definition (.thrift file) for a given structured data type.
 
 
-## What Jsonio17 does? ##
+### What Jsonio17 does? 
 
 
 * Jsonio17 implements the rendering to/from file or text stream into ArangoDB and/or JSON format. 
@@ -14,7 +14,7 @@ The data munging is based on JSON schemas connected with the internal JSONDOM ob
 * Version: currently 0.1.
 * Will be distributed as is (no liability) under the terms of Lesser GPL v.3 license. 
 
-## Why use Jsonio17? ##
+### Why use Jsonio17? 
 
 Advantages of the Jsonio17 JSON parser:
 
@@ -23,7 +23,7 @@ Advantages of the Jsonio17 JSON parser:
 * Comprises the basis of JSONUI17 GUI widgets for editing and viewing schema-related and schemaless JSON documents kept in NoSQL databases such as ArangoDB.
 
 
-## How to get Jsonio17 source code ##
+### How to get Jsonio17 source code
 
 * In your home directory, make a folder named e.g. ~/jsonio17.
 * cd ~/jsonio17 and clone this repository from https://bitbucket.org/gems4/jsonio17.git  using a preinstalled free git client SourceTree or SmartGit (the best way on Windows). 
@@ -34,7 +34,7 @@ git clone https://bitbucket.org/gems4/jsonio17.git .
 
 ```
 
-## How to install the Jsonio17 library  Ubuntu and MacOS ##
+### How to install the Jsonio17 library  Ubuntu and MacOS
 
  Building Jsonio17 requires g++, [CMake](http://www.cmake.org/), Velocypack, jsonArango.
 
@@ -72,7 +72,7 @@ sudo ./install.sh
 * Install current version of ArangoDB server locally ( see [jsonArango](https://bitbucket.org/gems4/jsonarango/src/master/) ).
 
 
-### How to use Jsonio17 (use cases) ###
+### How to use Jsonio17 (use cases) 
 
 * Files parse example
 
@@ -180,7 +180,7 @@ int main(int, char* [])
 
 For more information on APIs and more examples, take a look into the /examples directory.
 
-#### [Doxygen](http://www.stack.nl/~dimitri/doxygen/index.html) documentation #####
+#### [Doxygen](http://www.stack.nl/~dimitri/doxygen/index.html) documentation
 
 Install doxygen
 
@@ -195,7 +195,7 @@ Generate html help
 doxygen  jsonio-doxygen.conf
 ```
 
-#### How to generate JSON schemas using thrift ####
+#### How to generate JSON schemas using thrift
 
 Use the following command:
 
