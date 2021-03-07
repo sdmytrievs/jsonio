@@ -1,6 +1,7 @@
-# JSONIO17 #
+# JSONIO17 
 
-	Jsonio17 library and API for creating structured data exchange interfaces (in RAM, via files, and using ArangoDB remote and local instances). 
+
+Jsonio17 library and API for creating structured data exchange interfaces (in RAM, via files, and using ArangoDB remote and local instances). 
 The data munging is based on JSON schemas connected with the internal JSONDOM object. A JSON schema can be easily generated from a Thrift data structure definition (.thrift file) for a given structured data type.
 
 
@@ -118,20 +119,12 @@ int main(int argc, char* argv[])
 
 ```c++ 
 
-
 int main(int, char* [])
 {
     JsonioSettings::settingsFileName = "jsonio17-config.json";
-
     // Test collection name
     std::string collectionName = "test";
-
-    // Select from number of documents
     int numOfDocuments =  10;
-
-    // Record keys
-    std::vector<std::string> recKeys;
-    std::vector<std::string> recjsonValues;
 
     try{
 
