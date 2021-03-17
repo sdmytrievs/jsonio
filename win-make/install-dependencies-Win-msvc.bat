@@ -134,7 +134,7 @@ cd jsonarango
 git checkout test
 
 echo "Configuring..."
-cmake -G%COMPILER_VER_NAME% -DCMAKE_BUILD_TYPE=Release -DBuildVelocyPackExamples=OFF -DCMAKE_INSTALL_PREFIX=%LOCALINSTALL% .. -S . -B build
+cmake -G%COMPILER_VER_NAME% -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=%LOCALINSTALL% .. -S . -B build
 echo "Building..."
 cmake --build build  --target install
 cd ..\..
