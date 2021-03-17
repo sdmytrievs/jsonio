@@ -67,6 +67,7 @@ TEST( JsonioParser, TestDouble )
     TEST_DOUBLE("[4.9406564584124654e-324]", 4.9406564584124654e-324); // minimum denormal
     TEST_DOUBLE("[2.2250738585072009e-308]", 2.2250738585072009e-308); // Max subnormal double
     TEST_DOUBLE("[2.2250738585072014e-308]", 2.2250738585072014e-308); // Min normal positive double
+#ifndef _MSC_VER
     TEST_DOUBLE("[1.7976931348623157e+308]", 1.7976931348623157e+308); // Max double
 
     TEST_DOUBLE("[1e-10000]", 0.0);                                   // must underflow
@@ -74,6 +75,7 @@ TEST( JsonioParser, TestDouble )
     TEST_DOUBLE("[1e-214748364]", 0.0);
 
     TEST_DOUBLE("[0.017976931348623157e+310]", 1.7976931348623157e+308); // Max double in another form
+#endif
 #endif
 
 }

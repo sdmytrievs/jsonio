@@ -40,8 +40,10 @@ INCLUDEPATH   += $$JSONIO17_DIR
 INCLUDEPATH   += $$JSONIO17_HEADERS_DIR
 INCLUDEPATH   += $$TESTS_DIR
 
-!macx-clang:LIBS +=  -lstdc++fs
-LIBS +=  -ljsonarango -lcurl  -lvelocypack
+unix:!macx-clang:LIBS += -lstdc++fs
+win32:LIBS +=  -ljsonarango-static -llibcurl
+!win32:LIBS += -ljsonarango -lcurl
+LIBS +=   -lvelocypack
 
 OBJECTS_DIR   = obj
 
