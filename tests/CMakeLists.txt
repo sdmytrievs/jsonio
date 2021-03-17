@@ -2,6 +2,8 @@ message(STATUS "Building test suite: ${BuildTests}")
 file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/pass" DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/")
 file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/fail" DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/")
 
+
+
 include(CTest)
 enable_testing()
 find_package(Threads)
@@ -17,7 +19,6 @@ if(${CMAKE_CXX_COMPILER_ID} STREQUAL MSVC)
       target_link_libraries( test_main
             PUBLIC gtest
             PUBLIC jsonio17-static
-            PUBLIC stdc++fs
             PUBLIC jsonarango-static
             PRIVATE velocypack
             PRIVATE libcurl
