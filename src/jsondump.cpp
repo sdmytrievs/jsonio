@@ -1,4 +1,5 @@
 #include <iomanip>
+#include <locale>
 #include "jsonio17/jsondump.h"
 #include "jsonio17/jsonfree.h"
 #include "jsonio17/jsonschema.h"
@@ -212,7 +213,7 @@ void undumpString( std::string& strvalue )
                 encode_utf8(last_escaped_codepoint, resstr);
                 last_escaped_codepoint = -1;
                 auto ch = strvalue[ii++];
-                JSONIO_THROW_IF( !isspace(ch) && in_range<long>(ch, 0, 0x1f),
+                JSONIO_THROW_IF( !std::isspace(ch, std::locale()) && in_range<long>(ch, 0, 0x1f),
                                   "JsonParser", 12, "unescaped in string" );
                 resstr += ch;
             }

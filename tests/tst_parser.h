@@ -2,14 +2,70 @@
 
 #include <gtest/gtest.h>
 
-#include "jsonio17/jsondump.h"
 #include "jsonio17/jsonfree.h"
 #include "jsonio17/service.h"
 #include "jsonio17/txt2file.h"
+#include "jsonio17/jsondump.h"
 
 using namespace testing;
 using namespace jsonio17;
 
+const char* const test_free_str = R"([
+                                  "JSON Test Pattern pass1",
+                                  {"object_with_1_member":["array with 1 element"]},
+                                  {},
+                                  [],
+                                  -42,
+                                  true,
+                                  false,
+                                  {
+                                      "integer": 1234567890,
+                                      "real": -9876.543210,
+                                      "e": 0.123456789e-12,
+                                      "E": 1.234567890E+34,
+                                      "":  23456789012E66,
+                                      "zero": 0,
+                                      "one": 1,
+                                      "space": " ",
+                                      "quote": "\"",
+                                      "backslash": "\\",
+                                      "controls": "\b\f\n\r\t",
+                                      "slash": "/ & \/",
+                                      "alpha": "abcdefghijklmnopqrstuvwyz",
+                                      "ALPHA": "ABCDEFGHIJKLMNOPQRSTUVWYZ",
+                                      "digit": "a0123456789",
+                                      "a123456789": "digit",
+                                      "special": "`1~!@#$%^&*()_+-={':[,]}|;.</>?",
+                                      "hex": "ģ䕧覫췯ꯍ",
+                                      "true": true,
+                                      "false": false,
+                                      "null": null,
+                                      "array":[  ],
+                                      "object":{  },
+                                      "address": "50 St. James Street",
+                                      "url": "http://www.JSON.org/",
+                                      "comment": "// /* <!-- --",
+                                      "spaced" :[1,2 , 3
+
+                              ,
+
+                              4 , 5        ,          6           ,7        ],"compact":[1,2,3,4,5,6,7],
+                                      "jsontext": "{\"object with 1 member\":[\"array with 1 element\"]}",
+                                      "quotes": "&#34; \u0022 %22 0x22 034 &#x22;",
+                                      "uuu": "A key can be any string"
+                                  },
+                                  0.5 ,98.6
+                              ,
+                              99.44
+                              ,
+
+                              1066,
+                              1e1,
+                              0.1e1,
+                              1e-1,
+                              1e00,2e+00,2e-00
+                              ,"rosebud"]
+)";
 
 TEST( JsonioParser, TestNullBool )
 {
@@ -103,7 +159,7 @@ TEST( JsonioParser, TestInt )
             expected < std::numeric_limits<long>::min() )
         {
             EXPECT_EQ( JsonBase::Double, jsFree[0].type() );
-            EXPECT_DOUBLE_EQ( expected, jsFree[0].toDouble() );
+            EXPECT_DOUBLE_EQ( static_cast<double>(expected), jsFree[0].toDouble() );
         }
         else
         {
@@ -180,10 +236,14 @@ TEST( JsonioParser, TestPass )
   EXPECT_NO_THROW( json::loads( " {} " ) );
 
   auto fail_json_files =  files_into_directory( "pass" );
-  for( auto file: fail_json_files)
+  for( auto const& file: fail_json_files)
   {
      auto json_data = read_ascii_file( file );
      EXPECT_NO_THROW( json::loads( json_data )  );
   }
 }
 
+TEST( JsonioParser, ObjectFree)
+{
+    auto json_obj = json::loads( test_free_str );
+}

@@ -1,3 +1,4 @@
+#include <locale>
 #include "jsonio17/jsonparser.h"
 #include "jsonio17/jsondump.h"
 #include "jsonio17/exceptions.h"
@@ -126,7 +127,7 @@ bool JsonParser::skip_space()
 {
     for( ; cur_pos<end_pos; ++cur_pos )
     {
-        if( !isspace(jsontext[cur_pos]) )
+        if( !std::isspace(jsontext[cur_pos]) )
             break;
     }
     return (cur_pos < end_pos);
@@ -157,7 +158,7 @@ bool JsonParser::parse_string( std::string &str )
     while( jsontext[cur_pos] != jsQuote || lastCh )
     {
         // non-UTF-8 sequence
-        if (  !isspace(jsontext[cur_pos]) && static_cast<uint8_t>(jsontext[cur_pos]) < 0x20)
+        if (  !std::isspace(jsontext[cur_pos], std::locale()) && static_cast<uint8_t>(jsontext[cur_pos]) < 0x20)
         {
           // control character
           JSONIO_THROW( "JsonParser", 10, "Unexpected control character" + err_part() );
