@@ -129,7 +129,7 @@ echo
 
 
 echo Get jsonarango from git...
-git clone https://svetadmitrieva@bitbucket.org/gems4/jsonarango.git
+git clone https://bitbucket.org/gems4/jsonarango.git
 cd jsonarango
 git checkout test
 
@@ -143,5 +143,5 @@ cd ..\..
 REM Housekeeping
 rd /s /q tmp_all
 
-
+:end
 

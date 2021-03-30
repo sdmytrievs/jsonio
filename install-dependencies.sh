@@ -9,7 +9,6 @@ if [ "$(uname)" == "Darwin" ]; then
     brew install cmake
 
     EXTN=dylib
-    CXXSTANDARD=17
 
 elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
 
@@ -18,7 +17,6 @@ elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
     sudo apt-get install -y libcurl4-openssl-dev
 
     EXTN=so
-    CXXSTANDARD=11
 
 fi
 
@@ -41,7 +39,7 @@ test -f /usr/local/lib/libvelocypack.a || {
                 cd velocypack && \
                 mkdir -p build && \
                 cd build && \
-                cmake .. -DCMAKE_CXX_FLAGS=-fPIC -DBuildVelocyPackExamples=OFF -DCMAKE_CXX_STANDARD=$CXXSTANDARD && \
+                cmake .. -DCMAKE_CXX_FLAGS=-fPIC -DBuildVelocyPackExamples=OFF && \
                 make -j $threads && \
                 sudo make install
 
@@ -57,7 +55,7 @@ test -f /usr/local/lib/libjsonarango.$EXTN || {
         # Building jsonio library
         mkdir -p ~/code && \
                 cd ~/code && \
-                git clone https://bitbucket.org/gems4/jsonarango.git && \
+                git clone https://bitbucket.org/gems4/jsonarango.git -b test && \
                 cd jsonarango && \
                 mkdir -p build && \
                 cd build && \
