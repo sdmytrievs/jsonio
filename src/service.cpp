@@ -105,7 +105,7 @@ std::string extract_string_json( const std::string& key, const std::string& json
     while( pos_set != std::string::npos )
     {
        pos_set += key_size;
-       while( isspace( jsondata[pos_set] ) )
+       while(isspace( jsondata[pos_set] ) )
            ++pos_set;
        if( jsondata[pos_set] == ':')
        {

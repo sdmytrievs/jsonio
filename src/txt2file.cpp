@@ -13,14 +13,13 @@
 //#include "boost/filesystem.hpp"
 //namespace fs = boost::filesystem;
 // might be
-#ifdef __APPLE__
+#if defined(_MSC_VER) || defined(__APPLE__)
 #include <filesystem>
 namespace fs = std::filesystem;
 #else
 #include <experimental/filesystem>
 namespace fs = std::experimental::filesystem;
 #endif
-
 
 namespace jsonio17 {
 

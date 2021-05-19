@@ -98,11 +98,7 @@ TYPED_TEST( JsonioBaseComplexTest, ValueViaPath )
 
     std::string sval;
     EXPECT_TRUE( obj.get_value_via_path( "data[2]", sval, std::string("undefined") ) );
-#ifdef _WIN32
-    EXPECT_EQ( sval, "{\"group\":\"double\",\"value\":1e-010}");
-#else
     EXPECT_EQ( sval, "{\"group\":\"double\",\"value\":1e-10}");
-#endif
 
     EXPECT_TRUE( obj.get_key_via_path( "data[2]", sval ) );
     EXPECT_EQ( sval, "");
@@ -147,13 +143,9 @@ TYPED_TEST( JsonioBaseComplexTest, ClearRemove )
     EXPECT_EQ( obj["data"].size(), 4 );
     EXPECT_TRUE( obj["data"][1].remove() );
     EXPECT_EQ( obj["data"].size(), 3 );
-#ifdef _WIN32
-    EXPECT_EQ( obj["data"].toString(true),
-            "[{\"group\":\"float\",\"value\":1.4},{\"group\":\"double\",\"value\":1e-010},{\"group\":\"double\",\"value\":10000000000}]" );
-#else
     EXPECT_EQ( obj["data"].toString(true),
             "[{\"group\":\"float\",\"value\":1.4},{\"group\":\"double\",\"value\":1e-10},{\"group\":\"double\",\"value\":10000000000}]" );
-#endif
+
 }
 
 TYPED_TEST( JsonioBaseComplexTest, ArrayResize )

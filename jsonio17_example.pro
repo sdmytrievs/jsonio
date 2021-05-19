@@ -36,6 +36,8 @@ macx-clang {
 }
 
 win32 {
+  #CONFIG += staticlib
+  #QMAKE_CXXFLAGS_DEBUG += -MTd
   INCLUDEPATH   += "C:\usr\local\include"
   DEPENDPATH   += "C:\usr\local\include"
   LIBPATH += "C:\usr\local\lib"
@@ -53,8 +55,10 @@ INCLUDEPATH   += $$JSONIO17_HEADERS_DIR
 
 #LIBS += -pg  # gprof information
 
-!macx-clang:LIBS += -pg  -lstdc++fs
-LIBS +=   -ljsonarango -lcurl  -lvelocypack
+unix:!macx-clang:LIBS += -pg  -lstdc++fs
+win32:LIBS +=  -ljsonarango-static -llibcurl
+!win32:LIBS += -ljsonarango -lcurl
+LIBS +=   -lvelocypack
 
 OBJECTS_DIR   = obj
 

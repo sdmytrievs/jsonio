@@ -2,6 +2,7 @@
 
 #include <gtest/gtest.h>
 
+#include <array>
 #include <list>
 #include <map>
 #include <unordered_map>
@@ -110,7 +111,8 @@ TEST( JsonioBase, set_map_from )
     jsFree.set_map_from(vumaps);
     EXPECT_TRUE( jsFree.isObject() );
     EXPECT_EQ( jsFree.size(), 2 );
-    EXPECT_EQ( "{\"key2\":\"val5\",\"key1\":\"val4\"}", jsFree.dump(  true ) );
+    EXPECT_EQ( "val4", jsFree["key1"].toString() );
+    EXPECT_EQ( "val5", jsFree["key2"].toString() );
 
     //std::multimap<std::string, int> vmmap = { {"key1", 4 }, {"key2", 5 }/*, {"key1", 8 }*/ };
     // not used  jsFree.set_map_from(vmmap);
@@ -223,7 +225,8 @@ TEST( JsonioBase, set_fromMapKey )
     jsFree.set_from(vumaps);
     EXPECT_TRUE( jsFree.isObject() );
     EXPECT_EQ( jsFree.size(), 2 );
-    EXPECT_EQ( "{\"key2\":\"val5\",\"key1\":\"val4\"}", jsFree.dump(  true ) );
+    EXPECT_EQ( "val4", jsFree["key1"].toString() );
+    EXPECT_EQ( "val5", jsFree["key2"].toString() );
 
     std::map<int, std::string> smap = { { 1, "key1" }, { 2, "key2" } };
     jsFree.set_from(smap);

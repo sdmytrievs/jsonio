@@ -1,6 +1,8 @@
 #pragma once
 
 #include <gtest/gtest.h>
+#include <iostream>
+#include <fstream>
 
 #include "jsonio17/service.h"
 #include "jsonio17/txt2file.h"
@@ -145,9 +147,14 @@ TEST( JsonioService, Replace )
 
 // Test filesystem ----------------------------------------------------------------------
 
-#include <fstream>
+#if defined(_MSC_VER) || defined(__APPLE__)
+#include <filesystem>
+namespace fs = std::filesystem;
+#else
 #include <experimental/filesystem>
 namespace fs = std::experimental::filesystem;
+#endif
+
 
 TEST( Jsoniofilesystem, HomeDir )
 {
