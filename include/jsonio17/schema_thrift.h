@@ -29,7 +29,7 @@ public:
                     const FieldRequered& arequired = FieldDef::fld_default,
                     const std::string& default_json="",
                     const std::string& struct_enum_name="",
-                    double vmin=std::numeric_limits<double>::min(),
+                    double vmin=std::numeric_limits<double>::lowest(),
                     double vmax=std::numeric_limits<double>::max()):
         FieldDef(), f_id(id), f_name(name), f_doc( doc), f_type_id(types),
         f_required(arequired), f_default(default_json), class_name(struct_enum_name),
@@ -103,7 +103,7 @@ protected:
     /// "class": Struct or enum name for corresponding field type
     std::string  class_name="";
 
-    double minval = std::numeric_limits<double>::min();
+    double minval = std::numeric_limits<double>::lowest();
     double maxval = std::numeric_limits<double>::max();
 
     void read_field( const JsonFree& object );
