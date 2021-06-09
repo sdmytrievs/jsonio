@@ -61,6 +61,9 @@ std::string DBSchemaDocument::genOid( const std::string &key_template )
         {
            thetemplate = make_template_key( current_schema_object,
                                             schema_struct->getKeyTemplateList() );
+           thetemplate = regexp_replace(thetemplate ,"\"*:\"*",":");
+           thetemplate = regexp_replace(thetemplate ,"\\{\"*","");
+           thetemplate = regexp_replace(thetemplate ,"\"*\\}","");
         }
     }
     return collection_from->generateOid( thetemplate );

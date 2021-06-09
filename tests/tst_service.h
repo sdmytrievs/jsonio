@@ -60,6 +60,13 @@ TEST( JsonioService, regexpReplace )
     std::string rev = "{\"_id\":\"test_vertex_API/eCreate\",\"_key\":\"eCreate\",\"_rev\":\"_aGZ9am----\",\"task\":\"exampleCRUD\"}";
     auto resrev = regexp_replace(rev ,"(\"_rev\":\"[^\"]*\",)","");
     EXPECT_EQ( "{\"_id\":\"test_vertex_API/eCreate\",\"_key\":\"eCreate\",\"task\":\"exampleCRUD\"}", resrev );
+
+    rev = "Al1;{\"0\":\"ELEMENT\"};{\"15\":\"PSI_NAGRA\"}";
+    resrev = regexp_replace(rev ,"\"*:\"*",":");
+    resrev = regexp_replace(resrev ,"\\{\"*","");
+    resrev = regexp_replace(resrev ,"\"*\\}","");
+    EXPECT_EQ( "Al1;0:ELEMENT;15:PSI_NAGRA", resrev );
+
 }
 
 

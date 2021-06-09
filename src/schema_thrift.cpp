@@ -129,7 +129,7 @@ void ThriftFieldDef::read_field( const JsonFree& field_object )
     // default value we get to string for different types
     field_object.get_value_via_path<std::string>( key_default, f_default, "" );
 
-    field_object.get_value_via_path( key_minval, minval, std::numeric_limits<double>::min() );
+    field_object.get_value_via_path( key_minval, minval, std::numeric_limits<double>::lowest() );
     field_object.get_value_via_path( key_maxval, maxval, std::numeric_limits<double>::max() );
 
     std::string requred;
