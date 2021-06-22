@@ -348,6 +348,17 @@ public:
         return *query_result;
     }
 
+    /// Find key from current data
+    /// Compare to data into query table
+    virtual std::string getKeyFromValue(const JsonBase& node) const
+    {
+        std::shared_lock<std::shared_mutex> g(query_result_mutex);
+
+        JSONIO_THROW_IF( query_result.get() == nullptr, "DBDocument", 10,
+                          "'get_key_from_query_result' could be execute only into selection mode." );
+        return  query_result->getKeyFromValue( node/*current_data()*/ );
+    }
+
 protected:
 
     /// Documents are grouped into collection
@@ -400,16 +411,6 @@ protected:
         return  { "_id", "_key","_rev"};
     }
 
-    /// Find key from current data
-    /// Compare to data into query table
-    virtual std::string get_key_from_query_result() const
-    {
-        std::shared_lock<std::shared_mutex> g(query_result_mutex);
-
-        JSONIO_THROW_IF( query_result.get() == nullptr, "DBDocument", 10,
-                          "'get_key_from_query_result' could be execute only into selection mode." );
-        return  query_result->getKeyFromValue( current_data() );
-    }
 
     virtual field_value_map_t extract_fields( const std::vector<std::string> queryFields, const JsonBase& domobj ) const;
     virtual field_value_map_t extract_fields( const std::vector<std::string> queryFields, const std::string& jsondata ) const;
