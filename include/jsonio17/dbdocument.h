@@ -348,15 +348,17 @@ public:
         return *query_result;
     }
 
-    /// Find key from current data
-    /// Compare to data into query table
+    /// Identify key from current data.
+    /// The current data is compared with the internally loaded values,
+    /// and if all values are the same, the selected key is returned,
+    /// otherwise, an empty string is returned.
     virtual std::string getKeyFromValue(const JsonBase& node) const
     {
         std::shared_lock<std::shared_mutex> g(query_result_mutex);
 
         JSONIO_THROW_IF( query_result.get() == nullptr, "DBDocument", 10,
-                          "'get_key_from_query_result' could be execute only into selection mode." );
-        return  query_result->getKeyFromValue( node/*current_data()*/ );
+                          "'getKeyFromValue' could be execute only into selection mode." );
+        return  query_result->getKeyFromValue( node );
     }
 
 protected:
