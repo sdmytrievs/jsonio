@@ -108,26 +108,40 @@ values_table_t DBSchemaDocument::downloadDocumentsbySchema( const std::vector<st
 
 void DBSchemaDocument::update_query()
 {
-    std::unique_lock<std::shared_mutex> g(query_result_mutex);
+    try{
+        std::unique_lock<std::shared_mutex> g(query_result_mutex);
 
-    query_result->clear();
-    SetReaded_f setfnc = [&]( const std::string& jsondata )
+        query_result->clear();
+        SetReaded_f setfnc = [&]( const std::string& jsondata )
+        {
+            if( query_result->condition().isOnlyFieldsQuery() )
+            {
+                auto json_free = json::loads( jsondata );
+                auto key = collection_from->getKeyFrom( json_free/*, query_result->condition().queryFields()*/ );
+                query_result->add_line_fields( key, json_free, query_result->condition().queryFields() );
+            }
+            else
+            {
+                auto json_schema = json::loads( schema_name, jsondata );
+                auto key = collection_from->getKeyFrom( json_schema );
+                query_result->add_line( key,  json_schema, false );
+            }
+        };
+
+        collection_from->selectQuery( query_result->condition(), setfnc );
+    }
+    catch(jsonio17::jsonio_exception& e)
     {
-        if( query_result->condition().isOnlyFieldsQuery() )
-        {
-            auto json_free = json::loads( jsondata );
-            auto key = collection_from->getKeyFrom( json_free/*, query_result->condition().queryFields()*/ );
-            query_result->add_line_fields( key, json_free, query_result->condition().queryFields() );
-        }
-        else
-        {
-           auto json_schema = json::loads( schema_name, jsondata );
-           auto key = collection_from->getKeyFrom( json_schema );
-           query_result->add_line( key,  json_schema, false );
-        }
-    };
-
-    collection_from->selectQuery( query_result->condition(), setfnc );
+        std::cout << "Update query jsonio_exception: " <<  e.what() << std::endl;
+    }
+    catch(std::exception& e)
+    {
+        std::cout << "Update query  std::exception" << e.what() << std::endl;
+    }
+    catch(...)
+    {
+        std::cout << "Undefined update query  exception" << std::endl;
+    }
 }
 
 

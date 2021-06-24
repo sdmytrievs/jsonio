@@ -224,12 +224,26 @@ void DBCollection::deleteDocument(DBDocumentBase *document)
 //  Other thread
 void DBCollection::loadCollectionFile(  const std::set<std::string>& query_fields )
 {
-    std::unique_lock<std::shared_mutex> g(keysmap_mutex);
-    SetReadedKey_f setfnc = [&]( const std::string& jsondata, const std::string& keydata )
+    try {
+        std::unique_lock<std::shared_mutex> g(keysmap_mutex);
+        SetReadedKey_f setfnc = [&]( const std::string& jsondata, const std::string& keydata )
+        {
+            add_record_to_map( jsondata, keydata );
+        };
+        db_driver()->all_query( name(), query_fields, setfnc );
+    }
+    catch(jsonio17::jsonio_exception& e)
     {
-        add_record_to_map( jsondata, keydata );
-    };
-    db_driver()->all_query( name(), query_fields, setfnc );
+        std::cout << "loadCollectionFile jsonio_exception: " <<  e.what() << std::endl;
+    }
+    catch(std::exception& e)
+    {
+        std::cout << "loadCollectionFile  std::exception" << e.what() << std::endl;
+    }
+    catch(...)
+    {
+        std::cout << "Undefined loadCollectionFile exception" << std::endl;
+    }
 }
 
 void DBCollection::loadCollection()
