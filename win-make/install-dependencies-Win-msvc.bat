@@ -131,7 +131,7 @@ echo
 echo Get jsonarango from git...
 git clone https://bitbucket.org/gems4/jsonarango.git
 cd jsonarango
-git checkout test
+rem git checkout test
 
 echo "Configuring..."
 cmake -G%COMPILER_VER_NAME% -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=%LOCALINSTALL% .. -S . -B build
