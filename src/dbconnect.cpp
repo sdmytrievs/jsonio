@@ -69,7 +69,7 @@ void DataBase::updateDriver( std::shared_ptr<AbstractDBDriver> db_driver )
         current_driver = db_driver;
     }
     std::shared_lock lock(collections_mutex);
-    for( auto coll:  collections_list )
+    for( const auto& coll:  collections_list )
         coll.second->reload();
 }
 
