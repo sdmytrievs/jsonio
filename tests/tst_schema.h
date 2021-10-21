@@ -58,7 +58,7 @@ TEST( JsonioSchema, Field )
     EXPECT_EQ( dfield->description(), "A 64-bit floating point number " );
     EXPECT_EQ( dfield->className(), "" );
     EXPECT_EQ( dfield->defaultValue(), "" );
-    EXPECT_EQ( dfield->minValue(), std::numeric_limits<double>::min() );
+    EXPECT_EQ( dfield->minValue(), std::numeric_limits<double>::lowest() );
     EXPECT_EQ( dfield->maxValue(), std::numeric_limits<double>::max() );
 }
 

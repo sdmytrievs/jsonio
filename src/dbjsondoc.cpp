@@ -28,17 +28,31 @@ DBJsonDocument *DBJsonDocument::newJsonDocumentQuery( const DataBase& dbconnect,
 
 void DBJsonDocument::update_query()
 {
-    std::unique_lock<std::shared_mutex> g(query_result_mutex);
+    try {
+        std::unique_lock<std::shared_mutex> g(query_result_mutex);
 
-    query_result->clear();
-    SetReaded_f setfnc = [&]( const std::string& jsondata )
+        query_result->clear();
+        SetReaded_f setfnc = [&]( const std::string& jsondata )
+        {
+            auto jsonFree = json::loads( jsondata );
+            auto key = collection_from->getKeyFrom( jsonFree );
+            query_result->add_line( key,  jsonFree, false );
+        };
+
+        collection_from->selectQuery( query_result->condition(), setfnc );
+    }
+    catch(jsonio17::jsonio_exception& e)
     {
-        auto jsonFree = json::loads( jsondata );
-        auto key = collection_from->getKeyFrom( jsonFree );
-        query_result->add_line( key,  jsonFree, false );
-    };
-
-    collection_from->selectQuery( query_result->condition(), setfnc );
+        std::cout << "Update query jsonio_exception: " <<  e.what() << std::endl;
+    }
+    catch(std::exception& e)
+    {
+        std::cout << "Update query  std::exception" << e.what() << std::endl;
+    }
+    catch(...)
+    {
+        std::cout << "Undefined update query  exception" << std::endl;
+    }
 }
 
 

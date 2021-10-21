@@ -73,7 +73,7 @@ std::string DBDocumentBase::createWithTestValues( bool test_values )
 
     if( key.empty() && test_values )
     {
-        key = get_key_from_query_result();
+        key = getKeyFromValue(current_data());
         if( !key.empty() )
         {
             updateDocument( key );
