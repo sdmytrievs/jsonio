@@ -32,7 +32,7 @@ void DBSchemaDocument::resetSchema( const std::string &aschema_name, bool change
         schema_name = aschema_name;
         current_schema_object = JsonSchema::object(schema_name);
     }
-    std::unique_lock<std::shared_mutex> g(query_result_mutex);
+    std::lock_guard<std::shared_mutex> g(query_result_mutex);
     if( change_queries && query_result.get() != nullptr  )
     {
       // for new schema need new query
@@ -109,7 +109,7 @@ values_table_t DBSchemaDocument::downloadDocumentsbySchema( const std::vector<st
 void DBSchemaDocument::update_query()
 {
     try{
-        std::unique_lock<std::shared_mutex> g(query_result_mutex);
+        std::lock_guard<std::shared_mutex> g(query_result_mutex);
 
         query_result->clear();
         SetReaded_f setfnc = [&]( const std::string& jsondata )

@@ -201,7 +201,7 @@ protected:
     /// Clear keys
     void clear_keysmap()
     {
-        std::unique_lock<std::shared_mutex> g(keysmap_mutex);
+        std::lock_guard<std::shared_mutex> g(keysmap_mutex);
         key_record_map.clear();
     }
 
@@ -236,13 +236,13 @@ protected:
     /// Add new opened document from collection
     void addDocument( DBDocumentBase* doc )
     {
-        std::unique_lock<std::shared_mutex> g(documents_mutex);
+        std::lock_guard<std::shared_mutex> g(documents_mutex);
         documents_list.insert(doc);
     }
     /// Erase document from collection
     void eraseDocument( DBDocumentBase* doc )
     {
-        std::unique_lock<std::shared_mutex> g(documents_mutex);
+        std::lock_guard<std::shared_mutex> g(documents_mutex);
         auto itr =  documents_list.find(doc);
         if( itr != documents_list.end() )
             documents_list.erase(doc);

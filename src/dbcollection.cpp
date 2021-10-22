@@ -109,7 +109,7 @@ std::string DBCollection::createDocument( JsonBase& data_object )
                          " two records with the same key '" + new_id +"'." );
     }
     {
-        std::unique_lock<std::shared_mutex> g(keysmap_mutex);
+        std::lock_guard<std::shared_mutex> g(keysmap_mutex);
         std::string second;
         // save record to data base
         std::string ret_id = db_driver()->create_record( name(), second, data_object );
@@ -192,7 +192,7 @@ bool DBCollection::deleteDocument( const std::string &key )
 {
     bool rec_deleted = false;
     {
-        std::unique_lock<std::shared_mutex> g(keysmap_mutex);
+        std::lock_guard<std::shared_mutex> g(keysmap_mutex);
         auto itr = key_record_map.find(key);
         JSONIO_THROW_IF( itr==key_record_map.end(), "DBCollection", 18,
                          " record to delete does not exist '" + key +"'." );
@@ -225,7 +225,7 @@ void DBCollection::deleteDocument(DBDocumentBase *document)
 void DBCollection::loadCollectionFile(  const std::set<std::string>& query_fields )
 {
     try {
-        std::unique_lock<std::shared_mutex> g(keysmap_mutex);
+        std::lock_guard<std::shared_mutex> g(keysmap_mutex);
         SetReadedKey_f setfnc = [&]( const std::string& jsondata, const std::string& keydata )
         {
             add_record_to_map( jsondata, keydata );
