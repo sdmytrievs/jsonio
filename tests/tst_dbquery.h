@@ -247,7 +247,7 @@ TEST( DBQuery, extractFields )
     auto jsonFree = json::loads( jsondata );
     auto flds_values = extract_fields_test( queryFields, jsonFree );
 
-    EXPECT_EQ( flds_values.size(), 4 );
+    EXPECT_EQ( flds_values.size(), static_cast<size_t>(4) );
     EXPECT_EQ( flds_values["_id"], "thermodatasets/test1;0:TDS_REF;1");
     EXPECT_EQ( flds_values["symbol"], "test1");
     EXPECT_EQ( flds_values["name"], "fffff255");

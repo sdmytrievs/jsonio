@@ -142,7 +142,7 @@ TEST( JsonioDetail, isType )
 TEST( JsonioDetail, Split )
 {
  auto intquery =   split_int( "1---2---3", "---" );
- EXPECT_EQ( 3, intquery.size() );
+ EXPECT_EQ( static_cast<size_t>(3), intquery.size() );
  EXPECT_EQ( 1, intquery.front() );
  intquery.pop();
  EXPECT_EQ( 2, intquery.front() );
@@ -153,7 +153,7 @@ TEST( JsonioDetail, Split )
  EXPECT_THROW( split_int( ";1e;3;", ";" ), jsonio_exception );
 
  auto strquery = split("a:bb:ccc", ":" );
- EXPECT_EQ( 3, strquery.size() );
+ EXPECT_EQ( static_cast<size_t>(3), strquery.size() );
  EXPECT_EQ( "a", strquery.front() );
  strquery.pop();
  EXPECT_EQ( "bb", strquery.front() );
@@ -161,10 +161,10 @@ TEST( JsonioDetail, Split )
  EXPECT_EQ( "ccc", strquery.front() );
 
  auto strquery2 = split("::bb::ccc::", ":" );
- EXPECT_EQ( 2, strquery2.size() );
+ EXPECT_EQ( static_cast<size_t>(2), strquery2.size() );
 
  strquery = split("name1.name2.name3", "./[]" );
- EXPECT_EQ( 3, strquery.size() );
+ EXPECT_EQ( static_cast<size_t>(3), strquery.size() );
  EXPECT_EQ( "name1", strquery.front() );
  strquery.pop();
  EXPECT_EQ( "name2", strquery.front() );
@@ -172,7 +172,7 @@ TEST( JsonioDetail, Split )
  EXPECT_EQ( "name3", strquery.front() );
 
  strquery = split("name1.name2[3].name3", "./[]" );
- EXPECT_EQ( 4, strquery.size() );
+ EXPECT_EQ( static_cast<size_t>(4), strquery.size() );
  EXPECT_EQ( "name1", strquery.front() );
  strquery.pop();
  EXPECT_EQ( "name2", strquery.front() );
@@ -182,7 +182,7 @@ TEST( JsonioDetail, Split )
  EXPECT_EQ( "name3", strquery.front() );
 
  strquery = split("/name1/name2[3]/name3", "./[]" );
- EXPECT_EQ( 4, strquery.size() );
+ EXPECT_EQ( static_cast<size_t>(4), strquery.size() );
  EXPECT_EQ( "name1", strquery.front() );
  strquery.pop();
  EXPECT_EQ( "name2", strquery.front() );
@@ -192,7 +192,7 @@ TEST( JsonioDetail, Split )
  EXPECT_EQ( "name3", strquery.front() );
 
  strquery = split("/name1/name2/3/name3", "./[]" );
- EXPECT_EQ( 4, strquery.size() );
+ EXPECT_EQ( static_cast<size_t>(4), strquery.size() );
  EXPECT_EQ( "name1", strquery.front() );
  strquery.pop();
  EXPECT_EQ( "name2", strquery.front() );
@@ -202,7 +202,7 @@ TEST( JsonioDetail, Split )
  EXPECT_EQ( "name3", strquery.front() );
 
  strquery = split("[\"name1\"][\"name2\"][3][\"name3\"]", "./[]\"" );
- EXPECT_EQ( 4, strquery.size() );
+ EXPECT_EQ( static_cast<size_t>(4), strquery.size() );
  EXPECT_EQ( "name1", strquery.front() );
  strquery.pop();
  EXPECT_EQ( "name2", strquery.front() );

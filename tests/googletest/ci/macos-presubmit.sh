@@ -1,7 +1,7 @@
-#!/usr/bin/env bash
-# Copyright 2017 Google Inc.
-# All Rights Reserved.
+#!/bin/bash
 #
+# Copyright 2020, Google Inc.
+# All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -29,21 +29,45 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-set -eu
+set -euox pipefail
 
-if [ "${TRAVIS_OS_NAME}" != linux ]; then
-    echo "Not a Linux build; skipping installation"
-    exit 0
+if [[ -z ${GTEST_ROOT:-} ]]; then
+  GTEST_ROOT="$(realpath $(dirname ${0})/..)"
 fi
 
+# Test the CMake build
+for cmake_off_on in OFF ON; do
+  BUILD_DIR=$(mktemp -d build_dir.XXXXXXXX)
+  cd ${BUILD_DIR}
+  time cmake ${GTEST_ROOT} \
+    -DCMAKE_CXX_STANDARD=11 \
+    -Dgtest_build_samples=ON \
+    -Dgtest_build_tests=ON \
+    -Dgmock_build_tests=ON \
+    -Dcxx_no_exception=${cmake_off_on} \
+    -Dcxx_no_rtti=${cmake_off_on}
+  time make
+  time ctest -j$(nproc) --output-on-failure
+done
 
-if [ "${TRAVIS_SUDO}" = "true" ]; then
-    echo "deb [arch=amd64] http://storage.googleapis.com/bazel-apt stable jdk1.8" | \
-        sudo tee /etc/apt/sources.list.d/bazel.list
-    curl https://bazel.build/bazel-release.pub.gpg | sudo apt-key add -
-    sudo apt-get update && sudo apt-get install -y bazel gcc-4.9 g++-4.9 clang-3.9
-elif [ "${CXX}" = "clang++" ]; then
-    # Use ccache, assuming $HOME/bin is in the path, which is true in the Travis build environment.
-    ln -sf /usr/bin/ccache $HOME/bin/${CXX};
-    ln -sf /usr/bin/ccache $HOME/bin/${CC};
+# Test the Bazel build
+
+# If we are running on Kokoro, check for a versioned Bazel binary.
+KOKORO_GFILE_BAZEL_BIN="bazel-3.7.0-darwin-x86_64"
+if [[ ${KOKORO_GFILE_DIR:-} ]] && [[ -f ${KOKORO_GFILE_DIR}/${KOKORO_GFILE_BAZEL_BIN} ]]; then
+  BAZEL_BIN="${KOKORO_GFILE_DIR}/${KOKORO_GFILE_BAZEL_BIN}"
+  chmod +x ${BAZEL_BIN}
+else
+  BAZEL_BIN="bazel"
 fi
+
+cd ${GTEST_ROOT}
+for absl in 0 1; do
+  ${BAZEL_BIN} test ... \
+    --copt="-Wall" \
+    --copt="-Werror" \
+    --define="absl=${absl}" \
+    --keep_going \
+    --show_timestamps \
+    --test_output=errors
+done

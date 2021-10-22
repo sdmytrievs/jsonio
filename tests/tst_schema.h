@@ -20,7 +20,7 @@ TEST( JsonioSchema, Struct )
     all_schemas.addSchemaFormat(schema_thrift, schema_str);
 
     auto all_structs =  all_schemas.getStructs(false);
-    EXPECT_EQ( all_structs.size(), 5 );
+    EXPECT_EQ( all_structs.size(), static_cast<size_t>(5) );
     EXPECT_EQ( json::dump(all_structs) , "[ \"ComplexSchemaTest\", \"Describe\", \"FormatData\", \"SimpleSchemaTest\", \"SpecifiersData\" ]" );
 
     auto schem_simpl = all_schemas.getStruct("SimpleSchemaTest");
@@ -47,7 +47,7 @@ TEST( JsonioSchema, Field )
     EXPECT_NE( schem_simpl, nullptr );
 
     auto fields = schem_simpl->getFields(false);
-    EXPECT_EQ( fields.size(), 6 );
+    EXPECT_EQ( fields.size(), static_cast<size_t>(6) );
     EXPECT_EQ( json::dump(fields) , "[ \"vbool\", \"vint\", \"vdouble\", \"vstring\", \"vlist\", \"vmap\" ]" );
 
     auto dfield = schem_simpl->getField("vdouble");
@@ -73,7 +73,7 @@ TEST( JsonioSchema, DefaultField )
     EXPECT_NE( schem_spec, nullptr );
 
     auto fields = schem_spec->getFields(false);
-    EXPECT_EQ( fields.size(), 2 );
+    EXPECT_EQ( fields.size(), static_cast<size_t>(2) );
     EXPECT_EQ( json::dump(fields) , "[ \"group\", \"value\" ]" );
 
     auto dfield = schem_spec->getField("value");
@@ -99,7 +99,7 @@ TEST( JsonioSchema, ComplexField )
     EXPECT_NE( schem_spec, nullptr );
 
     auto fields = schem_spec->getFields(false);
-    EXPECT_EQ( fields.size(), 4 );
+    EXPECT_EQ( fields.size(), static_cast<size_t>(4) );
     EXPECT_EQ( json::dump(fields) , "[ \"about\", \"formats\", \"data\", \"values\" ]" );
 
     auto dfield = schem_spec->getField("about");
@@ -480,7 +480,7 @@ TEST( JsonioSchema, Enum )
     all_schemas.addSchemaFormat(schema_thrift, schema_enum_str);
 
     auto all_enums =  all_schemas.getEnums();
-    EXPECT_EQ( all_enums.size(), 3 );
+    EXPECT_EQ( all_enums.size(), static_cast<size_t>(3) );
     EXPECT_EQ( json::dump(all_enums) ,"[ \"DecayType\", \"ElementClass\", \"SourceTDB\" ]" );
 
     auto aenum = all_schemas.getEnum("ElementClass");
