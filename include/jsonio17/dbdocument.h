@@ -42,7 +42,7 @@ public:
     virtual ~DBDocumentBase()
     {
         collection_from->eraseDocument(this);
-        std::unique_lock<std::shared_mutex> g(query_result_mutex);
+        std::lock_guard<std::shared_mutex> g(query_result_mutex);
     }
 
     /// Get type of document ( collection )
@@ -380,7 +380,7 @@ protected:
     /// Add line to view table
     void add_line( const std::string& key_str, const JsonBase& nodedata, bool isupdate )
     {
-        std::unique_lock<std::shared_mutex> g(query_result_mutex);
+        std::lock_guard<std::shared_mutex> g(query_result_mutex);
         if( query_result.get() != nullptr )
             query_result->add_line( key_str, nodedata, isupdate );
     }
@@ -388,7 +388,7 @@ protected:
     /// Update line into view table
     void update_line( const std::string& key_str, const JsonBase& nodedata )
     {
-        std::unique_lock<std::shared_mutex> g(query_result_mutex);
+        std::lock_guard<std::shared_mutex> g(query_result_mutex);
         if( query_result.get() != nullptr )
             query_result->update_line( key_str, nodedata );
     }
@@ -396,7 +396,7 @@ protected:
     /// Delete line from view table
     void delete_line( const std::string& key_str )
     {
-        std::unique_lock<std::shared_mutex> g(query_result_mutex);
+        std::lock_guard<std::shared_mutex> g(query_result_mutex);
         if( query_result.get() != nullptr )
             query_result->delete_line( key_str );
     }

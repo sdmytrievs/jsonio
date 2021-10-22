@@ -74,6 +74,9 @@ if(${CMAKE_CXX_COMPILER_ID} STREQUAL MSVC)
     )
 endif()
 
+# test thread safe
+#set (CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -fsanitize=thread")
+#set (CMAKE_LINKER_FLAGS_DEBUG "${CMAKE_LINKER_FLAGS_DEBUG} -fsanitize=thread")
 
 # Set the jsonio17 source directory path
 set(JSONIO17_SOURCE_DIR ${CMAKE_SOURCE_DIR}/src)

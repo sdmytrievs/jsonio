@@ -26,7 +26,7 @@ DBDocumentBase::DBDocumentBase( DBCollection* collection  ):
 void DBDocumentBase::setQuery( const DBQueryDef& querydef )
 {
     {
-        std::unique_lock<std::shared_mutex> g(query_result_mutex);
+        std::lock_guard<std::shared_mutex> g(query_result_mutex);
         if(query_result.get() == nullptr )
             query_result.reset( new DBQueryResult( querydef ) );
         else

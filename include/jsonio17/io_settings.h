@@ -8,7 +8,7 @@ namespace jsonio17 {
 
 class JsonioSettings;
 /// Function to connect for a Preferences object
-extern JsonioSettings& ioSettings();
+extern JsonioSettings &ioSettings();
 
 
 /// Definition of json based section settings

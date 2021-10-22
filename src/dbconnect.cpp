@@ -65,11 +65,11 @@ DataBase::~DataBase()
 void DataBase::updateDriver( std::shared_ptr<AbstractDBDriver> db_driver )
 {
     {
-        std::unique_lock lock(driver_mutex);
+        std::lock_guard lock(driver_mutex);
         current_driver = db_driver;
     }
     std::shared_lock lock(collections_mutex);
-    for( auto coll:  collections_list )
+    for( const auto& coll:  collections_list )
         coll.second->reload();
 }
 
@@ -79,7 +79,7 @@ std::shared_ptr<DBCollection> DataBase::add_collection( const std::string& colna
     col_ptr->coll_type = type;
     col_ptr->load();
     {
-        std::unique_lock lock(collections_mutex);
+        std::lock_guard lock(collections_mutex);
         collections_list[colname] = col_ptr;
     }
     return col_ptr;

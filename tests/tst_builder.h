@@ -25,7 +25,7 @@ TEST( JsonioBuilder, addScalar )
             .addScalar( "vbool2", "false" ).addScalar( "vint", "3" )
             .addScalar( "vdouble", "1e-10" ).addScalar( "vstring", "Test String" );
 
-    EXPECT_EQ( jsFree.size(), 6 );
+    EXPECT_EQ( jsFree.size(), static_cast<size_t>(6) );
     EXPECT_TRUE( jsFree["vnull"].isNull() );
 
     EXPECT_TRUE( jsFree["vbool1"].isBool() );
@@ -53,7 +53,7 @@ TEST( JsonioBuilder, JsonObjectBuilder )
             .addDouble( "vdouble", 1e-10 ).addString( "vstring", "Test String" );
 
     EXPECT_TRUE( jsFree.isObject() );
-    EXPECT_EQ( jsFree.size(), 6 );
+    EXPECT_EQ( jsFree.size(), static_cast<size_t>(6) );
     EXPECT_TRUE( jsFree["vnull"].isNull() );
 
     EXPECT_TRUE( jsFree["vbool1"].isBool() );
@@ -89,7 +89,7 @@ TEST( JsonioBuilder, JsonValueObjectBuilder )
     jsBuilder.addMapKey( "vumap", vumaps );
 
     EXPECT_TRUE( jsFree.isObject() );
-    EXPECT_EQ( jsFree.size(), 5 );
+    EXPECT_EQ( jsFree.size(), static_cast<size_t>(5) );
 
     EXPECT_TRUE( jsFree["vint"].isNumber() );
     EXPECT_EQ( jsFree["vint"].toInt(), vint );
@@ -99,13 +99,13 @@ TEST( JsonioBuilder, JsonValueObjectBuilder )
     EXPECT_EQ( jsFree["vfloat"].toDouble(),vfloat );
 
     EXPECT_TRUE( jsFree["vlist"].isArray() );
-    EXPECT_EQ( jsFree["vlist"].size(), 4 );
+    EXPECT_EQ( jsFree["vlist"].size(), static_cast<size_t>(4) );
     auto restr = jsFree["vlist"].toString(true);
     trim( restr );
     EXPECT_EQ( restr, "[1.7,2.7,3.7,4.7]" );
 
     EXPECT_TRUE( jsFree["vumap"].isObject() );
-    EXPECT_EQ( jsFree["vumap"].size(), 2 );
+    EXPECT_EQ( jsFree["vumap"].size(), static_cast<size_t>(2) );
     restr = jsFree["vumap"].toString(true);
     trim( restr );
     EXPECT_EQ(restr, "{\"key1\":\"val1\",\"key2\":\"val2\"}" );
@@ -127,20 +127,20 @@ TEST( JsonioBuilder, JsonComplexObjectBuilder )
     auto obj = jsBuilder.addObject("object").addInt("version", 1).addString("comment", "Test example");
 
     EXPECT_TRUE( jsFree.isObject() );
-    EXPECT_EQ( jsFree.size(), 3 );
+    EXPECT_EQ( jsFree.size(),static_cast<size_t>(3) );
 
     EXPECT_TRUE( jsFree["name"].isString() );
-    EXPECT_EQ( jsFree["name"].size(), 0 );
+    EXPECT_EQ( jsFree["name"].size(), static_cast<size_t>(0) );
     EXPECT_EQ( jsFree["name"].toString(), "ComplexObject" );
 
     EXPECT_TRUE( jsFree["array"].isArray() );
-    EXPECT_EQ( jsFree["array"].size(), 10 );
+    EXPECT_EQ( jsFree["array"].size(), static_cast<size_t>(10) );
     auto restr = jsFree["array"].toString(true);
     trim( restr );
     EXPECT_EQ( restr, "[0,1,2,3,4,5,6,7,8,9]" );
 
     EXPECT_TRUE( jsFree["object"].isObject() );
-    EXPECT_EQ( jsFree["object"].size(), 2 );
+    EXPECT_EQ( jsFree["object"].size(), static_cast<size_t>(2) );
     restr = jsFree["object"].toString(true);
     trim( restr );
     EXPECT_EQ( restr, "{\"version\":1,\"comment\":\"Test example\"}" );
@@ -159,7 +159,7 @@ TEST( JsonioBuilder, JsonArrayBuilder )
             .addDouble( 1e-10 ).addString( "Test String" );
 
     EXPECT_TRUE( jsFree.isArray() );
-    EXPECT_EQ( jsFree.size(), 6 );
+    EXPECT_EQ( jsFree.size(), static_cast<size_t>(6) );
     EXPECT_TRUE( jsFree[0].isNull() );
 
     EXPECT_TRUE( jsFree[1].isBool() );
@@ -188,7 +188,7 @@ TEST( JsonioBuilder, JsonIntArrayBuilder )
         jsBuilder.addValue( ii );
 
     EXPECT_TRUE( jsFree.isArray() );
-    EXPECT_EQ( jsFree.size(), 5 );
+    EXPECT_EQ( jsFree.size(), static_cast<size_t>(5) );
 
     EXPECT_TRUE( jsFree[0].isNumber() );
     EXPECT_EQ( jsFree[0].toInt(), 0 );
@@ -213,20 +213,20 @@ TEST( JsonioBuilder, JsonComplexArrayBuilder )
     auto obj = jsBuilder.addObject().addInt("version", 1).addString("comment", "Test example");
 
     EXPECT_TRUE( jsFree.isArray() );
-    EXPECT_EQ( jsFree.size(), 3 );
+    EXPECT_EQ( jsFree.size(), static_cast<size_t>(3) );
 
     EXPECT_TRUE( jsFree[0].isString() );
-    EXPECT_EQ( jsFree[0].size(), 0 );
+    EXPECT_EQ( jsFree[0].size(), static_cast<size_t>(0) );
     EXPECT_EQ( jsFree[0].toString(), "ComplexObject" );
 
     EXPECT_TRUE( jsFree[1].isArray() );
-    EXPECT_EQ( jsFree[1].size(), 10 );
+    EXPECT_EQ( jsFree[1].size(), static_cast<size_t>(10) );
     auto restr = jsFree[1].toString(true);
     trim( restr );
     EXPECT_EQ( restr, "[0,1,2,3,4,5,6,7,8,9]" );
 
     EXPECT_TRUE( jsFree[2].isObject() );
-    EXPECT_EQ( jsFree[2].size(), 2 );
+    EXPECT_EQ( jsFree[2].size(), static_cast<size_t>(2) );
     restr = jsFree[2].toString(true);
     trim( restr );
     EXPECT_EQ( restr, "{\"version\":1,\"comment\":\"Test example\"}" );
@@ -250,7 +250,7 @@ TEST( JsonioBuilder, JsonValueArrayBuilder )
     jsBuilder.addMapKey( vumaps );
 
     EXPECT_TRUE( jsFree.isArray() );
-    EXPECT_EQ( jsFree.size(), 5 );
+    EXPECT_EQ( jsFree.size(), static_cast<size_t>(5) );
 
     EXPECT_TRUE( jsFree[0].isNumber() );
     EXPECT_EQ( jsFree[0].toInt(), vint );
@@ -260,13 +260,13 @@ TEST( JsonioBuilder, JsonValueArrayBuilder )
     EXPECT_EQ( jsFree[2].toDouble(),vfloat );
 
     EXPECT_TRUE( jsFree[3].isArray() );
-    EXPECT_EQ( jsFree[3].size(), 4 );
+    EXPECT_EQ( jsFree[3].size(), static_cast<size_t>(4) );
     auto restr = jsFree[3].toString(true);
     trim( restr );
     EXPECT_EQ( restr, "[1.7,2.7,3.7,4.7]" );
 
     EXPECT_TRUE( jsFree[4].isObject() );
-    EXPECT_EQ( jsFree[4].size(), 2 );
+    EXPECT_EQ( jsFree[4].size(), static_cast<size_t>(2) );
     restr = jsFree[4].toString(true);
     trim( restr );
     EXPECT_EQ(restr, "{\"key1\":\"val1\",\"key2\":\"val2\"}" );

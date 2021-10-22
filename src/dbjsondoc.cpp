@@ -29,7 +29,7 @@ DBJsonDocument *DBJsonDocument::newJsonDocumentQuery( const DataBase& dbconnect,
 void DBJsonDocument::update_query()
 {
     try {
-        std::unique_lock<std::shared_mutex> g(query_result_mutex);
+        std::lock_guard<std::shared_mutex> g(query_result_mutex);
 
         query_result->clear();
         SetReaded_f setfnc = [&]( const std::string& jsondata )

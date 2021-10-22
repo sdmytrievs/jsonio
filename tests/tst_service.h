@@ -196,7 +196,7 @@ TEST( Jsoniofilesystem, TestDir )
     std::ofstream(test_dir+"/file3.json").put('1');
 
     auto files = files_into_directory( test_dir, "txt");
-    EXPECT_EQ( files.size(), 2);
+    EXPECT_EQ( files.size(), static_cast<size_t>(2));
 #ifdef _WIN32
     EXPECT_TRUE(std::find(files.begin(), files.end(),test_dir+"\\file1.txt")!=files.end() );
     EXPECT_TRUE(std::find(files.begin(), files.end(),test_dir+"\\file2.txt")!=files.end() );

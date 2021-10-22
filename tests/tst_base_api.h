@@ -140,9 +140,9 @@ TYPED_TEST( JsonioBaseTest, getTypeSize )
     EXPECT_EQ( JsonBase::Array, obj["vlist"].type() );
     EXPECT_EQ( JsonBase::Object, obj["vmap"].type() );
 
-    EXPECT_EQ( 0, obj["vdouble"].size() );
-    EXPECT_EQ( 4, obj["vlist"].size() );
-    EXPECT_EQ( 2, obj["vmap"].size() );
+    EXPECT_EQ( static_cast<size_t>(0), obj["vdouble"].size() );
+    EXPECT_EQ( static_cast<size_t>(4), obj["vlist"].size() );
+    EXPECT_EQ( static_cast<size_t>(2), obj["vmap"].size() );
 
     EXPECT_FALSE( obj.empty());
     EXPECT_FALSE( obj["vlist"].empty() );
@@ -305,8 +305,8 @@ TYPED_TEST( JsonioBaseTest, ArrayResize )
     auto& obj = *this->test_object;
 
     auto sizes = obj["vlist"].array_sizes();
-    EXPECT_EQ( 1, sizes.size() );
-    EXPECT_EQ( 4, sizes[0] );
+    EXPECT_EQ(static_cast<size_t>(1), sizes.size() );
+    EXPECT_EQ( static_cast<size_t>(4), sizes[0] );
 
     obj["vlist"].array_resize(2, "5");
     EXPECT_EQ( obj["vlist"].dump(true), "[1.7,2.7]" );
@@ -329,9 +329,9 @@ TYPED_TEST( JsonioBaseTest, Iterators )
     EXPECT_EQ( ii, obj["vlist"].size() );
 
     // range-based for
-    ii=0;
-    for (auto it = obj["vdouble"].begin(); it != obj["vdouble"].end(); ++it, ++ii);
-    EXPECT_EQ( ii, 0 );
+    int jj=0;
+    for (auto it = obj["vdouble"].begin(); it != obj["vdouble"].end(); ++it, ++jj);
+    EXPECT_EQ( jj, 0 );
 
 
     // iterate the array

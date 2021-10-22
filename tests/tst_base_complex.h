@@ -140,9 +140,9 @@ TYPED_TEST( JsonioBaseComplexTest, ClearRemove )
     EXPECT_TRUE( obj.path_if_exists( "about" ) );
     EXPECT_FALSE( obj.path_if_exists( "about.version" ) );
 
-    EXPECT_EQ( obj["data"].size(), 4 );
+    EXPECT_EQ( obj["data"].size(), static_cast<size_t>(4) );
     EXPECT_TRUE( obj["data"][1].remove() );
-    EXPECT_EQ( obj["data"].size(), 3 );
+    EXPECT_EQ( obj["data"].size(), static_cast<size_t>(3) );
     EXPECT_EQ( obj["data"].toString(true),
             "[{\"group\":\"float\",\"value\":1.4},{\"group\":\"double\",\"value\":1e-10},{\"group\":\"double\",\"value\":10000000000}]" );
 
@@ -153,9 +153,9 @@ TYPED_TEST( JsonioBaseComplexTest, ArrayResize )
     auto& obj = *this->test_object;
 
     auto sizes = obj["values"].array_sizes();
-    EXPECT_EQ( 2, sizes.size() );
-    EXPECT_EQ( 2, sizes[0] );
-    EXPECT_EQ( 3, sizes[1] );
+    EXPECT_EQ( static_cast<size_t>(2), sizes.size() );
+    EXPECT_EQ( static_cast<size_t>(2), sizes[0] );
+    EXPECT_EQ( static_cast<size_t>(3), sizes[1] );
 
     obj["values"].array_resize_xD({3,5}, "5");
     EXPECT_EQ( obj["values"].dump(true), "[[1,2,3,5,5],[11,12,13,5,5],[1,2,3,5,5]]" );
