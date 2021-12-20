@@ -304,9 +304,6 @@ To do:
 - Implement examples and tests for database part ( try use googlemock )
 http://artlang.net/post/unit-testirovaniye-c++-mock-obyekty-google-c++-mocking-framework/
 
-
-- Finish work about jsonimpex
-- Do work about jsonui
 - add top level std::shared_ptr
 
 ## Important links  --------------------------------------------------------------------------------
@@ -316,6 +313,7 @@ https://gist.github.com/Cartexius/4c437c084d6e388288201aadf9c8cdd5
 
 sudo apt-get update -y
 sudo apt-get install -y googletest
+
 
 
 ## Best practices
