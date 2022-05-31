@@ -13,6 +13,7 @@
 #include "tst_schema.h"
 #include "tst_jsonschema.h"
 #include "tst_dbquery.h"
+#include "spdlog/spdlog.h"
 
 
 // https://doc.qt.io/qtcreator/creator-autotest.html
@@ -22,6 +23,10 @@
 
 int main(int argc, char *argv[])
 {
+    auto ar_logger = spdlog::get("jsonio17");
+    ar_logger->set_level(spdlog::level::off);
+    spdlog::set_pattern("[%n] [%^%l%$] %v");
+
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
 }

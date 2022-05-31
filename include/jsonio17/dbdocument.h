@@ -4,7 +4,6 @@
 #include "jsonio17/exceptions.h"
 #include "jsonio17/dbcollection.h"
 #include "jsonio17/dbquerybase.h"
-//#include "jsonio17/jsonbase.h"
 
 
 namespace jsonio17 {
@@ -189,14 +188,14 @@ public:
     /// Set document-handle(_id) to document
     virtual void setOid( const std::string&  newid )
     {
-      current_data().set_oid(newid);
+        current_data().set_oid(newid);
     }
     /// Extract document-handle(_id) from current document
     virtual std::string getOid() const
     {
-      std::string oid;
-      current_data().get_value_via_path( "_id", oid, std::string("") );
-      return oid;
+        std::string oid;
+        current_data().get_value_via_path( "_id", oid, std::string("") );
+        return oid;
     }
 
     /// Return curent document as json string
@@ -344,7 +343,7 @@ public:
         std::shared_lock<std::shared_mutex> g(query_result_mutex);
 
         JSONIO_THROW_IF( query_result.get() == nullptr, "DBDocument", 1,
-                          "'currentQueryResult' could be execute only into selection mode." );
+                         "'currentQueryResult' could be execute only into selection mode." );
         return *query_result;
     }
 
@@ -357,7 +356,7 @@ public:
         std::shared_lock<std::shared_mutex> g(query_result_mutex);
 
         JSONIO_THROW_IF( query_result.get() == nullptr, "DBDocument", 10,
-                          "'getKeyFromValue' could be execute only into selection mode." );
+                         "'getKeyFromValue' could be execute only into selection mode." );
         return  query_result->getKeyFromValue( node );
     }
 

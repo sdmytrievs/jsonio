@@ -43,15 +43,15 @@ void DBJsonDocument::update_query()
     }
     catch(jsonio17::jsonio_exception& e)
     {
-        std::cout << "Update query jsonio_exception: " <<  e.what() << std::endl;
+        io_logger->error("Update query jsonio_exception: {}", e.what());
     }
     catch(std::exception& e)
     {
-        std::cout << "Update query  std::exception" << e.what() << std::endl;
+        io_logger->error("Update query  std::exception: {}", e.what());
     }
     catch(...)
     {
-        std::cout << "Undefined update query  exception" << std::endl;
+        io_logger->error("Undefined update query  exception");
     }
 }
 

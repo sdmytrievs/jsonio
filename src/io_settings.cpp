@@ -100,7 +100,7 @@ void JsonioSettings::readSchemaDir(const std::string &dir_path)
     if( !file_names.empty() )
     {
         schema.clear_all();
-        for (auto file: file_names)
+        for (const auto& file: file_names)
             schema.addSchemaFile( schema_thrift, file );
     }
     // init vertex&edge lists from schema data

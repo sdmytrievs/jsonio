@@ -1,10 +1,7 @@
 #include <cstring>
-#include <iostream>
-
 #include "jsonio17/dbdriverarango.h"
 #include "jsonio17/dbquerybase.h"
 #include "jsonio17/io_settings.h"
-
 #include "jsonarango/arangocollection.h"
 #include "jsonarango/arangoexception.h"
 
@@ -53,8 +50,9 @@ void ArangoDBClient::reset_db_connection( const arangocpp::ArangoDBConnection& a
     try {
         arando_connect = std::make_shared<arangocpp::ArangoDBConnection>(aconnect_data);
         arando_db = std::make_shared<arangocpp::ArangoDBCollectionAPI>(aconnect_data);
-
-    } catch(arangocpp::arango_exception& e)
+        io_logger->debug("ArangoDBClient::reset_db_connection url: {}", arando_connect->fullHost() );
+    }
+    catch(arangocpp::arango_exception& e)
     {
         JSONIO_THROW( "ArangoDBClient", e.id, e.what() );
     }
@@ -273,7 +271,7 @@ arangocpp::CollectionTypes ArangoDBClient::to_arrango_types( CollTypes ctype ) c
 // Test if we have complex field path
 bool ArangoDBClient::is_comlex_fields( const std::set<std::string>& queryFields)
 {
-    for( auto fld: queryFields )
+    for( const auto& fld: queryFields )
         if( fld.find(".") !=  std::string::npos )
             return true;
     return false;

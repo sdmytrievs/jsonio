@@ -3,8 +3,13 @@
 #include <exception>
 #include <stdexcept>
 #include <string>
+#include "spdlog/spdlog.h"
 
 namespace jsonio17 {
+
+/// Default logger for jsonio17 library
+extern std::shared_ptr<spdlog::logger> io_logger;
+
 
 /// @brief General exception structure into project.
 class jsonio_exception: public std::exception

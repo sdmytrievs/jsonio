@@ -108,7 +108,7 @@ TEST( DBQuery, dbQueryDef )
     ioSettings().addSchemaFormat( schema_thrift, query_schema_str );
 
     auto query = std::make_shared<DBQueryBase>(
-                "FOR u IN elements\nFILTER u.number IN @nbrs \n",
+                "FOR u IN elements\nFILTER u.number IN @nbrs ",
                 DBQueryBase::qAQL);
 
     std::string bind_vars = "{ \"nbrs\": [1,2,3] }";
@@ -148,7 +148,7 @@ TEST( DBQuery, dbQueryDef )
     };
 
     EXPECT_EQ( query_def.condition()->type(),DBQueryBase::qAQL);
-    EXPECT_EQ( query_def.condition()->queryString(),"FOR u IN elements\nFILTER u.number IN @nbrs \n");
+    EXPECT_EQ( query_def.condition()->queryString(),"FOR u IN elements\nFILTER u.number IN @nbrs ");
     EXPECT_EQ( query_def.condition()->bindVars(),bind_vars);
     EXPECT_EQ( query_def.condition()->options(),options);
     EXPECT_EQ( query_def.condition()->queryFields(), new_map_fields);
@@ -165,7 +165,7 @@ TEST( DBQuery, dbQueryDef )
     query2.fromJson(jsonQuery);
     EXPECT_EQ( *query_def.condition(), *query2.condition());
     EXPECT_EQ( query2.condition()->type(),DBQueryBase::qAQL);
-    EXPECT_EQ( query2.condition()->queryString(),"FOR u IN elements\nFILTER u.number IN @nbrs \n");
+    EXPECT_EQ( query2.condition()->queryString(),"FOR u IN elements\nFILTER u.number IN @nbrs ");
     EXPECT_EQ( query2.condition()->bindVars(),bind_vars);
     EXPECT_EQ( query2.condition()->options(),options);
     EXPECT_EQ( query2.condition()->queryFields(), new_map_fields);
@@ -198,7 +198,7 @@ TEST( DBQuery, addFieldsToFilter )
     EXPECT_EQ( query_template.options(), "");
     EXPECT_EQ( query_template.queryFields(), fields2query_t{} );
 
-    DBQueryBase query_aql( "FOR u IN elements\nFILTER u.number IN @nbrs \n", DBQueryBase::qAQL);
+    DBQueryBase query_aql( "FOR u IN elements\nFILTER u.number IN @nbrs ", DBQueryBase::qAQL);
 
     std::string bind_vars = "{ \"nbrs\": [1,2,3] }";
     query_aql.setBindVars( bind_vars );
@@ -214,7 +214,7 @@ TEST( DBQuery, addFieldsToFilter )
 
     query_aql.addFieldsToFilter(field_value);
     EXPECT_EQ( query_aql.type(),DBQueryBase::qAQL);
-    EXPECT_EQ( query_aql.queryString(),"FOR u IN elements\nFILTER u.number IN @nbrs \n\nFILTER u.bar == \"string\" && u.foo.baz == 1 ");
+    EXPECT_EQ( query_aql.queryString(),"FOR u IN elements\nFILTER u.number IN @nbrs \nFILTER u.bar == \"string\" && u.foo.baz == 1 ");
     EXPECT_EQ( query_aql.bindVars(),bind_vars);
     EXPECT_EQ( query_aql.options(),options);
     EXPECT_EQ( query_aql.queryFields(), map_fields);
@@ -222,7 +222,7 @@ TEST( DBQuery, addFieldsToFilter )
     DBQueryBase query_aql_return( "FOR u IN elements\nRETURN u", DBQueryBase::qAQL);
     query_aql_return.addFieldsToFilter(field_value);
     EXPECT_EQ( query_aql_return.type(),DBQueryBase::qAQL);
-    EXPECT_EQ( query_aql_return.queryString(),"FOR u IN elements\n\nFILTER u.bar == \"string\" && u.foo.baz == 1 \nRETURN u");
+    EXPECT_EQ( query_aql_return.queryString(),"FOR u IN elements\nFILTER u.bar == \"string\" && u.foo.baz == 1 \nRETURN u");
 
 }
 

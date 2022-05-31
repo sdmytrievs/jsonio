@@ -67,7 +67,7 @@ public:
           for(auto const &id : ids)
              parseEdge( id, afunc );
       }
-      std::cout << "vertexList " << vertex_list.size() << " edgeList " << edge_list.size() << std::endl;
+      io_logger->info("Traverse {} vertexes and  {} edges ", vertex_list.size(), edge_list.size());
     }
 
     /// Read graph from JSON file

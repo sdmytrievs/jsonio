@@ -7,7 +7,7 @@ if [ "$(uname)" == "Darwin" ]; then
     #Needs Xcode and ArangoDB server locally installed
     brew upgrade
     brew install cmake
-
+    brew install spdlog
     EXTN=dylib
 
 elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
@@ -15,14 +15,14 @@ elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
     #Needs gcc v.5 or higher and ArangoDB server locally installed
     sudo apt-get update
     sudo apt-get install -y libcurl4-openssl-dev
-
+    sudo apt install libspdlog-dev
     EXTN=so
 
 fi
 
 # Uncomment what is necessary to reinstall by force
-#sudo rm -f /usr/local/lib/libvelocypack.a
-#sudo rm -f /usr/local/lib/libjsonarango.$EXTN
+sudo rm -f /usr/local/lib/libvelocypack.a
+sudo rm -f /usr/local/lib/libjsonarango.$EXTN
 
 
 threads=3
@@ -35,7 +35,7 @@ test -f /usr/local/lib/libvelocypack.a || {
         # Building velocypack library
         mkdir -p ~/code && \
                 cd ~/code && \
-                git clone https://github.com/arangodb/velocypack.git && \
+                git clone https://github.com/arangodb/velocypack.git -b XYZ1.0 && \
                 cd velocypack && \
                 mkdir -p build && \
                 cd build && \

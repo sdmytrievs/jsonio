@@ -71,7 +71,6 @@ public:
     /// Return a const reference to arr[i] if this is an array, exception otherwise.
     const JsonFree &operator[](size_t idx) const
     {
-        //std::cout << "const JsonFree &operator[](size_t idx)" << std::endl;
         if( isArray() || isObject()  )
         {
             return get_child( idx );
@@ -82,7 +81,6 @@ public:
     /// Return a reference to arr[i] if this is an array, exception otherwise.
     JsonFree &operator[](size_t idx)
     {
-        //std::cout << "JsonFree &operator[](size_t idx)" << std::endl;
         if( isArray() || isObject()  )
         {
             return get_child( idx );
@@ -94,7 +92,6 @@ public:
     /// Return a const reference to object[key] if this is an object, exception otherwise.
     const JsonFree &operator[](const std::string &key) const
     {
-        //std::cout << "const JsonFree &operator[](const std::string &key)" << std::endl;
         if( isObject()  )
         {
             return get_child( key );
@@ -105,7 +102,6 @@ public:
     /// Return a reference to object[key] if this is an object, exception otherwise.
     JsonFree &operator[](const std::string &key)
     {
-        //std::cout << "JsonFree &operator[](const std::string &key)" << std::endl;
         if( isNull() )
             update_node( JsonBase::Object, "" );
         if( isArray() || isObject()  )
@@ -260,13 +256,5 @@ private:
 
 };
 
-// Add iterator?
-//virtual bool updateTypeTop( int newtype ) = 0;
-//
-/// Set _id to Node
-//virtual void setOid_( const std::string& _oid  );
-//
-/// Set up string json value to array or struct field
-//void setComplexValue(const std::string& newval );
 
 } // namespace jsonio17

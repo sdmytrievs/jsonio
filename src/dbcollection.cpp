@@ -123,7 +123,7 @@ std::string DBCollection::createDocument( JsonBase& data_object )
 
 std::string DBCollection::createDocument( DBDocumentBase *document )
 {
-    //std::cout << "4.1 createWithTestValues " << document->current_data().dump(false) << std::endl;
+    io_logger->trace("DBCollection::createDocument {}", document->current_data().dump(false));
     auto new_key = createDocument( document->current_data() );
     document->add_line( new_key, document->current_data(), false );
     return new_key;
@@ -234,15 +234,15 @@ void DBCollection::loadCollectionFile(  const std::set<std::string>& query_field
     }
     catch(jsonio17::jsonio_exception& e)
     {
-        std::cout << "loadCollectionFile jsonio_exception: " <<  e.what() << std::endl;
+        io_logger->warn("loadCollectionFile jsonio_exception: {}", e.what());
     }
     catch(std::exception& e)
     {
-        std::cout << "loadCollectionFile  std::exception" << e.what() << std::endl;
+        io_logger->warn("loadCollectionFile std::exception: {}", e.what());
     }
     catch(...)
     {
-        std::cout << "Undefined loadCollectionFile exception" << std::endl;
+        io_logger->warn("Undefined loadCollectionFile exception");
     }
 }
 
@@ -295,7 +295,7 @@ std::vector<std::string> DBCollection::ids_from_keys(const std::vector<std::stri
     std::vector<std::string> ids;
     std::shared_lock<std::shared_mutex> g(keysmap_mutex);
 
-    for( auto rkey: rkeys )
+    for( const auto& rkey: rkeys )
     {
         const auto itrl = key_record_map.find( rkey );
         if( itrl != key_record_map.end() )
