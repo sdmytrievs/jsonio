@@ -23,8 +23,7 @@
 
 int main(int argc, char *argv[])
 {
-    auto ar_logger = spdlog::get("jsonio17");
-    ar_logger->set_level(spdlog::level::off);
+    ioSettings().set_levels("critical");
     spdlog::set_pattern("[%n] [%^%l%$] %v");
 
     ::testing::InitGoogleTest(&argc, argv);

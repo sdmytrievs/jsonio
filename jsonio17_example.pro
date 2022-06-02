@@ -69,9 +69,9 @@ SOURCES += \
 #      examples/create_example.cpp
 #      examples/schema_example.cpp
 #      examples/builder_example.cpp
-       examples/parser_example.cpp
+#       examples/parser_example.cpp
 #       examples/time_parser.cpp
-#       examples/coll_query_example.cpp
+       examples/coll_query_example.cpp
 #       examples/coll_time_test.cpp
 
 DISTFILES += \

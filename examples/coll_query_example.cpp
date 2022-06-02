@@ -17,10 +17,16 @@ void printData( const std::string&  title, const std::vector<std::string>& value
     std::cout <<  std::endl;
 }
 
+
 /// Test different query types
 int main(int, char* [])
 {
     JsonioSettings::settingsFileName = "jsonio17-config.json";
+
+    ioSettings().get_logger("new_logger");
+    ioSettings().set_levels("trace");
+    ioSettings().set_module_level("jsonarango", "info");
+    ioSettings().set_module_level("other_logger", "debug");
 
     // Test collection name
     std::string collectionName = "test";
@@ -33,7 +39,6 @@ int main(int, char* [])
     std::vector<std::string> recjsonValues;
 
     try{
-
         // Connect to Arangodb ( load settings from "jsonio17-config.json" config file )
         DataBase db;
         // Open collection, if document collection collectionName not exist it would be created
@@ -51,11 +56,13 @@ int main(int, char* [])
             recKeys.push_back(rkey);
         }
 
+
         // Define call back function
         SetReadedKey_f setfnc_key = [&recjsonValues]( const std::string& jsondata, const std::string& )
         {
             recjsonValues.push_back(jsondata);
         };
+
 
         // Select all records
         recjsonValues.clear();
@@ -78,6 +85,7 @@ int main(int, char* [])
         recjsonValues.clear();
         DBQueryBase    templatequery( "{ \"name\" : \"a\" }", DBQueryBase::qTemplate );
         coll->selectQuery( templatequery, setfnc );
+        io_logger->trace("Select records by template !!!!!!!!!!!!");
         printData( "Select records by template", recjsonValues );
 
         // Select records by AQL query

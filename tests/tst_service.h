@@ -387,7 +387,7 @@ TEST( JsonioSettings, TestSettingsCreate )
 
     JsonFile ftxt(fpath);
     EXPECT_EQ( ftxt.load_json(),
-         "{\"jsonio\":{},\"common\":{\"test\":{\"UseString\":\"Test string\",\"UseBool\":true,\"UseInt\":1,\"UseDouble\":2.5}}}" );
+         "{\"jsonio\":{},\"log\":{\"modules\":[\"jsonarango\",\"jsonio17\"],\"level\":\"info\"},\"common\":{\"test\":{\"UseString\":\"Test string\",\"UseBool\":true,\"UseInt\":1,\"UseDouble\":2.5}}}" );
 
     if(path_exist( fpath ) )
         fs::remove_all(fpath);
@@ -442,7 +442,7 @@ TEST( JsonioSettings, TestSettingsPath )
 #endif
 
     JsonFile fjson(fpath);
-    EXPECT_EQ( fjson.load_json(), "{\"jsonio\":{},\"common\":{\"UserHomeDirectoryPath\":\"~/newJSONIO/jsonio17\","
+    EXPECT_EQ( fjson.load_json(), "{\"jsonio\":{},\"log\":{\"modules\":[\"jsonarango\",\"jsonio17\"],\"level\":\"info\"},\"common\":{\"UserHomeDirectoryPath\":\"~/newJSONIO/jsonio17\","
                                   "\"ResourcesDirectory\":\"~/Resources\",\"SchemasDirectory\":\"~/Resources/data/schemas\","
                                   "\"WorkDirectoryPath\":\".\"}}" );
     if(path_exist( fpath ) )
