@@ -11,7 +11,8 @@ dependencies:
   - nlohmann_json
   - velocypack
   - fmt
-  - spdlog
+  - spdlog>=1.10.0 # [win]
+  - spdlog # [unix]
   - jsonarango
 
 environment:
