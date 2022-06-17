@@ -10,6 +10,7 @@ dependencies:
   - curl
   - nlohmann_json
   - velocypack
+  - fmt
   - spdlog
   - jsonarango
 
