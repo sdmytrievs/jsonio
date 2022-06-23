@@ -125,7 +125,7 @@ std::shared_ptr<spdlog::logger> JsonioSettings::get_logger(const std::string &mo
       res->set_level(get_level(module));
   }
   module_loggers.insert(res);
-  io_logger->info("add logger {} ", res->name(), module_loggers.size());
+  io_logger->debug("add logger {} {}", res->name(), module_loggers.size());
   return res;
 }
 
