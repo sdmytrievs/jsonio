@@ -114,6 +114,7 @@ void JsonioSettings::readSchemaDir(const std::string &dir_path)
 
 std::shared_ptr<spdlog::logger> JsonioSettings::get_logger(const std::string &module)
 {
+  auto pattern = logger_section.value<std::string>("pattern", "[%n] [%^%l%$] %v");
   auto linked_it = linked_logger_names.find(module);
   if( linked_it == linked_logger_names.end() ) {
      linked_logger_names.insert(module);
@@ -124,6 +125,7 @@ std::shared_ptr<spdlog::logger> JsonioSettings::get_logger(const std::string &mo
       res = spdlog::stdout_color_mt(module);
       res->set_level(get_level(module));
   }
+  res->set_pattern(pattern);
   module_loggers.insert(res);
   io_logger->debug("add logger {} {}", res->name(), module_loggers.size());
   return res;
@@ -134,6 +136,14 @@ void JsonioSettings::set_levels(const std::string &level_name)
     logger_section.setValue<std::string>("level",level_name);
     for(const auto& logger: module_loggers) {
         logger->set_level(get_level(logger->name()));
+    }
+}
+
+void JsonioSettings::set_pattern(const std::string &pattern)
+{
+    logger_section.setValue<std::string>("pattern",pattern);
+    for(const auto& logger: module_loggers) {
+        logger->set_pattern(pattern);
     }
 }
 

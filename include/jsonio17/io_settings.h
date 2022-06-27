@@ -209,6 +209,10 @@ public:
     /// @param  module and the level to set
     void set_module_level( const std::string& module_name, const std::string& level_name);
 
+    /// Set the output pattern for all existing and future loggers.
+    /// @param pattern     the pattern to set
+    void set_pattern(const std::string &pattern);
+
 private:
 
     /// Internal Data File
