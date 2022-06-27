@@ -167,7 +167,7 @@ void JsonFree::copy(const JsonFree &obj)
     field_value = obj.field_value;
 
     children.clear();
-    for( auto child: obj.children )
+    for( const auto& child: obj.children )
     {
         children.push_back( std::make_shared<JsonFree>(*child) );
         children.back()->parent_object = this;
@@ -184,9 +184,10 @@ void JsonFree::move(JsonFree &&obj)
 
     children = std::move(obj.children);
     obj.children.clear();
-    for( auto child: children )
+    for( const auto& child: children )
     {
-        children.back()->parent_object = this;
+        child->parent_object = this;
+        //children.back()->parent_object = this;
     }
 }
 

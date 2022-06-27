@@ -37,6 +37,7 @@ std::string  home_dir()
     std::string homeDir;
     auto current_path =  fs::current_path();
     homeDir = current_path.root_path().string();
+    io_logger->info("Home directory is {}", homeDir);
     return homeDir;
 #else
     const char *homeDir;
@@ -49,7 +50,7 @@ std::string  home_dir()
             homeDir = pwd->pw_dir;
     }
     JSONIO_THROW_IF( !homeDir, "filesystem", 1,  "HOME environment variable not set.");
-    //std::cout << "Home directory is " << homeDir << std::endl;
+    io_logger->info("Home directory is {}", homeDir);
     return std::string(homeDir);
 #endif
 }
@@ -117,9 +118,10 @@ list_names_t files_into_directory( const std::string& directory_path, const std:
                 if (fs::is_regular_file(p.path()))
                 {
                     std::string file = p.path().string();
-                    //cout << "file = " << file << endl;
-                    if ( sample.empty() || file.find(sample) != std::string::npos)
+                    if ( sample.empty() || file.find(sample) != std::string::npos) {
+                        io_logger->trace("file =  {}", file);
                         fileNames.push_back(file);
+                    }
                 }
             }
         }

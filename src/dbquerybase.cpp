@@ -195,8 +195,7 @@ bool operator==(const DBQueryBase & left, const DBQueryBase &right)
 //// https://docs.arangodb.com/3.3/Manual/DataModeling/Documents/DocumentMethods.html
 void DBQueryBase::addFieldsToFilter(const field_value_map_t &fldvalues)
 {
-    //std::cout << queryString() << std::endl;
-
+    io_logger->debug("addFieldsToFilter before: {}", queryString());
     auto new_query_string = queryString();
     auto new_type = type();
 
@@ -220,9 +219,11 @@ void DBQueryBase::addFieldsToFilter(const field_value_map_t &fldvalues)
     {
         auto pos = new_query_string.find("RETURN");  // add before return
         std::string retstring = "";
-        if( pos != std::string::npos )
-            retstring = new_query_string.substr( pos);
+        if( pos != std::string::npos ) {
+            retstring = new_query_string.substr(pos);
+        }
         new_query_string = new_query_string.substr(0, pos);
+        rtrim(new_query_string, "\n");
         new_query_string += generateFILTER(fldvalues, false, "u" ); // !!! only u
         if( !retstring.empty() )
             new_query_string += "\n"+retstring;
@@ -237,7 +238,8 @@ void DBQueryBase::addFieldsToFilter(const field_value_map_t &fldvalues)
     new_arando_query->setOptions( arando_query->options() );
     new_arando_query->setQueryFields( arando_query->queryFields() );
     arando_query = new_arando_query;
-    //std::cout << " Result: " <<  queryString() << std::endl;
+    io_logger->debug("addFieldsToFilter result: {}", queryString());
+
 }
 
 //----------------------------------------------------------------------------------------------
@@ -386,7 +388,7 @@ std::size_t DBQueryResult::getKeysValues( std::vector<std::string> &aKeyList, st
     std::size_t ii;
     std::vector<std::size_t> fieldindexes;
 
-    for( auto fname: fieldnames )
+    for( const auto& fname: fieldnames )
     {
         for( ii=0; ii< query_data.fields().size(); ii++ )
         {

@@ -2,6 +2,7 @@
 #include "jsonio17/dbcollection.h"
 #include "jsonio17/dbdriverarango.h"
 #include "jsonio17/service.h"
+#include "jsonio17/jsondump.h"
 
 namespace jsonio17 {
 
@@ -47,6 +48,14 @@ void DataBase::update_from_schema( const schemas_t &schema_data )
                 all_edges_traverse.push_back(label);
             }
         }
+    }
+    if( io_logger->should_log(spdlog::level::debug))
+    {
+        io_logger->debug("Vertex schemas:\n {}", json::dump(vertexes));
+        io_logger->debug("Edge schemas:\n {}", json::dump(edges));
+        io_logger->debug("Vertex collections:\n {}", json::dump(vertex_collections));
+        io_logger->debug("Edge collections:\n {}", json::dump(edge_collections));
+        io_logger->debug("EdgesAllDefined: {}", json::dump(all_edges_traverse));
     }
 }
 

@@ -88,7 +88,6 @@ int extract_int_json( const std::string& key, const std::string& jsondata )
     replace_all( data, "\'", '\"');
     std::string regstr =  std::string(".*\"")+key+"\"\\s*:\\s*([+-]?[1-9]\\d*|0).*";
     auto token = regexp_extract_string( regstr, data );
-    //cout << key << "  token " << token  << endl;
     if( token.empty() )
         return 0;
     return stoi(token);

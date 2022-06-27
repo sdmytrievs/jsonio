@@ -1,6 +1,5 @@
 #pragma once
 
-#include <iostream>
 #include <vector>
 #include "jsonio17/schema.h"
 
@@ -108,13 +107,10 @@ public:
     /// Task settings file name
     static std::string settingsFileName;
     static std::string jsonio_section_name;
+    static std::string logger_section_name;
 
     /// Constructor
     explicit JsonioSettings( const std::string& config_file_path );
-
-    JsonioSettings( const JsonioSettings& other ) =default;
-    JsonioSettings( JsonioSettings&& other ) =default;
-
     virtual ~JsonioSettings();
 
     /// Get section from settings
@@ -201,6 +197,22 @@ public:
     /// Update/reread schema directory
     bool updateSchemaDir();
 
+    /// Creates or fetches an spdlog logger.
+    /// @param module Name of the logger.
+    std::shared_ptr<spdlog::logger> get_logger(const std::string& module);
+
+    /// Set the output level for all existing and future loggers.
+    /// @param level_name     the level to set
+    void set_levels(const std::string& level_name);
+
+    /// Configure the output levels for separate module.
+    /// @param  module and the level to set
+    void set_module_level( const std::string& module_name, const std::string& level_name);
+
+    /// Set the output pattern for all existing and future loggers.
+    /// @param pattern     the pattern to set
+    void set_pattern(const std::string &pattern);
+
 private:
 
     /// Internal Data File
@@ -214,6 +226,9 @@ private:
 
     /// Link to jsonio settings
     SectionSettings jsonio_section;
+
+    /// Link to spdlog settings
+    SectionSettings logger_section;
 
     // jsonio internal data --------------------------------
 
@@ -235,6 +250,17 @@ private:
     /// Read all schemas from Directory
     void readSchemaDir( const std::string& dir_path );
 
+    // logger internal data --------------------------------
+
+    std::set<std::shared_ptr<spdlog::logger>> module_loggers;
+    std::set<std::string> linked_logger_names;
+
+    /// Get the output level for module logger.
+    /// @param module_name Name of the logger.
+    spdlog::level::level_enum get_level(const std::string& module);
+
+    /// Update/reread spdlog settings
+    bool updateLogger();
 };
 
 inline std::string common_section( const std::string& item )

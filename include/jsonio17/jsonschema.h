@@ -72,7 +72,6 @@ public:
     /// Return a const reference to arr[i] if this is an array, exception otherwise.
     const JsonSchema &operator[](size_t idx) const
     {
-        //std::cout << "const JsonSchema &operator[](size_t idx)" << std::endl;
         if( isArray() )
         {
             return get_child( idx );
@@ -83,7 +82,6 @@ public:
     /// Return a reference to arr[i] if this is an array, exception otherwise.
     JsonSchema &operator[](size_t idx)
     {
-        //std::cout << "JsonSchema &operator[](size_t idx)" << std::endl;
         if( isArray() )
         {
             return get_child( idx );
@@ -95,7 +93,6 @@ public:
     /// Return a const reference to object[key] if this is an object, exception otherwise.
     const JsonSchema &operator[](const std::string &key) const
     {
-        //std::cout << "const JsonSchema &operator[](const std::string &key)" << std::endl;
         if( isObject()  )
         {
             return get_child( key );
@@ -106,7 +103,6 @@ public:
     /// Return a reference to object[key] if this is an object, exception otherwise.
     JsonSchema &operator[](const std::string &key)
     {
-        //std::cout << "JsonSchema &operator[](const std::string &key)" << std::endl;
         if(  isObject()  )
         {
             return get_child( key );

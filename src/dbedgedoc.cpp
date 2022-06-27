@@ -7,7 +7,6 @@ RETURN e
 
 */
 
-#include <iostream>
 #include "jsonio17/dbedgedoc.h"
 #include "jsonio17/dbconnect.h"
 #include "jsonio17/io_settings.h"
@@ -81,7 +80,6 @@ DBQueryBase DBEdgeDocument::make_default_query_template() const
     std::string AQLquery = "FOR u IN " + collection_from->name();
     AQLquery += "\nFILTER u._label == '" + object_label + "' ";
     //AQLquery += "\nRETURN u ";
-    //std::cout << "AQLquery" << AQLquery << std::endl;
 //    auto flds_query = make_default_query_fields();
 //    auto key_flds = collection_from->keyFields();
 //    flds_query.insert(flds_query.end(), key_flds.begin(), key_flds.end() );

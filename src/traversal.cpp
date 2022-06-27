@@ -22,7 +22,7 @@ bool GraphTraversal::parseVertex( const std::string& idVertex, GraphElement_f af
     if( vertex_list.find( idVertex ) !=  vertex_list.end() )
         return false;
 
-    std::cout << "idVertex " << idVertex << std::endl;
+    io_logger->debug("idVertex  {}", idVertex);
     vertex_list.insert( idVertex );
     vertex_doc->readDocument( idVertex );
     afunc( true, vertex_doc->getJson() );
@@ -55,7 +55,7 @@ bool GraphTraversal::parseEdge( const std::string& idEdge, GraphElement_f afunc 
     if( edge_list.find( idEdge ) !=  edge_list.end() )
         return false;
 
-    std::cout << "idEdge " << idEdge << std::endl;
+    io_logger->debug("idEdge  {}", idEdge);
     edge_list.insert( idEdge );
     edge_doc->readDocument( idEdge );
     std::string tojson = edge_doc->getJson();
@@ -83,7 +83,7 @@ void GraphTraversal::restoreGraphFromFile( const std::string& file_path )
 {
     std::string type, id;
     std::string cur_record;
-    std::cout << " restoreGraphFromFile " << std::endl;
+    io_logger->info("Restore graph from file {}", file_path);
 
     JsonArrayFile file( file_path);
     file.Open( TxtFile::ReadOnly );
@@ -91,7 +91,7 @@ void GraphTraversal::restoreGraphFromFile( const std::string& file_path )
     {
         id = extract_string_json( "_id", cur_record );
         type = extract_string_json( "_type", cur_record );
-        std::cout << id << "  " <<  type << std::endl;
+        io_logger->info("{} {}", id, type);
         if( type.empty() )
             continue;
         if( type == "edge" )

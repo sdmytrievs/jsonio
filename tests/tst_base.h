@@ -161,8 +161,6 @@ TEST( JsonioBase, set_from )
     jsFree["vdouble"].set_from( vdouble );
     EXPECT_TRUE( jsFree["vdouble"].isNumber() );
     EXPECT_EQ( jsFree["vdouble"].toDouble(), vdouble );
-
-    // json::dump(std::cout, jsFree, true);
 }
 
 TEST( JsonioBase, set_fromArray )

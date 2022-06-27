@@ -42,6 +42,8 @@ void DBDocumentBase::updateQuery()
         if( query_result.get() == nullptr )
             return;
     }
+    io_logger->debug("Document {} update query: {}", collection_from->name(), query_result->condition().queryString());
+
     //update_query();
     // Create a thread using member function
     std::thread th( &DBDocumentBase::update_query, this );
@@ -196,7 +198,7 @@ std::vector<std::string> DBDocumentBase::getKeysByQuery(DBQueryBase &&query) con
     {
         auto akey = extract_string_json("_id", data);
         //regexp_replace( data, ".*\"_id\"\\s*:\\s*\"([^\"]*)\".*", "$1");
-        //cout << data << "      " << akey << endl;
+        io_logger->trace("{}: {}", akey, data);
         keys.push_back(akey);
     }
     return keys;

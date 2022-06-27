@@ -48,8 +48,7 @@ DBVertexDocument *DBVertexDocument::newVertexDocumentQuery( const DataBase& dbco
     auto duration1 = std::chrono::duration_cast<std::chrono::microseconds>( t2 - t1 ).count();
     auto duration3 = std::chrono::duration_cast<std::chrono::microseconds>( t3 - t2 ).count();
 
-    std::cout << aschema_name <<  " Loding collection " << duration1 <<  " Loding query " << duration3 << std::endl;
-
+    io_logger->info("{} loading collection: {}, loading query: {}", aschema_name, duration1, duration3);
     return new_document;
 }
 
@@ -139,9 +138,8 @@ void DBVertexDocument::before_remove(const std::string & vertex_id )
 
     std::shared_ptr<DBEdgeDocument> edges( documentAllEdges( collection_from->db_connect ));
     auto edgekeys =  getKeysByQuery( allEdgesQuery( vertex_id ) );
-    for( auto idedge: edgekeys )
+    for( const auto& idedge: edgekeys )
     {
-        //cout << idedge << endl;
         edges->resetSchema( edges->extractSchemaFromId(idedge), false );
         edges->deleteDocument(idedge);
     }
@@ -212,7 +210,7 @@ void DBVertexDocument::after_save_update(const std::string &)
 
         if( !unique_fields_values.insert( std::pair< values_t, std::string>(uniq_values, uniq_fields["_id"])).second )
         {
-            std::cout << "Not unique values: " << json::dump( uniq_values ) << std::endl;
+            io_logger->warn("Not unique values:  {}", json::dump(uniq_values));
         }
     }
 }
@@ -241,7 +239,7 @@ void DBVertexDocument::load_unique_fields()
 
         if( !unique_fields_values.insert( std::pair< values_t, std::string>(row, idkey)).second )
         {
-            std::cout << "Not unique values: " << json::dump( row ) << std::endl;
+            io_logger->warn("Not unique values:  {}", json::dump(row));
         }
     }
 }
@@ -251,7 +249,6 @@ DBQueryBase DBVertexDocument::make_default_query_template() const
     std::string AQLquery = "FOR u IN " + collection_from->name();
     AQLquery += "\nFILTER u._label == '" + object_label + "' ";
     //AQLquery += "\nRETURN u ";
-    //std::cout << "AQLquery" << AQLquery << std::endl;
 //    auto flds_query = make_default_query_fields();
 //    auto key_flds = collection_from->keyFields();
 //    flds_query.insert(flds_query.end(), key_flds.begin(), key_flds.end() );

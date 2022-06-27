@@ -49,7 +49,6 @@ template<> void JsonioBaseTest<JsonSchema>::SetUp()
     ioSettings().addSchemaFormat(schema_thrift, schema_str);
     test_object = new  JsonSchema( JsonSchema::object(schemaName) );
     test_object->loads( input_json );
-    //std::cout << test_object->dump(false);
 }
 
 using JsonTypes = ::testing::Types<JsonFree, JsonSchema>;

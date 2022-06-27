@@ -150,12 +150,6 @@ template<typename T>
 // other
 // https://stackoverflow.com/questions/12042824/how-to-write-a-type-trait-is-container-or-is-vector
 /*
- std::cout << is_container<std::vector<int>>::value << std::endl; //true
- std::cout << is_container<std::list<int>>::value << std::endl;   //true
- std::cout << is_container<std::map<int>>::value << std::endl;    //true
- std::cout << is_container<std::set<int>>::value << std::endl;    //true
- std::cout << is_container<int>::value << std::endl;              //false
-
 
 template<typename T, typename _ = void>
 struct is_container : std::false_type {};

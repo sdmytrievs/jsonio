@@ -18,7 +18,6 @@ using namespace jsonio17;
 
 TEST( JsonioDetail, isContainer )
 {
-    // std::cout << "Test is_container" << std::endl;
     EXPECT_TRUE( is_container<std::forward_list<int>>::value );
     EXPECT_TRUE( is_container<std::vector<int>>::value );
     EXPECT_TRUE( is_container<std::list<int>>::value );
@@ -42,7 +41,6 @@ TEST( JsonioDetail, isContainer )
 
 TEST( JsonioDetail, isMappish )
 {
-    // std::cout << "Test is_mappish" << std::endl;
     EXPECT_FALSE( is_mappish<std::forward_list<int>>::value );
     EXPECT_FALSE( is_mappish<std::vector<int>>::value );
     EXPECT_FALSE( is_mappish<std::list<int>>::value );

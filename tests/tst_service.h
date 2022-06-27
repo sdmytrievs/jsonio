@@ -1,7 +1,6 @@
 #pragma once
 
 #include <gtest/gtest.h>
-#include <iostream>
 #include <fstream>
 
 #include "jsonio17/service.h"
@@ -17,13 +16,11 @@ using namespace jsonio17;
 TEST( JsonioService, regexpSplit )
 {
     auto tokens = regexp_split( "1\r 22 \n333 ", "\\s+" );
-    // std::cout << dump(tokens) << std::endl;
     EXPECT_EQ( "[ \"1\", \"22\", \"333\" ]", json::dump(tokens) );
     auto strquery = regexp_split("a:bb:ccc", ":" );
     EXPECT_EQ( "[ \"a\", \"bb\", \"ccc\" ]", json::dump(strquery) );
 
     tokens = regexp_split( " \"aaa\", \"bbb\", \"ccc\" ", "[\",\\s]+" );
-    //std::cout << json::dump(tokens) << std::endl;
     EXPECT_EQ( "[ \"\", \"aaa\", \"bbb\", \"ccc\" ]", json::dump(tokens) );
 }
 
@@ -31,7 +28,6 @@ TEST( JsonioService, regexpSplit )
 TEST( JsonioService, regexpExtract )
 {
     auto tokens = regexp_extract( " %h11 %h22 hhh %h33 ", "%h\\d+" );
-    //std::cout << dump(tokens) << std::endl;
     EXPECT_EQ( "[ \"%h11\", \"%h22\", \"%h33\" ]", json::dump(tokens) );
 
     tokens = regexp_extract(
@@ -66,6 +62,10 @@ TEST( JsonioService, regexpReplace )
     resrev = regexp_replace(resrev ,"\\{\"*","");
     resrev = regexp_replace(resrev ,"\"*\\}","");
     EXPECT_EQ( "Al1;0:ELEMENT;15:PSI_NAGRA", resrev );
+
+    rev = "PSI_SeO4<2->_SO4<2->_Na<+>";
+    resrev = regexp_replace(rev ,"<[^>]*>","");
+    EXPECT_EQ( "PSI_SeO4_SO4_Na", resrev );
 
 }
 
@@ -166,7 +166,7 @@ namespace fs = std::experimental::filesystem;
 TEST( Jsoniofilesystem, HomeDir )
 {
    auto current_path =  fs::current_path();
-   std::cout << "Current path is " << fs::current_path() << '\n';
+   io_logger->info("Current path is  {}", current_path.c_str());
 
    std::string homedir, rel_path;
    EXPECT_NO_THROW( homedir = home_dir());
@@ -387,7 +387,7 @@ TEST( JsonioSettings, TestSettingsCreate )
 
     JsonFile ftxt(fpath);
     EXPECT_EQ( ftxt.load_json(),
-         "{\"jsonio\":{},\"common\":{\"test\":{\"UseString\":\"Test string\",\"UseBool\":true,\"UseInt\":1,\"UseDouble\":2.5}}}" );
+         "{\"jsonio\":{},\"log\":{\"modules\":[\"jsonarango\",\"jsonio17\"],\"level\":\"info\"},\"common\":{\"test\":{\"UseString\":\"Test string\",\"UseBool\":true,\"UseInt\":1,\"UseDouble\":2.5}}}" );
 
     if(path_exist( fpath ) )
         fs::remove_all(fpath);
@@ -442,7 +442,7 @@ TEST( JsonioSettings, TestSettingsPath )
 #endif
 
     JsonFile fjson(fpath);
-    EXPECT_EQ( fjson.load_json(), "{\"jsonio\":{},\"common\":{\"UserHomeDirectoryPath\":\"~/newJSONIO/jsonio17\","
+    EXPECT_EQ( fjson.load_json(), "{\"jsonio\":{},\"log\":{\"modules\":[\"jsonarango\",\"jsonio17\"],\"level\":\"info\"},\"common\":{\"UserHomeDirectoryPath\":\"~/newJSONIO/jsonio17\","
                                   "\"ResourcesDirectory\":\"~/Resources\",\"SchemasDirectory\":\"~/Resources/data/schemas\","
                                   "\"WorkDirectoryPath\":\".\"}}" );
     if(path_exist( fpath ) )
