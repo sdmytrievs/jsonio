@@ -21,8 +21,8 @@ elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
 fi
 
 # Uncomment what is necessary to reinstall by force
-sudo rm -f /usr/local/lib/libvelocypack.a
-sudo rm -f /usr/local/lib/libjsonarango.$EXTN
+#sudo rm -f /usr/local/lib/libvelocypack.a
+#sudo rm -f /usr/local/lib/libjsonarango.$EXTN
 
 
 threads=3
