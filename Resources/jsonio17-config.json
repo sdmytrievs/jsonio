@@ -31,5 +31,30 @@
                "DBRootUser" :   "",
                "DBRootPassword" :   ""
           }
+     },
+     "jsonio" :   {
+
+     },
+     "log" :   {
+          "modules" :   [
+               "jsonarango",
+               "jsonimpex17",
+               "jsonio17"
+          ],
+          "level" :   "trace",
+          "module_level" :   {
+               "other_logger" :   "debug",
+               "jsonarango" :   "info",
+               "jsonimpex17" :   "off"
+          },
+          "file" :   {
+               "path" :   "log.txt",
+               "size" :   10000000,
+               "count" :   10,
+               "modules" :   [
+                    "jsonarango",
+                    "jsonio17"
+               ]
+          }
      }
 }
