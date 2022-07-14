@@ -2,6 +2,7 @@
 #include "jsonio17/schema_thrift.h"
 #include "jsonio17/dbconnect.h"
 #include <spdlog/sinks/stdout_color_sinks.h>
+#include <spdlog/sinks/rotating_file_sink.h>
 
 
 namespace jsonio17 {
@@ -178,9 +179,35 @@ bool JsonioSettings::updateLogger()
         for( const auto& module_name: linked_logger_names) {
             get_logger(module_name);
         }
+        // set file loggers
+        add_file_sinks();
     }
     set_levels(logger_section.value<std::string>("level","info"));
     return true;
+}
+
+void JsonioSettings::add_file_sinks()
+{
+    if(!logger_section.contains("file")) {
+        return;
+    }
+    auto file_logger_section = section(logger_section_name+".file");
+    auto file_module_names = file_logger_section.value<std::vector<std::string>>("modules", {});
+    if(file_module_names.empty()) {
+        return;
+    }
+    auto logfile_path = file_logger_section.value<std::string>("path", "log.txt");
+    auto logfile_size = file_logger_section.value<size_t>("size", 1048576);
+    auto logfile_count = file_logger_section.value<size_t>("count", 3);
+    auto file_sink = std::make_shared<spdlog::sinks::rotating_file_sink_mt>(
+                    logfile_path, logfile_size, logfile_count);
+
+    for(const auto& module_name: file_module_names) {
+        auto plogger = spdlog::get(module_name);
+        if (plogger) {
+            plogger->sinks().push_back(file_sink);
+        }
+    }
 }
 
 } // namespace jsonio

@@ -258,6 +258,7 @@ private:
     /// Get the output level for module logger.
     /// @param module_name Name of the logger.
     spdlog::level::level_enum get_level(const std::string& module);
+    void add_file_sinks();
 
     /// Update/reread spdlog settings
     bool updateLogger();
