@@ -385,6 +385,23 @@ TEST( JsonioBase, ObjectAssignment)
 
 }
 
+TEST( JsonioBase, MapAssignment)
+{
+    auto obj = json::loads("{\"about\":{\"version\":1,\"description\":\"About\"},\"formats\":"
+                           "{\"int\":{\"width\":5,\"precision\":0}}}");
+
+    std::map<std::string, int> data = { {"width",20},{"precision",10}};
+    obj["formats"]["obj2"] = data;
+    EXPECT_EQ( obj["formats"].size(), static_cast<size_t>(2) );
+    EXPECT_EQ( obj["formats"]["obj2"].dump(true), "{\"precision\":10,\"width\":20}" );
+
+    data["width"] = 30;
+    data["precision"] = 15;
+    obj["formats"]["obj3"] = data;
+    EXPECT_EQ( obj["formats"].size(), static_cast<size_t>(3) );
+    EXPECT_EQ( obj["formats"]["obj3"].dump(true), "{\"precision\":15,\"width\":30}" );
+}
+
 TEST( JsonioBase, get_to_no_exist_free )
 {
     auto obj = json::loads("{\"vbool\":true,\"vint\":-100,\"vdouble\":5.2,\"vstring\":\"Test string\","

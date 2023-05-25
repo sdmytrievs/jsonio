@@ -1,10 +1,10 @@
 TEMPLATE = app
-CONFIG += console c++17
+CONFIG += console c++2a
 CONFIG -= app_bundle
 CONFIG += thread
 CONFIG -= qt
 
-QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.15
+#QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.15
 
 !win32 {
   DEFINES += __unix
