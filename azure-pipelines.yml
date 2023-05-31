@@ -31,7 +31,7 @@ jobs:
     submodules: recursive
   - task: Bash@3
     inputs:
-      filePath: 'ci/pipelines/install.sh
+      filePath: 'ci/pipelines/install-osx.sh
 
   - script: |
         ./ci/pipelines/test.sh

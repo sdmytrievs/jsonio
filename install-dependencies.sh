@@ -46,7 +46,7 @@ test -f /usr/local/lib/libjsonarango.$EXTN || {
         # Building jsonio library
         mkdir -p ~/code && \
                 cd ~/code && \
-                git clone https://bitbucket.org/gems4/jsonarango.git && \
+                git clone  --recurse-submodules https://bitbucket.org/gems4/jsonarango.git && \
                 cd jsonarango && \
                 mkdir -p build && \
                 cd build && \

@@ -12,7 +12,7 @@ echo ******                    ******
 echo
 
 echo git clone jsonarango...
-git clone https://bitbucket.org/gems4/jsonarango.git
+git clone  --recurse-submodules https://bitbucket.org/gems4/jsonarango.git
 cd jsonarango
 
 echo "Configuring..."
