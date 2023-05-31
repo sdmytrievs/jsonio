@@ -2,18 +2,16 @@ name: jsonio17
 
 dependencies:
   - gxx_linux-64>=9.4.0  # [linux]
-  - cmake>=3.7
+  - cmake>=3.13
   - ninja # [unix]
   - make  # [win]
   - git
   - ccache  # [unix]
   - curl
   - nlohmann_json
-  - velocypack
-  - fmt
-  - spdlog>=1.10.0 # [win]
-  - spdlog # [unix]
-  - jsonarango
+#  - velocypack
+  - spdlog
+#  - jsonarango
 
 environment:
 

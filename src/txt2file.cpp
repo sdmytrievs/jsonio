@@ -10,16 +10,8 @@
 #include "jsonio17/txt2file.h"
 #include "jsonio17/jsonfree.h"
 
-//#include "boost/filesystem.hpp"
-//namespace fs = boost::filesystem;
-// might be
-#if defined(_MSC_VER) || defined(__APPLE__)
 #include <filesystem>
 namespace fs = std::filesystem;
-#else
-#include <experimental/filesystem>
-namespace fs = std::experimental::filesystem;
-#endif
 
 namespace jsonio17 {
 

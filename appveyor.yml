@@ -1,6 +1,6 @@
 image:
-# - Visual Studio 2015
-- Visual Studio 2017
+# - Visual Studio 2017
+- Visual Studio 2019
 
 build:
   parallel: true
@@ -21,7 +21,9 @@ init:
   - set PATH=%CONDA_DIR%;%CONDA_DIR%\Scripts;%CONDA_DIR%\Library\bin;%PATH%
 
 install:
+  - git submodule update --init --recursive
   - call ci\appveyor\install.bat
+  - call conda-install-dependencies.bat
 
 build_script:
   - call ci\appveyor\build.bat

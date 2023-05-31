@@ -2,6 +2,8 @@
 
 #include <gtest/gtest.h>
 #include <fstream>
+#include <filesystem>
+namespace fs = std::filesystem;
 
 #include "jsonio17/service.h"
 #include "jsonio17/txt2file.h"
@@ -151,16 +153,6 @@ TEST( JsonioService, Replace )
     replace_all( str, " \t\n", '_' );
     EXPECT_EQ( "Test___:", str );
 }
-
-// Test filesystem ----------------------------------------------------------------------
-
-#if defined(_MSC_VER) || defined(__APPLE__)
-#include <filesystem>
-namespace fs = std::filesystem;
-#else
-#include <experimental/filesystem>
-namespace fs = std::experimental::filesystem;
-#endif
 
 
 TEST( Jsoniofilesystem, HomeDir )

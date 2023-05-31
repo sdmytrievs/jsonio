@@ -1,6 +1,7 @@
 if [ ! -f $HOME/miniconda/bin/conda ]; then
     echo "Downloading and installing miniconda"
-    wget -O miniconda.sh https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh
+    if [ $TRAVIS_OS_NAME = "linux" ]; then OS=Linux-x86_64; else OS=MacOSX-x86_64; fi
+    wget -O miniconda.sh https://repo.continuum.io/miniconda/Miniconda3-latest-$OS.sh
     rm -rf $HOME/miniconda
     bash miniconda.sh -b -p $HOME/miniconda
 fi
@@ -17,27 +18,21 @@ conda update -q conda
 conda info -a
 conda devenv
 source activate jsonio17
+./conda-install-dependencies.sh
 mkdir build
 cd build
 # Configure step
-cmake \
+cmake -GNinja \
     -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_INSTALL_LIBDIR=lib \
     ..
-make
+ninja install
 if [ $? -eq 0 ]
 then
-    echo "The cmake step ran OK"
+echo "The make step ran ok"
 else
-    echo "The cmake step failed" >&2
-    exit 1
-fi
-make install
-if [ $? -eq 0 ]
-then
-    echo "The make step ran OK"
-else
-    echo "The make step failed" >&2
-    exit 1
+echo "The make step failed" >&2
+exit 1
 fi
 conda list
+cd ..
