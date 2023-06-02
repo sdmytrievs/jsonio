@@ -23,7 +23,7 @@
 
 int main(int argc, char *argv[])
 {
-    ioSettings().set_levels("trace");
+    ioSettings().set_levels("off");
     spdlog::set_pattern("[%n] [%^%l%$] %v");
 
     ::testing::InitGoogleTest(&argc, argv);
