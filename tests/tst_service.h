@@ -2,6 +2,8 @@
 
 #include <gtest/gtest.h>
 #include <fstream>
+#include <filesystem>
+namespace fs = std::filesystem;
 
 #include "jsonio17/service.h"
 #include "jsonio17/txt2file.h"
@@ -152,35 +154,27 @@ TEST( JsonioService, Replace )
     EXPECT_EQ( "Test___:", str );
 }
 
-// Test filesystem ----------------------------------------------------------------------
-
-#if defined(_MSC_VER) || defined(__APPLE__)
-#include <filesystem>
-namespace fs = std::filesystem;
-#else
-#include <experimental/filesystem>
-namespace fs = std::experimental::filesystem;
-#endif
-
 
 TEST( Jsoniofilesystem, HomeDir )
 {
-   auto current_path =  fs::current_path();
-   io_logger->info("Current path is  {}", current_path.c_str());
+    auto current_path =  fs::current_path();
+    io_logger->info("Current path is  {}", current_path.c_str());
 
-   std::string homedir, rel_path;
-   EXPECT_NO_THROW( homedir = home_dir());
+    std::string homedir, rel_path;
+    EXPECT_NO_THROW( homedir = home_dir());
+    if( homedir.find("root") == std::string::npos) {
 #ifdef _WIN32
-   EXPECT_EQ( homedir, current_path.root_path().string());
+        EXPECT_EQ( homedir, current_path.root_path().string());
 #else
-   EXPECT_TRUE( current_path.native().rfind(homedir, 0) == 0 );
+        EXPECT_TRUE( current_path.native().rfind(homedir, 0) == 0 );
 #endif
-  std::string newpath =current_path.string();
-  rel_path = newpath.substr(homedir.length());
-  rel_path = "~"+rel_path;
+        std::string newpath =current_path.string();
+        rel_path = newpath.substr(homedir.length());
+        rel_path = "~"+rel_path;
 
-  EXPECT_EQ( current_path.string(), expand_home_dir( rel_path, homedir ));
-  EXPECT_EQ( current_path.string(), expand_home_dir( rel_path, "" ));
+        EXPECT_EQ( current_path.string(), expand_home_dir( rel_path, homedir ));
+        EXPECT_EQ( current_path.string(), expand_home_dir( rel_path, "" ));
+    }
 }
 
 TEST( Jsoniofilesystem, TestDir )

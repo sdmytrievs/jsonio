@@ -11,6 +11,9 @@ const std::string version = "v1.0";
 std::string JsonioSettings::settingsFileName = "jsonio17-config.json";
 std::string JsonioSettings::jsonio_section_name = "jsonio";
 std::string JsonioSettings::logger_section_name = "log";
+std::string JsonioSettings::data_logger_directory = "";
+size_t JsonioSettings::log_file_size = 1048576;
+size_t JsonioSettings::log_file_count = 1;
 
 
 JsonioSettings& ioSettings()
@@ -25,9 +28,9 @@ void SectionSettings::sync() const
     io_settins.sync();
 }
 
-std::string SectionSettings::directoryPath( const std::string& fldpath, const std::string& defvalue  ) const
+std::string SectionSettings::directoryPath( const std::string& fldpath, const std::string& defvalue ) const
 {
-    std::string dirPath = value(fldpath, defvalue );
+    std::string dirPath = value(fldpath, defvalue);
     return expand_home_dir( dirPath, io_settins.homeDir() );
 }
 
@@ -62,7 +65,7 @@ void JsonioSettings::getDataFromPreferences()
     UserDir = directoryPath( "common.WorkDirectoryPath", std::string(".") );
     SchemDir =  "";
     updateSchemaDir();
-    updateLogger();
+    update_logger();
 }
 
 // Connect localDB to new path
@@ -78,12 +81,12 @@ bool JsonioSettings::updateSchemaDir()
   return false;
 }
 
-void JsonioSettings::setUserDir( const std::string& dir_path)
+void JsonioSettings::setUserDir(const std::string& dir_path)
 {
     if( dir_path.empty() )
         return;
     setValue( "common.WorkDirectoryPath", dir_path );
-    UserDir = directoryPath( "common.WorkDirectoryPath", std::string(".") );
+    UserDir = directoryPath("common.WorkDirectoryPath", std::string("."));
 }
 
 void JsonioSettings::setHomeDir( const std::string& dir_path )
@@ -164,9 +167,10 @@ spdlog::level::level_enum JsonioSettings::get_level(const std::string &module_na
     return spdlog::level::from_str(level_name);
 }
 
-bool JsonioSettings::updateLogger()
+bool JsonioSettings::update_logger()
 {
     logger_section.change_head(&all_settings.add_object_via_path(logger_section_name));
+    data_logger_directory = logger_section.value<std::string>("logs-directory", data_logger_directory);
     auto module_names = logger_section.value<std::vector<std::string>>("modules", {});
     if(module_names.empty() ) {
         get_logger("jsonio17");
@@ -186,6 +190,15 @@ bool JsonioSettings::updateLogger()
     return true;
 }
 
+std::string JsonioSettings::with_directory(const std::string &logfile_name)
+{
+    auto file_path = logfile_name;
+    if(file_path.find_first_of("/\\") == std::string::npos) {
+        file_path =  data_logger_directory + file_path;
+    }
+    return expand_home_dir(file_path);
+}
+
 void JsonioSettings::add_file_sinks()
 {
     if(!logger_section.contains("file")) {
@@ -197,10 +210,10 @@ void JsonioSettings::add_file_sinks()
         return;
     }
     auto logfile_path = file_logger_section.value<std::string>("path", "log.txt");
-    auto logfile_size = file_logger_section.value<size_t>("size", 1048576);
-    auto logfile_count = file_logger_section.value<size_t>("count", 3);
+    auto logfile_size = file_logger_section.value<size_t>("size", log_file_size);
+    auto logfile_count = file_logger_section.value<size_t>("count", log_file_count);
     auto file_sink = std::make_shared<spdlog::sinks::rotating_file_sink_mt>(
-                    logfile_path, logfile_size, logfile_count);
+                    with_directory(logfile_path), logfile_size, logfile_count);
 
     for(const auto& module_name: file_module_names) {
         auto plogger = spdlog::get(module_name);

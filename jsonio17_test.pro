@@ -1,10 +1,10 @@
 TEMPLATE = app
-CONFIG += console c++17
+CONFIG += console c++2a
 CONFIG -= app_bundle
 CONFIG += thread
 CONFIG -= qt
 
-QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.15
+#QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.15
 
 !win32 {
   DEFINES += __unix
@@ -40,10 +40,13 @@ INCLUDEPATH   += $$JSONIO17_DIR
 INCLUDEPATH   += $$JSONIO17_HEADERS_DIR
 INCLUDEPATH   += $$TESTS_DIR
 
-unix:!macx-clang:LIBS += -lstdc++fs
-win32:LIBS +=  -ljsonarango-static -llibcurl
-!win32:LIBS += -ljsonarango -lcurl
-LIBS +=   -lvelocypack
+win32:LIBS +=  -ljsonarango-static
+!win32:LIBS += -ljsonarango
+
+#unix:!macx-clang:LIBS += -lstdc++fs
+#win32:LIBS +=  -ljsonarango-static -llibcurl
+#!win32:LIBS += -ljsonarango -lcurl
+#LIBS +=   -lvelocypack
 
 OBJECTS_DIR   = obj
 

@@ -1,7 +1,8 @@
 # options
-message(STATUS "Building jsonio17 examples: ${BUILD_EXAMPLES}")
+message(STATUS "Building jsonio17 examples: ${BuildExamples}")
 
 include_directories(${CMAKE_SOURCE_DIR})
+find_package(Threads REQUIRED)
 
 set(Examples
         create_example
@@ -13,35 +14,11 @@ set(Examples
         time_parser )
 
 foreach (exampleName ${Examples})
-    add_executable(${exampleName} ${exampleName}.cpp)
-    if(${CMAKE_CXX_COMPILER_ID} STREQUAL MSVC)
-          target_link_libraries(${exampleName}
-                PUBLIC jsonio17-static
-                PUBLIC stdc++fs
-                PUBLIC jsonarango-static
-                PRIVATE velocypack
-                PRIVATE libcurl
-                PUBLIC pthread )
-   elseif(${CMAKE_CXX_COMPILER_ID} MATCHES "Clang")
-
-          target_link_libraries( ${exampleName}
-                PRIVATE jsonio17
-                PUBLIC jsonarango
-                PUBLIC velocypack
-                PUBLIC curl
-                PUBLIC pthread )
-    else()
-          target_link_libraries( ${exampleName}
-               PRIVATE jsonio17
-               PUBLIC stdc++fs
-               PUBLIC jsonarango
-               PUBLIC velocypack
-               PUBLIC curl
-               PUBLIC pthread )
-    endif()
-#target_link_libraries(${exampleName} jsonio17 stdc++fs  jsonarango curl  velocypack pthread )
+  add_executable(${exampleName} ${exampleName}.cpp)
+  if(${CMAKE_CXX_COMPILER_ID} STREQUAL MSVC)
+     target_link_libraries(${exampleName} jsonio17::jsonio17-static Threads::Threads )
+  else()
+     target_link_libraries(${exampleName} jsonio17::jsonio17 Threads::Threads)
+  endif()
 endforeach()
-
-#add_executable(time_parser time_parser.cpp)
-#target_link_libraries(time_parser jsonio17 stdc++fs jsonarango curl  velocypack )
 

@@ -1,7 +1,8 @@
 TEMPLATE = app
-CONFIG += thread console c++17
+CONFIG += thread console c++2a
 CONFIG -= app_bundle
 CONFIG -= qt
+CONFIG += sanitizer sanitize_thread
 # https://resources.qt.io/qt-world-summit-2018/qtws18-kdabs-opensource-tools-for-qt-milian-wolff-kdab
 #Clazy
 #GammaRay
@@ -67,11 +68,11 @@ include($$JSONIO17_DIR/jsonio17.pri)
 SOURCES += \
 #       main.cpp
 #      examples/create_example.cpp
-#      examples/schema_example.cpp
+      examples/schema_example.cpp
 #      examples/builder_example.cpp
 #       examples/parser_example.cpp
 #       examples/time_parser.cpp
-       examples/coll_query_example.cpp
+#       examples/coll_query_example.cpp
 #       examples/coll_time_test.cpp
 
 DISTFILES += \

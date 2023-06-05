@@ -30,7 +30,7 @@ public:
 
     /// Get Directory path from Node
     /// "~" refers to the "UserHomeDirectoryPath" directory
-    std::string directoryPath( const std::string& jsonpath, const std::string& defvalue  ) const;
+    std::string directoryPath( const std::string& jsonpath, const std::string& defvalue ) const;
 
     /// Explicit type conversion between the JSON path value and a compatible value.
     /// The following jsonpath expression could be used
@@ -109,6 +109,11 @@ public:
     static std::string jsonio_section_name;
     static std::string logger_section_name;
 
+    /// Path to logger data (by default empty)
+    static std::string data_logger_directory;
+    static size_t log_file_size;
+    static size_t log_file_count;
+
     /// Constructor
     explicit JsonioSettings( const std::string& config_file_path );
     virtual ~JsonioSettings();
@@ -128,7 +133,7 @@ public:
 
     /// Get Directory path from Node
     /// "~" refers to the "UserHomeDirectoryPath" directory
-    std::string directoryPath( const std::string& jsonpath, const std::string& defvalue  ) const
+    std::string directoryPath( const std::string& jsonpath, const std::string& defvalue ) const
     {
         return top_section.directoryPath( jsonpath, defvalue);
     }
@@ -261,7 +266,8 @@ private:
     void add_file_sinks();
 
     /// Update/reread spdlog settings
-    bool updateLogger();
+    bool update_logger();
+    std::string with_directory(const std::string &logfile_name);
 };
 
 inline std::string common_section( const std::string& item )

@@ -7,46 +7,19 @@ file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/fail" DESTINATION "${CMAKE_CURRENT_BINARY
 include(CTest)
 enable_testing()
 find_package(Threads)
-#set(INSTALL_GTEST OFF)
 add_subdirectory(googletest REQUIRED)
 
 # -------------------------------------
 # Build test program
 # -------------------------------------
-
 add_executable(test_main  main.cpp )
 if(${CMAKE_CXX_COMPILER_ID} STREQUAL MSVC)
-      target_link_libraries( test_main
-            PUBLIC gtest
-            PUBLIC jsonio17-static
-            PUBLIC jsonarango-static
-            PRIVATE velocypack
-            PRIVATE libcurl
-            PUBLIC pthread )
-elseif(${CMAKE_CXX_COMPILER_ID} MATCHES "Clang")
-
-     target_link_libraries( test_main
-            PUBLIC gtest
-            PUBLIC jsonio17
-            PUBLIC jsonarango
-            PUBLIC velocypack
-            PUBLIC curl
-            PUBLIC pthread )
+  target_link_libraries(test_main gtest_main jsonio17::jsonio17-static Threads::Threads)
 else()
-      target_link_libraries( test_main
-           PUBLIC gtest
-           PUBLIC jsonio17
-           PUBLIC stdc++fs
-           PUBLIC jsonarango
-           PUBLIC velocypack
-           PUBLIC curl
-           PUBLIC pthread )
+  target_link_libraries(test_main gtest jsonio17::jsonio17 Threads::Threads)
 endif()
-#target_link_libraries(test_main gtest jsonio17 stdc++fs  jsonarango curl  velocypack pthread ${CMAKE_THREAD_LIBS_INIT} )
 
-target_include_directories(test_main PRIVATE
-${CMAKE_CURRENT_SOURCE_DIR}/../src
-)
+target_include_directories(test_main PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../src )
 
 add_test(NAME test_main COMMAND ./tests/test_main)
 
