@@ -22,7 +22,7 @@ if(BUILD_SHARED_LIBS)
     target_link_libraries(jsonio17 PUBLIC jsonarango::jsonarango)
 
     install( TARGETS jsonio17
-         EXPORT jsonioTargets DESTINATION "lib" COMPONENT libraries)
+         EXPORT jsonio17Targets DESTINATION "lib" COMPONENT libraries)
 
     # Install debug symbols
     if(MSVC)
@@ -42,7 +42,7 @@ if(BUILD_STATIC_LIBS)
     target_link_libraries(jsonio17-static PUBLIC jsonarango::jsonarango-static)
 
     install( TARGETS jsonio17-static
-            EXPORT jsonioTargets DESTINATION "lib" COMPONENT libraries)
+            EXPORT jsonio17Targets DESTINATION "lib" COMPONENT libraries)
 endif()
 
 install(

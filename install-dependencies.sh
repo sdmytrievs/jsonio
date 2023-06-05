@@ -59,6 +59,6 @@ test -f /usr/local/lib/libjsonarango.$EXTN || {
                  rm -rf ~/code
 }
 
-if [ `uname -s` == Linux* ];  then
+if [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
    sudo ldconfig
 fi

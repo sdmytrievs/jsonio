@@ -54,7 +54,7 @@ endif()
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 # Find all  dependencies
-include(jsonioFindDeps)
+include(jsonio17FindDeps)
 
 # Set the list of compiler flags for GNU compiler
 if(${CMAKE_CXX_COMPILER_ID} MATCHES "GNU")
@@ -121,5 +121,5 @@ if(BuildTests)
 endif()
 
 # Install the cmake config files that permit users to use find_package(jsonio17)
-include(jsonioInstallCMakeConfigFiles)
+include(jsonio17InstallCMakeConfigFiles)
 

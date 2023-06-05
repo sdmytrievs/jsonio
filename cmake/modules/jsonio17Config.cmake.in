@@ -6,7 +6,7 @@ list(APPEND CMAKE_PREFIX_PATH $ENV{CONDA_PREFIX})
 
 # Include the cmake targets of the project if they have not been yet.
 if(NOT TARGET jsonio17::jsonio17)
-    include("@PACKAGE_JSONIO_INSTALL_CONFIGDIR@/jsonioTargets.cmake")
+    include("@PACKAGE_JSONIO_INSTALL_CONFIGDIR@/jsonio17Targets.cmake")
 endif()
 
 # Recommended check at the end of a cmake config file.
