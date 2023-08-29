@@ -20,7 +20,8 @@ public:
 
     static DBSchemaDocument *newSchemaDocumentQuery( const DataBase& dbconnect, const std::string& aschema_name,
                                                      const std::string& collection_name,
-                                                     const DBQueryBase& query = DBQueryBase::emptyQuery()  );
+                                                     const DBQueryBase& query = DBQueryBase::emptyQuery(),
+                                                     const std::vector<std::string>& fields_list = {}  );
 
     static DBSchemaDocument* newSchemaDocument( const DataBase& dbconnect,
               const std::string& aschema_name, const std::string& collection_name  );
