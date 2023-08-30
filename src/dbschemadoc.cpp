@@ -5,13 +5,14 @@
 namespace jsonio17 {
 
 DBSchemaDocument *DBSchemaDocument::newSchemaDocumentQuery( const DataBase& dbconnect, const std::string& aschema_name,
-                                                            const std::string& collection_name, const DBQueryBase& query)
+                                                            const std::string& collection_name, const DBQueryBase& query,
+                                                            const std::vector<std::string>& fields_list)
 {
     if( aschema_name.empty() || collection_name.empty() )
         return nullptr;
     auto new_document =  new DBSchemaDocument( aschema_name, dbconnect, collection_name );
     // init internal selection block
-    new_document->setQuery( query );
+    new_document->setQuery( query, fields_list );
     return new_document;
 }
 
