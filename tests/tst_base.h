@@ -382,7 +382,11 @@ TEST( JsonioBase, ObjectAssignment)
     obj["formats"]["obj3"] = json::loads("{\"width\":30,\"precision\":15}");
     EXPECT_EQ( obj["formats"].size(), static_cast<size_t>(3) );
     EXPECT_EQ( obj["formats"]["obj3"].dump(true), "{\"width\":30,\"precision\":15}" );
-
+    obj["test"][0] = std::vector<double>{1,2,3};
+    EXPECT_EQ( obj["test"].dump(true), "[[1,2,3]]" );
+    obj["test"][0][3] = 6;
+    EXPECT_EQ( obj["test"].dump(true), "[[1,2,3,6]]" );
+    EXPECT_THROW( obj["test"][0][8] = 12, jsonio_exception );
 }
 
 TEST( JsonioBase, MapAssignment)
