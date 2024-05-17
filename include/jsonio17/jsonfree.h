@@ -81,6 +81,8 @@ public:
     /// Return a reference to arr[i] if this is an array, exception otherwise.
     JsonFree &operator[](size_t idx)
     {
+        if( isNull() )
+            update_node( JsonBase::Array, "" );
         if( isArray() || isObject()  )
         {
             return get_child( idx );
