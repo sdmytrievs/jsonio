@@ -255,6 +255,71 @@ TYPED_TEST( JsonioBaseTest, set_from )
     EXPECT_EQ( "{\"vbool\":false,\"vint\":15,\"vdouble\":-2.5,\"vstring\":\"New string\",\"vlist\":[17,27],\"vmap\":{\"newkey1\":\"val11\",\"newkey2\":\"val22\"}}", obj.toString(true) );
 }
 
+TYPED_TEST( JsonioBaseTest, set_value )
+{
+    auto& obj = *this->test_object;
+
+    obj["vbool"] = false;
+    obj["vint"] = 15;
+    obj["vdouble"] = -2.5;
+    obj["vstring"] = "New string";
+    obj["vlist"] = std::list<double>{ 17, 27 };
+    obj["vmap"] = std::map<std::string, std::string>{ {"newkey1", "val11" }, {"newkey2", "val22" } };
+
+    EXPECT_EQ( "{\"vbool\":false,\"vint\":15,\"vdouble\":-2.5,\"vstring\":\"New string\",\"vlist\":[17,27],\"vmap\":{\"newkey1\":\"val11\",\"newkey2\":\"val22\"}}", obj.toString(true) );
+}
+
+TYPED_TEST( JsonioBaseTest, set_null_value )
+{
+    auto& obj = *this->test_object;
+
+    obj["vbool"].set_null();
+    obj["vint"].set_null();
+    obj["vdouble"].set_null();
+    obj["vstring"].set_null();
+    obj["vlist"].set_null();
+    obj["vmap"].set_null();
+
+    EXPECT_TRUE( obj["vbool"].isNull() );
+    EXPECT_TRUE( obj["vint"].isNull() );
+    EXPECT_TRUE( obj["vdouble"].isNull() );
+    EXPECT_TRUE( obj["vstring"].isNull() );
+    EXPECT_TRUE( obj["vlist"].isNull() );
+    EXPECT_TRUE( obj["vmap"].isNull() );
+
+    EXPECT_EQ( "{\"vbool\":null,\"vint\":null,\"vdouble\":null,\"vstring\":null,\"vlist\":null,\"vmap\":null}", obj.toString(true) );
+}
+
+TYPED_TEST( JsonioBaseTest, loads_null_value )
+{
+    auto& obj = *this->test_object;
+    std::string null_json = "{\"vbool\":false,\"vint\":null,\"vdouble\":null,\"vstring\":\"New string\",\"vlist\":[17,null],\"vmap\":{\"newkey1\":\"val11\",\"newkey2\":null}}";
+    obj.loads(null_json);
+    EXPECT_TRUE( obj["vint"].isNull() );
+    EXPECT_TRUE( obj["vdouble"].isNull() );
+    EXPECT_FALSE( obj["vstring"].isNull() );
+    EXPECT_TRUE( obj["vlist"][1].isNull() );
+    EXPECT_TRUE( obj["vmap"]["newkey2"].isNull() );
+    EXPECT_EQ( null_json, obj.toString(true) );
+}
+
+TYPED_TEST( JsonioBaseTest, set_after_null_value )
+{
+    auto& obj = *this->test_object;
+    std::string null_json = "{\"vbool\":null,\"vint\":null,\"vdouble\":null,\"vstring\":null,\"vlist\":null,\"vmap\":null}";
+    obj.loads(null_json);
+
+    obj["vbool"] = false;
+    obj["vint"] = 15;
+    obj["vdouble"] = -2.5;
+    obj["vstring"] = "New string";
+    obj["vlist"] = std::list<double>{ 17, 27 };
+    obj["vmap"] = std::map<std::string, std::string>{ {"newkey1", "val11" }, {"newkey2", "val22" } };
+
+    EXPECT_EQ( "{\"vbool\":false,\"vint\":15,\"vdouble\":-2.5,\"vstring\":\"New string\",\"vlist\":[17,27],\"vmap\":{\"newkey1\":\"val11\",\"newkey2\":\"val22\"}}", obj.toString(true) );
+}
+
+
 TYPED_TEST( JsonioBaseTest, get_to_illegal_value )
 {
     auto& obj = *this->test_object;
