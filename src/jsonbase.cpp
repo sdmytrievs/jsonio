@@ -118,7 +118,9 @@ bool JsonBase::set_scalar_via_path(const std::string &jsonpath, const std::strin
                                 pobj->update_node(JsonBase::Double, v2string(dval));
                             else
                                 pobj->update_node(JsonBase::String, v2string(value));
+        return true;
     }
+    return false;
 }
 
 void JsonBase::set_oid(const std::string &oid )
