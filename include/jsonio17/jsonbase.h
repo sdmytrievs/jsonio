@@ -408,6 +408,16 @@ public:
         return false;
     }
 
+    /// Use jsonpath to modify any value in a JSON object.
+    /// The following jsonpath expression could be used
+    ///     "name1.name2.3.name3"
+    ///     "name1.name2[3].name3"
+    ///     "/name1/name2/3/name3"
+    ///     "/name1/name2[3]/name3"
+    ///     "[\"name1\"][\"name2\"][3][\"name3\"]"
+    /// @return true if jsonpath present in a JSON object.
+    virtual bool set_scalar_via_path(const std::string& jsonpath, const std::string& val);
+
     /// Return a reference to object[jsonpath] if an object can be create, exception otherwise.
     virtual JsonBase &add_object_via_path(const std::string &jsonpath) = 0;
 

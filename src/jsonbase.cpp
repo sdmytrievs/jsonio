@@ -91,6 +91,37 @@ std::string JsonBase::get_path() const
     }
 }
 
+bool JsonBase::set_scalar_via_path(const std::string &jsonpath, const std::string &value)
+{
+    long ival = 0;
+    double dval=0.;
+
+    auto pobj = field_add(jsonpath);
+    if( pobj ) {
+
+        if( value == "~" )
+            pobj->update_node(JsonBase::Null, "null");
+        else
+            if( value == "null" )
+                pobj->update_node(JsonBase::Null, "null");
+            else
+                if( value == "true" )
+                    pobj->update_node(JsonBase::Bool, "true");
+                else
+                    if( value == "false" )
+                        pobj->update_node(JsonBase::Bool, "false");
+                    else
+                        if( is<long>( ival, value ) )
+                            pobj->update_node(JsonBase::Int, v2string(ival));
+                        else
+                            if( is<double>( dval, value ))
+                                pobj->update_node(JsonBase::Double, v2string(dval));
+                            else
+                                pobj->update_node(JsonBase::String, v2string(value));
+        return true;
+    }
+    return false;
+}
 
 void JsonBase::set_oid(const std::string &oid )
 {

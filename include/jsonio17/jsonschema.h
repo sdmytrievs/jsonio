@@ -76,7 +76,7 @@ public:
         {
             return get_child( idx );
         }
-        JSONIO_THROW( "JsonSchema", 21, "cannot use operator[] with a numeric argument with " + std::string( typeName() ) );
+        JSONIO_THROW( "JsonSchema", 1, "cannot use operator[] with a numeric argument with " + std::string( typeName() ) );
     }
 
     /// Return a reference to arr[i] if this is an array, exception otherwise.
@@ -86,7 +86,7 @@ public:
         {
             return get_child( idx );
         }
-        JSONIO_THROW( "JsonSchema", 22, "cannot use operator[] with a numeric argument with " + std::string( typeName() ) );
+        JSONIO_THROW( "JsonSchema", 2, "cannot use operator[] with a numeric argument with " + std::string( typeName() ) );
     }
 
 
@@ -97,7 +97,7 @@ public:
         {
             return get_child( key );
         }
-        JSONIO_THROW( "JsonSchema", 23, "cannot use operator[] with a string argument with " + std::string( typeName() ) );
+        JSONIO_THROW( "JsonSchema", 3, "cannot use operator[] with a string argument with " + std::string( typeName() ) );
     }
 
     /// Return a reference to object[key] if this is an object, exception otherwise.
@@ -107,7 +107,7 @@ public:
         {
             return get_child( key );
         }
-        JSONIO_THROW( "JsonSchema", 24, "cannot use operator[] with a string argument with " + std::string( typeName() ) );
+        JSONIO_THROW( "JsonSchema", 4, "cannot use operator[] with a string argument with " + std::string( typeName() ) );
     }
 
     /// @brief returns an iterator to one past the last element.
@@ -179,7 +179,12 @@ public:
     /// Get json type from Object
     Type type() const override
     {
-        return  fieldtype2basetype( fieldType() );
+        if( getFieldValue()=="null") {
+            return Null;
+        }
+        else {
+            return fieldtype2basetype( fieldType() );
+        }
     }
 
     /// Get sizes of complex array ( 2D, 3D ... ).
@@ -199,7 +204,7 @@ public:
     /// Set up defval values if the JSON type of elements is primitive
     void array_resize_xD( const std::vector<size_t> &sizes, const std::string& defval ) override
     {
-        JSONIO_THROW_IF( !(isArray() || isMap()), "JsonBase", 11, "cannot resize not array data " + std::string( typeName() ) );
+        JSONIO_THROW_IF( !(isArray() || isMap()), "JsonBase", 5, "cannot resize not array data " + std::string( typeName() ) );
         resize_array_level( 0, sizes, defval  );
     }
 
@@ -422,7 +427,7 @@ private:
                      ( field_descrip == other.field_descrip && level_type == other.level_type)))  )
             {
                 if( use_exception )
-                    JSONIO_THROW( "JsonSchema", 10, "copy or move assignment unpossible"  );
+                    JSONIO_THROW( "JsonSchema", 6, "copy or move assignment unpossible"  );
                 else
                     return false;
             }
@@ -433,14 +438,14 @@ private:
     /// Test if assignment of value is possible
     bool test_assign_value( JsonBase::Type atype, bool use_exception = true  )
     {
-        auto obj_type = type();
+        auto obj_type = fieldtype2basetype( fieldType() );
         if( !( obj_type == atype ||
-               atype == Null ||
+               atype == Type::Null ||
                ( ( obj_type == Type::Int || obj_type == Type::Double ) &&
                  ( atype == Type::Int || atype == Type::Double ) ) ) )
         {
             if( use_exception )
-                JSONIO_THROW( "JsonSchema", 11, getKey() + " assignment of value of type is unpossible " + std::string( typeName() ) );
+                JSONIO_THROW( "JsonSchema", 7, getKey() + " assignment of value of type is unpossible " + std::string( typeName() ) );
             else
                 return false;
         }
@@ -452,7 +457,7 @@ private:
     /// Generate default children list for structure
     void struct2model( const StructDef * const strDef );
     /// Change current value from json string value
-    void set_value(const std::string &value);
+    void set_value(JsonBase::Type atype, const std::string &value);
 
     /// Set default value
     void set_default_value()
