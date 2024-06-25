@@ -159,6 +159,19 @@ JsonFree &JsonFree::add_array_via_path(const std::string &jsonpath)
     JSONIO_THROW( "JsonBase", 21, "cannot create array with jsonpath " + std::string( jsonpath ) );
 }
 
+void JsonFree::placehold_null()
+{
+    for( auto& child:  children ) {
+        if(child->isNull()) {
+            child->update_node(String, "---");
+        }
+        else {
+           child->placehold_null();
+        }
+
+    }
+}
+
 // key and parent not changed
 void JsonFree::copy(const JsonFree &obj)
 {

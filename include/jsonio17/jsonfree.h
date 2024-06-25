@@ -176,6 +176,8 @@ public:
     /// Return a reference to object[jsonpath] if an array can be create, exception otherwise.
     JsonFree &add_array_via_path(const std::string &jsonpath) override;
 
+    void placehold_null();
+
 protected:
 
     // Get methods ( using in Qt GUI model ) --------------------------
