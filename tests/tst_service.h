@@ -36,6 +36,8 @@ TEST( JsonioService, regexpExtract )
                 "\"limitsTP\":null,\"m_compressibility\":10,\"m_expansivity\":null,\"name\":\"Al(OH)4-\",\"reaction\":null,",
                 "(?!,)[^,\n]+(?=null,)" );
     EXPECT_EQ( "[ \"\\\"limitsTP\\\":\", \"\\\"m_expansivity\\\":\", \"\\\"reaction\\\":\" ]", json::dump(tokens) );
+    tokens = regexp_extract( " \"aaa\", \"bbb\", \"ccc\" ", "[^\",\\s]+" );
+    EXPECT_EQ( "[ \"aaa\", \"bbb\", \"ccc\" ]", json::dump(tokens) );
 
 }
 
