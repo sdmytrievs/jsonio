@@ -116,6 +116,12 @@ void JsonioSettings::readSchemaDir(const std::string &dir_path)
     DataBase::update_from_schema( schema.allStructs() );
 }
 
+void JsonioSettings::addSchemaFile(const std::string &file_path)
+{
+    schema.addSchemaFile( schema_thrift, file_path );
+    DataBase::update_from_schema( schema.allStructs() );
+}
+
 std::shared_ptr<spdlog::logger> JsonioSettings::get_logger(const std::string &module)
 {
   auto pattern = logger_section.value<std::string>("pattern", "[%n] [%^%l%$] %v");

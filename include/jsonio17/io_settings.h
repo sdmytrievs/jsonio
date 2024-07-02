@@ -218,6 +218,7 @@ public:
     /// @param pattern     the pattern to set
     void set_pattern(const std::string &pattern);
 
+    void addSchemaFile(const std::string &file_path);
 private:
 
     /// Internal Data File
