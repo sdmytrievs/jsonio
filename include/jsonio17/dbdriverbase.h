@@ -44,6 +44,8 @@ public:
     virtual ~AbstractDBDriver()
     {}
 
+    virtual AbstractDBDriver *clone(const std::string& new_db_name) = 0;
+
     // Collections API
 
     /// Create collection if no exist

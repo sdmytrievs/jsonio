@@ -14,6 +14,10 @@ namespace jsonio17 {
 /// Get settings data from ison section
 arangocpp::ArangoDBConnection getFromSettings( const SectionSettings& section, bool rootdata );
 
+/// Service function for creating a database for local ArangoDB
+void create_ArangoDB_local_database_if_no_exist(const std::string &db_url, const std::string &db_user,
+                                       const std::string &user_passwd, const std::string &db_name);
+
 /// Implementation of Database Driver using Low-Level C++ Driver for ArangoDB.
 class ArangoDBClient: public AbstractDBDriver
 {
@@ -23,11 +27,15 @@ public:
     ///  Constructor
     ArangoDBClient();
 
-    /// Constructor
-    explicit ArangoDBClient( const arangocpp::ArangoDBConnection& aconnect_data ):AbstractDBDriver()
+    /// Constructor for connection data
+    explicit ArangoDBClient(const arangocpp::ArangoDBConnection& aconnect_data): AbstractDBDriver()
     {
-        reset_db_connection( aconnect_data );
+        reset_db_connection(aconnect_data);
     }
+
+    /// Constructor for minimum connection data
+    explicit ArangoDBClient(const std::string &db_url, const std::string &db_user,
+                            const std::string &user_passwd, const std::string &db_name);
 
     ///  Destructor
     ~ArangoDBClient()
@@ -35,6 +43,8 @@ public:
 
     /// ArangoDB connection data
     const arangocpp::ArangoDBConnection& connect_data() const;
+
+    AbstractDBDriver *clone(const std::string& new_db_name) override;
 
     // Collections API
 

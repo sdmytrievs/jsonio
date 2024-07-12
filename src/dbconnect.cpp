@@ -59,6 +59,15 @@ void DataBase::update_from_schema( const schemas_t &schema_data )
     }
 }
 
+DataBase::DataBase(const std::string &db_url, const std::string &db_user,
+                   const std::string &user_passwd, const std::string &db_name):
+    current_driver(nullptr), collections_list(),
+    driver_mutex(), collections_mutex()
+{
+    std::shared_ptr<AbstractDBDriver> db_driver(new ArangoDBClient(db_url, db_user, user_passwd, db_name));
+    updateDriver(db_driver);
+}
+
 DataBase::DataBase():
     current_driver(nullptr), collections_list(),
     driver_mutex(), collections_mutex()
@@ -93,6 +102,5 @@ std::shared_ptr<DBCollection> DataBase::add_collection( const std::string& colna
     }
     return col_ptr;
 }
-
 
 } // namespace jsonio17
