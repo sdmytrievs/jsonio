@@ -40,9 +40,23 @@ ArangoDBClient::ArangoDBClient():AbstractDBDriver()
     reset_db_connection( aconnect_data );
 }
 
+ArangoDBClient::ArangoDBClient(const std::string &db_url, const std::string &db_user,
+                               const std::string &user_passwd, const std::string &db_name): AbstractDBDriver()
+{
+    arangocpp::ArangoDBConnection aconnect_data(db_url, db_user, user_passwd, db_name);
+    reset_db_connection(aconnect_data);
+}
+
 const arangocpp::ArangoDBConnection &ArangoDBClient::connect_data() const
 {
     return *arando_connect.get();
+}
+
+AbstractDBDriver *ArangoDBClient::clone(const std::string &new_db_name)
+{
+    auto connection_data = connect_data();
+    connection_data.databaseName = new_db_name;
+    return new ArangoDBClient{connection_data};
 }
 
 void ArangoDBClient::reset_db_connection( const arangocpp::ArangoDBConnection& aconnect_data )
@@ -277,5 +291,22 @@ bool ArangoDBClient::is_comlex_fields( const std::set<std::string>& queryFields)
     return false;
 }
 
+void create_ArangoDB_local_database_if_no_exist(const std::string &db_url,  const std::string &db_user,
+                                       const std::string &user_passwd, const std::string &db_name)
+{
+    if(db_url.find("localhost")) {
+        try {
+            arangocpp::ArangoDBConnection local_root{db_url, db_user, user_passwd, "_system"};
+            std::shared_ptr<arangocpp::ArangoDBRootClient> root_client(new arangocpp::ArangoDBRootClient{local_root});
+            if(!root_client->existDatabase(db_name)) {
+                root_client->createDatabase(db_name);
+            }
+        }
+        catch(std::exception& e)
+        {
+            io_logger->error("Exception when creating local database {}, if they do not exist {}", db_name, e.what());
+        }
+    }
+}
 
 } // namespace jsonio17

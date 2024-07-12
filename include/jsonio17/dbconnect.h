@@ -115,6 +115,10 @@ public:
 
     static void update_from_schema( const schemas_t& schema_data );
 
+    /// Constructor use define database vendor.
+    DataBase(const std::string &db_url, const std::string &db_user,
+             const std::string &user_passwd, const std::string &db_name);
+
     /// Constructor use specific database vendor.
     DataBase( std::shared_ptr<AbstractDBDriver> db_driver ):
         current_driver(nullptr), collections_list(),
@@ -122,11 +126,17 @@ public:
     {
         updateDriver( db_driver );
     }
+
     ///  Constructor used internal ArangoDBClient
     DataBase();
 
     /// Destructor
     virtual ~DataBase();
+
+    virtual std::shared_ptr<DataBase> clone(const std::string& new_db_name) {
+       std::shared_ptr<AbstractDBDriver> new_driver{theDriver()->clone(new_db_name)};
+       return std::make_shared<jsonio17::DataBase>(new_driver);
+    }
 
     ///  Switch to the specified database driver (provided it exists and the user can connect to it).
     ///  From this point on, any following action in the same shell or connection will use the specified database.
