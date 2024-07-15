@@ -319,6 +319,18 @@ TYPED_TEST( JsonioBaseTest, set_after_null_value )
     EXPECT_EQ( "{\"vbool\":false,\"vint\":15,\"vdouble\":-2.5,\"vstring\":\"New string\",\"vlist\":[17,27],\"vmap\":{\"newkey1\":\"val11\",\"newkey2\":\"val22\"}}", obj.toString(true) );
 }
 
+TYPED_TEST( JsonioBaseTest, loads_empty_value )
+{
+    auto& obj = *this->test_object;
+    std::string empty_json = "{\"vbool\":false,\"vint\":0,\"vdouble\":0,\"vstring\":\"\",\"vlist\":[],\"vmap\":{}}";
+    obj.loads(empty_json);
+    EXPECT_FALSE( obj["vint"].isNull() );
+    EXPECT_FALSE( obj["vdouble"].isNull() );
+    EXPECT_FALSE( obj["vstring"].isNull() );
+    EXPECT_TRUE( obj["vlist"].isArray() );
+    EXPECT_TRUE( obj["vmap"].isObject() );
+    EXPECT_EQ( empty_json, obj.toString(true) );
+}
 
 TYPED_TEST( JsonioBaseTest, get_to_illegal_value )
 {
