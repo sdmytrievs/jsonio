@@ -18,6 +18,8 @@ std::vector<std::string> regexp_extract(const std::string& str, std::string rgx_
 std::string regexp_replace(const std::string& instr, const std::string& rgx_str, const std::string& replacement );
 ///  Returns true whether the string matches the regular expression.
 bool regexp_test(const std::string& str, std::string rgx_str);
+///  Function that can be used to replace text.
+std::string string_replace_all(const std::string& instr, const std::string& replace_from, const std::string& replace_to);
 
 //// Extract the string value from data.
 std::string regexp_extract_string( const std::string& regstr, const std::string& data );

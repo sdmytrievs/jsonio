@@ -57,6 +57,18 @@ std::string regexp_replace(const std::string& instr, const std::string& rgx_str,
    return output_str;
 }
 
+//  Function that can be used to replace text.
+std::string string_replace_all(const std::string& instr, const std::string& replace_from, const std::string& replace_to)
+{
+    auto output_str = instr;
+    size_t pos = output_str.find(replace_from);
+    while (pos != std::string::npos) {
+        output_str.replace(pos, replace_from.size(), replace_to);
+        pos = output_str.find(replace_from, pos + replace_to.size());
+    }
+    return output_str;
+}
+
 // Extract the string value from string
 std::string regexp_extract_string( const std::string& regstr, const std::string& data )
 {
