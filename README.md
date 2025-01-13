@@ -1,42 +1,42 @@
-## JSONIO17 
+## JSONIO 
 
 
-Jsonio17 library and API for creating structured data exchange interfaces (in RAM, via files, and using ArangoDB remote and local instances). 
+Jsonio library and API for creating structured data exchange interfaces (in RAM, via files, and using ArangoDB remote and local instances). 
 The data munging is based on JSON schemas connected with the internal JSONDOM object. A JSON schema can be easily generated from a Thrift data structure definition (.thrift file) for a given structured data type.
 
 
-### What Jsonio17 does? 
+### What Jsonio does? 
 
 
-* Jsonio17 implements the rendering to/from file or text stream into ArangoDB and/or JSON format. 
-* Jsonio17 can also be used for connecting any user-defined C++ data structures to a GUI editor widget and graphics (using the JSONUI17 widget API).
+* Jsonio implements the rendering to/from file or text stream into ArangoDB and/or JSON format. 
+* Jsonio can also be used for connecting any user-defined C++ data structures to a GUI editor widget and graphics (using the JSONUI widget API).
 * JSONIO is written in C/C++ using open-source library Velocypack from ArangoDB.
 * Version: currently 0.1.
 * Will be distributed as is (no liability) under the terms of Lesser GPL v.3 license. 
 
-### Why use Jsonio17? 
+### Why use Jsonio? 
 
-Advantages of the Jsonio17 JSON parser:
+Advantages of the Jsonio JSON parser:
 
 * Full support of JSON schemas (the same API can be used for schemaless and for schema-related JSON documents).
 * Fixed order of JSON object keys in the document (convenient for rendering in GUIs and comparing dump JSON output).
-* Comprises the basis of JSONUI17 GUI widgets for editing and viewing schema-related and schemaless JSON documents kept in NoSQL databases such as ArangoDB.
+* Comprises the basis of JSONUI GUI widgets for editing and viewing schema-related and schemaless JSON documents kept in NoSQL databases such as ArangoDB.
 
 
-### How to get Jsonio17 source code
+### How to get Jsonio source code
 
-* In your home directory, make a folder named e.g. ~/jsonio17.
-* cd ~/jsonio17 and clone this repository from https://bitbucket.org/gems4/jsonio17.git  using a preinstalled free git client SourceTree or SmartGit (the best way on Windows). 
+* In your home directory, make a folder named e.g. ~/jsonio.
+* cd ~/jsonio and clone this repository from https://github.com/sdmytrievs/jsonio.git  using a preinstalled free git client SourceTree or SmartGit (the best way on Windows). 
 * Alternatively on Mac OS X or linux, open a terminal and type in the command line (do not forget a period):
 
 ```sh
-git clone https://bitbucket.org/gems4/jsonio17.git . 
+git clone https://github.com/sdmytrievs/jsonio.git . 
 
 ```
 
-### How to install the Jsonio17 library  Ubuntu and MacOS
+### How to install the Jsonio library  Ubuntu and MacOS
 
- Building Jsonio17 requires g++, [CMake](http://www.cmake.org/), Velocypack, jsonArango.
+ Building Jsonio requires g++, [CMake](http://www.cmake.org/), arango-cpp.
 
 * Make sure you have g++, cmake and git installed. If not, install them. 
 
@@ -54,25 +54,25 @@ sudo apt-get install g++ cmake git libssl-dev libtool byacc flex
 
 ```sh
 #!bash
-cd ~/jsonio17
+cd ~/jsonio
 sudo ./install-dependencies.sh
 ```
 
-* Install the Jsonio17 library
+* Install the Jsonio library
 
 Then navigate to the directory where this README.md file is located and type in terminal:
 
 ```sh
-cd ~/jsonio17
+cd ~/jsonio
 sudo ./install.sh
 ```
 
 * After that, headers, library  and the third-party libraries can be found in /usr/local/{include,lib}. 
 
-* Install current version of ArangoDB server locally ( see [jsonArango](https://bitbucket.org/gems4/jsonarango/src/master/) ).
+* Install current version of ArangoDB server locally ( see [arango-cpp](https://github.com/sdmytrievs/arango-cpp.git/) ).
 
 
-### How to use Jsonio17 (use cases) 
+### How to use Jsonio (use cases) 
 
 * Files parse example
 
@@ -121,14 +121,14 @@ int main(int argc, char* argv[])
 
 int main(int, char* [])
 {
-    JsonioSettings::settingsFileName = "jsonio17-config.json";
+    JsonioSettings::settingsFileName = "jsonio-config.json";
     // Test collection name
     std::string collectionName = "test";
     int numOfDocuments =  10;
 
     try{
 
-        // Connect to Arangodb ( load settings from "jsonio17-config.json" config file )
+        // Connect to Arangodb ( load settings from "jsonio-config.json" config file )
         DataBase db;
         // Open collection, if document collection collectionName not exist it would be created
         auto coll= db.collection( collectionName );

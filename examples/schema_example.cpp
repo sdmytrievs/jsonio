@@ -1,12 +1,12 @@
 #include <iostream>
-#include "jsonio17/jsonschema.h"
-#include "jsonio17/jsondump.h"
-#include "jsonio17/schema_thrift.h"
-#include "jsonio17/io_settings.h"
+#include "jsonio/jsonschema.h"
+#include "jsonio/jsondump.h"
+#include "jsonio/schema_thrift.h"
+#include "jsonio/io_settings.h"
 #include "tests/example_schema.h"
 
 using namespace std;
-using namespace jsonio17;
+using namespace jsonio;
 
 void SimpleSchema()
 {

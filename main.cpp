@@ -14,15 +14,15 @@ using namespace std;
 // https://qtcreator.gres.biz/page/gtest/#%D1%81%D0%BA%D0%B0%D1%87%D0%B0%D1%82%D1%8C
 // https://doc.qt.io/qtcreator/creator-autotest.html
 
-#include "jsonio17/jsonfree.h"
-#include "jsonio17/jsonschema.h"
-#include "jsonio17/jsondump.h"
-#include "jsonio17/service.h"
-#include "jsonio17/schema_thrift.h"
-#include "jsonio17/io_settings.h"
+#include "jsonio/jsonfree.h"
+#include "jsonio/jsonschema.h"
+#include "jsonio/jsondump.h"
+#include "jsonio/service.h"
+#include "jsonio/schema_thrift.h"
+#include "jsonio/io_settings.h"
 #include "tests/example_schema.h"
 
-using namespace jsonio17;
+using namespace jsonio;
 
 /// STL-like access
 void AccesstoObjectError();

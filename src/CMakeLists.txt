@@ -1,6 +1,6 @@
 
 # Recursively collect all header files from the current directory
-file(GLOB_RECURSE HEADER_FILES_TOP  ${CMAKE_SOURCE_DIR}/include/jsonio17/*.h )
+file(GLOB_RECURSE HEADER_FILES_TOP  ${CMAKE_SOURCE_DIR}/include/jsonio/*.h )
 
 # Recursively collect all header files from the current directory
 file(GLOB_RECURSE HEADER_FILES  *.h )
@@ -9,25 +9,25 @@ file(GLOB_RECURSE HEADER_FILES  *.h )
 file(GLOB_RECURSE SOURCE_FILES  *.cpp )
 
 # Create the shared library using the collected source files
-#add_library(JSONIO17_OBJECTS OBJECT ${HEADER_FILES} ${SOURCE_FILES} )
+#add_library(JSONIO_OBJECTS OBJECT ${HEADER_FILES} ${SOURCE_FILES} )
 
 # Check if a shared library is to be built
 if(BUILD_SHARED_LIBS)
     # Enable automatic creation of a module definition (.def) file for a SHARED library on Windows.
     set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS TRUE)
 
-    #add_library(jsonio17 SHARED $<TARGET_OBJECTS:JSONIO17_OBJECTS>)
-    add_library(jsonio17 SHARED ${HEADER_FILES} ${SOURCE_FILES})
-    add_library(jsonio17::jsonio17 ALIAS jsonio17)
-    target_link_libraries(jsonio17 PUBLIC jsonarango::jsonarango)
+    #add_library(jsonio SHARED $<TARGET_OBJECTS:JSONIO_OBJECTS>)
+    add_library(jsonio SHARED ${HEADER_FILES} ${SOURCE_FILES})
+    add_library(jsonio::jsonio ALIAS jsonio)
+    target_link_libraries(jsonio PUBLIC arango-cpp::arango-cpp)
 
-    install( TARGETS jsonio17
-         EXPORT jsonio17Targets DESTINATION "lib" COMPONENT libraries)
+    install( TARGETS jsonio
+         EXPORT jsonioTargets DESTINATION "lib" COMPONENT libraries)
 
     # Install debug symbols
     if(MSVC)
        install(
-             FILES $<TARGET_PDB_FILE:jsonio17>
+             FILES $<TARGET_PDB_FILE:jsonio>
              DESTINATION ${CMAKE_INSTALL_BINDIR}
              COMPONENT libraries
              OPTIONAL)
@@ -36,17 +36,17 @@ endif()
 
 # Check if a static library is to be built
 if(BUILD_STATIC_LIBS)
-    #add_library(jsonio17-static STATIC  $<TARGET_OBJECTS:JSONIO17_OBJECTS>)
-    add_library(jsonio17-static STATIC ${HEADER_FILES} ${SOURCE_FILES})
-    add_library(jsonio17::jsonio17-static ALIAS jsonio17-static)
-    target_link_libraries(jsonio17-static PUBLIC jsonarango::jsonarango-static)
+    #add_library(jsonio-static STATIC  $<TARGET_OBJECTS:JSONIO_OBJECTS>)
+    add_library(jsonio-static STATIC ${HEADER_FILES} ${SOURCE_FILES})
+    add_library(jsonio::jsonio-static ALIAS jsonio-static)
+    target_link_libraries(jsonio-static PUBLIC arango-cpp::arango-cpp)
 
-    install( TARGETS jsonio17-static
-            EXPORT jsonio17Targets DESTINATION "lib" COMPONENT libraries)
+    install( TARGETS jsonio-static
+            EXPORT jsonioTargets DESTINATION "lib" COMPONENT libraries)
 endif()
 
 install(
-    DIRECTORY   "${JSONIO17_HEADER_DIR}/jsonio17"
+    DIRECTORY   "${JSONIO_HEADER_DIR}/jsonio"
     DESTINATION include
 )
                   

@@ -8,10 +8,10 @@
 #include <unordered_set>
 #include <forward_list>
 
-#include "jsonio17/jsondump.h"
+#include "jsonio/jsondump.h"
 
 using namespace testing;
-using namespace jsonio17;
+using namespace jsonio;
 
 TEST( JsonioDump, dumpValue )
 {

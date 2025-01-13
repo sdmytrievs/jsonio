@@ -17,7 +17,7 @@ conda update -q conda
 conda config --set ssl_verify false || exit 1
 conda info -a
 conda devenv
-source activate jsonio17
+source activate jsonio
 ./conda-install-dependencies.sh
 mkdir build
 cd build

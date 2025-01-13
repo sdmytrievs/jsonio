@@ -1,14 +1,14 @@
-#include "jsonio17/io_settings.h"
-#include "jsonio17/schema_thrift.h"
-#include "jsonio17/dbconnect.h"
+#include "jsonio/io_settings.h"
+#include "jsonio/schema_thrift.h"
+#include "jsonio/dbconnect.h"
 #include <spdlog/sinks/stdout_color_sinks.h>
 #include <spdlog/sinks/rotating_file_sink.h>
 
 
-namespace jsonio17 {
+namespace jsonio {
 
 const std::string version = "v1.0";
-std::string JsonioSettings::settingsFileName = "jsonio17-config.json";
+std::string JsonioSettings::settingsFileName = "jsonio-config.json";
 std::string JsonioSettings::jsonio_section_name = "jsonio";
 std::string JsonioSettings::logger_section_name = "log";
 std::string JsonioSettings::data_logger_directory = "";
@@ -179,7 +179,7 @@ bool JsonioSettings::update_logger()
     data_logger_directory = logger_section.value<std::string>("logs-directory", data_logger_directory);
     auto module_names = logger_section.value<std::vector<std::string>>("modules", {});
     if(module_names.empty() ) {
-        get_logger("jsonio17");
+        get_logger("jsonio");
         get_logger("jsonarango");
     }
     else {

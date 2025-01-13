@@ -16,7 +16,7 @@ conda install conda-devenv
 conda update -q conda
 conda info -a
 conda devenv
-source activate jsonio17
+source activate jsonio
 ./conda-install-dependencies.sh
 mkdir build
 cd build

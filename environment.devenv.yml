@@ -1,4 +1,4 @@
-name: jsonio17
+name: jsonio
 
 dependencies:
   - gxx_linux-64>=9.4.0  # [linux]

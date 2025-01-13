@@ -1,8 +1,8 @@
 
-#include "jsonio17/traversal.h"
-#include "jsonio17/dbconnect.h"
+#include "jsonio/traversal.h"
+#include "jsonio/dbconnect.h"
 
-namespace jsonio17 {
+namespace jsonio {
 
 GraphTraversal::GraphTraversal( const DataBase& dbconnect )
 {
@@ -104,4 +104,4 @@ void GraphTraversal::restoreGraphFromFile( const std::string& file_path )
 }
 
 
-} // namespace jsonio17
+} // namespace jsonio

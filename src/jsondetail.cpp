@@ -1,9 +1,9 @@
 #include <iomanip>
-#include "jsonio17/jsondetail.h"
-#include "jsonio17/service.h"
-#include "jsonio17/exceptions.h"
+#include "jsonio/jsondetail.h"
+#include "jsonio/service.h"
+#include "jsonio/exceptions.h"
 
-namespace jsonio17 {
+namespace jsonio {
 
 int DetailSettings::doublePrecision = 15;
 int DetailSettings::floatPrecision = 7;
@@ -122,4 +122,4 @@ std::queue<std::string> split(const std::string& str, const std::string& delimit
 }
 
 
-} // namespace jsonio17
+} // namespace jsonio

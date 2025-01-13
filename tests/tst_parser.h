@@ -2,13 +2,13 @@
 
 #include <gtest/gtest.h>
 
-#include "jsonio17/jsonfree.h"
-#include "jsonio17/service.h"
-#include "jsonio17/txt2file.h"
-#include "jsonio17/jsondump.h"
+#include "jsonio/jsonfree.h"
+#include "jsonio/service.h"
+#include "jsonio/txt2file.h"
+#include "jsonio/jsondump.h"
 
 using namespace testing;
-using namespace jsonio17;
+using namespace jsonio;
 
 const char* const test_free_str = R"([
                                   "JSON Test Pattern pass1",

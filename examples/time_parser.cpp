@@ -1,9 +1,9 @@
 #include <iostream>
 #include <chrono>
 
-#include "jsonio17/jsondump.h"
-#include "jsonio17/txt2file.h"
-#include "jsonio17/jsonfree.h"
+#include "jsonio/jsondump.h"
+#include "jsonio/txt2file.h"
+#include "jsonio/jsonfree.h"
 
 #include <velocypack/Parser.h>
 
@@ -15,19 +15,19 @@ void usage( const std::string& progname )
     std::cout <<  "Usage: " << progname << " [j|v|n] <directory> " << std::endl;
 }
 
-int jsonio17_parse_test( const std::vector<std::string>& json_files )
+int jsonio_parse_test( const std::vector<std::string>& json_files )
 {
     for( auto file: json_files)
     {
         try{
-            auto json_data = jsonio17::read_ascii_file( file );
+            auto json_data = jsonio::read_ascii_file( file );
             //std::cout <<  "\nStart: " << file << "'" << json_data<< "'\n";
 
-            auto jsFree =  jsonio17::json::loads( json_data );
+            auto jsFree =  jsonio::json::loads( json_data );
             //std::cout <<  "Pass: " <<  " Result: "  <<  jsFree.dump(true) <<  std::endl;
             std::cout <<  "Pass: " <<  file <<  std::endl;
         }
-        catch( jsonio17::jsonio_exception& e )
+        catch( jsonio::jsonio_exception& e )
         {
             std::cout << "Fail: " << file <<  "  Exeption: "  <<  e.what() <<  std::endl;
         }
@@ -44,7 +44,7 @@ int velocypack_parse_test( const std::vector<std::string>& json_files )
     for( auto file: json_files)
     {
         try{
-            auto json_data = jsonio17::read_ascii_file( file );
+            auto json_data = jsonio::read_ascii_file( file );
             //std::cout <<  "\nStart: " << file << "'" << json_data<< "'\n";
 
             auto data = ::arangodb::velocypack::Parser::fromJson( json_data );
@@ -68,7 +68,7 @@ int nlohmann_parse_test( const std::vector<std::string>& json_files )
     for( auto file: json_files)
     {
         try{
-            auto json_data = jsonio17::read_ascii_file( file );
+            auto json_data = jsonio::read_ascii_file( file );
             //std::cout <<  "\nStart: " << file << "'" << json_data<< "'\n";
 
             auto data = nlohmann::json::parse( json_data );
@@ -121,12 +121,12 @@ int main(int argc, char* argv[])
         }
 
         // test all json files into directory
-        auto json_files =  jsonio17::files_into_directory( test_dir, ".json" );
+        auto json_files =  jsonio::files_into_directory( test_dir, ".json" );
 
         auto start = std::chrono::high_resolution_clock::now();
         switch( parser )
         {
-        case 'j':  jsonio17_parse_test( json_files );
+        case 'j':  jsonio_parse_test( json_files );
             break;
         case 'v':  velocypack_parse_test( json_files );
             break;

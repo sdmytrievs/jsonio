@@ -1,11 +1,11 @@
 #include <algorithm>
 #include <ctime>
-#include "jsonio17/jsonschema.h"
-#include "jsonio17/jsonbuilder.h"
-#include "jsonio17/io_settings.h"
+#include "jsonio/jsonschema.h"
+#include "jsonio/jsonbuilder.h"
+#include "jsonio/io_settings.h"
 
 
-namespace jsonio17 {
+namespace jsonio {
 
 
 JsonSchema JsonSchema::object( const std::string &schema_name )
@@ -617,4 +617,4 @@ void JsonSchema::set_current_time()
     set_value_via_path( "second", time_now->tm_sec );
 }
 
-} // namespace jsonio17
+} // namespace jsonio

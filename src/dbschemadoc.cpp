@@ -1,8 +1,8 @@
-#include "jsonio17/dbschemadoc.h"
-#include "jsonio17/jsondump.h"
-#include "jsonio17/io_settings.h"
+#include "jsonio/dbschemadoc.h"
+#include "jsonio/jsondump.h"
+#include "jsonio/io_settings.h"
 
-namespace jsonio17 {
+namespace jsonio {
 
 DBSchemaDocument *DBSchemaDocument::newSchemaDocumentQuery( const DataBase& dbconnect, const std::string& aschema_name,
                                                             const std::string& collection_name, const DBQueryBase& query,
@@ -131,7 +131,7 @@ void DBSchemaDocument::update_query()
 
         collection_from->selectQuery( query_result->condition(), setfnc );
     }
-    catch(jsonio17::jsonio_exception& e)
+    catch(jsonio::jsonio_exception& e)
     {
         io_logger->error("Update query jsonio_exception: {}", e.what());
     }
@@ -194,4 +194,4 @@ field_value_map_t DBSchemaDocument::extract_fields(const std::vector<std::string
 }
 
 
-} // namespace jsonio17
+} // namespace jsonio

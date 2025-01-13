@@ -7,13 +7,13 @@
 #include <unistd.h>
 #endif
 
-#include "jsonio17/txt2file.h"
-#include "jsonio17/jsonfree.h"
+#include "jsonio/txt2file.h"
+#include "jsonio/jsonfree.h"
 
 #include <filesystem>
 namespace fs = std::filesystem;
 
-namespace jsonio17 {
+namespace jsonio {
 
 
 // Get home directory in Linux, C++
@@ -331,4 +331,4 @@ std::string JsonArrayFile::getString()
 }
 
 
-} // namespace jsonio17
+} // namespace jsonio

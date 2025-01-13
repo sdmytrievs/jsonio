@@ -1,9 +1,9 @@
-#include "jsonio17/jsonbase.h"
-#include "jsonio17/dbvertexdoc.h"
-#include "jsonio17/jsonfree.h"
-#include "jsonio17/jsondump.h"
+#include "jsonio/jsonbase.h"
+#include "jsonio/dbvertexdoc.h"
+#include "jsonio/jsonfree.h"
+#include "jsonio/jsondump.h"
 
-namespace jsonio17 {
+namespace jsonio {
 
 
 
@@ -232,7 +232,7 @@ void DBCollection::loadCollectionFile(  const std::set<std::string>& query_field
         };
         db_driver()->all_query( name(), query_fields, setfnc );
     }
-    catch(jsonio17::jsonio_exception& e)
+    catch(jsonio::jsonio_exception& e)
     {
         io_logger->warn("loadCollectionFile jsonio_exception: {}", e.what());
     }
@@ -324,5 +324,5 @@ bool DBCollection::is_allowed( const std::string &akey ) const
 }
 
 
-} // namespace jsonio17
+} // namespace jsonio
 

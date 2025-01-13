@@ -1,9 +1,9 @@
-#include "jsonio17/dbdocument.h"
-#include "jsonio17/dbconnect.h"
-#include "jsonio17/jsonfree.h"
-#include "jsonio17/jsondump.h"
+#include "jsonio/dbdocument.h"
+#include "jsonio/dbconnect.h"
+#include "jsonio/jsonfree.h"
+#include "jsonio/jsondump.h"
 
-namespace jsonio17 {
+namespace jsonio {
 
 
 // Default configuration of the Data Base
@@ -205,4 +205,4 @@ std::vector<std::string> DBDocumentBase::getKeysByQuery(DBQueryBase &&query) con
 }
 
 
-} // namespace jsonio17
+} // namespace jsonio

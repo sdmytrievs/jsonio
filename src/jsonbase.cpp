@@ -1,8 +1,8 @@
 #include <iomanip>
-#include "jsonio17/jsondump.h"
-#include "jsonio17/jsonparser.h"
+#include "jsonio/jsondump.h"
+#include "jsonio/jsonparser.h"
 
-namespace jsonio17 {
+namespace jsonio {
 
 
 std::ostream &operator<<( std::ostream &os, const JsonBase &obj )
@@ -338,4 +338,4 @@ std::string JsonBase::checked_value( JsonBase::Type type, const std::string& new
     return chvalue;
 }
 
-} // namespace jsonio17
+} // namespace jsonio

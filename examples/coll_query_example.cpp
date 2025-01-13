@@ -1,11 +1,11 @@
 /// Test example for ArangoDBCollectionAPI the API for manipulating collections and documents into.
 
 #include <iostream>
-#include "jsonio17/jsonfree.h"
-#include "jsonio17/dbcollection.h"
-#include "jsonio17/dbquerybase.h"
-#include "jsonio17/io_settings.h"
-using namespace jsonio17;
+#include "jsonio/jsonfree.h"
+#include "jsonio/dbcollection.h"
+#include "jsonio/dbquerybase.h"
+#include "jsonio/io_settings.h"
+using namespace jsonio;
 
 void printData( const std::string&  title, const std::vector<std::string>& values );
 
@@ -21,7 +21,7 @@ void printData( const std::string&  title, const std::vector<std::string>& value
 /// Test different query types
 int main(int, char* [])
 {
-    JsonioSettings::settingsFileName = "jsonio17-config.json";
+    JsonioSettings::settingsFileName = "jsonio-config.json";
 
     ioSettings().get_logger("new_logger");
     ioSettings().set_levels("trace");
@@ -39,7 +39,7 @@ int main(int, char* [])
     std::vector<std::string> recjsonValues;
 
     try{
-        // Connect to Arangodb ( load settings from "jsonio17-config.json" config file )
+        // Connect to Arangodb ( load settings from "jsonio-config.json" config file )
         DataBase db;
         // Open collection, if document collection collectionName not exist it would be created
         auto coll= db.collection( collectionName );

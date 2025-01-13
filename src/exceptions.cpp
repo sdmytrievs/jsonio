@@ -1,10 +1,10 @@
-#include "jsonio17/exceptions.h"
+#include "jsonio/exceptions.h"
 #include <spdlog/sinks/stdout_color_sinks.h>
 
-namespace jsonio17 {
+namespace jsonio {
 
 // Thread-safe logger to stdout with colors
-std::shared_ptr<spdlog::logger> io_logger = spdlog::stdout_color_mt("jsonio17");
+std::shared_ptr<spdlog::logger> io_logger = spdlog::stdout_color_mt("jsonio");
 
 void JSONIO_THROW(const std::string &title, int id, const std::string &message)
 {
@@ -20,4 +20,4 @@ void JSONIO_THROW_IF(bool error, const std::string &title, int id, const std::st
     }
 }
 
-} // namespace jsonio17
+} // namespace jsonio

@@ -1,5 +1,5 @@
 #!/bin/bash
-# Installing dependencies needed to build jsonio17
+# Installing dependencies needed to build jsonio
 
 if [ "$(uname)" == "Darwin" ]; then
     # Do under Mac OS X platform

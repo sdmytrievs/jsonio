@@ -56,7 +56,7 @@ inline spdlog::level::level_enum from_str(const std::string &name)
 
  Thread-safe logger to stdout with colors and/or to file loggers
  
- Currently, such loggers are implemented for jsonio17 and additional for jsonarango, jsonimpex17, and jsonui17. It is possible to find loggers by name and change the level. 
+ Currently, such loggers are implemented for jsonio and additional for jsonarango, jsonimpex17, and jsonui17. It is possible to find loggers by name and change the level. 
 
  All file loggers write to the working directory, but this can be fixed by changing JsonioSettings::data_logger_directory. 
 
@@ -64,7 +64,7 @@ inline spdlog::level::level_enum from_str(const std::string &name)
 
 std::shared_ptr<spdlog::logger> arango_logger = spdlog::stdout_color_mt("jsonarango");
 
-std::shared_ptr<spdlog::logger> io_logger = spdlog::stdout_color_mt("jsonio17");
+std::shared_ptr<spdlog::logger> io_logger = spdlog::stdout_color_mt("jsonio");
 
 ```
 
@@ -100,7 +100,7 @@ ioSettings().set_levels("critical");
 
 ```
 
-### Using configuration file (*jsonio17-config.json*) for changing loggers settings without rebuilding
+### Using configuration file (*jsonio-config.json*) for changing loggers settings without rebuilding
 
 * **log.level**     - level for all loggers except defined into log.module_level 
 * **log.module_level**  - specific level for particular logger
@@ -119,7 +119,7 @@ ioSettings().set_levels("critical");
      "modules" :   [
           "jsonarango",
           "jsonimpex17",
-          "jsonio17",
+          "jsonio",
           "jsonui17"
      ],
      "level" :   "critical",
@@ -133,7 +133,7 @@ ioSettings().set_levels("critical");
           "count" :   10,
           "modules" :   [
                "jsonarango",
-               "jsonio17"
+               "jsonio"
           ]
      }
 }

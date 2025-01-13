@@ -1,11 +1,11 @@
 #include <locale>
-#include "jsonio17/jsonparser.h"
-#include "jsonio17/jsondump.h"
-#include "jsonio17/exceptions.h"
-#include "jsonio17/service.h"
-#include "jsonio17/jsonbuilder.h"
+#include "jsonio/jsonparser.h"
+#include "jsonio/jsondump.h"
+#include "jsonio/exceptions.h"
+#include "jsonio/service.h"
+#include "jsonio/jsonbuilder.h"
 
-namespace jsonio17 {
+namespace jsonio {
 
 static const int json_max_depth = 10000;
 
@@ -265,4 +265,4 @@ void JsonParser::set_scalar( JsonBase& result_object )
                             JSONIO_THROW(  "JsonParser", 9, "must be value " + value );
 }
 
-} // namespace jsonio17
+} // namespace jsonio

@@ -8,13 +8,13 @@
 #include <unordered_set>
 #include <forward_list>
 
-#include "jsonio17/service.h"
-#include "jsonio17/jsonbuilder.h"
-#include "jsonio17/jsondump.h"
-#include "jsonio17/jsonfree.h"
+#include "jsonio/service.h"
+#include "jsonio/jsonbuilder.h"
+#include "jsonio/jsondump.h"
+#include "jsonio/jsonfree.h"
 
 using namespace testing;
-using namespace jsonio17;
+using namespace jsonio;
 
 TEST( JsonioBuilder, addScalar )
 {

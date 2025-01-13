@@ -7,12 +7,12 @@ RETURN e
 
 */
 
-#include "jsonio17/dbedgedoc.h"
-#include "jsonio17/dbconnect.h"
-#include "jsonio17/io_settings.h"
+#include "jsonio/dbedgedoc.h"
+#include "jsonio/dbconnect.h"
+#include "jsonio/io_settings.h"
 
 
-namespace jsonio17 {
+namespace jsonio {
 
 
 DBEdgeDocument* documentAllEdges( const DataBase& dbconnect )
@@ -96,4 +96,4 @@ DBQueryBase DBEdgeDocument::make_default_query_old() const
 }
 
 
-} // namespace jsonio17
+} // namespace jsonio

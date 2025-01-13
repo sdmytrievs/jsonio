@@ -8,12 +8,12 @@
 #include <unordered_set>
 #include <forward_list>
 
-#include "jsonio17/jsondetail.h"
-#include "jsonio17/exceptions.h"
-#include "jsonio17/type_test.h"
+#include "jsonio/jsondetail.h"
+#include "jsonio/exceptions.h"
+#include "jsonio/type_test.h"
 
 using namespace testing;
-using namespace jsonio17;
+using namespace jsonio;
 
 
 TEST( JsonioDetail, isContainer )

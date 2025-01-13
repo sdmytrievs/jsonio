@@ -8,16 +8,16 @@
 // https://stackoverflow.com/questions/49756620/including-google-tests-in-qt-project
 
 
-#include "jsonio17/dbquerybase.h"
-#include "jsonio17/jsondump.h"
-#include "jsonio17/jsonfree.h"
-#include "jsonio17/jsonschema.h"
-#include "jsonio17/io_settings.h"
-#include "jsonio17/schema_thrift.h"
+#include "jsonio/dbquerybase.h"
+#include "jsonio/jsondump.h"
+#include "jsonio/jsonfree.h"
+#include "jsonio/jsonschema.h"
+#include "jsonio/io_settings.h"
+#include "jsonio/schema_thrift.h"
 #include "example_schema.h"
 #include "jsonarango/arangoquery.h"
 using namespace testing;
-using namespace jsonio17;
+using namespace jsonio;
 
 TEST( DBQuery, testEmpty )
 {

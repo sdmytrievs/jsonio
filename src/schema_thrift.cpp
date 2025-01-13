@@ -1,10 +1,10 @@
 
-#include "jsonio17/schema_thrift.h"
-#include "jsonio17/service.h"
-#include "jsonio17/jsondump.h"
-#include "jsonio17/io_settings.h"
+#include "jsonio/schema_thrift.h"
+#include "jsonio/service.h"
+#include "jsonio/jsondump.h"
+#include "jsonio/io_settings.h"
 
-namespace jsonio17 {
+namespace jsonio {
 
 
 // Generate field name from ids list
@@ -23,9 +23,9 @@ std::string StructDef::getPathFromIds( std::queue<int> ids ) const
 
     key_name = field_def->name();
     int level = 0;
-    while(   field_def->type(level) == jsonio17::FieldDef::T_SET ||
-             field_def->type(level) == jsonio17::FieldDef::T_LIST ||
-             field_def->type(level) == jsonio17::FieldDef::T_MAP  )
+    while(   field_def->type(level) == jsonio::FieldDef::T_SET ||
+             field_def->type(level) == jsonio::FieldDef::T_LIST ||
+             field_def->type(level) == jsonio::FieldDef::T_MAP  )
     {
         if( ids.empty() )
             return key_name;
@@ -33,12 +33,12 @@ std::string StructDef::getPathFromIds( std::queue<int> ids ) const
         aid = ids.front();
         ids.pop();
         key_name += "."+ std::to_string(aid);
-        if(field_def->type(level) == jsonio17::FieldDef::T_MAP )
+        if(field_def->type(level) == jsonio::FieldDef::T_MAP )
             level++;
         level++;
     }
 
-    if( !ids.empty() && field_def->type(level) == jsonio17::FieldDef::T_STRUCT )
+    if( !ids.empty() && field_def->type(level) == jsonio::FieldDef::T_STRUCT )
     {
         auto filed_str  = ioSettings().Schema().getStruct( field_def->className() );
         if( filed_str != nullptr )
@@ -287,4 +287,4 @@ void ThriftSchemaRead( const std::string& jsondata, schema_files_t& files,
 }
 
 
-} // namespace jsonio17
+} // namespace jsonio

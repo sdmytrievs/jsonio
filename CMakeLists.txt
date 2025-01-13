@@ -2,7 +2,7 @@
 cmake_minimum_required(VERSION 3.9)
 
 # Set the name of the project
-project(jsonio17 VERSION 0.2.0 LANGUAGES CXX C)
+project(jsonio VERSION 0.2.0 LANGUAGES CXX C)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_CXX_STANDARD 20)
@@ -54,7 +54,7 @@ endif()
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 # Find all  dependencies
-include(jsonio17FindDeps)
+include(jsonioFindDeps)
 
 # Set the list of compiler flags for GNU compiler
 if(${CMAKE_CXX_COMPILER_ID} MATCHES "GNU")
@@ -97,13 +97,13 @@ if(${CMAKE_CXX_COMPILER_ID} STREQUAL MSVC)
     link_directories("c:/usr/local/lib")
 endif()
 
-# Set the jsonio17 source directory path
-set(JSONIO17_SOURCE_DIR ${CMAKE_SOURCE_DIR}/src)
-set(JSONIO17_HEADER_DIR ${CMAKE_SOURCE_DIR}/include)
+# Set the jsonio source directory path
+set(JSONIO_SOURCE_DIR ${CMAKE_SOURCE_DIR}/src)
+set(JSONIO_HEADER_DIR ${CMAKE_SOURCE_DIR}/include)
 
 # Set the include directories
-include_directories(${JSONIO17_SOURCE_DIR})
-include_directories(${JSONIO17_HEADER_DIR})
+include_directories(${JSONIO_SOURCE_DIR})
+include_directories(${JSONIO_HEADER_DIR})
 
 
 # Build jsonio library
@@ -120,6 +120,6 @@ if(BuildTests)
     add_subdirectory(tests)
 endif()
 
-# Install the cmake config files that permit users to use find_package(jsonio17)
-include(jsonio17InstallCMakeConfigFiles)
+# Install the cmake config files that permit users to use find_package(jsonio)
+include(jsonioInstallCMakeConfigFiles)
 

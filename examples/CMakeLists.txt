@@ -1,5 +1,5 @@
 # options
-message(STATUS "Building jsonio17 examples: ${BuildExamples}")
+message(STATUS "Building jsonio examples: ${BuildExamples}")
 
 include_directories(${CMAKE_SOURCE_DIR})
 find_package(Threads REQUIRED)
@@ -16,9 +16,9 @@ set(Examples
 foreach (exampleName ${Examples})
   add_executable(${exampleName} ${exampleName}.cpp)
   if(${CMAKE_CXX_COMPILER_ID} STREQUAL MSVC)
-     target_link_libraries(${exampleName} jsonio17::jsonio17-static Threads::Threads )
+     target_link_libraries(${exampleName} jsonio::jsonio-static Threads::Threads )
   else()
-     target_link_libraries(${exampleName} jsonio17::jsonio17 Threads::Threads)
+     target_link_libraries(${exampleName} jsonio::jsonio Threads::Threads)
   endif()
 endforeach()
 

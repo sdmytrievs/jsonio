@@ -14,9 +14,9 @@ add_subdirectory(googletest REQUIRED)
 # -------------------------------------
 add_executable(test_main  main.cpp )
 if(${CMAKE_CXX_COMPILER_ID} STREQUAL MSVC)
-  target_link_libraries(test_main gtest_main jsonio17::jsonio17-static Threads::Threads)
+  target_link_libraries(test_main gtest_main jsonio::jsonio-static Threads::Threads)
 else()
-  target_link_libraries(test_main gtest jsonio17::jsonio17 Threads::Threads)
+  target_link_libraries(test_main gtest jsonio::jsonio Threads::Threads)
 endif()
 
 target_include_directories(test_main PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../src )

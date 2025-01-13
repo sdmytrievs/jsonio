@@ -1,7 +1,7 @@
-#include "jsonio17/jsonfree.h"
-#include "jsonio17/jsonbuilder.h"
+#include "jsonio/jsonfree.h"
+#include "jsonio/jsonbuilder.h"
 
-namespace jsonio17 {
+namespace jsonio {
 
 JsonFree::JsonFree( JsonBase::Type atype, const std::string &akey, const std::string &avalue, JsonFree *aparent ):
     field_type(atype), field_key(akey), field_value(avalue), ndx_in_parent(0), parent_object(aparent), children()
@@ -348,4 +348,4 @@ void JsonFree::array_resize( std::size_t  newsize, const std::string& defval  )
 }
 
 
-} // namespace jsonio17
+} // namespace jsonio

@@ -1,10 +1,10 @@
 
-#include "jsonio17/dbcollection.h"
-#include "jsonio17/dbdriverarango.h"
-#include "jsonio17/service.h"
-#include "jsonio17/jsondump.h"
+#include "jsonio/dbcollection.h"
+#include "jsonio/dbdriverarango.h"
+#include "jsonio/service.h"
+#include "jsonio/jsondump.h"
 
-namespace jsonio17 {
+namespace jsonio {
 
 
 datamap_t DataBase::vertexes ={};
@@ -103,4 +103,4 @@ std::shared_ptr<DBCollection> DataBase::add_collection( const std::string& colna
     return col_ptr;
 }
 
-} // namespace jsonio17
+} // namespace jsonio

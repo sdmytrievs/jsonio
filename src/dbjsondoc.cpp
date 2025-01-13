@@ -1,8 +1,8 @@
 
-#include "jsonio17/dbjsondoc.h"
-#include "jsonio17/jsondump.h"
+#include "jsonio/dbjsondoc.h"
+#include "jsonio/jsondump.h"
 
-namespace jsonio17 {
+namespace jsonio {
 
 DBJsonDocument *DBJsonDocument::newJsonDocument( const DataBase& dbconnect, const std::string& coll_name,
                                                  const std::vector<std::string>& key_template_fields)
@@ -41,7 +41,7 @@ void DBJsonDocument::update_query()
 
         collection_from->selectQuery( query_result->condition(), setfnc );
     }
-    catch(jsonio17::jsonio_exception& e)
+    catch(jsonio::jsonio_exception& e)
     {
         io_logger->error("Update query jsonio_exception: {}", e.what());
     }
@@ -67,4 +67,4 @@ void DBJsonDocument::before_save_update( std::string &key )
     }
 }
 
-} // namespace jsonio17
+} // namespace jsonio

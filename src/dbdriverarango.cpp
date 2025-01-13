@@ -1,11 +1,11 @@
 #include <cstring>
-#include "jsonio17/dbdriverarango.h"
-#include "jsonio17/dbquerybase.h"
-#include "jsonio17/io_settings.h"
+#include "jsonio/dbdriverarango.h"
+#include "jsonio/dbquerybase.h"
+#include "jsonio/io_settings.h"
 #include "jsonarango/arangocollection.h"
 #include "jsonarango/arangoexception.h"
 
-namespace jsonio17 {
+namespace jsonio {
 
 // Get settings data from ison section
 arangocpp::ArangoDBConnection getFromSettings( const SectionSettings& section, bool rootdata )
@@ -309,4 +309,4 @@ void create_ArangoDB_local_database_if_no_exist(const std::string &db_url,  cons
     }
 }
 
-} // namespace jsonio17
+} // namespace jsonio

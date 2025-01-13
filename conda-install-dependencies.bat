@@ -11,13 +11,13 @@ cd tmp_velo
 
 echo
 echo ******                    ******
-echo ****** Compiling jsonarango ******
+echo ****** Compiling arango-cpp ******
 echo ******                    ******
 echo
 
-echo git clone jsonarango...
-git clone  --recurse-submodules https://bitbucket.org/gems4/jsonarango.git
-cd jsonarango
+echo git clone arango-cpp...
+git clone  --recurse-submodules https://github.com/sdmytrievs/arango-cpp.git
+cd arango-cpp
 
 echo "Configuring..."
 cmake -G"Visual Studio 16 2019" -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX:PATH="%CONDA_PREFIX%\Library" -DBUILD_EXAMPLES=OFF  -DBULID_LOCAL_TESTS=OFF -DBULID_REMOTE_TESTS=OFF .. -A x64 -S . -B build
