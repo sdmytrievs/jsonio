@@ -149,6 +149,11 @@ public:
         return current_driver.get();
     }
 
+    /// This report message is about checking how the Database server is responding to incoming HTTP requests.
+    std::string status() const;
+    /// Return Database server status.
+    bool connected() const;
+
     /// Load the collection with the given colname or create new if no such collection exists.
     /// \param type - type of collection ( "document", "schema", "vertex", "edge" )
     /// \param colname - name of collection

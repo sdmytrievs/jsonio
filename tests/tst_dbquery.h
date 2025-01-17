@@ -15,7 +15,7 @@
 #include "jsonio/io_settings.h"
 #include "jsonio/schema_thrift.h"
 #include "example_schema.h"
-#include "jsonarango/arangoquery.h"
+#include "arango-cpp/arangoquery.h"
 using namespace testing;
 using namespace jsonio;
 

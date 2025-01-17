@@ -2,8 +2,8 @@
 #include "jsonio/dbdriverarango.h"
 #include "jsonio/dbquerybase.h"
 #include "jsonio/io_settings.h"
-#include "jsonarango/arangocollection.h"
-#include "jsonarango/arangoexception.h"
+#include "arango-cpp/arangocollection.h"
+#include "arango-cpp/arangoexception.h"
 
 namespace jsonio {
 
@@ -57,6 +57,17 @@ AbstractDBDriver *ArangoDBClient::clone(const std::string &new_db_name)
     auto connection_data = connect_data();
     connection_data.databaseName = new_db_name;
     return new ArangoDBClient{connection_data};
+}
+
+std::string ArangoDBClient::status() const
+{
+    return arando_db->getConnectMessage();
+}
+
+bool ArangoDBClient::connected() const
+{
+    auto status_mess = status();
+    return status_mess.find("server version") != std::string::npos;
 }
 
 void ArangoDBClient::reset_db_connection( const arangocpp::ArangoDBConnection& aconnect_data )

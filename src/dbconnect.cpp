@@ -91,6 +91,16 @@ void DataBase::updateDriver( std::shared_ptr<AbstractDBDriver> db_driver )
         coll.second->reload();
 }
 
+std::string DataBase::status() const
+{
+    return current_driver->status();
+}
+
+bool DataBase::connected() const
+{
+    return current_driver->connected();
+}
+
 std::shared_ptr<DBCollection> DataBase::add_collection( const std::string& colname, const std::string& type  ) const
 {
     auto col_ptr = std::shared_ptr<DBCollection>( new DBCollection( *this, colname) );

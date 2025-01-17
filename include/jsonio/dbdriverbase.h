@@ -46,6 +46,11 @@ public:
 
     virtual AbstractDBDriver *clone(const std::string& new_db_name) = 0;
 
+    /// This report message is about checking how the Database server is responding to incoming HTTP requests.
+    virtual std::string status() const =0;
+    /// Return Database server status.
+    virtual bool connected() const =0;
+
     // Collections API
 
     /// Create collection if no exist
