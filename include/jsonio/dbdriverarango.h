@@ -11,8 +11,8 @@ class ArangoDBCollectionAPI;
 
 namespace jsonio {
 
-/// Get settings data from ison section
 arangocpp::ArangoDBConnection getFromSettings( const SectionSettings& section, bool rootdata );
+
 
 /// Service function for creating a database for local ArangoDB
 void create_ArangoDB_local_database_if_no_exist(const std::string &db_url, const std::string &db_user,
@@ -146,7 +146,7 @@ protected:
     std::shared_ptr<arangocpp::ArangoDBCollectionAPI> arando_db = nullptr;
 
     /// Reset connections to ArangoDB server
-    void reset_db_connection( const arangocpp::ArangoDBConnection& connect_data );
+    void reset_db_connection(const arangocpp::ArangoDBConnection& connect_data);
 
     bool is_comlex_fields( const std::set<std::string>& query_fields);
 

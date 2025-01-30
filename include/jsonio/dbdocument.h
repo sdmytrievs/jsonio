@@ -328,6 +328,11 @@ public:
     */
 
     // internal selection part
+    bool queryDefined() const
+    {
+        return query_result.get()!=nullptr;
+    }
+
 
     /// Set&execute query for document
     virtual void setQuery( const DBQueryBase& query, std::vector<std::string>  fieldsList = {} );

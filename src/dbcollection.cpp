@@ -252,6 +252,7 @@ void DBCollection::loadCollection()
     // create collection if no exist
     db_driver()->create_collection( name(), coll_type );
     //loadCollectionFile( keyFields() );
+    io_logger->info("Start loadCollection thread {}", name());
     // Create a thread using member function
     std::thread th( &DBCollection::loadCollectionFile, this,  keyFields() );
     th.detach();

@@ -120,7 +120,7 @@ public:
              const std::string &user_passwd, const std::string &db_name);
 
     /// Constructor use specific database vendor.
-    DataBase( std::shared_ptr<AbstractDBDriver> db_driver ):
+    DataBase(std::shared_ptr<AbstractDBDriver> db_driver):
         current_driver(nullptr), collections_list(),
         driver_mutex(), collections_mutex()
     {

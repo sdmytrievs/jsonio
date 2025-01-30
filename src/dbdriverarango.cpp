@@ -32,6 +32,7 @@ arangocpp::ArangoDBConnection getFromSettings( const SectionSettings& section, b
 }
 
 
+
 // Default Constructor
 ArangoDBClient::ArangoDBClient():AbstractDBDriver()
 {
@@ -272,6 +273,7 @@ std::string ArangoDBClient::sanitization(const std::string &documentHandle)
         JSONIO_THROW( "ArangoDBClient", e.id, e.what() );
     }
 }
+
 
 //-----------------------------------------------------------------------------------------
 
