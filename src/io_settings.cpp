@@ -180,7 +180,7 @@ bool JsonioSettings::update_logger()
     auto module_names = logger_section.value<std::vector<std::string>>("modules", {});
     if(module_names.empty() ) {
         get_logger("jsonio");
-        get_logger("jsonarango");
+        get_logger("arango-cpp");
     }
     else {
         linked_logger_names.clear();

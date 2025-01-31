@@ -42,8 +42,7 @@ void DBDocumentBase::updateQuery()
         if( query_result.get() == nullptr )
             return;
     }
-    io_logger->debug("Document {} update query: {}", collection_from->name(), query_result->condition().queryString());
-
+    io_logger->info("Start document {} update query: {}", collection_from->name(), query_result->condition().queryString());
     //update_query();
     // Create a thread using member function
     std::thread th( &DBDocumentBase::update_query, this );

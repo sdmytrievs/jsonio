@@ -165,6 +165,7 @@ protected:
     std::shared_ptr<arangocpp::ArangoDBQuery> arando_query = nullptr;
 
     friend class ArangoDBClient;
+    friend class ArangoDBClientOld;
 };
 
 bool operator==(const DBQueryBase & left, const DBQueryBase &right);

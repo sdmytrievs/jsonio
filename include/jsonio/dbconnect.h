@@ -120,7 +120,7 @@ public:
              const std::string &user_passwd, const std::string &db_name);
 
     /// Constructor use specific database vendor.
-    DataBase( std::shared_ptr<AbstractDBDriver> db_driver ):
+    DataBase(std::shared_ptr<AbstractDBDriver> db_driver):
         current_driver(nullptr), collections_list(),
         driver_mutex(), collections_mutex()
     {
@@ -148,6 +148,11 @@ public:
         std::shared_lock lock(driver_mutex);
         return current_driver.get();
     }
+
+    /// This report message is about checking how the Database server is responding to incoming HTTP requests.
+    std::string status() const;
+    /// Return Database server status.
+    bool connected() const;
 
     /// Load the collection with the given colname or create new if no such collection exists.
     /// \param type - type of collection ( "document", "schema", "vertex", "edge" )

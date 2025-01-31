@@ -11,34 +11,34 @@ class ArangoDBCollectionAPI;
 
 namespace jsonio {
 
+/// Get settings data from ison section
 arangocpp::ArangoDBConnection getFromSettings( const SectionSettings& section, bool rootdata );
-
 
 /// Service function for creating a database for local ArangoDB
 void create_ArangoDB_local_database_if_no_exist(const std::string &db_url, const std::string &db_user,
                                        const std::string &user_passwd, const std::string &db_name);
 
 /// Implementation of Database Driver using Low-Level C++ Driver for ArangoDB.
-class ArangoDBClient: public AbstractDBDriver
+class ArangoDBClientOld: public AbstractDBDriver
 {
 
 public:
 
     ///  Constructor
-    ArangoDBClient();
+    ArangoDBClientOld();
 
     /// Constructor for connection data
-    explicit ArangoDBClient(const arangocpp::ArangoDBConnection& aconnect_data): AbstractDBDriver()
+    explicit ArangoDBClientOld(const arangocpp::ArangoDBConnection& aconnect_data): AbstractDBDriver()
     {
         reset_db_connection(aconnect_data);
     }
 
     /// Constructor for minimum connection data
-    explicit ArangoDBClient(const std::string &db_url, const std::string &db_user,
+    explicit ArangoDBClientOld(const std::string &db_url, const std::string &db_user,
                             const std::string &user_passwd, const std::string &db_name);
 
     ///  Destructor
-    ~ArangoDBClient()
+    ~ArangoDBClientOld()
     {}
 
     /// ArangoDB connection data
@@ -47,10 +47,15 @@ public:
     AbstractDBDriver *clone(const std::string& new_db_name) override;
 
     /// This report message is about checking how the ArangoDB server is responding to incoming HTTP requests.
-    std::string status() const override;
+    std::string status() const override
+    {
+       return "connected";
+    }
     /// Return ArangoDB server status.
-    bool connected() const override;
-
+    bool connected() const override
+    {
+        return true;
+    }
 
     // Collections API
 
@@ -146,7 +151,7 @@ protected:
     std::shared_ptr<arangocpp::ArangoDBCollectionAPI> arando_db = nullptr;
 
     /// Reset connections to ArangoDB server
-    void reset_db_connection(const arangocpp::ArangoDBConnection& connect_data);
+    void reset_db_connection( const arangocpp::ArangoDBConnection& connect_data );
 
     bool is_comlex_fields( const std::set<std::string>& query_fields);
 
