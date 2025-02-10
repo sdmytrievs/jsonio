@@ -242,8 +242,11 @@ bool JsonSchema::remove_child( JsonSchema* child )
     {
         if( children[ii].get() == child )
             thisndx = static_cast<int>(ii);
-        if( thisndx >= 0 )
-            children[ii]->ndx_in_parent--;
+        if( thisndx >= 0 )  {
+          children[ii]->ndx_in_parent--;
+          if( isArray() )
+              children[ii]->field_key = std::to_string(children[ii]->ndx_in_parent);
+        }
     }
     if( thisndx >= 0 )
     {
