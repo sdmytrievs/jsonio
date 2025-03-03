@@ -1,22 +1,15 @@
-name: jsonio
+name: arango-cpp
+
+channels:
+  - conda-forge
 
 dependencies:
-  - gxx_linux-64>=9.4.0  # [linux]
-  - cmake>=3.13
-  - ninja # [unix]
-  - make  # [win]
-  - git
-  - ccache  # [unix]
+  - cmake
+  - make  # [unix]
+  - ninja
+  - doxygen =1.9.1  # [linux]
   - curl
-  - nlohmann_json
-#  - velocypack
   - spdlog
-#  - jsonarango
+  - nlohmann_json
 
-environment:
 
-  LD_LIBRARY_PATH:                                                   # [unix]
-    - {{ root }}/artifacts/lib                                       # [unix]
-
-  PATH:                                                              # [win]
-    - {{ root }}\artifacts\bin                                       # [win]
