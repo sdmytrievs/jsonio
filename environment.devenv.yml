@@ -1,4 +1,4 @@
-name: arango-cpp
+name: jsonio
 
 channels:
   - conda-forge

@@ -21,13 +21,13 @@ jobs:
         include:
           - os: ubuntu-latest
             conda_platform: linux-64
-            artifact_name: arango-cpp-linux
+            artifact_name: jsonio-linux
           - os: windows-latest
             conda_platform: win-64
-            artifact_name: arango-cpp-windows
+            artifact_name: jsonio-windows
           - os: macos-latest
             conda_platform: osx-64
-            artifact_name: arango-cpp-macos   
+            artifact_name: jsonio-macos
 
     steps:
 
@@ -50,22 +50,22 @@ jobs:
           conda install conda-devenv
           conda devenv
 
-      - name: Building, Testing & Installing arango-cpp
+      - name: Building, Testing & Installing jsonio
         if: matrix.os != 'windows-latest'
         shell: bash -l {0}
         run: |
-          conda activate arango-cpp
+          conda activate jsonio
           ./conda-install-dependencies.sh
           mkdir .build && cd .build
           cmake -GNinja .. -DCMAKE_BUILD_TYPE=Release
           ninja
           ninja install
 
-      - name: Building, Testing & Installing arango-cpp (Windows)
+      - name: Building, Testing & Installing jsonio (Windows)
         if: matrix.os == 'windows-latest'
         shell: cmd
         run: |
-          call conda activate arango-cpp || goto :eof
+          call conda activate jsonio || goto :eof
           call conda-install-dependencies.bat || goto :eof
           echo "Configuring..." || goto :eof
           cmake -DCMAKE_BUILD_TYPE=Release -DBULID_REMOTE_TESTS=OFF  -A x64 -S . -B build  || goto :eof
