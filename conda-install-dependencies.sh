@@ -11,7 +11,7 @@ fi
 
 # arango-cpp database client
 # if no arango-cpp installed in ${CONDA_PREFIX}/lib/libarango-cpp.a
-test -f ${CONDA_PREFIX}/lib/libjsonarango.$EXTN || {
+test -f ${CONDA_PREFIX}/lib/libarango-cpp.$EXTN || {
 
         # Building arango-cpp library
         mkdir -p ~/code && \
