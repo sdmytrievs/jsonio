@@ -39,7 +39,7 @@ if(BUILD_STATIC_LIBS)
     #add_library(jsonio-static STATIC  $<TARGET_OBJECTS:JSONIO_OBJECTS>)
     add_library(jsonio-static STATIC ${HEADER_FILES} ${SOURCE_FILES})
     add_library(jsonio::jsonio-static ALIAS jsonio-static)
-    target_link_libraries(jsonio-static PUBLIC arango-cpp::arango-cpp)
+    target_link_libraries(jsonio-static PUBLIC arango-cpp::arango-cpp-static)
 
     install( TARGETS jsonio-static
             EXPORT jsonioTargets DESTINATION "lib" COMPONENT libraries)
