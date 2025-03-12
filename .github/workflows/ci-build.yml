@@ -68,9 +68,9 @@ jobs:
           call conda activate jsonio || goto :eof
           call conda-install-dependencies.bat || goto :eof
           echo "Configuring..." || goto :eof
-          cmake -DCMAKE_BUILD_TYPE=Release -DBULID_REMOTE_TESTS=OFF  -A x64 -S . -B build  || goto :eof
+          cmake -DCMAKE_BUILD_TYPE=Release -A x64 -S . -B build  || goto :eof
           echo "Building..." || goto :eof
-          cmake --build build --target install || goto :eof
+          cmake --build build --target install --config Release  || goto :eof
 
       - name: Check conda
         run: |
