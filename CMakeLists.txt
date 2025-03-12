@@ -30,11 +30,11 @@ option(BuildTests "Build test suite" ON)
 
 
 # Used into conda only
-#if(DEFINED ENV{CONDA_PREFIX})
-#   option(USE_SPDLOG_PRECOMPILED "Use spdlog in compiled version" ON)
-#else()
-#   option(USE_SPDLOG_PRECOMPILED "Use spdlog in compiled version" OFF)
-#endif()
+if(DEFINED ENV{CONDA_PREFIX})
+   option(USE_SPDLOG_PRECOMPILED "Use spdlog in compiled version" ON)
+else()
+   option(USE_SPDLOG_PRECOMPILED "Use spdlog in compiled version" OFF)
+endif()
 
 # Set the default build type to Release
 if(NOT CMAKE_BUILD_TYPE)
