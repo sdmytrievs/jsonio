@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - master
+      - develop
   pull_request:
     branches:
       - master
@@ -60,6 +61,7 @@ jobs:
           cmake -GNinja .. -DCMAKE_BUILD_TYPE=Release
           ninja
           ninja install
+          ctest --test-dir tests
 
       - name: Building, Testing & Installing jsonio (Windows)
         if: matrix.os == 'windows-latest'
