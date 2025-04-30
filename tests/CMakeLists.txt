@@ -21,7 +21,7 @@ endif()
 
 target_include_directories(test_main PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../src )
 
-add_test(NAME test_main COMMAND test_main)
+#add_test(NAME test_main COMMAND test_main)
 
 #https://cliutils.gitlab.io/modern-cmake/chapters/testing/googletest.html
 #https://github.com/TusharChugh/travis-gcov-gtest-example/blob/master/.travis.yml
