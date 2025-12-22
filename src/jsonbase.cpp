@@ -91,7 +91,7 @@ std::string JsonBase::get_path() const
     }
 }
 
-bool JsonBase::set_scalar_via_path(const std::string &jsonpath, const std::string &value)
+const JsonBase* JsonBase::set_scalar_via_path(const std::string &jsonpath, const std::string &value)
 {
     long ival = 0;
     double dval=0.;
@@ -118,9 +118,9 @@ bool JsonBase::set_scalar_via_path(const std::string &jsonpath, const std::strin
                                 pobj->update_node(JsonBase::Double, v2string(dval));
                             else
                                 pobj->update_node(JsonBase::String, v2string(value));
-        return true;
+        return pobj;
     }
-    return false;
+    return pobj;
 }
 
 void JsonBase::set_oid(const std::string &oid )

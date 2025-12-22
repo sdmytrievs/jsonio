@@ -92,6 +92,10 @@ TEST( JsonioService, regexprExtractString )
     EXPECT_EQ( regexp_extract_string(".*\"_key\"\\s*:\\s*\"([^\"]*)\".*", test_data), "eCRUD" );
     EXPECT_EQ( regexp_extract_string(".*\"level\"\\s*:\\s*\"([^\"]*)\".*", test_data), "insert record" );
     EXPECT_EQ( regexp_extract_string(".*\"task\"\\s*:\\s*\"([^\"]*)\".*", test_data), "exampleCRUD" );
+
+    EXPECT_EQ( regexp_extract_string(".*name=\\s*\"([^\"]*)\".*", "<a name=\"tPom_14\"></a>"), "tPom_14" );
+    EXPECT_EQ( regexp_extract_string(".*src=\\s*\"([^\"]*)\".*", "<img src=\"gems1.png\" align=\"left\" height=\"48\" width=\"48\">"), "gems1.png" );
+
 }
 
 
